@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// import { Dropdown } from 'flowbite-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { atom, useRecoilState } from 'recoil';
@@ -10,9 +9,9 @@ import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { accessTokenAtom, refreshTokenAtom } from 'service/atoms/atoms';
 import { UserId } from 'service/atoms/type';
-// import Alarm from './Alarm';
 import MobileNav from './MobileNav';
 import NavPriofile from './Profile';
+
 axios.defaults.withCredentials = true;
 
 const Nav = () => {
@@ -21,24 +20,20 @@ const Nav = () => {
   const [authority, setAuthority] = useState<boolean>(false);
   const router = useRouter();
 
-  //nav바
+  // nav바 현재 페이지 확인
   const urlHasAbout = router.asPath.includes('about');
   const urlHasArticle = router.asPath.includes('article');
   const urlHasResume = router.asPath.includes('resume');
   const urlHasGithub = router.asPath.includes('github');
+
   useEffect(() => {
-    if (urlHasAbout) {
-      setPage('ABOUT');
-    } else if (urlHasArticle) {
-      setPage('ARTICLE');
-    } else if (urlHasResume) {
-      setPage('RESUME');
-    } else if (urlHasGithub) {
-      setPage('GITHUB');
-    }
+    if (urlHasAbout) setPage('ABOUT');
+    else if (urlHasArticle) setPage('ARTICLE');
+    else if (urlHasResume) setPage('RESUME');
+    else if (urlHasGithub) setPage('GITHUB');
   }, [router.asPath]);
 
-  //토큰 전역처리
+  // 토큰 전역처리
   const localAccessToken = LocalStorage.getItem('CVtoken');
   const localRefreshToken = Cookie.getItem('refreshToken');
   const [, setAccessToken] = useRecoilState(accessTokenAtom);
@@ -55,112 +50,93 @@ const Nav = () => {
     }
   }, [localAccessToken]);
 
-  //FIXME 필터 연결
-  // const tagSearch = () => {
-  //   const tag = window.prompt(
-  //     '태그를 입력해주세요. ex) JAVA, java, JAVASCRIPT....',
-  //     ''
-  //   );
-  // };
-
   return (
-    <header className="relative flex items-center justify-center w-full h-24 shadow-md bg-beige10 shadow-gray-200">
-      <div className="flex justify-between w-full my-3">
-        <div className="flex items-center justify-center w-1/6 text-ftWhite sm:hidden invert ">
-          <Shared.LogmeIcon.LensIcon
-            alt={'돋보기'}
-            width={20}
-            height={20}
-            cn={'hover:cursor-not-allowed'}
-            onClick={() => alert('v1.1에서 만나요 🥰')}
-          />
-        </div>
-        <div className="flex items-center justify-center w-1/6 sm:justify-start sm:ml-10">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-beige10 shadow-gray-200">
+      <div className="grid h-full grid-cols-12 gap-4 px-4 mx-auto max-w-7xl">
+        {/* 로고 섹션 - 모바일에서는 4칸, 데스크탑에서는 3칸 */}
+        <div className="flex items-center col-span-4 mobile:col-span-3">
           <Link
-            href={'/about'}
-            onClick={() => {
-              setPage('About');
-            }}
+            href="/about"
+            onClick={() => setPage('About')}
+            className="flex items-center"
           >
-            <Shared.LogmeIcon.NewLogo alt={'로고'} width={130} height={45} />
+            <Shared.LogmeIcon.NewLogo alt="로고" width={130} height={45} />
           </Link>
         </div>
-        <div className="items-center hidden h-6 p-3 rounded-full sm:flex justify-evenly md:w-96 sm:mt-3 md:p-4 lg:p-6">
-          {menu.map((list: string) => (
-            <Link
-              key={list}
-              href={`/${
-                list === 'Article' && localAccessToken === null
-                  ? ''
-                  : list.toLowerCase()
-              }`}
-              onClick={() => {
-                list === 'Article' &&
-                  localAccessToken === null &&
-                  alert('로그인 먼저 해주세요.');
-                setPage(list);
-              }}
-            >
-              <Shared.LogmeHeadline
-                type="medium"
-                fontStyle="semibold"
-                className={`lg:flex  items-center justify-center  px-7 hidden lg:text-2xl hover:cursor-pointer  ${
-                  page === list
-                    ? 'text-beige30 bg-white  rounded-full shadow-md'
-                    : 'text-gray50 hover:text-gray70 '
-                } `}
+
+        {/* 메뉴 리스트 섹션 - 모바일에서는 숨김, 데스크탑에서는 6칸 */}
+        <nav className="items-center justify-center hidden col-span-6 mobile:flex">
+          <div className="flex items-center justify-center gap-2">
+            {menu.map(list => (
+              <Link
+                key={list}
+                href={`/${
+                  list === 'Article' && localAccessToken === null
+                    ? ''
+                    : list.toLowerCase()
+                }`}
+                onClick={() => {
+                  if (list === 'Article' && localAccessToken === null) {
+                    alert('로그인 먼저 해주세요.');
+                  }
+                  setPage(list);
+                }}
               >
-                {list}
-              </Shared.LogmeHeadline>
+                <Shared.LogmeHeadline
+                  type="medium"
+                  fontStyle="semibold"
+                  className={`px-4  py-2 transition-all duration-200 hover:cursor-pointer ${
+                    page === list
+                      ? 'text-beige30 bg-white rounded-3xl shadow-md'
+                      : 'text-gray50 hover:text-gray70'
+                  }`}
+                >
+                  {list}
+                </Shared.LogmeHeadline>
+              </Link>
+            ))}
+          </div>
+        </nav>
+
+        {/* 우측 메뉴 섹션 - 모바일에서는 8칸, 데스크탑에서는 3칸 */}
+        <div className="flex items-center justify-end col-span-8 gap-6 mobile:col-span-3">
+          {/* 모바일 메뉴 토글 */}
+          <div className="mobile:hidden">
+            <MobileNav />
+          </div>
+
+          {/* 데스크탑 메뉴 아이템들 */}
+          <div className="items-center hidden gap-6 mobile:flex">
+            <Link
+              href={authority ? '/mypage' : '/'}
+              onClick={() => !authority && alert('로그인 먼저 해주세요.')}
+              className="transition-opacity hover:opacity-80"
+            >
+              <Shared.LogmeIcon.SettingsIcon
+                alt="설정"
+                width={28}
+                height={28}
+              />
             </Link>
-          ))}
-        </div>
-        <div className="flex justify-center w-1/6  lg:hidden md:w-base invert z-[999] items-center">
-          <MobileNav />
-        </div>
-        <div className="items-center justify-end hidden w-1/6 mr-10 lg:flex ">
-          <Link
-            href={`${authority ? '/mypage' : '/'}`}
-            onClick={() => !authority && alert('로그인 먼저 해주세요.')}
-          >
-            <Shared.LogmeIcon.SettingsIcon
-              alt={'설정'}
-              width={33}
-              height={33}
-            />
-          </Link>
-          {/* <div className="flex items-center justify-center mt-1 md:mx-1 hover:opacity-80 md:w-8 invert">
-            <Dropdown
-              className="items-center "
-              arrowIcon={false}
-              inline={true}
-              label={
-                <div className="flex items-center justify-center "> */}
-          <Shared.LogmeIcon.NotificationIcon
-            alt={'알람'}
-            width={36}
-            height={36}
-            cn="ml-2 mr-2"
-          />
-          {/* </div>
-              }
-            > */}
-          {/* <Alarm /> */}
-          {/* </Dropdown>
-          </div> */}
-          <div className="">
+
+            <button className="transition-opacity hover:opacity-80">
+              <Shared.LogmeIcon.NotificationIcon
+                alt="알람"
+                width={28}
+                height={28}
+              />
+            </button>
+
             {authority && localAccessToken !== null ? (
               <NavPriofile setAuthority={setAuthority} />
             ) : (
-              <Link href={'/'}>
-                <div
-                  onClick={() => {
-                    setAuthority(true);
-                  }}
-                  className="px-2 mt-1 border border-black rounded-lg text-ftBlick md:ml-1 text-md md:mt-0 md:text-lg hover:opacity-80 hover:cursor-pointer"
+              <Link href="/">
+                <button
+                  onClick={() => setAuthority(true)}
+                  className="px-4 py-2 text-sm font-medium transition-all border border-black rounded-lg text-ftBlick hover:bg-gray-100"
                 >
                   Join
-                </div>
+                </button>
               </Link>
             )}
           </div>

@@ -1,49 +1,23 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Typography } from './base';
+
 interface LogmeTypoBaseProps {
   fontStyle?: 'bold' | 'semibold' | 'regular';
   className?: string;
   style?: React.CSSProperties;
   children: React.ReactNode;
 }
+
 export interface LogmeHeadlineProps extends LogmeTypoBaseProps {
   type: 'display' | 'big' | 'medium' | 'small';
   link?: boolean;
 }
+
 export interface LogmeTextProps extends LogmeTypoBaseProps {
   type: 'title' | 'body' | 'label' | 'caption';
   link?: boolean;
 }
-const Headline = styled(Typography.Title)<LogmeHeadlineProps>`
-  font-size: ${props => {
-    switch (props.type) {
-      case 'display':
-        return '48px';
-      case 'big':
-        return '36px';
-      case 'medium':
-        return '24px';
-      case 'small':
-        return '20px';
-    }
-  }};
-`;
-const Text = styled(Typography.Text)<LogmeTextProps>`
-  font-size: ${props => {
-    switch (props.type) {
-      case 'title':
-        return '18px';
-      case 'body':
-        return '16px';
-      case 'label':
-        return '14px';
-      case 'caption':
-        return '12px';
-    }
-  }};
-`;
 
+// 헤드라인 스타일 컴포넌트
 export const LogmeHeadline = ({
   type,
   fontStyle,
@@ -52,29 +26,45 @@ export const LogmeHeadline = ({
   children,
   link,
 }: LogmeHeadlineProps) => {
-  let fontWeight;
+  let fontWeight = '';
   switch (fontStyle) {
     case 'bold':
-      fontWeight = 700;
+      fontWeight = 'font-bold';
       break;
     case 'semibold':
-      fontWeight = 600;
+      fontWeight = 'font-semibold';
       break;
     case 'regular':
-      fontWeight = 400;
+      fontWeight = 'font-normal';
       break;
   }
 
-  const headlineProps = {
-    as: link ? 'a' : undefined,
-    type,
-    className,
-    style: { ...style, fontWeight },
-  };
+  let fontSize = '';
+  switch (type) {
+    case 'display':
+      fontSize = 'text-4xl'; // 36px
+      break;
+    case 'big':
+      fontSize = 'text-2xl'; // 24px
+      break;
+    case 'medium':
+      fontSize = 'text-base'; // 16px
+      break;
+    case 'small':
+      fontSize = 'text-sm'; // 14px
+      break;
+  }
 
-  return <Headline {...headlineProps}>{children}</Headline>;
+  const headlineClassNames = `m-0 ${fontWeight} ${fontSize} ${className || ''}`;
+
+  return (
+    <h1 className={headlineClassNames} style={style} {...(link && { as: 'a' })}>
+      {children}
+    </h1>
+  );
 };
 
+// 텍스트 스타일 컴포넌트
 export const LogmeText = ({
   type,
   fontStyle,
@@ -83,23 +73,40 @@ export const LogmeText = ({
   children,
   link,
 }: LogmeTextProps) => {
-  let fontWeight;
+  let fontWeight = '';
   switch (fontStyle) {
     case 'bold':
-      fontWeight = 700;
+      fontWeight = 'font-bold';
       break;
     case 'semibold':
-      fontWeight = 600;
+      fontWeight = 'font-semibold';
       break;
     case 'regular':
-      fontWeight = 400;
+      fontWeight = 'font-normal';
       break;
   }
-  const textProps = {
-    as: link ? 'a' : undefined,
-    type,
-    className,
-    style: { ...style, fontWeight },
-  };
-  return <Text {...textProps}>{children}</Text>;
+
+  let fontSize = '';
+  switch (type) {
+    case 'title':
+      fontSize = 'text-base'; // 16px
+      break;
+    case 'body':
+      fontSize = 'text-sm'; // 14px
+      break;
+    case 'label':
+      fontSize = 'text-xs'; // 12px
+      break;
+    case 'caption':
+      fontSize = 'text-xs'; // 12px
+      break;
+  }
+
+  const textClassNames = `m-0 ${fontWeight} ${fontSize} ${className || ''}`;
+
+  return (
+    <p className={textClassNames} style={style} {...(link && { as: 'a' })}>
+      {children}
+    </p>
+  );
 };

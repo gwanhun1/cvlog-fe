@@ -14,14 +14,21 @@ export default function LoginCallback() {
         if (code) {
           // GitHub 인증 코드로 백엔드 API 호출
           const response = await axiosInstance.get(`/auth/login`, {
-            params: { code }
+            params: { code },
           });
-          
-          if (response.data && response.data.data && response.data.data.accessToken) {
+
+          if (
+            response.data &&
+            response.data.data &&
+            response.data.data.accessToken
+          ) {
             // 토큰 저장
-            await LocalStorage.setItem('CVtoken', response.data.data.accessToken);
+            await LocalStorage.setItem(
+              'CVtoken',
+              response.data.data.accessToken
+            );
             // 메인 페이지로 리다이렉트
-            router.push('/');
+            router.push('/about');
           } else {
             console.error('Invalid response data:', response.data);
             router.push('/');
