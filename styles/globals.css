@@ -146,8 +146,8 @@ table {
     color-scheme: dark;
   }
   body {
-    background: #000;
-    color: #fff;
+    background: #f1f5f9;
+    color: #000;
   }
 }
 
@@ -155,7 +155,7 @@ table {
   html {
     @apply antialiased;
   }
-  
+
   body {
     @apply bg-bgWhite text-cardFtBlack;
   }
@@ -219,12 +219,12 @@ table {
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
