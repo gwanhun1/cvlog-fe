@@ -151,22 +151,29 @@ table {
   }
 }
 
-/* TEXT */
 @layer base {
+  html {
+    @apply antialiased;
+  }
+  
+  body {
+    @apply bg-bgWhite text-cardFtBlack;
+  }
+
   h1 {
-    @apply text-4xl font-bold;
+    @apply text-4xl font-bold mb-4;
   }
+
   h2 {
-    @apply text-2xl font-bold;
+    @apply text-3xl font-bold mb-3;
   }
+
   h3 {
-    @apply text-xl font-bold;
+    @apply text-2xl font-bold mb-2;
   }
-  h4 {
-    @apply text-lg font-normal;
-  }
-  h5 {
-    @apply text-xs font-normal;
+
+  p {
+    @apply mb-4;
   }
 }
 
@@ -185,6 +192,55 @@ table {
 
   .caption {
     @apply text-xs font-normal;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-ftWhite hover:bg-ftBlue;
+  }
+
+  .btn-secondary {
+    @apply btn bg-gray10 text-gray70 hover:bg-gray20;
+  }
+
+  .card {
+    @apply bg-bgWhite rounded-lg shadow-md p-6;
+  }
+
+  .input {
+    @apply w-full px-4 py-2 rounded-lg border border-gray20 focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Custom animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 

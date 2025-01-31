@@ -6,7 +6,13 @@ module.exports = {
     'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
+    screens: {
+      mobile: '360px', // 모바일
+      tablet: '768px', // 태블릿
+      desktop: '1280px', // PC
+    },
     colors: {
+      transparent: 'transparent',
       bgWhite: '#f1f5f9',
       ftWhite: '#e5e7eb',
       cardFtBlack: '#27272a',
@@ -25,6 +31,13 @@ module.exports = {
       gray70: '#3C485C',
     },
     extend: {
+      spacing: {
+        128: '32rem',
+        144: '36rem',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+      },
       keyframes: {
         ping: {
           '75%, 100%': {
@@ -59,12 +72,11 @@ module.exports = {
       },
       animation: {
         ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
-        spin: 'spin 3s linear infinite ',
-        down: 'down 0.4s linear ',
-        right: 'right 0.6s linear ',
+        spin: 'spin 1s linear infinite',
+        down: 'down 0.3s ease-out',
+        right: 'right 0.3s ease-out',
       },
     },
   },
-  plugins: [require('flowbite/plugin')],
-  darkMode: 'class',
+  plugins: [],
 };
