@@ -78,9 +78,9 @@ const ListView = () => {
       <div className="flex items-center gap-4">
         <div className="flex-1 relative">
           <input
-            className="w-full h-12 mobile:h-14 px-4 text-gray-600 text-lg mobile:text-xl tablet:text-2xl border rounded-lg border-gray20 placeholder:text-gray-400 placeholder:text-lg tablet:placeholder:text-xl focus:outline-none focus:ring-2 focus:ring-ftBlue focus:border-transparent"
+            className="w-full h-12 mobile:h-14 px-6 text-gray-700 text-lg mobile:text-xl tablet:text-2xl bg-white/90 backdrop-blur-sm rounded-2xl border-2 border-blue-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.15)] hover:border-blue-300"
             name="title"
-            placeholder="Search........... 👀"
+            placeholder="Search for articles..."
             onKeyDown={handleKeyDown}
           />
           <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">

@@ -22,7 +22,10 @@ const extractImageUrl = (content: string): string | undefined => {
 };
 
 const removeImageFromContent = (content: string): string => {
-  return content.replace(/!\[.*\]\(.+\)\n/g, '');
+  // 이미지 마크다운 구문을 완전히 제거
+  const cleanContent = content.replace(/!\[([^\]]*)\]\([^)]+\)/g, '').trim();
+  // 연속된 빈 줄 제거
+  return cleanContent.replace(/\n\s*\n/g, '\n');
 };
 
 const formatTimeAgo = (date: string): string => {
@@ -59,34 +62,37 @@ const formatTimeAgo = (date: string): string => {
   }
 };
 
-const Card: React.FC<CardProps> = ({
-  title,
-  updated_at,
-  content,
-  tags,
-}) => {
+const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
 
   return (
-    <article className="w-full overflow-hidden transition-all duration-300 bg-white border rounded-lg shadow-sm hover:shadow-lg">
-      <div className={`flex flex-col tablet:flex-row ${imageUrl ? 'tablet:h-[300px]' : 'tablet:h-[200px]'}`}>
+    <article className="w-full overflow-hidden transition-all duration-300 bg-white border rounded-lg shadow-sm hover:shadow-lg relative">
+      <div
+        className={`flex flex-col tablet:flex-row ${
+          imageUrl ? 'tablet:h-[250px]' : 'tablet:h-[180px]'
+        }`}
+      >
         <div className="flex flex-col justify-between p-5 w-full">
           <div className="h-full flex flex-col">
-            <h3 className="mb-2 text-4xl font-bold leading-tight text-gray-900 hover:text-blue-600 line-clamp-2">
+            <h3 className="mb-1 text-2xl font-bold leading-tight text-gray-900 hover:text-blue-600 line-clamp-2">
               {title}
             </h3>
-            <p className={`mb-4 text-gray-600 ${imageUrl ? 'line-clamp-3' : 'line-clamp-2'} flex-grow`}>
+            <p
+              className={`mb-3 text-gray-600 ${
+                imageUrl ? 'line-clamp-3' : 'line-clamp-2'
+              } flex-grow`}
+            >
               {markdownToText(cleanContent)}
             </p>
-            <div className="flex items-center justify-between mt-auto">
+            <div className="flex items-center mt-auto">
               <div className="flex-1">
                 {tags?.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {tags.map(tag => (
                       <Badge
                         key={tag.id}
-                        className="px-3 py-1 text-sm bg-blue-100 text-blue-800"
+                        className="px-2 py-1 text-xs bg-blue-100 text-blue-800"
                         color="info"
                         size="sm"
                       >
@@ -96,31 +102,36 @@ const Card: React.FC<CardProps> = ({
                   </div>
                 )}
               </div>
-              <div className="flex-none ml-4">
-                {updated_at && (
-                  <time className="text-sm text-gray-500">
-                    {formatTimeAgo(updated_at)}
-                  </time>
-                )}
-              </div>
             </div>
           </div>
         </div>
         {imageUrl && (
-          <div className="relative tablet:w-1/3 h-full">
-            <div className="aspect-w-16 aspect-h-9 tablet:aspect-h-full">
+          <div className="relative tablet:w-3/5 h-full">
+            <div className="relative w-full h-full">
               <Image
-                className="object-cover w-full h-full bg-gray-100 rounded-t-lg tablet:rounded-l-none tablet:rounded-r-lg"
-                width={400}
-                height={300}
+                className="object-cover rounded-t-lg tablet:rounded-l-none tablet:rounded-r-lg"
                 src={imageUrl}
                 alt={title}
                 priority
+                style={{ objectFit: 'cover' }}
+                fill
+                sizes="(max-width: 768px) 100vw, 60vw"
+                onError={e => {
+                  const imgElement = e.target as HTMLImageElement;
+                  imgElement.style.display = 'none';
+                }}
               />
             </div>
           </div>
         )}
       </div>
+      {updated_at && (
+        <div className="absolute bottom-3 right-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full px-3 py-1 border border-blue-100/50 shadow-sm">
+          <time className="text-xs font-medium text-blue-600/70">
+            {formatTimeAgo(updated_at)}
+          </time>
+        </div>
+      )}
     </article>
   );
 };
