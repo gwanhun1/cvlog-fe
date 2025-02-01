@@ -15,6 +15,7 @@ const nextConfig = {
       'avatars.githubusercontent.com',
       'user-images.githubusercontent.com',
       'logme-bucket.s3.amazonaws.com',
+      'res.cloudinary.com'
     ],
   },
 
