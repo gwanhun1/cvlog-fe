@@ -5,7 +5,9 @@ import * as Shared from 'components/Shared';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { useGetUserInfo } from 'service/hooks/Login';
-import { signOut } from '../../../service/api/login/index';
+import { useRecoilState } from 'recoil';
+import { authorityState } from 'service/atoms/atoms';
+import { handleSignOut } from 'utils/auth';
 
 const MobileNav = () => {
   const menu = ['About', 'Article', 'Resume', 'Github'];
@@ -17,28 +19,15 @@ const MobileNav = () => {
   const refreshToken = Cookie.getItem('refreshToken');
   const [cvRefreshToken, setCvRefreshToken] = useState(refreshToken);
   const info = useGetUserInfo().data;
+  const [authority, setAuthority] = useRecoilState(authorityState);
 
   useEffect(() => {
     setToken(accessToken);
     setCvRefreshToken(cvRefreshToken);
   }, [accessToken, cvRefreshToken]);
 
-  //로그아웃
-  const handleSignOut = () => {
-    if (window.confirm('로그아웃 하십니까?')) {
-      signOut();
-      // 쿠키 삭제
-      const deleteCookie = function (name: string) {
-        document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
-      };
-      deleteCookie('refreshToken');
-      localStorage.removeItem('CVtoken');
-      sessionStorage.removeItem('recoil-persist');
-
-      if (typeof window !== 'undefined') {
-        window.location.href = '/';
-      }
-    }
+  const onClickLogout = async () => {
+    await handleSignOut(setAuthority);
   };
 
   return (
@@ -53,10 +42,9 @@ const MobileNav = () => {
                 alt={'햄버거'}
                 width={20}
                 height={20}
-                cn="ml-2 mb-1"
+                cn="ml-2 mb-1 stroke-gray-800"
               />
             }
-            className="invert "
           >
             {token && token !== null && (
               <Dropdown.Header>
@@ -98,14 +86,12 @@ const MobileNav = () => {
             ))}
             <div className="flex flex-col justify-center w-28 ">
               {token && token !== null ? (
-                <Dropdown.Item
-                  onClick={() => {
-                    handleSignOut();
-                  }}
-                  className="flex justify-center"
+                <button
+                  className="flex w-full items-center justify-center rounded-lg  px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
+                  onClick={onClickLogout}
                 >
                   로그아웃
-                </Dropdown.Item>
+                </button>
               ) : (
                 <Dropdown.Item className="flex justify-center">
                   <Link href={'/about'}>
@@ -138,4 +124,12 @@ const MobileNav = () => {
   );
 };
 
-export default MobileNav;
+const MobileNavWrapper = () => {
+  return (
+    <div className="desktop:hidden">
+      <MobileNav />
+    </div>
+  );
+};
+
+export default MobileNavWrapper;

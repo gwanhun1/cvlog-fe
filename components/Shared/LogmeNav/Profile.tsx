@@ -2,26 +2,14 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { Avatar, Dropdown } from 'flowbite-react';
 import Sessionstorage from 'public/utils/Sessionstorage';
 import { useGetUserInfo } from 'service/hooks/Login';
-import { signOut } from '../../../service/api/login/index';
+import { handleSignOut } from 'utils/auth';
 import Loader from '../Loader';
 
 const NavPriofile = ({ setAuthority }: Props) => {
   const info = useGetUserInfo().data;
 
-  const handleSignOut = () => {
-    if (window.confirm('로그아웃 하십니까?')) {
-      signOut();
-      const deleteCookie = function (name: string) {
-        document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
-      };
-      deleteCookie('refreshToken');
-      localStorage.removeItem('CVtoken');
-      Sessionstorage.removeItem('recoil-persist');
-      setAuthority(false);
-      if (typeof window !== 'undefined') {
-        window.location.href = '/';
-      }
-    }
+  const onClickLogout = async () => {
+    await handleSignOut(setAuthority);
   };
 
   return (
@@ -65,7 +53,7 @@ const NavPriofile = ({ setAuthority }: Props) => {
           </Dropdown.Header>
           <Dropdown.Item
             className="flex justify-center py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-            onClick={() => handleSignOut()}
+            onClick={onClickLogout}
           >
             로그아웃
           </Dropdown.Item>

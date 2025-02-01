@@ -481,34 +481,34 @@ const NewPost: NextPage = () => {
   }, [typeof window !== 'undefined' && window.innerWidth]);
 
   return (
-    <main className="h-screen min-h-screen">
-      <div className="flex flex-col content-wrapper">
-        <header>
-          <div className="h-full    bg-[#f8f9fa] min-h-screen ">
-            <div className="md:pt-2">
-              <div className="flex flex-row-reverse">
+    <main className="h-screen">
+      <div className="flex flex-col h-full">
+        <header className="flex-none">
+          <div className="bg-[#f8f9fa]">
+            <div className="tablet:pt-2">
+              <div className="flex items-center justify-end gap-2 px-4 py-2">
                 <button
-                  className="px-2 m-1 bg-gray-600 rounded-md cursor-pointer hover:bg-ftBlue"
+                  className="px-4 py-2 text-sm font-medium text-white transition-colors bg-gray-600 rounded-md hover:bg-gray-700"
+                  onClick={() =>
+                    accessToken ? router.push('/article') : router.push('/')
+                  }
+                >
+                  취소
+                </button>
+                <button
+                  className="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700"
                   onClick={() =>
                     accessToken
                       ? saveNewPost()
                       : alert('로그인 먼저 해주세요..')
                   }
                 >
-                  SAVE
-                </button>
-                <button
-                  className="px-2 m-1 bg-gray-600 rounded-md cursor-pointer hover:bg-ftBlue"
-                  onClick={() =>
-                    accessToken ? router.push('/article') : router.push('/')
-                  }
-                >
-                  QUIT
+                  저장
                 </button>
               </div>
-              <div className="relative px-2 border-b md:pt-2 border-gray">
+              <div className="relative px-2 border-b tablet:pt-2 border-gray">
                 <input
-                  className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs lg:text-2xl md:text-xl placeholder-zinc-600 lg:placeholder:text-2xl md:placeholder:text-xl "
+                  className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl tablet:text-xl placeholder-zinc-600 tablet:placeholder:text-2xl tablet:placeholder:text-xl"
                   name="title"
                   value={doc.title}
                   placeholder="오늘은 어떤 주제로 모두를 놀라게 해주실 건가요? 🥰"
@@ -516,10 +516,10 @@ const NewPost: NextPage = () => {
                   onChange={onChangeTextarea}
                 />
               </div>
-              <div className="min-h-[80px]">
-                <div className="relative flex px-2 pt-2 border-b md:mt-4 border-gray">
+              <div className="min-h-[60px] py-2">
+                <div className="relative flex px-2 border-b border-gray">
                   <input
-                    className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-400 h-7 md:text-xl placeholder:text-xs placeholder-zinc-600 md:placeholder:text-lg placeholder:italic"
+                    className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-400 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
                     name="tag"
                     value={tag}
                     placeholder="태그를 만들어주세요."
@@ -527,132 +527,105 @@ const NewPost: NextPage = () => {
                     onChange={e => setTag(e.target.value)}
                   />
                 </div>
-                <div className="flex justify-between mt-2 ">
-                  <div className="flex flex-wrap w-11/12 mb-1 truncate">
-                    {doc.tags.map((tag, index) => {
-                      return (
-                        <>
-                          <Badge
-                            className="relative flex p-2 mx-2 mt-1 "
-                            color="info"
-                            size="sm"
-                            key={`${tag}-${index}`}
-                          >
-                            {tag}
-                            <Shared.LogmeIcon.CloseIcon
-                              alt="left-right"
-                              width={50}
-                              height={50}
-                              onClick={() => removeTag(tag)}
-                              cn="absolute w-3 h-3 right-[-4px] top-[-4px] hover:block hover:cursor-pointer "
-                            />
-                          </Badge>
-                        </>
-                      );
-                    })}
+                <div className="flex justify-between mt-1">
+                  <div className="flex flex-wrap w-11/12 truncate">
+                    {doc.tags.map((tag, index) => (
+                      <Badge
+                        className="relative flex p-2 mx-1 mt-1"
+                        color="info"
+                        size="sm"
+                        key={`${tag}-${index}`}
+                      >
+                        {tag}
+                        <Shared.LogmeIcon.CloseIcon
+                          alt="left-right"
+                          width={50}
+                          height={50}
+                          onClick={() => removeTag(tag)}
+                          cn="absolute w-3 h-3 right-[-4px] top-[-4px] hover:block hover:cursor-pointer"
+                        />
+                      </Badge>
+                    ))}
                   </div>
-                  <label className=" text-gray-400 top-[-35px] right-4  flex justify-end w-10 h-8">
-                    {/* FIXME 추후 기능 추가
-                <Image
-                  src="/images/mirror.png"
-                  className={`w-4 m-2 ${
-                    isVisiblePreview && (previewAlign ? 'bg-gray-300' : '')
-                  }`}
-                  alt="left-right"
-                  id="left-right"
-                  width="30"
-                  height="30"
-                  onClick={() => changePreviewMode('left-right')}
-                />
-                <Image
-                  src="/images/mirror.png"
-                  className={`w-4 m-2 rotate-90 ${
-                    isVisiblePreview && (previewAlign ? '' : 'bg-gray-300')
-                  }`}
-                  alt="top-bottom"
-                  id="top-bottom"
-                  width="30"
-                  height="30"
-                  onClick={() => changePreviewMode('top-bottom')}
-                /> */}
+                  <div className="flex items-center w-10">
                     <Shared.LogmeIcon.EyeIcon
                       alt="eye"
                       width={30}
                       height={30}
                       onClick={() => setIsVisiblePreview(!isVisiblePreview)}
-                      cn={`w-4 m-2 hover:cursor-pointer ${
+                      cn={`w-4 hover:cursor-pointer ${
                         !isVisiblePreview ? 'bg-gray-300 rounded-full' : ''
                       }`}
                     />
-                  </label>
+                  </div>
                 </div>
               </div>
             </div>
-            <main className="relative flex flex-col justify-center flex-1 w-full lg:flex-row ">
-              <div
-                className={cn(
-                  css.mde,
-                  `${isVisiblePreview ? 'lg:w-1/2' : 'lg:w-full'}`,
-                  'w-full'
-                )}
-              >
-                <SimpleMDE
-                  style={{ color: '#fff' }}
-                  options={isMobile ? MDE_OPTIONMOBILE : MDE_OPTION}
-                  value={doc.content}
-                  onChange={onChange}
-                  onDrop={e => {
-                    e.preventDefault();
-                    handleImageUpload(e);
-                  }}
-                />
-              </div>
-
-              {isVisiblePreview && (
-                <div className="flex justify-center lg:min-w-[50vw] lg:w-[50vw] ">
-                  <div
-                    ref={containerTopRef}
-                    className=" w-[70vw] lg:w-full xl:pl-8  lg:pl-5 max-h-[35vh] md:max-h-[38vh] lg:max-h-[75vh] overflow-y-auto"
-                  >
-                    <ReactMarkdown
-                      className="contentMarkdown"
-                      rehypePlugins={[rehypeRaw]}
-                      remarkPlugins={[remarkGfm]}
-                      components={{
-                        code({ inline, className, children, ...props }) {
-                          const match = /language-(\w+)/.exec(className || '');
-                          return !inline && match ? (
-                            <CopyBlock
-                              language={checkLanguage(languageArr, match[1])}
-                              text={String(children).replace(/\n$/, '')}
-                              theme={dracula}
-                              showLineNumbers={true}
-                              wrapLines={true}
-                              codeBlock
-                            />
-                          ) : (
-                            <code
-                              className={className}
-                              style={{
-                                color: '#eb5757',
-                                padding: '2px 4px',
-                              }}
-                              {...props}
-                            >
-                              {children}
-                            </code>
-                          );
-                        },
-                      }}
-                    >
-                      {doc?.content}
-                    </ReactMarkdown>
-                  </div>
-                </div>
-              )}
-            </main>
           </div>
         </header>
+        <main className="flex flex-col flex-1 w-full tablet:flex-row">
+          <div
+            className={cn(
+              css.mde,
+              `${isVisiblePreview ? 'tablet:w-1/2' : 'tablet:w-full'}`,
+              'w-full'
+            )}
+          >
+            <SimpleMDE
+              style={{ color: '#fff' }}
+              options={isMobile ? MDE_OPTIONMOBILE : MDE_OPTION}
+              value={doc.content}
+              onChange={onChange}
+              onDrop={e => {
+                e.preventDefault();
+                handleImageUpload(e);
+              }}
+            />
+          </div>
+
+          {isVisiblePreview && (
+            <div className="flex-1 tablet:min-w-[50vw] tablet:w-[50vw]">
+              <div
+                ref={containerTopRef}
+                className="w-full h-full px-4 overflow-y-auto tablet:px-8"
+              >
+                <ReactMarkdown
+                  className="contentMarkdown"
+                  rehypePlugins={[rehypeRaw]}
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    code({ inline, className, children, ...props }) {
+                      const match = /language-(\w+)/.exec(className || '');
+                      return !inline && match ? (
+                        <CopyBlock
+                          language={checkLanguage(languageArr, match[1])}
+                          text={String(children).replace(/\n$/, '')}
+                          theme={dracula}
+                          showLineNumbers={true}
+                          wrapLines={true}
+                          codeBlock
+                        />
+                      ) : (
+                        <code
+                          className={className}
+                          style={{
+                            color: '#eb5757',
+                            padding: '2px 4px',
+                          }}
+                          {...props}
+                        >
+                          {children}
+                        </code>
+                      );
+                    },
+                  }}
+                >
+                  {doc?.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )}
+        </main>
       </div>
     </main>
   );

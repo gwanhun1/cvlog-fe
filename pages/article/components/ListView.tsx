@@ -73,56 +73,61 @@ const ListView = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <div className="flex justify-between w-full">
-        <div className="flex w-full pl-3 pr-3 mr-16 border rounded-lg border-gray20">
+    <div className="flex flex-col gap-6">
+      {/* Search and New Post Section */}
+      <div className="flex items-center gap-4">
+        <div className="flex-1 relative">
           <input
-            className="w-full text-gray-600 mb-2text-xl placeholder:text-gray-500 md:text-2xl placeholder:text-lg md:placeholder:text-xl placeholder:italic"
+            className="w-full h-12 mobile:h-14 px-4 text-gray-600 text-lg mobile:text-xl tablet:text-2xl border rounded-lg border-gray20 placeholder:text-gray-400 placeholder:text-lg tablet:placeholder:text-xl focus:outline-none focus:ring-2 focus:ring-ftBlue focus:border-transparent"
             name="title"
             placeholder="Search........... 👀"
             onKeyDown={handleKeyDown}
           />
-          <div className="items-center hidden md:flex text-ftWhite invert">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
             <Shared.LogmeIcon.LensIcon
               alt="search"
               width={24}
               height={24}
               onClick={() => alert('v1.1에서 만나요 🥰')}
-              cn={' hover:cursor-not-allowed opacity-40'}
+              cn="hover:cursor-not-allowed"
             />
           </div>
         </div>
-        <div className="flex">
-          <Shared.LogmeButton type="classic" size="big" onClick={handleNewPost}>
-            <Shared.LogmeHeadline
-              type="medium"
-              fontStyle="semibold"
-              style={{ color: '#fff' }}
-            >
-              NEW
-            </Shared.LogmeHeadline>
-          </Shared.LogmeButton>
-        </div>
+        <Shared.LogmeButton type="classic" size="big" onClick={handleNewPost}>
+          <Shared.LogmeHeadline
+            type="medium"
+            fontStyle="semibold"
+            style={{ color: '#fff' }}
+          >
+            NEW
+          </Shared.LogmeHeadline>
+        </Shared.LogmeButton>
       </div>
-      {List.data?.posts.map(
-        ({ id, title, content, tags, updated_at }, index) => {
-          return (
-            <Link
-              href={`/article/content/${id}`}
-              key={id}
-              onClick={() => saveListIndex(index)}
-            >
-              <Card
-                title={title}
-                content={content}
-                tags={tags}
-                updated_at={updated_at}
-              />
-            </Link>
-          );
-        }
-      )}
-      <div className="flex items-center justify-center">
+
+      {/* Cards Grid */}
+      <div className="grid gap-6">
+        {List.data?.posts.map(
+          ({ id, title, content, tags, updated_at }, index) => {
+            return (
+              <Link
+                href={`/article/content/${id}`}
+                key={id}
+                onClick={() => saveListIndex(index)}
+              >
+                <Card
+                  title={title}
+                  content={content}
+                  tags={tags}
+                  updated_at={updated_at}
+                />
+              </Link>
+            );
+          }
+        )}
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-center py-6">
         {List && List.data?.maxPage && List.data?.maxPage !== 1 && (
           <Pagination
             className="white"

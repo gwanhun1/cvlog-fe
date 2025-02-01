@@ -1,7 +1,7 @@
 import React from 'react';
 import LocalStorage from 'public/utils/Localstorage';
 import { useGetCommentList } from 'service/hooks/Comment';
-import Comment from './Comment';
+import CommentProps from './Comment';
 
 const CommentList = ({ pid }: { pid: string }) => {
   //댓글 리스트 불러오기

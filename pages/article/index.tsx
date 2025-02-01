@@ -4,24 +4,23 @@ import Head from 'next/head';
 import ListView from './components/ListView';
 import SideView from './components/SideView';
 
-const List: NextPage = () => {
+const Article: NextPage = () => {
   return (
-    <div className="flex items-start justify-center min-h-screen p-2 pt-10 bg-white md:pt-20">
+    <div className="flex items-start justify-center min-h-screen bg-white">
       <Head>
         <title>CVLOG</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="w-full pr-4 md:w-1/4 xl:mt-10">
-        <SideView />
-      </div>
-      <div className="flex items-center justify-center w-full mx-5 md:w-3/4">
-        <ListView />
-      </div>
-      <div className="w-full pr-4 md:w-1/4 xl:mt-10 ">
-        {/* FIXME 추후 추가 기능(공유, 좋아요) */}
+      <div className="container mx-auto flex flex-col tablet:flex-row gap-8 p-4 tablet:p-8">
+        <div className="hidden tablet:block w-72 desktop:w-80 shrink-0">
+          <SideView />
+        </div>
+        <div className="flex-1 max-w-4xl mx-auto">
+          <ListView />
+        </div>
       </div>
     </div>
   );
 };
 
-export default List;
+export default Article;

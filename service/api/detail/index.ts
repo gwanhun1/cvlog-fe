@@ -1,6 +1,6 @@
 import { Content } from 'pages/article/content/[pid]';
 import { DeleteDetail, PatchDetailType } from './type';
-import axios from '../../axios';
+import { axiosInstance as axios } from 'service/axios';
 import { CreateNewPostReq } from '../new/type';
 
 export const getDetail = async (params: number) => {

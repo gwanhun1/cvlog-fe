@@ -1,4 +1,5 @@
 import axios from 'axios';
+import LocalStorage from 'public/utils/Localstorage';
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
@@ -10,6 +11,20 @@ export const axiosInstance = axios.create({
   },
 });
 
+// 요청 인터셉터 추가
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = LocalStorage.getItem('CVtoken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // 응답 인터셉터 추가
 axiosInstance.interceptors.response.use(
   response => response,
@@ -18,7 +33,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       // 토큰 제거
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('CVtoken');
+        LocalStorage.removeItem('CVtoken');
         window.location.href = '/';
       }
     }
@@ -35,3 +50,5 @@ export const axiosMock = async (mockType: string) => {
   const response = await axiosMockBase.get('');
   return response.data;
 };
+
+export default axiosInstance;

@@ -1,13 +1,13 @@
-import { GetListType } from 'pages/article/components/ListView';
 import {
-  GetTagsFolderRes,
-  CreateTagsFolderReq,
-  CreateTagsFolderRes,
-  RemoveTagsFolderRes,
+  GetListType,
+  GetTagsListType,
+  GetTagsType,
+  PostTagsFolderReq,
+  PostTagsFolderRes,
   PutTagsFolderRes,
   UpdateForm,
 } from './type';
-import axios from '../../axios';
+import { axiosInstance as axios } from 'service/axios';
 
 export const getList = async (page: number) => {
   const { data } = await axios.get<GetListType>(`/posts/page/${page}`);

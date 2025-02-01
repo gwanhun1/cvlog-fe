@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import LocalStorage from 'public/utils/Localstorage';
-import { axiosInstance } from '../../service/api/axios';
+import { axiosInstance } from '../../service/axios';
 
 export default function LoginCallback() {
   const router = useRouter();

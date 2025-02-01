@@ -514,29 +514,29 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
         <header>
           <div className="h-full    bg-[#f8f9fa] min-h-screen ">
             <div className="pt-2">
-              <div className="flex flex-row-reverse">
+              <div className="flex items-center justify-end gap-2 px-4 py-2">
                 <button
-                  className="px-2 m-1 bg-gray-600 rounded-md cursor-pointer hover:bg-ftBlue"
+                  className="px-4 py-2 text-sm font-medium text-white transition-colors bg-gray-600 rounded-md hover:bg-gray-700"
+                  onClick={() =>
+                    accessToken ? router.push('/article') : router.push('/')
+                  }
+                >
+                  취소
+                </button>
+                <button
+                  className="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700"
                   onClick={() =>
                     accessToken
                       ? handleSaveModifyPost()
                       : alert('로그인 먼저 해주세요..')
                   }
                 >
-                  SAVE
-                </button>
-                <button
-                  className="px-2 m-1 bg-gray-600 rounded-md cursor-pointer hover:bg-ftBlue"
-                  onClick={() =>
-                    accessToken ? router.push('/article') : router.push('/')
-                  }
-                >
-                  QUIT
+                  저장
                 </button>
               </div>
               <div className="relative px-2 pt-2 border-b border-gray">
                 <input
-                  className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs lg:text-2xl md:text-xl placeholder-zinc-600 lg:placeholder:text-2xl md:placeholder:text-xl"
+                  className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl tablet:text-xl placeholder-zinc-600 tablet:placeholder:text-2xl tablet:placeholder:text-xl"
                   name="title"
                   value={doc.title}
                   placeholder="오늘은 어떤 주제로 모두를 놀라게 해주실 건가요? 🥰"
@@ -547,7 +547,7 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
               <div className="min-h-[80px]">
                 <div className="relative flex px-2 pt-2 mt-4 border-b border-gray">
                   <input
-                    className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-400 h-7 md:text-xl placeholder:text-xs placeholder-zinc-600 md:placeholder:text-lg placeholder:italic"
+                    className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-400 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
                     name="tag"
                     value={tag}
                     placeholder="태그를 만들어주세요."
@@ -616,11 +616,11 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
                 </div>
               </div>
             </div>
-            <main className="relative flex flex-col justify-center flex-1 w-full lg:flex-row ">
+            <main className="relative flex flex-col justify-center flex-1 w-full tablet:flex-row ">
               <div
                 className={cn(
                   css.mde,
-                  `${isVisiblePreview ? 'lg:w-1/2' : 'lg:w-full'}`,
+                  `${isVisiblePreview ? 'tablet:w-1/2' : 'tablet:w-full'}`,
                   'w-full'
                 )}
               >
@@ -636,10 +636,10 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
                 />
               </div>
               {isVisiblePreview && (
-                <div className="flex justify-center lg:min-w-[50vw] lg:w-[50vw] ">
+                <div className="flex justify-center tablet:min-w-[50vw] tablet:w-[50vw]">
                   <div
                     ref={containerTopRef}
-                    className=" w-[70vw] lg:w-full xl:pl-8  lg:pl-5 max-h-[30vh] md:max-h-[35vh] lg:max-h-[75vh] overflow-y-auto"
+                    className=" w-[70vw] tablet:w-full desktop:pl-8 tablet:pl-5 max-h-[30vh] tablet:max-h-[35vh] desktop:max-h-[75vh] overflow-y-auto"
                   >
                     <ReactMarkdown
                       className="contentMarkdown"

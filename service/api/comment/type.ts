@@ -11,10 +11,10 @@ export interface User_id {
 
 export interface CommentType {
   success: boolean;
-  data: Comment[];
+  data: CommentProps[];
 }
 
-export interface Comment {
+export interface CommentProps {
   id: number;
   content: string;
   created_at: string;

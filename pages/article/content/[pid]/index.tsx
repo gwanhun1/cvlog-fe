@@ -54,14 +54,32 @@ const Detail = ({ pid }: { pid: string }) => {
   }, [pid]);
 
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col items-center justify-center w-[70vw] lg:w-[50.23vw]  rounded-lg bg-bgWhite my-7 md:my-15">
-        <header className="flex justify-between w-full h-12 py-2 border-b-[0.5px]  border-gray-200 min-[400px]:border-hidden md:pl-2 sm:h-16">
-          <h1 className="mr-1 text-xl truncate text-ftBlick sm:text-3xl lg:text-4xl ">
+    <div className="flex justify-center ">
+      <div className="flex flex-col items-center  justify-center rounded-lg my-7 tablet:my-15 w-full">
+        <header className="flex justify-between w-full py-2 border-b-[0.5px] border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
+          <h1 className="mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
             {getDetailData?.data?.post.title}
           </h1>
-          <div className="flex items-end h-full">
-            <time className="text-[6px] text-gray-600 ">
+          <div className="flex items-end flex-col">
+            <div className="flex flex-row justify-center text-sm w-16 tablet:text-base">
+              <div
+                className="cursor-pointer hover:text-blue-400 text-ftBlick "
+                onClick={() => {
+                  updateCheck();
+                }}
+              >
+                수정
+              </div>
+              <div
+                className="ml-1 cursor-pointer hover:text-blue-400 text-ftBlick"
+                onClick={() => {
+                  deleteCheck();
+                }}
+              >
+                삭제
+              </div>
+            </div>
+            <time className="text-xs text-gray-600 tablet:text-sm ">
               {getDetailData &&
                 getDetailData.data?.post.created_at.slice(0, 10)}
             </time>
@@ -76,30 +94,12 @@ const Detail = ({ pid }: { pid: string }) => {
               <Tag id={tag.id} name={tag.name} key={tag.id} />
             ))}
           </div>
-          <div className="flex flex-row items-center justify-center text-[6px] w-12 lg:text-[9px]">
-            <div
-              className="cursor-pointer hover:text-blue-400 text-ftBlick "
-              onClick={() => {
-                updateCheck();
-              }}
-            >
-              수정
-            </div>
-            <div
-              className="ml-1 cursor-pointer hover:text-blue-400 text-ftBlick"
-              onClick={() => {
-                deleteCheck();
-              }}
-            >
-              삭제
-            </div>
-          </div>
         </section>
-        <main className="w-full h-full pt-3 md:pb-12">
+        <main className="w-full h-full pt-3 tablet:pb-12">
           <section>
             <div className="flex justify-end w-full">
               <button
-                className="flex justify-end text-gray-600 cursor-pointer hover:text-blue-400 text-[6px] w-12 mr-1"
+                className="flex justify-end text-gray-600 cursor-pointer hover:text-blue-400 text-sm w-16 mr-1"
                 onClick={() => {
                   setPatchMessage(!patchMessage);
                   // patchDetail();
@@ -115,27 +115,27 @@ const Detail = ({ pid }: { pid: string }) => {
             </div>
           </section>
         </main>
-        <section className="flex justify-between w-full px-5 pb-2 border-b border-gray-400 sm:pb-5 mt-7">
-          <article className="mb-4 sm:mb-0">
+        <section className="flex justify-between w-full px-5 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
+          <article className="mb-4 mobile:mb-0">
             <Profile />
           </article>
-          <div className="flex items-center justify-around lg:w-96 w-60">
+          <div className="flex items-center justify-around tablet:w-96 w-60">
             <div
               className={`${
                 !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
-              } flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-pointer sm:ml-6 text-ftBlick hover:opacity-70 sm:h-12 md:ml-10 justify-evenly`}
+              } flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-pointer mobile:ml-6 text-ftBlick hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
             >
               {getDetailData.data?.prevPostInfo && (
                 <Link
                   href={`/article/content/${getDetailData.data?.prevPostInfo.id}`}
                   className="flex items-center cursor-pointer hover:opacity-70 "
                 >
-                  <div className="ml-1 md:ml-3">←</div>
-                  <div className="flex-col hidden w-[90px] md:w-full sm:flex truncate">
-                    <div className="text-[8px] text-center lg:text-xs ">
+                  <div className="ml-1 tablet:ml-3">←</div>
+                  <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
+                    <div className="text-xs text-center tablet:text-sm ">
                       이전 포스트
                     </div>
-                    <div className="h-5 mx-1 overflow-hidden text-[8px] font-bold text-center md:text-[10px] lg:text-xs flex-nowrap lg:w-32 md:w-20 mt-[2px]">
+                    <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
                       {getDetailData.data.prevPostInfo.title}
                     </div>
                   </div>
@@ -145,22 +145,22 @@ const Detail = ({ pid }: { pid: string }) => {
             <div
               className={`${
                 !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
-              } flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlick sm:h-12 justify-evenly hover:opacity-70 `}
+              } flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlick mobile:h-12 justify-evenly hover:opacity-70 `}
             >
               {getDetailData.data?.nextPostInfo && (
                 <Link
                   href={`/article/content/${getDetailData.data?.nextPostInfo?.id}`}
                   className="flex items-center cursor-pointer hover:opacity-70"
                 >
-                  <div className="flex-col hidden  w-[90px] md:w-full sm:flex truncate">
-                    <div className="text-[8px] text-center lg:text-xs">
+                  <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
+                    <div className="text-xs text-center tablet:text-sm">
                       다음 포스트
                     </div>
-                    <div className="h-5 mx-1  overflow-hidden text-[8px] font-bold text-center md:text-[10px] lg:text-xs flex-nowrap lg:w-32 md:w-20 mt-[2px]">
+                    <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
                       {getDetailData.data.nextPostInfo.title}
                     </div>
                   </div>
-                  <div className="w-100%  mr-1 md:mr-3 ">→</div>
+                  <div className="w-100%  mr-1 tablet:mr-3 ">→</div>
                 </Link>
               )}
             </div>
