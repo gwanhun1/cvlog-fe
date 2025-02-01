@@ -1,24 +1,29 @@
 import React, { PropsWithChildren } from 'react';
 import { useRouter } from 'next/router';
-import { cn } from 'styles/utils';
+import cn from 'classnames';
 
-const Layout = ({ children }: PropsWithChildren) => {
+interface Props {
+  children: React.ReactNode;
+}
+
+const Layout = ({ children }: Props) => {
   const router = useRouter();
+  const isNavVisible = !(
+    router.pathname === '/' ||
+    router.pathname === '/article/new' ||
+    router.pathname.startsWith('/article/modify/')
+  );
 
   return (
-    <div className="bg-white">
-      <div
-        className={`${
-          router.pathname === '/' ||
-          router.pathname === '/article/new' ||
-          router.pathname.startsWith('/article/content/') ||
-          router.pathname.startsWith('/article/modify/')
-            ? ''
-            : cn('container', 'mx-auto', 'px-6')
-        } `}
-      >
-        {children}
-      </div>
+    <div
+      className={`${
+        router.pathname === '/article/new' ||
+        router.pathname.startsWith('/article/modify/')
+          ? ''
+          : cn('container', 'mx-auto', 'px-20')
+      } ${isNavVisible ? 'pt-24' : ''}`}
+    >
+      {children}
     </div>
   );
 };

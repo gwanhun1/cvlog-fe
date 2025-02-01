@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import axios from 'axios';
 import Link from 'next/link';
-import * as Shared from 'components/Shared';
 import LocalStorage from 'public/utils/Localstorage';
+import * as Shared from 'components/Shared';
 import Introduce from './components/introduce';
 
 const About: NextPage = () => {
@@ -17,22 +17,22 @@ const About: NextPage = () => {
   }, []);
 
   return (
-    <section className="flex flex-col items-center justify-center pt-10 ">
+    <section className=" flex flex-col items-center justify-center">
       <article className="flex flex-col items-center justify-center w-full p-8 text-center ">
-        <h1 className="mb-1 text-sm md:mb-5 md:text-4xl text-ftBlue font-jost-medium">
+        <h1 className="mb-1 text-2xl tablet:mb-5 tablet:text-4xl text-ftBlue font-jost-medium">
           Write. Preview. Publish. Repeat.
         </h1>
-        <div className="text-[10px] text-gray-400 md:text-sm lg:px-24 xl:px-0  flex justify-center flex-col">
+        <div className="text-xs text-gray-400 tablet:text-sm desktop:px-24 desktop:px-0  flex justify-center flex-col">
           <p>The Ultimate Developer Blogging Platform powered by Markdown.</p>
-          <div className="hidden md:block">
+          <div className="hidden tablet:block">
             <p>Experience the New world of Markdown.</p>
           </div>
-          <div className="justify-center hidden my-12 sm:flex">
+          <div className="justify-center flex">
             <Shared.LogmeIcon.SymbolLogoIcon
               alt="logo"
-              width={150}
-              height={100}
-              cn="object-none object-bottom h-[55px] "
+              width={200}
+              height={120}
+              cn="object-none object-bottom h-[80px] "
             />
           </div>
         </div>

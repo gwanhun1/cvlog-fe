@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { axiosInstance } from 'service/axios';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { atom, useRecoilState } from 'recoil';
@@ -7,12 +7,17 @@ import { recoilPersist } from 'recoil-persist';
 import * as Shared from 'components/Shared';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
-import { accessTokenAtom, refreshTokenAtom } from 'service/atoms/atoms';
+import {
+  accessTokenAtom,
+  refreshTokenAtom,
+  authorityState,
+  userIdAtom,
+} from 'service/atoms/atoms';
 import { UserId } from 'service/atoms/type';
 import MobileNav from './MobileNav';
 import NavPriofile from './Profile';
 
-axios.defaults.withCredentials = true;
+axiosInstance.defaults.withCredentials = true;
 
 const Nav = () => {
   const menu = ['ABOUT', 'ARTICLE', 'RESUME', 'GITHUB'];
@@ -101,7 +106,7 @@ const Nav = () => {
         {/* 우측 메뉴 섹션 - 모바일에서는 8칸, 데스크탑에서는 3칸 */}
         <div className="flex items-center justify-end col-span-8 gap-6 mobile:col-span-3">
           {/* 모바일 메뉴 토글 */}
-          <div className="mobile:hidden">
+          <div className="lg:hidden">
             <MobileNav />
           </div>
 
@@ -147,17 +152,3 @@ const Nav = () => {
 };
 
 export default Nav;
-
-const recoilLocalStorage =
-  typeof window !== 'undefined' ? window.localStorage : undefined;
-
-const { persistAtom } = recoilPersist({
-  key: 'recoil-persist',
-  storage: recoilLocalStorage,
-});
-
-export const userIdAtom = atom<UserId>({
-  key: 'userId',
-  default: { id: 999999 },
-  effects_UNSTABLE: [persistAtom],
-});

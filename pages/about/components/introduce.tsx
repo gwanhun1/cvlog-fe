@@ -6,37 +6,44 @@ const Introduce = ({ Element }: { Element: IntroduceInterface }) => {
     <>
       {Element && (
         <section
-          className={`flex ${
-            Element.id % 2 === 1 ? 'md:flex-row' : 'md:flex-row-reverse'
-          } items-center justify-center w-full md:my-28  md:h-96 flex-col`}
+          className={`flex flex-col tablet:flex-row ${
+            Element.id % 2 === 0 ? 'tablet:flex-row-reverse' : ''
+          } items-center justify-center w-full gap-8 tablet:gap-12 py-8 tablet:py-16`}
         >
-          <article className="flex justify-center w-full px-5 md:w-2/3 md:h-96">
+          {/* Video Section */}
+          <article className="flex justify-center w-full px-4 tablet:px-8 tablet:w-3/5">
             <video
               src={Element.src}
               autoPlay
               loop
               muted
               playsInline
-              className="object-fill w-auto h-32 shadow-xl md:h-full md:w-full rounded-xl"
+              className="w-full max-w-2xl rounded-xl shadow-xl aspect-video object-cover"
             />
           </article>
-          <article className="flex items-center justify-center h-full p-2 md:w-2/5 md:p-0">
-            <div className="flex flex-col justify-between md:w-5/6 md:h-full md:py-3">
-              <div className="flex md:pt-5">
-                <div className="items-center justify-center hidden w-12 h-12 text-3xl text-white rounded-full md:flex bg-ftBlue">
+
+          {/* Content Section */}
+          <article className="flex items-start w-full px-4 tablet:px-0 tablet:w-2/5">
+            <div className="flex flex-col w-full gap-4 tablet:gap-6">
+              {/* Title Section */}
+              <div className="flex items-center gap-4">
+                <div className="hidden tablet:flex items-center justify-center w-12 h-12 text-2xl font-medium text-white rounded-full bg-ftBlue">
                   {Element.id + 1}
                 </div>
-                <h1 className="w-11/12 pl-3 text-lg text-center md:text-3xl text-ftBlue md:text-left">
+                <h1 className="text-xl tablet:text-3xl font-medium text-ftBlue">
                   {Element.title}
                 </h1>
               </div>
-              <p className="px-5 text-xs text-gray-700 md:px-0 md:text-lg">
-                {Element.message}
-                <br />
-                <span className="hidden md:block md:text-xs md:my-3 md:mt-8">
+
+              {/* Message Section */}
+              <div className="flex flex-col gap-4">
+                <p className="text-sm tablet:text-base text-gray-700">
+                  {Element.message}
+                </p>
+                <p className="hidden tablet:block text-xs text-gray-600">
                   {Element.messageBr}
-                </span>
-              </p>
+                </p>
+              </div>
             </div>
           </article>
         </section>

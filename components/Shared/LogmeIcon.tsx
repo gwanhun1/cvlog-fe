@@ -17,7 +17,7 @@ import MorePng from '/public/assets/more.png';
 import NotificationSvg from '/public/assets/notification.svg';
 import SettingsSvg from '/public/assets/settings.svg';
 import SymbolLogoPng from '/public/assets/symbol-logo.png';
-import BurgerPng from '/public/assets/more.png';
+import BurgerSvg from '/public/assets/burger.svg';
 import Image from 'next/image';
 import LogmeNewLogoSvg from 'public/assets/LogmeNewLogo.svg';
 import LogoRec from 'public/assets/LogoRec.svg';
@@ -195,7 +195,7 @@ export const SymbolLogoIcon = (props: IconProps) => (
 
 export const BurgerIcon = (props: IconProps) => (
   <Image
-    src={BurgerPng}
+    src={BurgerSvg}
     alt={props.alt}
     width={props.width}
     height={props.height}
