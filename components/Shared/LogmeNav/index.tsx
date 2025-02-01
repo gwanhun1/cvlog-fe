@@ -105,7 +105,7 @@ const DesktopNavActions = ({
 
 const Nav = () => {
   const [currentPage, setCurrentPage] = useState(MENU_ITEMS[0].name);
-  const [authority, setAuthority] = useState(false);
+  const [, setAuthority] = useState(false);
   const router = useRouter();
 
   const [, setAccessToken] = useRecoilState(accessTokenAtom);
