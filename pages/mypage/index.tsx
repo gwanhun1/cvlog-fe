@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { getUserInfo } from 'service/api/login';
 import {
@@ -9,6 +9,13 @@ import {
   FiBookOpen,
   FiHeart,
 } from 'react-icons/fi';
+import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
+import Cookie from 'public/utils/Cookie';
+import LocalStorage from 'public/utils/Localstorage';
+import { log } from 'console';
+import { useGetUserInfo } from 'service/hooks/Login';
 
 const StatsCard = ({
   title,
@@ -33,36 +40,12 @@ const StatsCard = ({
 );
 
 const Mypage = () => {
-  const [userInfo, setUserInfo] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: info } = useGetUserInfo();
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await getUserInfo();
-        setUserInfo(response);
-      } catch (error) {
-        console.error('Failed to fetch user info:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserInfo();
-  }, []);
-
-  if (loading) {
+  if (!info) {
     return (
       <div className="flex justify-center items-center min-h-[calc(100vh-80px)]">
-        Loading...
-      </div>
-    );
-  }
-
-  if (!userInfo) {
-    return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-80px)]">
-        로그인이 필요합니다.
+        <div>로그인이 필요합니다.</div>
       </div>
     );
   }
@@ -73,9 +56,9 @@ const Mypage = () => {
         {/* Profile Header */}
         <div className="flex items-center gap-6 mb-12">
           <div className="relative w-32 h-32 mobile:w-40 mobile:h-40 overflow-hidden rounded-full border-4 border-white shadow-lg">
-            {userInfo.profile_image && (
+            {info.profile_image && (
               <Image
-                src={userInfo.profile_image}
+                src={info.profile_image}
                 alt="User Profile"
                 fill
                 sizes="(max-width: 768px) 128px, 160px"
@@ -86,7 +69,7 @@ const Mypage = () => {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              {userInfo.github_id}
+              {info.github_id}
             </h1>
             <div className="flex items-center gap-2 text-gray-600">
               <FiGithub className="w-4 h-4" />
@@ -101,8 +84,8 @@ const Mypage = () => {
             icon={FiCalendar}
             title="가입일"
             value={
-              userInfo.created_at
-                ? new Date(userInfo.created_at).toLocaleDateString()
+              info.created_at
+                ? new Date(info.created_at).toLocaleDateString()
                 : '-'
             }
           />
@@ -125,7 +108,7 @@ const Mypage = () => {
                 </button>
               </div>
               <p className="text-gray-600 whitespace-pre-line leading-relaxed">
-                {userInfo.description || '자기소개를 작성해주세요.'}
+                {info.description || '자기소개를 작성해주세요.'}
               </p>
             </section>
 
@@ -164,7 +147,7 @@ const Mypage = () => {
                   </div>
                   <div>
                     <p className="text-gray-900 font-medium mb-1">
-                      {userInfo.github_id}@github.com
+                      {info.github_id}@github.com
                     </p>
                     <p className="text-sm text-gray-500">이메일</p>
                   </div>
@@ -175,7 +158,7 @@ const Mypage = () => {
                   </div>
                   <div>
                     <p className="text-gray-900 font-medium mb-1">
-                      github.com/{userInfo.github_id}
+                      github.com/{info.github_id}
                     </p>
                     <p className="text-sm text-gray-500">GitHub</p>
                   </div>
@@ -206,6 +189,34 @@ const Mypage = () => {
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  const accessToken = context.req.cookies['CVtoken'] || '';
+  const refreshToken = context.req.cookies['refreshToken'] || '';
+
+  if (!accessToken || !refreshToken) {
+    return {
+      props: {
+        error: 'Not authenticated',
+      },
+    };
+  }
+
+  try {
+    const userInfo = await getUserInfo();
+    return {
+      props: {
+        userInfo,
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        error: 'Failed to fetch user info',
+      },
+    };
+  }
 };
 
 export default Mypage;

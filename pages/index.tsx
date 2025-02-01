@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import * as Shared from 'components/Shared';
 import LocalStorage from 'public/utils/Localstorage';
+import dynamic from 'next/dynamic';
 
 const loginMethodArr = [
   {
@@ -31,7 +32,15 @@ const loginMethodArr = [
 ];
 
 const ButtonGroup = () => {
-  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setAccessToken(LocalStorage.getItem('CVtoken'));
+  }, []);
+
+  if (!mounted) return null;
 
   const hadleLogin = (loginMethod: string) => {
     if (accessToken) {
@@ -53,8 +62,12 @@ const ButtonGroup = () => {
 
   return (
     <div className="grid grid-cols-2 tablet:grid-cols-4 gap-4 w-full">
-      {loginMethodArr.map(item => (
-        <Link key={item.id} href={hadleLogin(item.method)} className="group">
+      {loginMethodArr.map((item) => (
+        <Link
+          key={item.id}
+          href={hadleLogin(item.method)}
+          className="group"
+        >
           <div className="flex flex-col items-center p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:border-blue-200 group-hover:-translate-y-1 group-hover:bg-white">
             <div className="transform transition-transform duration-300 group-hover:scale-110">
               {item.image}
@@ -68,6 +81,11 @@ const ButtonGroup = () => {
     </div>
   );
 };
+
+// 클라이언트 사이드에서만 렌더링되는 버튼 그룹
+const ClientButtonGroup = dynamic(() => Promise.resolve(ButtonGroup), {
+  ssr: false,
+});
 
 const Home = () => {
   return (
@@ -102,7 +120,7 @@ const Home = () => {
                   <h3 className="text-gray-700 font-medium mb-6 text-lg">
                     로그인하기
                   </h3>
-                  <ButtonGroup />
+                  <ClientButtonGroup />
                 </div>
 
                 <div className="flex items-center gap-4">
