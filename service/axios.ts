@@ -27,53 +27,69 @@ axiosInstance.interceptors.request.use(
 );
 
 // 응답 인터셉터 추가
-// axiosInstance.interceptors.response.use(
-//   response => response,
-//   async error => {
-//     const originalRequest = error.config;
+axiosInstance.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
 
-//     // 401 Unauthorized 에러이고 재시도하지 않은 요청인 경우
-//     if (error.response?.status === 401 && !originalRequest._retry) {
-//       originalRequest._retry = true;
+    // 429 Too Many Requests 에러 처리
+    if (error.response?.status === 429 && !originalRequest._retry429) {
+      originalRequest._retry429 = true;
+      
+      // 재시도 횟수 초기화
+      if (!originalRequest._retryCount) {
+        originalRequest._retryCount = 0;
+      }
 
-//       try {
-//         // refreshToken으로 새로운 accessToken 발급 요청
-//         const refreshToken = Cookie.getItem('refreshToken');
-//         const accessToken = LocalStorage.getItem('CVtoken');
+      // 최대 3번까지 재시도
+      if (originalRequest._retryCount < 3) {
+        originalRequest._retryCount++;
+        
+        // 지수 백오프: 1초, 2초, 4초 후 재시도
+        const backoffDelay = Math.pow(2, originalRequest._retryCount - 1) * 1000;
+        
+        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        
+        return axiosInstance(originalRequest);
+      }
+    }
 
-//         const response = await axiosInstance.post(
-//           '/auth/refresh',
-//           {},
-//           {
-//             headers: {
-//               refreshToken: refreshToken,
-//               Authorization: `Bearer ${accessToken}`,
-//             },
-//           }
-//         );
+    // 401 Unauthorized 에러 처리
+    if (error.response?.status === 401 && !originalRequest._retry401) {
+      originalRequest._retry401 = true;
 
-//         const newAccessToken = response.data.data.accessToken;
+      try {
+        const refreshToken = Cookie.getItem('refreshToken');
+        const accessToken = LocalStorage.getItem('CVtoken');
 
-//         // 새로운 accessToken을 localStorage에 저장
-//         LocalStorage.setItem('CVtoken', newAccessToken);
+        const response = await axiosInstance.post(
+          '/auth/refresh',
+          {},
+          {
+            headers: {
+              refreshToken: refreshToken,
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
 
-//         // 원래 요청의 헤더에 새로운 accessToken 설정
-//         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        const newAccessToken = response.data.data.accessToken;
+        LocalStorage.setItem('CVtoken', newAccessToken);
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        if (typeof window !== 'undefined') {
+          LocalStorage.removeItem('CVtoken');
+          window.location.href = '/';
+        }
+        return Promise.reject(refreshError);
+      }
+    }
 
-//         // 원래 요청 재시도
-//         return axiosInstance(originalRequest);
-//       } catch (refreshError) {
-//         // refreshToken도 만료된 경우
-//         if (typeof window !== 'undefined') {
-//           LocalStorage.removeItem('CVtoken');
-//           window.location.href = '/';
-//         }
-//         return Promise.reject(refreshError);
-//       }
-//     }
-//     return Promise.reject(error);
-//   }
-// );
+    return Promise.reject(error);
+  }
+);
 
 // For development fallback
 export const axiosMock = async (mockType: string) => {

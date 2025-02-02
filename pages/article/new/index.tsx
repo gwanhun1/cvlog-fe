@@ -439,17 +439,37 @@ const NewPost: NextPage = () => {
 
   const saveNewPost = () => {
     const userId = getUserInfo.data?.id;
-    if (userId !== undefined) {
-      const createForm = {
-        title: doc.title,
-        content: doc.content,
-        user_id: userId,
-        category_id: 1,
-        tags: doc.tags,
-        files: imageArr,
-      };
 
+    // 필수 필드 검증
+    if (!doc.title.trim()) {
+      alert('제목을 입력해주세요.');
+      return;
+    }
+
+    if (!doc.content.trim()) {
+      alert('내용을 입력해주세요.');
+      return;
+    }
+
+    if (userId === undefined) {
+      alert('사용자 정보를 불러올 수 없습니다. 다시 로그인해주세요.');
+      return;
+    }
+
+    const createForm = {
+      title: doc.title.trim(),
+      content: doc.content.trim(),
+      user_id: userId,
+      category_id: 1,
+      tags: doc.tags,
+      files: imageArr,
+    };
+
+    try {
       mutationCreatNewPost.mutate(createForm);
+    } catch (error) {
+      console.error('게시글 저장 중 오류 발생:', error);
+      alert('게시글 저장 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
