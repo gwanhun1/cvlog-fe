@@ -9,9 +9,17 @@ import {
 } from './type';
 import { axiosInstance as axios } from 'service/axios';
 
-export const getList = async (page: number) => {
-  const { data } = await axios.get<GetListType>(`/posts/page/${page}`);
+export const getList = async (page: number, userId?: number) => {
+  const url = userId
+    ? `/posts/page/${page}?userId=${userId}`
+    : `/posts/page/${page}`;
+  const { data } = await axios.get<GetListType>(url);
 
+  return data.data;
+};
+
+export const getPublicList = async (page: number) => {
+  const { data } = await axios.get<GetListType>(`/posts/public/page/${page}`);
   return data.data;
 };
 
@@ -22,12 +30,9 @@ export const fetchGetTagsFolders = async () => {
 };
 
 export const fetchCreateTagsFolders = async (
-  params: CreateTagsFolderReq
-): Promise<CreateTagsFolderRes> => {
-  const { data } = await axios.post<CreateTagsFolderRes>(
-    '/tag_folders',
-    params
-  );
+  params: PostTagsFolderReq
+): Promise<PostTagsFolderRes> => {
+  const { data } = await axios.post<PostTagsFolderRes>('/tag_folders', params);
   return data;
 };
 

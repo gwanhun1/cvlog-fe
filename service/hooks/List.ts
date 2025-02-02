@@ -9,6 +9,7 @@ import {
   fetchGetTagsFolders,
   fetchRemoveTagsFolders,
   getList,
+  getPublicList,
   putTagsFolders,
 } from 'service/api/tag';
 import {
@@ -17,12 +18,21 @@ import {
   UpdateForm,
 } from 'service/api/tag/type';
 
-export const useGetList = (page: number) => {
+export const useGetList = (page: number, userId?: number) => {
   return useQuery({
-    queryKey: ['list'],
+    queryKey: ['list', page, userId],
     queryFn: () => {
-      return getList(page);
+      return getList(page, userId);
     },
+    onError: handleGetErrors,
+    retry: 0,
+  });
+};
+
+export const useGetPublicList = (page: number) => {
+  return useQuery({
+    queryKey: ['publicList', page],
+    queryFn: () => getPublicList(page),
     onError: handleGetErrors,
     retry: 0,
   });
