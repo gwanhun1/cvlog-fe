@@ -15,7 +15,7 @@ import { CreateNewPostReq } from 'service/api/new/type';
 
 export const useGetDetail = (params: number) => {
   return useQuery({
-    queryKey: ['detail'],
+    queryKey: ['detail', params],
     queryFn: () => {
       return getDetail(params);
     },
@@ -38,11 +38,10 @@ export const DeleteDetail = (params: number) => {
   );
 };
 
-export const PatchDetail = (params: number) => {
+export const usePatchDetail = () => {
   return useMutation(
-    () => {
-      return patchDetail(params);
-    },
+    ({ id, public_status }: { id: number; public_status: boolean }) =>
+      patchDetail(id, public_status),
     {
       retry: 0,
       onError: (error: ErrorResponse) => {

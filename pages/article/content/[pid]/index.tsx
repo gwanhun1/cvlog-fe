@@ -6,27 +6,54 @@ import { useQueryClient } from 'react-query';
 import CommentBox from 'components/Shared/LogmeComment';
 import Tag from 'components/Shared/LogmeTag';
 import { useGetCommentList } from 'service/hooks/Comment';
-import { DeleteDetail, useGetDetail } from 'service/hooks/Detail';
+import {
+  DeleteDetail,
+  useGetDetail,
+  usePatchDetail,
+} from 'service/hooks/Detail';
 import Content from './content';
 import Profile from './Profile';
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
-  //데이터 받기
+
+  // 데이터 받기
   const getDetailData = useGetDetail(parseInt(pid));
   const commentList = useGetCommentList(parseInt(pid));
+  const patchDetailMutation = usePatchDetail();
 
-  //나만보기 메세지 창
-  // const patchDetail = () => {
-  //   PatchDetail(parseInt(pid));
-  //   if (patchMessage) {
-  //     alert('이 게시물은 나에게만 보입니다.');
-  //   } else {
-  //     alert('이 게시물은 "나만보기"가 해제 되었습니다.');
-  //   }
-  // };
-  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (getDetailData.data?.post) {
+      setPatchMessage(getDetailData.data.post.public_status);
+    }
+  }, [getDetailData.data]);
+
+  // 나만보기 메세지 창
+  const handlePrivateToggle = async () => {
+    const newPublicStatus = !patchMessage;
+    try {
+      await patchDetailMutation.mutateAsync({
+        id: parseInt(pid),
+        public_status: newPublicStatus,
+      });
+      setPatchMessage(newPublicStatus);
+
+      // 캐시 업데이트
+      await queryClient.invalidateQueries(['detail', pid]);
+      await queryClient.invalidateQueries('publicPosts');
+
+      if (newPublicStatus) {
+        alert('이 게시물은 "나만보기"가 설정 되었습니다.');
+      } else {
+        alert('이 게시물은 전체에게 보입니다.');
+      }
+    } catch (error) {
+      console.error('Error toggling private status:', error);
+      alert('상태 변경 중 오류가 발생했습니다.');
+    }
+  };
 
   // 삭제 창
   const deleteContent = DeleteDetail(parseInt(pid));
@@ -101,11 +128,10 @@ const Detail = ({ pid }: { pid: string }) => {
               <button
                 className="flex justify-end text-gray-600 cursor-pointer hover:text-blue-400 text-sm w-16 mr-1"
                 onClick={() => {
-                  setPatchMessage(!patchMessage);
-                  // patchDetail();
+                  handlePrivateToggle();
                 }}
               >
-                나만보기
+                {patchMessage ? '공개' : '나만보기'}
               </button>
             </div>
             <div className="flex justify-center">

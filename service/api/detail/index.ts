@@ -14,8 +14,10 @@ export const deleteDetail = async (params: number) => {
   return data;
 };
 
-export const patchDetail = async (params: number) => {
-  const { data } = await axios.patch<PatchDetailType>(`/posts/${params}`);
+export const patchDetail = async (params: number, public_status: boolean) => {
+  const { data } = await axios.patch<PatchDetailType>(`/posts/${params}`, {
+    public_status,
+  });
   return data;
 };
 
