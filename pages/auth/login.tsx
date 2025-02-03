@@ -13,7 +13,7 @@ export default function LoginCallback() {
 
         if (code) {
           // GitHub 인증 코드로 백엔드 API 호출
-          const response = await axiosInstance.get(`/auth/login`, {
+          const response = await axiosInstance.get('/auth/login', {
             params: { code },
           });
 

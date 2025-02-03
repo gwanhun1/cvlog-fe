@@ -312,7 +312,7 @@ const Content = ({ data }: { data: string }) => {
   };
 
   return (
-    <div className="w-full min-h-[200px] tablet:w-[50vw] desktop:px-4 tablet:px-[10px]">
+    <div className="w-full min-h-[200px] tablet:w-[50vw] ">
       <ReactMarkdown
         className="contentMarkdown "
         rehypePlugins={[rehypeRaw]}

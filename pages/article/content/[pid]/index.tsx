@@ -83,36 +83,18 @@ const Detail = ({ pid }: { pid: string }) => {
   return (
     <div className="flex justify-center ">
       <div className="flex flex-col items-center  justify-center rounded-lg my-7 tablet:my-15 w-full">
-        <header className="flex justify-between w-full py-2 border-b-[0.5px] border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
-          <h1 className="mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
+        <header className="flex justify-between w-full   border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
+          <h1 className="flex justify-center mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
             {getDetailData?.data?.post.title}
           </h1>
-          <div className="flex items-end flex-col">
-            <div className="flex flex-row justify-center text-sm w-16 tablet:text-base">
-              <div
-                className="cursor-pointer hover:text-blue-400 text-ftBlick "
-                onClick={() => {
-                  updateCheck();
-                }}
-              >
-                수정
-              </div>
-              <div
-                className="ml-1 cursor-pointer hover:text-blue-400 text-ftBlick"
-                onClick={() => {
-                  deleteCheck();
-                }}
-              >
-                삭제
-              </div>
-            </div>
-            <time className="text-xs text-gray-600 tablet:text-sm ">
+          <section className="flex items-end">
+            <time className="text-xs text-gray-600 tablet:text-sm mb-1">
               {getDetailData &&
                 getDetailData.data?.post.created_at.slice(0, 10)}
             </time>
-          </div>
+          </section>
         </header>
-        <section className="flex items-center justify-between w-full h-full py-2 border-b border-gray-400 ">
+        <section className="flex items-center justify-between w-full h-full border-b border-gray-400 ">
           <div
             className="flex flex-wrap justify-start w-full mr-1 text-ftBlick "
             onClick={() => alert('v1.1에서 만나요 🥰')}
@@ -125,15 +107,37 @@ const Detail = ({ pid }: { pid: string }) => {
         <main className="w-full h-full pt-3 tablet:pb-12">
           <section>
             <div className="flex justify-end w-full">
-              <button
-                className="flex justify-end text-gray-600 cursor-pointer hover:text-blue-400 text-sm w-16 mr-1"
-                onClick={() => {
-                  handlePrivateToggle();
-                }}
-              >
-                {patchMessage ? '공개' : '나만보기'}
-              </button>
+              <div className="">
+                <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
+                  <button
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
+                    onClick={() => {
+                      handlePrivateToggle();
+                    }}
+                  >
+                    {patchMessage ? '공개' : '나만보기'}
+                  </button>
+
+                  <button
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick "
+                    onClick={() => {
+                      updateCheck();
+                    }}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlick"
+                    onClick={() => {
+                      deleteCheck();
+                    }}
+                  >
+                    삭제
+                  </button>
+                </article>
+              </div>
             </div>
+
             <div className="flex justify-center">
               {getDetailData.data && (
                 <Content data={getDetailData.data?.post.content} />

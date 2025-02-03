@@ -1,13 +1,12 @@
+import { axiosInstance as axios } from 'service/axios';
 import {
-  GetListType,
-  GetTagsListType,
-  GetTagsType,
-  PostTagsFolderReq,
-  PostTagsFolderRes,
+  GetTagsFolderRes,
+  CreateTagsFolderReq,
+  CreateTagsFolderRes,
   PutTagsFolderRes,
   UpdateForm,
 } from './type';
-import { axiosInstance as axios } from 'service/axios';
+import { GetListType } from 'pages/article/components/ListView';
 
 export const getList = async (page: number, userId?: number) => {
   const url = userId
@@ -30,16 +29,17 @@ export const fetchGetTagsFolders = async () => {
 };
 
 export const fetchCreateTagsFolders = async (
-  params: PostTagsFolderReq
-): Promise<PostTagsFolderRes> => {
-  const { data } = await axios.post<PostTagsFolderRes>('/tag_folders', params);
+  params: CreateTagsFolderReq
+): Promise<CreateTagsFolderRes> => {
+  const { data } = await axios.post<CreateTagsFolderRes>(
+    '/tag_folders',
+    params
+  );
   return data;
 };
 
 export const fetchRemoveTagsFolders = async (params: number) => {
-  const { data } = await axios.delete<RemoveTagsFolderRes>(
-    `/tag_folders/${params}`
-  );
+  const { data } = await axios.delete(`/tag_folders/${params}`);
   return data;
 };
 

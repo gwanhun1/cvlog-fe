@@ -1,6 +1,9 @@
 import React from 'react';
+import { log } from 'console';
+import { GetServerSideProps } from 'next';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { getUserInfo } from 'service/api/login';
+import { useRouter } from 'next/router';
 import {
   FiGithub,
   FiMail,
@@ -9,12 +12,9 @@ import {
   FiBookOpen,
   FiHeart,
 } from 'react-icons/fi';
-import { GetServerSideProps } from 'next';
-import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
-import { log } from 'console';
+import { getUserInfo } from 'service/api/login';
 import { useGetUserInfo } from 'service/hooks/Login';
 
 const StatsCard = ({
