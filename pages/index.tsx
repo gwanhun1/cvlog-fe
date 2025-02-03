@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import * as Shared from 'components/Shared';
 import LocalStorage from 'public/utils/Localstorage';
-import dynamic from 'next/dynamic';
 
 const loginMethodArr = [
   {
@@ -62,12 +62,8 @@ const ButtonGroup = () => {
 
   return (
     <div className="grid grid-cols-2 tablet:grid-cols-4 gap-4 w-full">
-      {loginMethodArr.map((item) => (
-        <Link
-          key={item.id}
-          href={hadleLogin(item.method)}
-          className="group"
-        >
+      {loginMethodArr.map(item => (
+        <Link key={item.id} href={hadleLogin(item.method)} className="group">
           <div className="flex flex-col items-center p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 group-hover:shadow-xl group-hover:border-blue-200 group-hover:-translate-y-1 group-hover:bg-white">
             <div className="transform transition-transform duration-300 group-hover:scale-110">
               {item.image}

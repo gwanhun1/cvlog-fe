@@ -13,11 +13,11 @@ const Article: NextPage = () => {
           <title>CVLOG</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <div className="container mx-auto flex flex-col tablet:flex-row gap-8 p-4 tablet:p-8">
+        <div className="container mx-auto flex flex-col tablet:flex-row gap-8 pt-3 tablet:p-8">
           <div className="hidden tablet:block w-72 desktop:w-80 shrink-0">
             <SideView />
           </div>
-          <div className="flex-1 max-w-4xl mx-auto">
+          <div className="flex-1 ">
             <ListView />
           </div>
         </div>

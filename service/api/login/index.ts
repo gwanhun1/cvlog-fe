@@ -1,8 +1,8 @@
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { UserInfo } from 'service/atoms/type';
-import { GetNewTokenApi, SignOut } from './type';
 import { axiosInstance as axios } from 'service/axios';
+import { GetNewTokenApi, SignOut } from './type';
 
 export const handleGetErrors = async (error: ErrorResponse) => {
   const accessToken = LocalStorage.getItem('CVtoken') as string;

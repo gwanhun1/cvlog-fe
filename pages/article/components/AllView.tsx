@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useGetPublicList } from 'service/hooks/List';
-import LogmeAllCard from 'components/Shared/LogmeAllCard';
 import { Pagination } from 'flowbite-react';
+import LogmeAllCard, { TagItem } from 'components/Shared/LogmeAllCard';
+import { useGetPublicList } from 'service/hooks/List';
 
 const CardSkeleton = () => (
   <div className="w-[290px]">
@@ -49,27 +49,47 @@ const AllView = () => {
   // Generate skeleton array when loading
   const skeletonArray = Array(8).fill(null);
 
+  const handleNavigate = (path: string) => {
+    window.location.href = path;
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center gap-4 mb-6">
+    <div className="container mx-auto px-2 py-8">
+      <div className="flex items-center gap-4 mb-2">
         <h2 className="text-3xl font-bold text-gray-500 shrink-0">
           전체 게시물
         </h2>
         <div className="border-b border-gray-300 w-full self-center mb-3" />
       </div>
-      <div className="flex flex-wrap gap-6">
-        {isLoading
-          ? skeletonArray.map((_, index) => <CardSkeleton key={index} />)
-          : List?.posts?.map(post => (
-              <div key={post.id} className="w-[290px]">
-                <LogmeAllCard
-                  title={post.title}
-                  content={post.content}
-                  tags={post.tags}
-                  updated_at={post.updated_at}
-                />
-              </div>
-            ))}
+      <div className="flex justify-center min-h-screen">
+        <div className="flex flex-wrap gap-6 justify-center tablet:justify-start  w-full max-w-[1270px]">
+          {isLoading
+            ? skeletonArray.map((_, index) => <CardSkeleton key={index} />)
+            : List?.posts?.map(
+                (post: {
+                  id: React.Key | null | undefined;
+                  title: string;
+                  content: string;
+                  tags: TagItem[];
+                  updated_at: string | undefined;
+                }) => (
+                  <div
+                    key={post.id}
+                    className="w-[290px]"
+                    onClick={() =>
+                      handleNavigate(`/article/content/${post.id}`)
+                    }
+                  >
+                    <LogmeAllCard
+                      title={post.title}
+                      content={post.content}
+                      tags={post.tags}
+                      updated_at={post.updated_at}
+                    />
+                  </div>
+                )
+              )}
+        </div>
       </div>
 
       {/* Pagination */}

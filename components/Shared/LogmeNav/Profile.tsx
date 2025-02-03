@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Avatar, Dropdown } from 'flowbite-react';
+import dynamic from 'next/dynamic';
 import Sessionstorage from 'public/utils/Sessionstorage';
 import { useGetUserInfo } from 'service/hooks/Login';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../Loader';
-import dynamic from 'next/dynamic';
 
 // 클라이언트 사이드에서만 렌더링되는 드롭다운 컴포넌트
 const ClientDropdown = dynamic(

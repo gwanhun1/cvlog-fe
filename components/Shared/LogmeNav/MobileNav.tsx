@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Dropdown } from 'flowbite-react';
 import Link from 'next/link';
+import { useRecoilState } from 'recoil';
 import * as Shared from 'components/Shared';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
-import { useGetUserInfo } from 'service/hooks/Login';
-import { useRecoilState } from 'recoil';
 import { authorityState } from 'service/atoms/atoms';
+import { useGetUserInfo } from 'service/hooks/Login';
 import { handleSignOut } from 'utils/auth';
 
 const MobileNav = () => {

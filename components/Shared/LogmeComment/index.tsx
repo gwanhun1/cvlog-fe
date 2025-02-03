@@ -1,14 +1,14 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import { useGetCommentList } from 'service/hooks/Comment';
 import CommentLayout from 'components/Layout/commentLayout';
+import { useGetCommentList } from 'service/hooks/Comment';
 import CommentItem from './Comment';
 import CommentWrite from './CommentWrite';
 
 const CommentBox = ({ pid }: { pid: string }) => {
   const commentList = useGetCommentList(parseInt(pid));
   return (
-    <section className="flex flex-col w-full p-3 tablet:mt-3 tablet:p-5">
+    <section className="flex flex-col w-full p-1 tablet:mt-3 ">
       <h2 className="flex justify-start my-2 ml-1 text-xs mobile:text-base text-ftBlick">
         {commentList.data && commentList.data.data.length} 개의 댓글
       </h2>

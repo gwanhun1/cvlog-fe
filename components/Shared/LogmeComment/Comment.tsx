@@ -45,7 +45,7 @@ const CommentItem = ({ id, content, user_id, created_at }: CommentProps) => {
                 수정
               </button>
               <button
-                className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick"
+                className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlick"
                 onClick={() => deletComent()}
               >
                 삭제

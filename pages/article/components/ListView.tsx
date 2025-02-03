@@ -107,7 +107,7 @@ const ListView = () => {
   return (
     <div className="flex flex-col gap-6">
       {/* Search and New Post Section */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col tablet:flex-row tablet:items-center gap-4 w-full">
         <div className="flex-1 relative">
           <input
             className="w-full h-12 mobile:h-14 px-6 text-gray-700 text-lg mobile:text-xl tablet:text-2xl bg-white/90 backdrop-blur-sm rounded-2xl border-2 border-blue-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.15)] hover:border-blue-300"
@@ -125,19 +125,21 @@ const ListView = () => {
             />
           </div>
         </div>
-        <Shared.LogmeButton type="classic" size="big" onClick={handleNewPost}>
-          <Shared.LogmeHeadline
-            type="medium"
-            fontStyle="semibold"
-            style={{ color: '#fff' }}
-          >
-            NEW
-          </Shared.LogmeHeadline>
-        </Shared.LogmeButton>
+        <div className="w-full tablet:w-auto flex justify-end">
+          <Shared.LogmeButton type="classic" size="big" onClick={handleNewPost}>
+            <Shared.LogmeHeadline
+              type="medium"
+              fontStyle="semibold"
+              style={{ color: '#fff' }}
+            >
+              NEW
+            </Shared.LogmeHeadline>
+          </Shared.LogmeButton>
+        </div>
       </div>
 
       {/* Cards Grid */}
-      <div className="grid gap-6">
+      <div className="grid gap-2 tablet:gap-6">
         {List.data?.posts.map(
           ({ id, title, content, tags, updated_at }, index) => {
             return (

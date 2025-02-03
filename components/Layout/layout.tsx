@@ -1,27 +1,29 @@
-import React, { PropsWithChildren } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import cn from 'classnames';
+import { useRouter } from 'next/router';
 
 interface Props {
   children: React.ReactNode;
 }
 
 const Layout = ({ children }: Props) => {
-  const router = useRouter();
-  const isNavVisible = !(
-    router.pathname === '/' ||
-    router.pathname === '/article/new' ||
-    router.pathname.startsWith('/article/modify/')
-  );
+  const { pathname } = useRouter();
+  const isNavVisible =
+    !['/', '/article/new'].includes(pathname) &&
+    !pathname.startsWith('/article/modify/');
+  const isArticleContent = pathname.startsWith('/article/content/');
 
   return (
     <div
-      className={`${
-        router.pathname === '/article/new' ||
-        router.pathname.startsWith('/article/modify/')
-          ? ''
-          : cn('container', 'mx-auto', 'px-20')
-      } ${isNavVisible ? 'pt-24' : ''}`}
+      className={cn(
+        {
+          'tablet:container tablet:mx-auto px-2':
+            !pathname.startsWith('/article/new') &&
+            !pathname.startsWith('/article/modify/'),
+        },
+        { 'tablet:px-[17.5rem]': isArticleContent },
+        { 'pt-24': isNavVisible }
+      )}
     >
       {children}
     </div>

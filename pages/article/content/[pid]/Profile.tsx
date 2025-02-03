@@ -19,7 +19,7 @@ const Profile = () => {
           )}
         </figure>
         <div className="mb-1 space-y-1 font-medium tablet:mb-5 dark:text-white">
-          <h2 className="text-[7px] tablet:text-xs text-ftBlick pl-5">
+          <h2 className="text-xs tablet:text-lg text-ftBlick pl-5">
             {getUserInfo.data && getUserInfo.data.name !== null
               ? getUserInfo.data.name
               : getUserInfo.data?.github_id}
