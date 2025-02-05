@@ -12,17 +12,8 @@ import { Folder, UpdateForm } from 'service/api/tag/type';
 import { useGetFolders, usePutTagsFolder } from 'service/hooks/List';
 
 const SideMenu = () => {
-  const [putForm, setPutForm] = useState<UpdateForm>({
-    tag_id: 0,
-    folder_id: 0,
-  });
-
   const queryGetTagsFolders = useGetFolders();
-  const mutationUpdateTagsFolders = usePutTagsFolder(putForm, {
-    onSuccess: () => {
-      queryGetTagsFolders.refetch();
-    },
-  });
+  const mutationUpdateTagsFolders = usePutTagsFolder();
 
   const [closedIdx, setClosedIdx] = useState<number[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -64,8 +55,7 @@ const SideMenu = () => {
       folder_id: destinationFolder?.id,
     };
 
-    setPutForm(setForm);
-    mutationUpdateTagsFolders.mutate();
+    mutationUpdateTagsFolders.mutate(setForm);
   }
 
   const tryOpenModal = (name: string) => {
@@ -270,7 +260,7 @@ const SideMenu = () => {
                                 )}
                               </Draggable>
                             ))}
-                            {provided.placeholder}
+                            {provided.placeholder as React.ReactNode}
                           </div>
                         </div>
                       )}
@@ -312,7 +302,7 @@ const SideMenu = () => {
                             )}
                           </Draggable>
                         ))}
-                        {provided.placeholder}
+                        {provided.placeholder as React.ReactNode}
                       </div>
                     )}
                   </Droppable>

@@ -85,10 +85,10 @@ export const useRemoveFolders = (params: number) => {
   );
 };
 
-export const usePutTagsFolder = (params: UpdateForm) => {
+export const usePutTagsFolder = () => {
   const queryClient = useQueryClient();
   return useMutation(
-    () => {
+    (params: UpdateForm) => {
       return putTagsFolders(params);
     },
     {
