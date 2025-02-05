@@ -26,7 +26,7 @@ const CVModal = (props: {
         { name: inputRef.current.value.trim() },
         {
           onSuccess: () => {
-            queryGetTagsFolders.refetch();
+            queryClient.invalidateQueries(['tagsFolder']);
             if (inputRef.current) inputRef.current.value = '';
             setShowModal(false);
           },

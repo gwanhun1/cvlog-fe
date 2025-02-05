@@ -24,7 +24,7 @@ const Profile = () => {
               ? getUserInfo.data.name
               : getUserInfo.data?.github_id}
           </h2>
-          <div className="h-4 overflow-hidden text-[4px] text-gray-700 desktop:text-xs w-36 mobile:w-40 desktop:w-60 desktop:w-full dark:text-gray-400 pl-2 truncate">
+          <div className="h-4 overflow-hidden text-[4px] text-gray-700 desktop:text-xs w-36 mobile:w-40 desktop:w-60  dark:text-gray-400 pl-2 truncate">
             {getUserInfo.data && getUserInfo.data.description}
           </div>
         </div>

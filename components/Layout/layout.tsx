@@ -21,7 +21,7 @@ const Layout = ({ children }: Props) => {
             !pathname.startsWith('/article/new') &&
             !pathname.startsWith('/article/modify/'),
         },
-        { 'tablet:px-[17.5rem]': isArticleContent },
+        { 'desktop:px-[17.5rem]': isArticleContent },
         { 'pt-24': isNavVisible }
       )}
     >
