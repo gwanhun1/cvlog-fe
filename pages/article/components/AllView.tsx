@@ -61,8 +61,8 @@ const AllView = () => {
         </h2>
         <div className="border-b border-gray-300 w-full self-center mb-3" />
       </div>
-      <div className="flex justify-center min-h-screen">
-        <div className="flex flex-wrap gap-6 justify-center tablet:justify-start  w-full max-w-[1270px]">
+      <div className="flex justify-center items">
+        <div className="flex flex-wrap gap-6 justify-center tablet:justify-start w-full max-w-[1270px]">
           {isLoading
             ? skeletonArray.map((_, index) => <CardSkeleton key={index} />)
             : List?.posts?.map(

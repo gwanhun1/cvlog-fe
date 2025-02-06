@@ -61,7 +61,7 @@ const ButtonGroup = () => {
           className="group transform transition-all duration-300 hover:-translate-y-2 hover:scale-105"
         >
           <div className="flex flex-col items-center p-4 bg-white/90 backdrop-blur-md rounded-3xl border border-gray-200 shadow-lg hover:shadow-2xl hover:border-blue-200 space-y-3 transition-all">
-            <div className="p-3 bg-gray-50 rounded-full">{item.image}</div>
+            <div className="p-3  rounded-full">{item.image}</div>
             <span className="text-sm text-gray-700 font-semibold opacity-80 group-hover:opacity-100 group-hover:text-blue-600">
               {item.method}
             </span>
@@ -78,7 +78,7 @@ const ClientButtonGroup = dynamic(() => Promise.resolve(ButtonGroup), {
 
 const Home = () => {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-white via-blue-50 to-white">
+    <div className="min-h-screen relative overflow-hidden ">
       <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-[0.03]" />
       <div className="absolute inset-0 backdrop-blur-[150px]" />
 

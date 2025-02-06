@@ -147,7 +147,7 @@ const Detail = ({ pid }: { pid: string }) => {
         </main>
         <section className="flex justify-between w-full px-5 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
           <article className="mb-4 mobile:mb-0">
-            <Profile />
+            <Profile getDetailData={getDetailData?.data?.post.user_id} />
           </article>
           <div className="flex items-center justify-around tablet:w-96 w-60">
             <div

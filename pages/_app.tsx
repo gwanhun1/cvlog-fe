@@ -24,7 +24,11 @@ function SafeHydrate({ children }: { children: React.ReactNode }) {
     return null;
   }
 
-  return <div suppressHydrationWarning>{children}</div>;
+  return (
+    <div suppressHydrationWarning className="bg-[#fafaff]">
+      {children}
+    </div>
+  );
 }
 
 export default function App({ Component, pageProps }: AppProps) {

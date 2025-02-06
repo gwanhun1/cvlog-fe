@@ -22,7 +22,7 @@ const Layout = ({ children }: Props) => {
             !pathname.startsWith('/article/modify/'),
         },
         { 'desktop:px-[17.5rem]': isArticleContent },
-        { 'pt-24': isNavVisible }
+        { 'pt-24': isNavVisible },
       )}
     >
       {children}
