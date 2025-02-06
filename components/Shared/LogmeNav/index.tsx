@@ -6,15 +6,14 @@ import * as Shared from 'components/Shared';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { accessTokenAtom, refreshTokenAtom } from 'service/atoms/atoms';
-import { axiosInstance } from 'service/axios';
 import MobileNav from './MobileNav';
 import NavPriofile from './Profile';
 
 const MENU_ITEMS = [
   { name: 'ABOUT', path: '/about' },
-  { name: 'ARTICLE', path: '/article', requiresAuth: true },
-  { name: 'RESUME', path: '/resume' },
-  { name: 'GITHUB', path: '/github' },
+  { name: 'ARTICLE', path: '/article' },
+  { name: 'RESUME', path: '/resume', requiresAuth: true },
+  { name: 'GITHUB', path: '/github', requiresAuth: true },
 ] as const;
 
 const NavMenuItem = ({
@@ -34,7 +33,7 @@ const NavMenuItem = ({
 }) => {
   const handleClick = () => {
     if (requiresAuth && !isAuthenticated) {
-      alert('로그인 먼저 해주세요.');
+      alert('로그인이 필요합니다.');
       return;
     }
     onClick();
@@ -136,7 +135,6 @@ const Nav = () => {
       setCurrentPage(matchedMenu.name);
     }
   }, [router.asPath]);
-
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-beige10 shadow-gray-200">
       <div className="grid h-full grid-cols-12 gap-4 px-4 mx-auto max-w-7xl">
@@ -171,7 +169,7 @@ const Nav = () => {
         {/* Right Actions */}
         <div className="flex items-center justify-end col-span-8 gap-6 tablet:col-span-3">
           <div className="tablet:hidden">
-            <MobileNav />
+            {localAccessToken && <MobileNav />}
           </div>
           <DesktopNavActions
             isAuthenticated={!!localAccessToken}
