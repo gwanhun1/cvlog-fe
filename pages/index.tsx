@@ -122,17 +122,19 @@ const Home = () => {
 
                 <div className="group cursor-pointer">
                   <div className="p-6 bg-white/90 backdrop-blur-md border border-gray-200 rounded-3xl shadow-lg transition-all duration-300 hover:border-blue-200 hover:shadow-2xl hover:bg-blue-50/50 transform hover:-translate-y-2">
-                    <Shared.LogmeText
-                      type="caption"
-                      fontStyle="bold"
-                      className="text-gray-800 group-hover:text-blue-700 text-xl"
-                    >
-                      게스트 모드 시작하기
-                      <br />
-                      <span className="text-base text-gray-500 group-hover:text-blue-600">
-                        Start with Guest Mode
-                      </span>
-                    </Shared.LogmeText>
+                    <Link href="/about">
+                      <Shared.LogmeText
+                        type="caption"
+                        fontStyle="bold"
+                        className="text-gray-800 group-hover:text-blue-700 text-xl"
+                      >
+                        게스트 모드 시작하기
+                        <br />
+                        <span className="text-base text-gray-500 group-hover:text-blue-600">
+                          Start with Guest Mode
+                        </span>
+                      </Shared.LogmeText>
+                    </Link>
                   </div>
                 </div>
               </div>
