@@ -71,8 +71,14 @@ const LogmeAllCard: React.FC<CardProps> = ({
 
   return (
     <div className="rounded-lg h-[280px] w-full bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
-      {/* Image Section */}
-      <div className="relative h-32 w-full bg-gray-100">
+      {/* Image or Content Section */}
+      <div
+        className={`relative ${
+          imageUrl
+            ? 'h-32 w-full bg-gray-100'
+            : 'h-full w-full bg-gradient-to-br from-blue-50 to-indigo-50'
+        }`}
+      >
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -86,13 +92,17 @@ const LogmeAllCard: React.FC<CardProps> = ({
               imgElement.style.display = 'none';
             }}
           />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-blue-50 to-indigo-50" />
-        )}
+        ) : null}
       </div>
 
       {/* Content Section */}
-      <div className="p-4 flex flex-col h-[calc(280px-128px)]">
+      <div
+        className={`rounded-lg p-4 flex flex-col ${
+          imageUrl
+            ? 'h-[calc(280px-128px)]'
+            : 'h-[calc(280px-0px)] -mt-[280px] relative z-10 bg-white'
+        }`}
+      >
         <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors line-clamp-2 mb-2">
           {title}
         </h3>
