@@ -147,7 +147,7 @@ const Nav = () => {
             onClick={() => setCurrentPage('ABOUT')}
             className="flex items-center"
           >
-            <Shared.LogmeIcon.NewLogo alt="로고" width={130} height={45} />
+            <Shared.LogmeIcon.NewLogo alt="로고" width={70} height={70} />
           </Link>
         </div>
 
