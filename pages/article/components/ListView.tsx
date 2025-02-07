@@ -126,13 +126,17 @@ const ListView = () => {
           </div>
         </div>
         <div className="w-full tablet:w-auto flex justify-end">
-          <Shared.LogmeButton type="classic" size="big" onClick={handleNewPost}>
+          <Shared.LogmeButton
+            variant="classic"
+            size="big"
+            onClick={handleNewPost}
+          >
             <Shared.LogmeHeadline
               type="medium"
               fontStyle="semibold"
               style={{ color: '#fff' }}
             >
-              NEW
+              글 작성하기
             </Shared.LogmeHeadline>
           </Shared.LogmeButton>
         </div>

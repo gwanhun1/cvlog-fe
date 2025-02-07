@@ -161,15 +161,15 @@ table {
   }
 
   h1 {
-    @apply text-4xl font-bold mb-4;
+    @apply text-4xl font-bold mb-2;
   }
 
   h2 {
-    @apply text-3xl font-bold mb-3;
+    @apply text-3xl font-bold mb-2;
   }
 
   h3 {
-    @apply text-2xl font-bold mb-2;
+    @apply text-2xl font-bold mb-1;
   }
 
   p {

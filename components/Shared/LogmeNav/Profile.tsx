@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Avatar, Dropdown } from 'flowbite-react';
 import dynamic from 'next/dynamic';
-import Sessionstorage from 'public/utils/Sessionstorage';
 import { useGetUserInfo } from 'service/hooks/Login';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../Loader';
@@ -95,5 +94,5 @@ const NavPriofile = ({ setAuthority }: Props) => {
 export default NavPriofile;
 
 interface Props {
-  setAuthority: Dispatch<SetStateAction<boolean>>;
+  setAuthority: (value: boolean) => void;
 }

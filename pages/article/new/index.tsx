@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { CopyBlock, dracula } from 'react-code-blocks';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
-import { useRecoilValue } from 'recoil';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import * as Shared from 'components/Shared';
@@ -400,8 +399,11 @@ const NewPost: NextPage = () => {
     }
   };
 
-  const removeTag = (tag: string) => {
-    setDoc({ ...doc, tags: doc.tags.filter(item => tag !== item) });
+  const handleRemoveTag = (tag: string) => {
+    setDoc(prevDoc => ({
+      ...prevDoc,
+      tags: prevDoc.tags.filter(item => item !== tag),
+    }));
   };
 
   const handleImageUpload = async (e: React.DragEvent<HTMLDivElement>) => {
@@ -501,34 +503,45 @@ const NewPost: NextPage = () => {
   }, [typeof window !== 'undefined' && window.innerWidth]);
 
   return (
-    <main className="h-screen">
+    <main className="h-screen min-h-screen">
       <div className="flex flex-col h-full">
         <header className="flex-none">
           <div className="bg-[#f8f9fa]">
             <div className="tablet:pt-2">
               <div className="flex items-center justify-end gap-2 px-4 py-2">
-                <button
-                  className="px-4 py-2 text-sm font-medium text-white transition-colors bg-gray-600 rounded-md hover:bg-gray-700"
+                <Shared.LogmeButton
+                  variant="ghost"
+                  size="small"
                   onClick={() =>
                     accessToken ? router.push('/article') : router.push('/')
                   }
                 >
-                  취소
-                </button>
-                <button
-                  className="px-4 py-2 text-sm font-medium text-white transition-colors bg-blue-600 rounded-md hover:bg-blue-700"
+                  <Shared.LogmeHeadline type="medium" fontStyle="semibold">
+                    취소
+                  </Shared.LogmeHeadline>
+                </Shared.LogmeButton>
+
+                <Shared.LogmeButton
+                  variant="classic"
+                  size="small"
                   onClick={() =>
                     accessToken
                       ? saveNewPost()
                       : alert('로그인 먼저 해주세요..')
                   }
                 >
-                  저장
-                </button>
+                  <Shared.LogmeHeadline
+                    type="medium"
+                    fontStyle="semibold"
+                    style={{ color: '#fff' }}
+                  >
+                    저장
+                  </Shared.LogmeHeadline>
+                </Shared.LogmeButton>
               </div>
               <div className="relative px-2 border-b tablet:pt-2 border-gray">
                 <input
-                  className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl tablet:text-xl placeholder-zinc-600 tablet:placeholder:text-2xl tablet:placeholder:text-xl"
+                  className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
                   name="title"
                   value={doc.title}
                   placeholder="오늘은 어떤 주제로 모두를 놀라게 해주실 건가요? 🥰"
@@ -536,8 +549,8 @@ const NewPost: NextPage = () => {
                   onChange={onChangeTextarea}
                 />
               </div>
-              <div className="min-h-[60px] py-2">
-                <div className="relative flex px-2 border-b border-gray">
+              <div className="min-h-[83px]">
+                <div className="relative flex px-2 pt-4 border-b border-gray">
                   <input
                     className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-400 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
                     name="tag"
@@ -547,23 +560,28 @@ const NewPost: NextPage = () => {
                     onChange={e => setTag(e.target.value)}
                   />
                 </div>
-                <div className="flex justify-between mt-1">
-                  <div className="flex flex-wrap w-11/12 truncate">
+                <div className="flex justify-between mt-2">
+                  <div className="h-10 flex flex-wrap w-11/12 mb-1 truncate">
                     {doc.tags.map((tag, index) => (
                       <Badge
-                        className="relative flex p-2 mx-1 mt-1"
-                        color="info"
+                        className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                        color="default"
                         size="sm"
                         key={`${tag}-${index}`}
                       >
                         {tag}
-                        <Shared.LogmeIcon.CloseIcon
-                          alt="left-right"
-                          width={50}
-                          height={50}
-                          onClick={() => removeTag(tag)}
-                          cn="absolute w-3 h-3 right-[-4px] top-[-4px] hover:block hover:cursor-pointer"
-                        />
+                        <button
+                          onClick={() => {
+                            handleRemoveTag(tag);
+                          }}
+                        >
+                          <Shared.LogmeIcon.CloseIcon
+                            alt="close"
+                            width={50}
+                            height={50}
+                            cn="absolute w-3 h-3 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-blue-800 hover:text-blue-700 transition-all duration-200 transform hover:scale-110"
+                          />
+                        </button>
                       </Badge>
                     ))}
                   </div>
