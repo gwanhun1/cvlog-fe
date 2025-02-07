@@ -6,9 +6,9 @@ const Introduce = ({ Element }: { Element: IntroduceInterface }) => {
     <>
       {Element && (
         <section
-          className={`flex flex-col tablet:flex-row ${
+          className={`flex flex-col p-10 tablet:flex-row ${
             Element.id % 2 === 0 ? 'tablet:flex-row-reverse' : ''
-          } items-center justify-center w-full gap-8 tablet:gap-12 py-8 tablet:py-16`}
+          } items-center justify-center w-full gap-8 tablet:gap-12 py-8 tablet:py-16 shadow-lg`}
         >
           {/* Video Section */}
           <article className="flex justify-center w-full px-4 tablet:px-8 tablet:w-3/5">

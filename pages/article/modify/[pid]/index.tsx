@@ -18,6 +18,11 @@ import 'easymde/dist/easymde.min.css';
 import { useGetUserInfo } from 'service/hooks/Login';
 import { cn } from 'styles/utils';
 import css from './new.module.scss';
+import { languageArr } from 'pages/article/content/language';
+import {
+  MDE_OPTION,
+  MDE_OPTIONMOBILE,
+} from 'pages/article/content/markdownOpts';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
@@ -29,307 +34,6 @@ type DocType = {
   tags: string[];
 };
 
-const languageArr = [
-  'abap',
-  'abnf',
-  'actionscript',
-  'ada',
-  'agda',
-  'al',
-  'antlr4',
-  'apacheconf',
-  'apex',
-  'apl',
-  'applescript',
-  'aql',
-  'arduino',
-  'arff',
-  'asciidoc',
-  'asm6502',
-  'asmatmel',
-  'aspnet',
-  'autohotkey',
-  'autoit',
-  'avisynth',
-  'avroIdl',
-  'avro-idl',
-  'bash',
-  'basic',
-  'batch',
-  'bbcode',
-  'bicep',
-  'birb',
-  'bison',
-  'bnf',
-  'brainfuck',
-  'brightscript',
-  'bro',
-  'bsl',
-  'c',
-  'cfscript',
-  'chaiscript',
-  'cil',
-  'clike',
-  'clojure',
-  'cmake',
-  'cobol',
-  'coffeescript',
-  'concurnas',
-  'coq',
-  'cpp',
-  'crystal',
-  'csharp',
-  'cshtml',
-  'csp',
-  'cssExtras',
-  'css-extras',
-  'css',
-  'csv',
-  'cypher',
-  'd',
-  'dart',
-  'dataweave',
-  'dax',
-  'dhall',
-  'diff',
-  'django',
-  'dnsZoneFile',
-  'dns-zone-file',
-  'docker',
-  'dot',
-  'ebnf',
-  'editorconfig',
-  'eiffel',
-  'ejs',
-  'elixir',
-  'elm',
-  'erb',
-  'erlang',
-  'etlua',
-  'excelFormula',
-  'excel-formula',
-  'factor',
-  'falselang',
-  'false',
-  'firestoreSecurityRules',
-  'firestore-security-rules',
-  'flow',
-  'fortran',
-  'fsharp',
-  'ftl',
-  'gap',
-  'gcode',
-  'gdscript',
-  'gedcom',
-  'gherkin',
-  'git',
-  'glsl',
-  'gml',
-  'gn',
-  'goModule',
-  'go-module',
-  'go',
-  'graphql',
-  'groovy',
-  'haml',
-  'handlebars',
-  'haskell',
-  'haxe',
-  'hcl',
-  'hlsl',
-  'hoon',
-  'hpkp',
-  'hsts',
-  'http',
-  'ichigojam',
-  'icon',
-  'icuMessageFormat',
-  'icu-message-format',
-  'idris',
-  'iecst',
-  'ignore',
-  'inform7',
-  'ini',
-  'io',
-  'j',
-  'java',
-  'javadoc',
-  'javadoclike',
-  'javascript',
-  'javastacktrace',
-  'jexl',
-  'jolie',
-  'jq',
-  'jsExtras',
-  'js-extras',
-  'jsTemplates',
-  'js-templates',
-  'jsdoc',
-  'json',
-  'json5',
-  'jsonp',
-  'jsstacktrace',
-  'jsx',
-  'julia',
-  'keepalived',
-  'keyman',
-  'kotlin',
-  'kumir',
-  'kusto',
-  'latex',
-  'latte',
-  'less',
-  'lilypond',
-  'liquid',
-  'lisp',
-  'livescript',
-  'llvm',
-  'log',
-  'lolcode',
-  'lua',
-  'magma',
-  'makefile',
-  'markdown',
-  'markupTemplating',
-  'markup-templating',
-  'markup',
-  'matlab',
-  'maxscript',
-  'mel',
-  'mermaid',
-  'mizar',
-  'mongodb',
-  'monkey',
-  'moonscript',
-  'n1ql',
-  'n4js',
-  'nand2tetrisHdl',
-  'nand2tetris-hdl',
-  'naniscript',
-  'nasm',
-  'neon',
-  'nevod',
-  'nginx',
-  'nim',
-  'nix',
-  'nsis',
-  'objectivec',
-  'ocaml',
-  'opencl',
-  'openqasm',
-  'oz',
-  'parigp',
-  'parser',
-  'pascal',
-  'pascaligo',
-  'pcaxis',
-  'peoplecode',
-  'perl',
-  'phpExtras',
-  'php-extras',
-  'php',
-  'phpdoc',
-  'plsql',
-  'powerquery',
-  'powershell',
-  'processing',
-  'prolog',
-  'promql',
-  'properties',
-  'protobuf',
-  'psl',
-  'pug',
-  'puppet',
-  'pure',
-  'purebasic',
-  'purescript',
-  'python',
-  'q',
-  'qml',
-  'qore',
-  'qsharp',
-  'r',
-  'racket',
-  'reason',
-  'regex',
-  'rego',
-  'renpy',
-  'rest',
-  'rip',
-  'roboconf',
-  'robotframework',
-  'ruby',
-  'rust',
-  'sas',
-  'sass',
-  'scala',
-  'scheme',
-  'scss',
-  'shellSession',
-  'shell-session',
-  'smali',
-  'smalltalk',
-  'smarty',
-  'sml',
-  'solidity',
-  'solutionFile',
-  'solution-file',
-  'soy',
-  'sparql',
-  'splunkSpl',
-  'splunk-spl',
-  'sqf',
-  'sql',
-  'squirrel',
-  'stan',
-  'stylus',
-  'swift',
-  'systemd',
-  't4Cs',
-  't4-cs',
-  't4Templating',
-  't4-templating',
-  't4Vb',
-  't4-vb',
-  'tap',
-  'tcl',
-  'textile',
-  'toml',
-  'tremor',
-  'tsx',
-  'tt2',
-  'turtle',
-  'twig',
-  'typescript',
-  'typoscript',
-  'unrealscript',
-  'uorazor',
-  'uri',
-  'v',
-  'vala',
-  'vbnet',
-  'velocity',
-  'verilog',
-  'vhdl',
-  'vim',
-  'visualBasic',
-  'visual-basic',
-  'warpscript',
-  'wasm',
-  'webIdl',
-  'web-idl',
-  'wiki',
-  'wolfram',
-  'wren',
-  'xeora',
-  'xmlDoc',
-  'xml-doc',
-  'xojo',
-  'xquery',
-  'yaml',
-  'yang',
-  'zig',
-];
 const ModifyPost = ({ pid }: ModifyPostType) => {
   const router = useRouter();
   const accessToken = LocalStorage.getItem('CVtoken') as string;
@@ -571,33 +275,32 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
                   />
                 </div>
                 <div className="flex justify-between mt-2 ">
-                  <div className="h-10 flex flex-wrap w-11/12 mb-1 truncate">
-                    {doc.tags.map((tag, index) => {
-                      return (
-                        <>
-                          <Badge
-                            className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
-                            color="default"
-                            size="sm"
-                            key={`${tag}-${index}`}
-                          >
-                            {tag}
-                            <button
-                              onClick={() => {
-                                handleRemoveTag(tag);
-                              }}
-                            >
-                              <Shared.LogmeIcon.CloseIcon
-                                alt="close"
-                                width={50}
-                                height={50}
-                                cn="absolute w-3 h-3 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-blue-800 hover:text-blue-700 transition-all duration-200 transform hover:scale-110"
-                              />
-                            </button>
-                          </Badge>
-                        </>
-                      );
-                    })}
+                  <div
+                    className="h-10 overflow-x-scroll w-11/12 mb-1 whitespace-nowrap"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                  >
+                    {doc.tags.map((tag, index) => (
+                      <Badge
+                        className="relative inline-flex items-center px-3 mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                        color="default"
+                        size="sm"
+                        key={`${tag}-${index}`}
+                      >
+                        {tag}
+                        <button
+                          onClick={() => {
+                            handleRemoveTag(tag);
+                          }}
+                        >
+                          <Shared.LogmeIcon.CloseIcon
+                            alt="close"
+                            width={50}
+                            height={50}
+                            cn="absolute w-3 h-3 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-blue-800 hover:text-blue-700 transition-all duration-200 transform hover:scale-110"
+                          />
+                        </button>
+                      </Badge>
+                    ))}
                   </div>
                   <label className=" text-gray-400 top-[-35px] right-4  flex justify-end w-10 h-8">
                     {/* FIXME 추후 기능 추가
@@ -710,39 +413,6 @@ export default ModifyPost;
 export const getServerSideProps: GetServerSideProps = async context => {
   const pid = context.params?.pid;
   return { props: { pid } };
-};
-const MDE_OPTIONMOBILE = {
-  spellChecker: false,
-  sideBySideFullscreen: false,
-  toolbar: false,
-  insertTexts: {
-    horizontalRule: ['', '\n\n-----\n\n'],
-    image: ['![](http://', ')'],
-    link: ['[', '](http://)'],
-    table: [
-      '',
-      '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n',
-    ],
-  },
-  tabSize: 2,
-  maxHeight: '30vh',
-};
-
-const MDE_OPTION = {
-  spellChecker: false,
-  sideBySideFullscreen: false,
-  toolbar: false,
-  insertTexts: {
-    horizontalRule: ['', '\n\n-----\n\n'],
-    image: ['![](http://', ')'],
-    link: ['[', '](http://)'],
-    table: [
-      '',
-      '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n',
-    ],
-  },
-  tabSize: 2,
-  maxHeight: 'calc(100vh - 250px)',
 };
 
 type ModifyPostType = { pid: string };
