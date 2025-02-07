@@ -20,6 +20,7 @@ import SymbolLogoPng from '/public/assets/symbol-logo.png';
 import BurgerSvg from '/public/assets/burger.svg';
 import Image from 'next/image';
 import LogmeNewLogoSvg from 'public/assets/LogmeNewLogo.svg';
+import LogmeNewNavLogo from 'public/assets/NavLogo.svg';
 import LogoRec from 'public/assets/LogoRec.svg';
 
 interface IconProps {
@@ -205,6 +206,15 @@ export const BurgerIcon = (props: IconProps) => (
 export const NewLogo = (props: IconProps) => (
   <Image
     src={LogmeNewLogoSvg}
+    alt={props.alt}
+    width={props.width}
+    height={props.height}
+    className={props.cn}
+  />
+);
+export const NavLogo = (props: IconProps) => (
+  <Image
+    src={LogmeNewNavLogo}
     alt={props.alt}
     width={props.width}
     height={props.height}

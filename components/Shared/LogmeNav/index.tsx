@@ -9,12 +9,12 @@ import { accessTokenAtom, refreshTokenAtom } from 'service/atoms/atoms';
 import MobileNav from './MobileNav';
 import NavPriofile from './Profile';
 
-const MENU_ITEMS = [
-  { name: 'ABOUT', path: '/about' },
-  { name: 'ARTICLE', path: '/article' },
+const MENU_ITEMS: { name: string; path: string; requiresAuth: boolean }[] = [
+  { name: 'ABOUT', path: '/about', requiresAuth: false },
+  { name: 'ARTICLE', path: '/article', requiresAuth: false },
   { name: 'RESUME', path: '/resume', requiresAuth: true },
   { name: 'GITHUB', path: '/github', requiresAuth: true },
-] as const;
+];
 
 const NavMenuItem = ({
   name,
@@ -89,21 +89,29 @@ const DesktopNavActions = ({
   return (
     <div className="items-center hidden tablet:flex">
       <Link href="/">
-        <div className="border-2 border-[#000000] rounded-lg overflow-hidden">
-          <button
-            onClick={() => setAuthority(true)}
-            className="px-4 py-2 text-xl font-medium transition-all bg-white text-black hover:bg-gray-100"
+        <Shared.LogmeButton
+          variant="classic"
+          size="small"
+          onClick={() => setAuthority(true)}
+        >
+          <Shared.LogmeHeadline
+            type="medium"
+            fontStyle="semibold"
+            style={{ color: '#fff' }}
           >
             Join
-          </button>
-        </div>
+          </Shared.LogmeHeadline>
+        </Shared.LogmeButton>
       </Link>
     </div>
   );
 };
 
 const Nav = () => {
-  const [currentPage, setCurrentPage] = useState(MENU_ITEMS[0].name);
+  const [currentPage, setCurrentPage] = useState<
+    (typeof MENU_ITEMS)[number]['name']
+  >(MENU_ITEMS[0].name);
+
   const [, setAuthority] = useState(false);
   const router = useRouter();
 
@@ -145,7 +153,7 @@ const Nav = () => {
             onClick={() => setCurrentPage('ABOUT')}
             className="flex items-center"
           >
-            <Shared.LogmeIcon.NewLogo alt="로고" width={70} height={70} />
+            <Shared.LogmeIcon.NavLogo alt="로고" width={70} height={70} />
           </Link>
         </div>
 
@@ -158,7 +166,7 @@ const Nav = () => {
                 name={item.name}
                 path={item.path}
                 isActive={currentPage === item.name}
-                requiresAuth={item.requiresAuth}
+                requiresAuth={item.requiresAuth ?? false}
                 isAuthenticated={!!localAccessToken}
                 onClick={() => setCurrentPage(item.name)}
               />

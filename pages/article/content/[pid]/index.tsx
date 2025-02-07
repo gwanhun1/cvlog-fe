@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
 import CommentBox from 'components/Shared/LogmeComment';
-import Tag from 'components/Shared/LogmeTag';
+import * as Shared from 'components/Shared';
 import { useGetCommentList } from 'service/hooks/Comment';
 import {
   DeleteDetail,
@@ -13,6 +13,7 @@ import {
 } from 'service/hooks/Detail';
 import Content from './content';
 import Profile from './Profile';
+import { Badge } from 'flowbite-react';
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
@@ -83,59 +84,66 @@ const Detail = ({ pid }: { pid: string }) => {
   return (
     <div className="flex justify-center ">
       <div className="flex flex-col items-center  justify-center rounded-lg my-7 tablet:my-15 w-full">
-        <header className="flex justify-between w-full   border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
-          <h1 className="flex justify-center mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
+        <header className="w-full border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
+          <h1 className="mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
             {getDetailData?.data?.post.title}
           </h1>
-          <section className="flex items-end">
+        </header>
+        <section className="flex items-center justify-between w-full h-full border-b border-gray-400 ">
+          <div
+            className="flex flex-wrap justify-start w-full text-ftBlick h-9"
+            onClick={() => alert('v1.1에서 만나요 🥰')}
+          >
+            {getDetailData.data?.post.tags.map((tag: TagType) => (
+              <>
+                <Badge
+                  className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                  color="default"
+                  size="sm"
+                  key={tag.id}
+                >
+                  {tag.name}
+                </Badge>
+              </>
+            ))}
+          </div>
+          <section className="flex items-end w-28">
             <time className="text-xs text-gray-600 tablet:text-sm mb-1">
               {getDetailData &&
                 getDetailData.data?.post.created_at.slice(0, 10)}
             </time>
           </section>
-        </header>
-        <section className="flex items-center justify-between w-full h-full border-b border-gray-400 ">
-          <div
-            className="flex flex-wrap justify-start w-full mr-1 text-ftBlick "
-            onClick={() => alert('v1.1에서 만나요 🥰')}
-          >
-            {getDetailData.data?.post.tags.map((tag: TagType) => (
-              <Tag id={tag.id} name={tag.name} key={tag.id} />
-            ))}
-          </div>
         </section>
-        <main className="w-full h-full pt-3 tablet:pb-12">
+        <main className="w-full h-full tablet:pb-12">
           <section>
             <div className="flex justify-end w-full">
-              <div className="">
-                <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-                  <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
-                    onClick={() => {
-                      handlePrivateToggle();
-                    }}
-                  >
-                    {patchMessage ? '공개' : '나만보기'}
-                  </button>
+              <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
+                <button
+                  className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
+                  onClick={() => {
+                    handlePrivateToggle();
+                  }}
+                >
+                  {patchMessage ? '공개' : '나만보기'}
+                </button>
 
-                  <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick "
-                    onClick={() => {
-                      updateCheck();
-                    }}
-                  >
-                    수정
-                  </button>
-                  <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlick"
-                    onClick={() => {
-                      deleteCheck();
-                    }}
-                  >
-                    삭제
-                  </button>
-                </article>
-              </div>
+                <button
+                  className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick "
+                  onClick={() => {
+                    updateCheck();
+                  }}
+                >
+                  수정
+                </button>
+                <button
+                  className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlick"
+                  onClick={() => {
+                    deleteCheck();
+                  }}
+                >
+                  삭제
+                </button>
+              </article>
             </div>
 
             <div className="flex justify-center">
@@ -153,7 +161,7 @@ const Detail = ({ pid }: { pid: string }) => {
             <div
               className={`${
                 !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
-              } flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-pointer mobile:ml-6 text-ftBlick hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
+              } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlick hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
             >
               {getDetailData.data?.prevPostInfo && (
                 <Link
@@ -175,7 +183,7 @@ const Detail = ({ pid }: { pid: string }) => {
             <div
               className={`${
                 !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
-              } flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlick mobile:h-12 justify-evenly hover:opacity-70 `}
+              } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlick mobile:h-12 justify-evenly hover:opacity-70 `}
             >
               {getDetailData.data?.nextPostInfo && (
                 <Link

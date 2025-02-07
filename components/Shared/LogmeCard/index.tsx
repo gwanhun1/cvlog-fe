@@ -92,8 +92,8 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
                     {tags.map(tag => (
                       <Badge
                         key={tag.id}
-                        className="px-2 py-1 text-xs bg-blue-100 text-blue-800"
-                        color="info"
+                        className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                        color="default"
                         size="sm"
                       >
                         {tag.name}
