@@ -30,9 +30,8 @@ const About: NextPage = () => {
           <div className="justify-center flex">
             <Shared.LogmeIcon.SymbolLogoIcon
               alt="logo"
-              width={200}
-              height={120}
-              cn="object-none object-bottom h-[80px] "
+              width={300}
+              height={160}
             />
           </div>
         </div>

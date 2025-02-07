@@ -16,7 +16,7 @@ import MirrorPng from '/public/assets/mirror.png';
 import MorePng from '/public/assets/more.png';
 import NotificationSvg from '/public/assets/notification.svg';
 import SettingsSvg from '/public/assets/settings.svg';
-import SymbolLogoPng from '/public/assets/symbol-logo.png';
+import SymbolLogoSvg from '/public/assets/symbol-logo.svg';
 import BurgerSvg from '/public/assets/burger.svg';
 import Image from 'next/image';
 import LogmeNewLogoSvg from 'public/assets/LogmeNewLogo.svg';
@@ -186,7 +186,7 @@ export const SettingsIcon = (props: IconProps) => (
 );
 export const SymbolLogoIcon = (props: IconProps) => (
   <Image
-    src={SymbolLogoPng}
+    src={SymbolLogoSvg}
     alt={props.alt}
     width={props.width}
     height={props.height}

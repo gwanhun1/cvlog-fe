@@ -35,6 +35,7 @@ const ButtonGroup = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const token = LocalStorage.getItem('CVtoken');
+
   useEffect(() => {
     setMounted(true);
     token && setAccessToken(token);
@@ -43,35 +44,34 @@ const ButtonGroup = () => {
   if (!mounted) return null;
 
   const handleLogin = (loginMethod: string, event: React.MouseEvent) => {
-    if (accessToken) {
-      event.preventDefault();
-      return;
-    }
-
     if (loginMethod === 'Github') {
       window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${process.env.NEXT_PUBLIC_URL}`;
     } else {
       event.preventDefault();
       alert('준비 중입니다.');
     }
+
+    if (accessToken) {
+      event.preventDefault();
+      return;
+    }
   };
 
   return (
     <div className="grid grid-cols-2 tablet:grid-cols-4 gap-4 w-full">
       {loginMethodArr.map(item => (
-        <Link key={item.id} href="#" legacyBehavior>
-          <a
-            onClick={event => handleLogin(item.method, event)}
-            className="group transform transition-all duration-300 hover:-translate-y-2 hover:scale-105"
-          >
-            <div className="flex flex-col items-center p-4 bg-white/90 backdrop-blur-md rounded-3xl border border-gray-200 shadow-lg hover:shadow-2xl hover:border-blue-200 space-y-3 transition-all">
-              <div className="p-3 rounded-full">{item.image}</div>
-              <span className="text-sm text-gray-700 font-semibold opacity-80 group-hover:opacity-100 group-hover:text-blue-600">
-                {item.method}
-              </span>
-            </div>
-          </a>
-        </Link>
+        <div
+          key={item.id}
+          onClick={event => handleLogin(item.method, event)}
+          className="group transform transition-all duration-300 hover:-translate-y-2 hover:scale-105 cursor-pointer"
+        >
+          <div className="flex flex-col items-center p-4 bg-white/90 backdrop-blur-md rounded-3xl border border-gray-200 shadow-lg hover:shadow-2xl hover:border-blue-200 space-y-3 transition-all">
+            <div className="p-3 rounded-full">{item.image}</div>
+            <span className="text-sm text-gray-700 font-semibold opacity-80 group-hover:opacity-100 group-hover:text-blue-600">
+              {item.method}
+            </span>
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -86,10 +86,10 @@ const Home = () => {
     <div className="min-h-screen  flex flex-col justify-center items-center px-4">
       <div className="w-full max-w-md space-y-10 bg-white p-8 rounded-2xl border border-gray-200">
         <div className="flex justify-center">
-          <Shared.LogmeIcon.NewLogo
+          <Shared.LogmeIcon.SymbolLogoIcon
             alt={'logo'}
-            width={200}
-            height={200}
+            width={500}
+            height={500}
             // className="drop-shadow-2xl"
           />
         </div>
