@@ -28,3 +28,8 @@ export const fetchCreateModifyPost = async (
   const { data } = await axios.put<CreateNewPostReq>(`/posts/${pid}`, params);
   return data;
 };
+
+export const getMyPostsNavigation = async (params: number) => {
+  const { data } = await axios.get<Content>(`/posts/${params}/my-navigation`);
+  return data.data;
+};

@@ -8,7 +8,6 @@ import { useGetCommentList } from 'service/hooks/Comment';
 import {
   DeleteDetail,
   useGetDetail,
-  useGetMyPostsNavigation,
   usePatchDetail,
 } from 'service/hooks/Detail';
 import Content from './content';
@@ -23,15 +22,15 @@ const Detail = ({ pid }: { pid: string }) => {
   const info = useGetUserInfo().data;
 
   // 데이터 받기
-  const getMyPostsNavigation = useGetMyPostsNavigation(parseInt(pid));
+  const getDetailData = useGetDetail(parseInt(pid));
   const commentList = useGetCommentList(parseInt(pid));
   const patchDetailMutation = usePatchDetail();
 
   useEffect(() => {
-    if (getMyPostsNavigation.data?.post) {
-      setPatchMessage(getMyPostsNavigation.data.post.public_status);
+    if (getDetailData.data?.post) {
+      setPatchMessage(getDetailData.data.post.public_status);
     }
-  }, [getMyPostsNavigation.data]);
+  }, [getDetailData.data]);
 
   // 나만보기 메세지 창
   const handlePrivateToggle = async () => {
@@ -79,22 +78,21 @@ const Detail = ({ pid }: { pid: string }) => {
   };
 
   useEffect(() => {
-    getMyPostsNavigation.refetch();
+    getDetailData.refetch();
     commentList.refetch();
   }, [pid]);
 
-  console.log(getMyPostsNavigation.data);
-  console.log(getMyPostsNavigation.data);
+  console.log(getDetailData.data);
   console.log(
-    info?.id === getMyPostsNavigation?.data?.post.user_id ||
-      info?.github_id === getMyPostsNavigation?.data?.post?.user_id?.github_id
+    info?.id === getDetailData?.data?.post.user_id ||
+      info?.github_id === getDetailData?.data?.post?.user_id?.github_id
   );
 
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
         <h1 className="mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
-          {getMyPostsNavigation?.data?.post.title}
+          {getDetailData?.data?.post.title}
         </h1>
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
@@ -102,7 +100,7 @@ const Detail = ({ pid }: { pid: string }) => {
           className="flex flex-wrap justify-start w-full text-ftBlick h-9"
           onClick={() => alert('v1.1에서 만나요 🥰')}
         >
-          {getMyPostsNavigation.data?.post.tags.map((tag: TagType) => (
+          {getDetailData.data?.post.tags.map((tag: TagType) => (
             <Badge
               className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
               color="default"
@@ -115,8 +113,7 @@ const Detail = ({ pid }: { pid: string }) => {
         </div>
         <section className="flex items-end w-28">
           <time className="text-xs text-gray-600 tablet:text-sm mb-1">
-            {getMyPostsNavigation &&
-              getMyPostsNavigation.data?.post.created_at.slice(0, 10)}
+            {getDetailData && getDetailData.data?.post.created_at.slice(0, 10)}
           </time>
         </section>
       </section>
@@ -124,9 +121,9 @@ const Detail = ({ pid }: { pid: string }) => {
         <section>
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-              {info?.id === getMyPostsNavigation?.data?.post.user_id ||
+              {info?.id === getDetailData?.data?.post.user_id ||
               info?.github_id ===
-                getMyPostsNavigation?.data?.post?.user_id?.github_id ? (
+                getDetailData?.data?.post?.user_id?.github_id ? (
                 <>
                   <button
                     className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
@@ -159,26 +156,25 @@ const Detail = ({ pid }: { pid: string }) => {
           </div>
 
           <div className="flex justify-center">
-            {getMyPostsNavigation.data && (
-              <Content data={getMyPostsNavigation.data?.post.content} />
+            {getDetailData.data && (
+              <Content data={getDetailData.data?.post.content} />
             )}
           </div>
         </section>
       </main>
       <section className="flex justify-between w-full px-5 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
         <article className="mb-4 mobile:mb-0">
-          <Profile getDetailData={getMyPostsNavigation?.data?.post.user_id} />
+          <Profile getDetailData={getDetailData?.data?.post.user_id} />
         </article>
         <div className="flex items-center justify-around tablet:w-96 w-60">
           <div
             className={`${
-              !getMyPostsNavigation.data?.prevPostInfo &&
-              'hover:cursor-not-allowed'
+              !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
             } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlick hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
           >
-            {getMyPostsNavigation.data?.prevPostInfo && (
+            {getDetailData.data?.prevPostInfo && (
               <Link
-                href={`/article/content/${getMyPostsNavigation.data?.prevPostInfo?.id}}`}
+                href={`/article/content/all/${getDetailData.data.prevPostInfo.id}}`}
                 className="flex items-center cursor-pointer hover:opacity-70 "
               >
                 <div className="ml-1 tablet:ml-3">←</div>
@@ -187,7 +183,7 @@ const Detail = ({ pid }: { pid: string }) => {
                     이전 포스트
                   </div>
                   <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
-                    {getMyPostsNavigation.data?.prevPostInfo?.title}
+                    {getDetailData.data.prevPostInfo.title}
                   </div>
                 </div>
               </Link>
@@ -195,13 +191,12 @@ const Detail = ({ pid }: { pid: string }) => {
           </div>
           <div
             className={`${
-              !getMyPostsNavigation.data?.nextPostInfo &&
-              'hover:cursor-not-allowed'
+              !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
             } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlick mobile:h-12 justify-evenly hover:opacity-70 `}
           >
-            {getMyPostsNavigation.data?.nextPostInfo && (
+            {getDetailData.data?.nextPostInfo && (
               <Link
-                href={`/article/content/${getMyPostsNavigation.data?.nextPostInfo?.id}}`}
+                href={`/article/content/all/${getDetailData.data.nextPostInfo.id}}`}
                 className="flex items-center cursor-pointer hover:opacity-70"
               >
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
@@ -209,7 +204,7 @@ const Detail = ({ pid }: { pid: string }) => {
                     다음 포스트
                   </div>
                   <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
-                    {getMyPostsNavigation.data?.nextPostInfo?.title}
+                    {getDetailData.data.nextPostInfo.title}
                   </div>
                 </div>
                 <div className="w-100%  mr-1 tablet:mr-3 ">→</div>

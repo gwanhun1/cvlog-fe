@@ -4,6 +4,7 @@ import {
   deleteDetail,
   fetchCreateModifyPost,
   getDetail,
+  getMyPostsNavigation,
   patchDetail,
 } from 'service/api/detail';
 import {
@@ -18,6 +19,17 @@ export const useGetDetail = (params: number) => {
     queryKey: ['detail', params],
     queryFn: () => {
       return getDetail(params);
+    },
+    retry: 0,
+    onError: handleGetErrors,
+  });
+};
+
+export const useGetMyPostsNavigation = (params: number) => {
+  return useQuery({
+    queryKey: ['myPostNavigation', params],
+    queryFn: () => {
+      return getMyPostsNavigation(params);
     },
     retry: 0,
     onError: handleGetErrors,
