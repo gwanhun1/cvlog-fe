@@ -78,7 +78,7 @@ const AllView = () => {
                     key={post.id}
                     className="w-[290px]"
                     onClick={() =>
-                      handleNavigate(`/article/content/${post.id}`)
+                      handleNavigate(`/article/content/all/${post.id}`)
                     }
                   >
                     <LogmeAllCard

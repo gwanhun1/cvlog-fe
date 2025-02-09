@@ -125,8 +125,6 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
     }));
   };
 
-  console.log(doc);
-
   //FIXME  추후 기능 추가
   // const changePreviewMode = (id: string) => {
   //   if (id !== 'no-preview') {

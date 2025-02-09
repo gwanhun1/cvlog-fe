@@ -12,7 +12,7 @@ const Article: NextPage = () => {
   return (
     <>
       {accessToken && (
-        <div className="flex items-start justify-center min-h-screen ">
+        <div className="flex items-start justify-center ">
           <Head>
             <title>CVLOG</title>
             <link rel="icon" href="/favicon.ico" />
