@@ -82,12 +82,6 @@ const Detail = ({ pid }: { pid: string }) => {
     commentList.refetch();
   }, [pid]);
 
-  console.log(getDetailData.data);
-  console.log(
-    info?.id === getDetailData?.data?.post.user_id ||
-      info?.github_id === getDetailData?.data?.post?.user_id?.github_id
-  );
-
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">

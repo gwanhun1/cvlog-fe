@@ -105,7 +105,7 @@ const ListView = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 ">
       {/* Search and New Post Section */}
       <div className="flex flex-col tablet:flex-row tablet:items-center gap-4 w-full">
         <div className="flex-1 relative">
@@ -143,24 +143,38 @@ const ListView = () => {
       </div>
 
       {/* Cards Grid */}
-      <div className="grid gap-2 tablet:gap-6">
-        {List.data?.posts.map(
-          ({ id, title, content, tags, updated_at }, index) => {
-            return (
-              <Link
-                href={`/article/content/${id}`}
-                key={id}
-                onClick={() => saveListIndex(index)}
-              >
-                <Card
-                  title={title}
-                  content={content}
-                  tags={tags}
-                  updated_at={updated_at}
-                />
-              </Link>
-            );
-          }
+      <div
+        className={`grid gap-2 tablet:gap-6 ${
+          List && List.data && List.data?.posts.length < 0
+            ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
+            : null
+        } `}
+      >
+        {List && List.data && List.data?.posts.length > 0 ? (
+          List.data?.posts.map(
+            ({ id, title, content, tags, updated_at }, index) => {
+              return (
+                <Link
+                  href={`/article/content/${id}`}
+                  key={id}
+                  onClick={() => saveListIndex(index)}
+                >
+                  <Card
+                    title={title}
+                    content={content}
+                    tags={tags}
+                    updated_at={updated_at}
+                  />
+                </Link>
+              );
+            }
+          )
+        ) : (
+          <div className="flex w-full justify-center items-center h-20 tablet:h-[23.5rem]">
+            <p className=" text-2xl font-bold text-gray-400">
+              글을 작성해주세요. 😄
+            </p>
+          </div>
         )}
       </div>
 
