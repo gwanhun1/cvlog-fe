@@ -241,7 +241,7 @@ const NewPost: NextPage = () => {
               </div>
               <div className="relative px-2 border-b tablet:pt-2 border-gray">
                 <input
-                  className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
+                  className="w-full h-10 text-gray-600 placeholder:text-gray-300 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
                   name="title"
                   value={doc.title}
                   placeholder="오늘은 어떤 주제로 모두를 놀라게 해주실 건가요? 🥰"
@@ -252,7 +252,7 @@ const NewPost: NextPage = () => {
               <div className="min-h-[83px]">
                 <div className="relative flex px-2 pt-4 border-b border-gray">
                   <input
-                    className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-400 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
+                    className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-300 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
                     name="tag"
                     value={tag}
                     placeholder="태그를 만들어주세요."

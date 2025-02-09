@@ -5,12 +5,20 @@ import { CreateNewPostReq } from '../new/type';
 
 export const getDetail = async (params: number) => {
   const { data } = await axios.get<Content>(`/posts/${params}`);
+  return data.data;
+};
 
+export const getMyDetail = async (params: number) => {
+  const { data } = await axios.get<Content>(`/posts/${params}/my`);
   return data.data;
 };
 
 export const deleteDetail = async (params: number) => {
-  const { data } = await axios.delete<DeleteDetail>(`/posts/${params}`);
+  const { data } = await axios.delete<DeleteDetail>(`/posts/${params}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
   return data;
 };
 
@@ -27,9 +35,4 @@ export const fetchCreateModifyPost = async (
 ) => {
   const { data } = await axios.put<CreateNewPostReq>(`/posts/${pid}`, params);
   return data;
-};
-
-export const getMyPostsNavigation = async (params: number) => {
-  const { data } = await axios.get<Content>(`/posts/${params}/my-navigation`);
-  return data.data;
 };

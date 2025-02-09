@@ -64,32 +64,38 @@ const AllView = () => {
       </div>
       <div className="flex justify-center items">
         <div className="flex flex-wrap gap-6 justify-center tablet:justify-start w-full max-w-[1270px]">
-          {isLoading
-            ? skeletonArray.map((_, index) => <CardSkeleton key={index} />)
-            : List?.posts?.map(
-                (post: {
-                  id: React.Key | null | undefined;
-                  title: string;
-                  content: string;
-                  tags: TagItem[];
-                  updated_at: string | undefined;
-                }) => (
-                  <div
-                    key={post.id}
-                    className="w-[290px]"
-                    onClick={() =>
-                      handleNavigate(`/article/content/all/${post.id}`)
-                    }
-                  >
-                    <LogmeAllCard
-                      title={post.title}
-                      content={post.content}
-                      tags={post.tags}
-                      updated_at={post.updated_at}
-                    />
-                  </div>
-                )
-              )}
+          {isLoading ? (
+            skeletonArray.map((_, index) => <CardSkeleton key={index} />)
+          ) : List && List?.posts.length > 0 ? (
+            List?.posts?.map(
+              (post: {
+                id: React.Key | null | undefined;
+                title: string;
+                content: string;
+                tags: TagItem[];
+                updated_at: string | undefined;
+              }) => (
+                <div
+                  key={post.id}
+                  className="w-[290px]"
+                  onClick={() =>
+                    handleNavigate(`/article/content/all/${post.id}`)
+                  }
+                >
+                  <LogmeAllCard
+                    title={post.title}
+                    content={post.content}
+                    tags={post.tags}
+                    updated_at={post.updated_at}
+                  />
+                </div>
+              )
+            )
+          ) : (
+            <div className="w-full flex justify-center items-center h-40 text-xl font-bold text-gray-400">
+              글이 하나도 없어요....😭
+            </div>
+          )}
         </div>
       </div>
 
