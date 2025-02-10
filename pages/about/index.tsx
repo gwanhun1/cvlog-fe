@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import axios from 'axios';
-import Link from 'next/link';
 import * as Shared from 'components/Shared';
 import LocalStorage from 'public/utils/Localstorage';
 import Introduce from './components/introduce';

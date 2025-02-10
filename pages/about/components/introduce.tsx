@@ -1,4 +1,3 @@
-import React from 'react';
 import { IntroduceInterface } from '..';
 
 const Introduce = ({ Element }: { Element: IntroduceInterface }) => {

@@ -1,6 +1,4 @@
-import React from 'react';
 import Image from 'next/image';
-import { useGetUserInfo } from 'service/hooks/Login';
 
 interface ProfileProps {
   getDetailData: any;
