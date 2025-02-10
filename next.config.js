@@ -1,6 +1,5 @@
 const nextConfig = {
   reactStrictMode: false,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {
@@ -18,26 +17,9 @@ const nextConfig = {
       'res.cloudinary.com',
     ],
   },
-
   eslint: {
-    plugins: ['import'],
-    rules: {
-      'import/order': [
-        'error',
-        {
-          groups: [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'sibling',
-            'index',
-          ],
-          'newlines-between': 'always',
-        },
-      ],
-    },
-  },
+    ignoreDuringBuilds: true
+  }
 };
 
 module.exports = nextConfig;

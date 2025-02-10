@@ -1,4 +1,14 @@
 {
+  "extends": ["next", "next/core-web-vitals"],
+  "env": {
+    "node": true,
+    "es2021": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["import"],
   "rules": {
     "import/order": [
       "error",
@@ -19,7 +29,7 @@
             "position": "before"
           },
           {
-            "pattern": "next/**", // next 관련 모듈을 builtin과 같은 그룹으로 설정
+            "pattern": "next/**",
             "group": "builtin",
             "position": "after"
           }

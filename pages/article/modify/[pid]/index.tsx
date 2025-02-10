@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import imageCompression from 'browser-image-compression';
@@ -18,11 +18,8 @@ import 'easymde/dist/easymde.min.css';
 import { useGetUserInfo } from 'service/hooks/Login';
 import { cn } from 'styles/utils';
 import css from './new.module.scss';
-import { languageArr } from 'pages/article/content/language';
-import {
-  MDE_OPTION,
-  MDE_OPTIONMOBILE,
-} from 'pages/article/content/markdownOpts';
+import { MDE_OPTION, MDE_OPTIONMOBILE } from 'src/constants/markdownOpts';
+import { languageArr } from 'src/constants/language';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,

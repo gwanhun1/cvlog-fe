@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pagination } from 'flowbite-react';
 import LogmeAllCard, { TagItem } from 'components/Shared/LogmeAllCard';
 import { useGetPublicList } from 'service/hooks/List';

@@ -18,8 +18,8 @@ import { useCreatePost } from 'service/hooks/New';
 import 'easymde/dist/easymde.min.css';
 import { cn } from 'styles/utils';
 import css from './new.module.scss';
-import { languageArr } from '../content/language';
-import { MDE_OPTION, MDE_OPTIONMOBILE } from '../content/markdownOpts';
+import { MDE_OPTION, MDE_OPTIONMOBILE } from 'src/constants/markdownOpts';
+import { languageArr } from 'src/constants/language';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,

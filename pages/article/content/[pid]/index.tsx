@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -117,8 +117,7 @@ const Detail = ({ pid }: { pid: string }) => {
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
               {info?.id === getMyDetail?.data?.post.user_id ||
-              info?.github_id ===
-                getMyDetail?.data?.post?.user_id?.github_id ? (
+              info?.github_id === getMyDetail?.data?.post.user_id ? (
                 <>
                   <button
                     className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
@@ -238,7 +237,7 @@ export interface ContentData {
   id: number;
   title: string;
   content: string;
-  user_id: number;
+  user_id: any;
   public_status: boolean;
   created_at: string;
   updated_at: string;
