@@ -162,7 +162,6 @@ const NewPost: NextPage = () => {
       title: doc.title.trim(),
       content: doc.content.trim(),
       user_id: userId,
-      category_id: 1,
       tags: doc.tags,
       files: imageArr,
     };

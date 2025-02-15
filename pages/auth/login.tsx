@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useSetRecoilState } from 'recoil';
 import LocalStorage from 'public/utils/Localstorage';
 import { axiosInstance } from '../../service/axios';
+import { userIdAtom } from '../../service/atoms/atoms';
+import Cookie from 'public/utils/Cookie';
 
 export default function LoginCallback() {
   const router = useRouter();
+  const setUserInfo = useSetRecoilState(userIdAtom);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -27,6 +31,17 @@ export default function LoginCallback() {
               'CVtoken',
               response.data.data.accessToken
             );
+            
+            // 리프레시 토큰 쿠키에 저장
+            if (response.data.data.refreshToken) {
+              Cookie.setItem('refreshToken', response.data.data.refreshToken, 7); // 7일 동안 유효
+            }
+
+            // 사용자 정보 저장
+            if (response.data.data.userInfo) {
+              setUserInfo(response.data.data.userInfo);
+            }
+
             // 메인 페이지로 리다이렉트
             router.push('/about');
           } else {
@@ -43,7 +58,7 @@ export default function LoginCallback() {
     if (router.isReady) {
       handleCallback();
     }
-  }, [router, router.isReady]);
+  }, [router, router.isReady, setUserInfo]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">

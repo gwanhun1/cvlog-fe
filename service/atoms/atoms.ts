@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
-import { UserInfo } from './type';
+import { UserInfoType } from './type';
 
 const { persistAtom } = recoilPersist({
   key: 'recoil-persist',
@@ -8,27 +8,37 @@ const { persistAtom } = recoilPersist({
 });
 
 export const authorityState = atom<boolean>({
-  key: 'authorityState',
+  key: 'cvlog_auth_state_v1',
   default: false,
 });
 
 export const refreshTokenAtom = atom<string>({
-  key: 'refreshToken',
+  key: 'cvlog_refresh_token_v1',
   default: '',
 });
 
 export const accessTokenAtom = atom<string>({
-  key: 'accessToken',
+  key: 'cvlog_access_token_v1',
   default: '',
 });
 
 export const listIndexAtom = atom<number>({
-  key: 'listIndex',
+  key: 'cvlog_list_index_v1',
   default: 999999,
 });
 
-export const userIdAtom = atom<{ id: number }>({
-  key: 'userId',
-  default: { id: 999999 },
+export const userIdAtom = atom<UserInfoType>({
+  key: 'cvlog_user_info_v1',
+  default: {
+    id: 0,
+    github_id: '',
+    name: '',
+    profile_image: '',
+    description: null,
+    refresh_token: '',
+    created_at: '',
+    updated_at: '',
+    deleted_at: null
+  },
   effects_UNSTABLE: [persistAtom],
 });
