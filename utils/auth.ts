@@ -2,6 +2,8 @@ import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import Sessionstorage from 'public/utils/Sessionstorage';
 import { signOut as apiSignOut } from '../service/api/login';
+import { userIdAtom } from '../service/atoms/atoms';
+import { useSetRecoilState } from 'recoil';
 
 export const handleSignOut = async (
   setAuthority?: (value: boolean) => void
@@ -18,6 +20,10 @@ export const handleSignOut = async (
     // 로컬 스토리지 및 세션 스토리지 클리어
     LocalStorage.removeItem('CVtoken');
     Sessionstorage.removeItem('recoil-persist');
+
+    // userIdAtom 초기화
+    const setUserId = useSetRecoilState(userIdAtom);
+    setUserId(null);
 
     // 권한 상태 업데이트 (있는 경우)
     if (setAuthority) {
