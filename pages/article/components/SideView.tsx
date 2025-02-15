@@ -4,7 +4,7 @@ import {
   Droppable,
   DropResult,
   DragDropContext,
-} from 'react-beautiful-dnd';
+} from '@hello-pangea/dnd';
 import * as Shared from 'components/Shared';
 import LogmeAddModal from 'components/Shared/LogmeAddModal';
 import LogmeRemoveModal from 'components/Shared/LogmeRemoveModal';
