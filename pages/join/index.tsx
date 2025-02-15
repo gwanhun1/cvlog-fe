@@ -35,22 +35,45 @@ export default Join;
 
 //ssr 소셜 로그인 애러 해결
 export const getServerSideProps: GetServerSideProps = async context => {
-  const { query } = context;
-  const { code } = query;
+  try {
+    const { query } = context;
+    const { code } = query;
 
-  const response = await axios.get(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login?code=${code}`,
-    {
-      withCredentials: true,
-      timeout: 5000, // 5초 타임아웃 설정
+    if (!code) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        },
+      };
     }
-  );
 
-  const info = response.data;
-  const setLocalCookie: string[] = response.headers['set-cookie'] as string[];
-  const cookie: string = setLocalCookie[0];
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login?code=${code}`,
+      {
+        withCredentials: true,
+        timeout: 5000,
+      }
+    );
 
-  return { props: { info, cookie } };
+    const info = response.data;
+    const setLocalCookie: string[] = response.headers['set-cookie'] as string[];
+    const cookie: string = setLocalCookie?.[0] || '';
+
+    if (!info || !cookie) {
+      throw new Error('Invalid response from server');
+    }
+
+    return { props: { info, cookie } };
+  } catch (error) {
+    console.error('Login error:', error);
+    return {
+      redirect: {
+        destination: '/?error=auth_failed',
+        permanent: false,
+      },
+    };
+  }
 };
 
 export interface Info {
