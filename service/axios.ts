@@ -9,7 +9,7 @@ import LocalStorage from 'public/utils/Localstorage';
 
 const API_URL: string =
   process.env.NODE_ENV === 'production'
-    ? 'https://[your-render-backend-url]' // Render 백엔드 URL로 교체
+    ? 'https://cvlog-be.onrender.com'
     : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 // 토큰 갱신 중인지 확인하는 플래그
