@@ -8,8 +8,10 @@ import LocalStorage from 'public/utils/Localstorage';
 import { authorityState } from 'service/atoms/atoms';
 import { useGetUserInfo } from 'service/hooks/Login';
 import { handleSignOut } from 'utils/auth';
+import { useRouter } from 'next/router';
 
 const MobileNav = () => {
+  const router = useRouter();
   const menu = ['About', 'Article', 'Resume', 'Github'];
   const [page, setPage] = useState(menu[0]);
 
@@ -27,7 +29,7 @@ const MobileNav = () => {
   }, [accessToken, cvRefreshToken]);
 
   const onClickLogout = async () => {
-    await handleSignOut(setAuthority);
+    await handleSignOut((value: string | null) => setAuthority(!!value));
   };
 
   return (

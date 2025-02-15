@@ -7,6 +7,12 @@ import { useQuery } from 'react-query';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 
+interface CodeProps {
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
+
 const Detail = () => {
   const {
     query: { pid },
@@ -30,26 +36,18 @@ const Detail = () => {
         rehypePlugins={[rehypeRaw]}
         remarkPlugins={[remarkGfm]}
         components={{
-          code({ inline, className, children, ...props }) {
+          code: ({ inline, className, children, ...props }: CodeProps) => {
             const match = /language-(\w+)/.exec(className || '');
             return !inline && match ? (
               <CopyBlock
-                language={match[1]}
                 text={String(children).replace(/\n$/, '')}
-                theme={dracula}
+                language={match[1]}
                 showLineNumbers={true}
-                wrapLines={true}
+                theme={dracula}
                 codeBlock
               />
             ) : (
-              <code
-                className={className}
-                style={{
-                  color: '#eb5757',
-                  padding: '2px 4px',
-                }}
-                {...props}
-              >
+              <code className={className} {...props}>
                 {children}
               </code>
             );

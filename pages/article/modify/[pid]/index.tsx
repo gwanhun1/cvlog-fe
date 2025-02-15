@@ -6,7 +6,7 @@ import { Badge } from 'flowbite-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { CopyBlock, dracula } from 'react-code-blocks';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
+import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import * as Shared from 'components/Shared';
@@ -20,6 +20,12 @@ import { cn } from 'styles/utils';
 import css from './new.module.scss';
 import { MDE_OPTION, MDE_OPTIONMOBILE } from 'src/constants/markdownOpts';
 import { languageArr } from 'src/constants/language';
+
+interface CodeProps {
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
@@ -360,37 +366,28 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
                     className=" w-[70vw] tablet:w-full desktop:pl-8 tablet:pl-5 max-h-[30vh] tablet:max-h-[35vh] desktop:max-h-[75vh] overflow-y-auto"
                   >
                     <ReactMarkdown
-                      className="contentMarkdown"
                       rehypePlugins={[rehypeRaw]}
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        code({ inline, className, children, ...props }) {
+                        code: ({ inline, className, children, ...props }: CodeProps) => {
                           const match = /language-(\w+)/.exec(className || '');
                           return !inline && match ? (
                             <CopyBlock
-                              language={checkLanguage(languageArr, match[1])}
                               text={String(children).replace(/\n$/, '')}
-                              theme={dracula}
+                              language={match[1]}
                               showLineNumbers={true}
-                              wrapLines={true}
+                              theme={dracula}
                               codeBlock
                             />
                           ) : (
-                            <code
-                              className={className}
-                              style={{
-                                color: '#eb5757',
-                                padding: '2px 4px',
-                              }}
-                              {...props}
-                            >
+                            <code className={className} {...props}>
                               {children}
                             </code>
                           );
                         },
                       }}
                     >
-                      {doc?.content}
+                      {doc.content}
                     </ReactMarkdown>
                   </div>
                 </div>

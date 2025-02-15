@@ -65,7 +65,7 @@ const NavPriofile = ({ setAuthority }: Props) => {
   }, []);
 
   const onClickLogout = async () => {
-    await handleSignOut(setAuthority);
+    await handleSignOut((value: string | null) => setAuthority(!!value));
   };
 
   if (!mounted) {
@@ -94,5 +94,5 @@ const NavPriofile = ({ setAuthority }: Props) => {
 export default NavPriofile;
 
 interface Props {
-  setAuthority: (value: boolean) => void;
+  setAuthority: Dispatch<SetStateAction<boolean>>;
 }

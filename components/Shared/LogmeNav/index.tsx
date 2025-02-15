@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Dispatch, SetStateAction } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
@@ -64,7 +64,7 @@ const DesktopNavActions = ({
   setAuthority,
 }: {
   isAuthenticated: boolean;
-  setAuthority: (value: boolean) => void;
+  setAuthority: Dispatch<SetStateAction<boolean>>;
 }) => {
   if (isAuthenticated) {
     return (
@@ -112,7 +112,7 @@ const Nav = () => {
     (typeof MENU_ITEMS)[number]['name']
   >(MENU_ITEMS[0].name);
 
-  const [, setAuthority] = useState(false);
+  const [authority, setAuthority] = useState<boolean>(false);
   const router = useRouter();
 
   const [, setAccessToken] = useRecoilState(accessTokenAtom);
