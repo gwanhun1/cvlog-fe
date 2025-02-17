@@ -41,7 +41,7 @@ const Text = (props: TextProps) => {
     return createElement(
       variant,
       { className: cn(variant, className) },
-      children
+      children,
     );
   }
 

@@ -6,7 +6,7 @@ import { userIdAtom } from '../service/atoms/atoms';
 import { UserInfoType } from '../service/atoms/type';
 
 export const handleSignOut = async (
-  setAuthority?: (authority: string | null) => void
+  setAuthority?: (authority: string | null) => void,
 ) => {
   if (window.confirm('로그아웃 하십니까?')) {
     await apiSignOut();

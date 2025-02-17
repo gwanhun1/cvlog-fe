@@ -17,7 +17,7 @@ export default function LoginCallback() {
 
         if (code) {
           let retryCount = 0;
-          const maxRetries = 3;  // 최대 3번 시도
+          const maxRetries = 3; // 최대 3번 시도
 
           while (retryCount < maxRetries) {
             try {
@@ -26,10 +26,17 @@ export default function LoginCallback() {
               });
 
               if (response.data?.data?.accessToken) {
-                await LocalStorage.setItem('CVtoken', response.data.data.accessToken);
-                
+                await LocalStorage.setItem(
+                  'CVtoken',
+                  response.data.data.accessToken,
+                );
+
                 if (response.data.data.refreshToken) {
-                  Cookie.setItem('refreshToken', response.data.data.refreshToken, 7);
+                  Cookie.setItem(
+                    'refreshToken',
+                    response.data.data.refreshToken,
+                    7,
+                  );
                 }
 
                 if (response.data.data.userInfo) {
@@ -37,24 +44,26 @@ export default function LoginCallback() {
                 }
 
                 router.push('/about');
-                return;  // 성공하면 즉시 종료
+                return; // 성공하면 즉시 종료
               }
             } catch (err) {
               retryCount++;
               if (retryCount < maxRetries) {
                 // 재시도 전 잠시 대기 (시간을 점점 늘림)
-                await new Promise(resolve => setTimeout(resolve, retryCount * 1500));
+                await new Promise(resolve =>
+                  setTimeout(resolve, retryCount * 1500),
+                );
                 continue;
               }
             }
           }
-          
+
           // 모든 재시도 실패 후 조용히 메인으로 리다이렉트
           router.push('/');
         }
       } catch (error) {
         console.error('Login error:', error);
-        router.push('/');  // 에러 파라미터 없이 리다이렉트
+        router.push('/'); // 에러 파라미터 없이 리다이렉트
       }
     };
 

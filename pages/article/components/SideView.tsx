@@ -42,12 +42,12 @@ const SideMenu = () => {
     if (!result.destination) return;
 
     const sourceFolder = queryGetTagsFolders.data?.find(
-      folder => folder.id.toString() === source.droppableId
+      folder => folder.id.toString() === source.droppableId,
     );
 
     const destinationFolder = queryGetTagsFolders.data?.find(
       folder =>
-        folder.id.toString() === (destination && destination.droppableId)
+        folder.id.toString() === (destination && destination.droppableId),
     );
 
     const setForm: UpdateForm = {

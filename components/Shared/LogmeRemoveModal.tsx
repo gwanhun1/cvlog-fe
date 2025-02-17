@@ -39,7 +39,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
 
     return queryGetTagsFolders.data.filter(
       (folder): folder is Folder =>
-        Array.isArray(folder.tags) && folder.tags.length === 0
+        Array.isArray(folder.tags) && folder.tags.length === 0,
     );
   };
 

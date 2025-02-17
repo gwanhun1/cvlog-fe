@@ -76,7 +76,7 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
       const { name, value } = e.target;
       setDoc({ ...doc, [name as keyof DocType]: value });
     },
-    [doc]
+    [doc],
   );
 
   const handleOnChange = useCallback(
@@ -89,7 +89,7 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
         setDoc({ ...doc, content: value });
       }
     },
-    [doc]
+    [doc],
   );
 
   const checkLanguage = (arr: string[], val: string) => {
@@ -157,7 +157,7 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/upload`,
         formData,
-        config
+        config,
       );
       const imageUrl = data.data.url;
       const imageName = data.data.name;
@@ -345,7 +345,7 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
                 className={cn(
                   css.mde,
                   `${isVisiblePreview ? 'tablet:w-1/2' : 'tablet:w-full'}`,
-                  'w-full'
+                  'w-full',
                 )}
               >
                 <SimpleMDE
@@ -369,7 +369,12 @@ const ModifyPost = ({ pid }: ModifyPostType) => {
                       rehypePlugins={[rehypeRaw]}
                       remarkPlugins={[remarkGfm]}
                       components={{
-                        code: ({ inline, className, children, ...props }: CodeProps) => {
+                        code: ({
+                          inline,
+                          className,
+                          children,
+                          ...props
+                        }: CodeProps) => {
                           const match = /language-(\w+)/.exec(className || '');
                           return !inline && match ? (
                             <CopyBlock

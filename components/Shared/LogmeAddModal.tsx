@@ -33,7 +33,7 @@ const CVModal = (props: {
           onError: () => {
             alert('중복된 폴더 이름이거나, 폴더 생성에 실패했습니다.');
           },
-        }
+        },
       );
     } finally {
       setIsLoading(false);

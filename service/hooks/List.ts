@@ -62,7 +62,7 @@ export const useCreateFolders = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };
 
@@ -81,7 +81,7 @@ export const useRemoveFolders = (params: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };
 
@@ -98,6 +98,6 @@ export const usePutTagsFolder = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };

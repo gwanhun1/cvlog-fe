@@ -205,6 +205,7 @@ const NewPost: NextPage = () => {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typeof window !== 'undefined' && window.innerWidth]);
 
   return (
@@ -340,7 +341,12 @@ const NewPost: NextPage = () => {
                   rehypePlugins={[rehypeRaw]}
                   remarkPlugins={[remarkGfm]}
                   components={{
-                    code: ({ inline, className, children, ...props }: CodeProps) => {
+                    code: ({
+                      inline,
+                      className,
+                      children,
+                      ...props
+                    }: CodeProps) => {
                       const match = /language-(\w+)/.exec(className || '');
                       return !inline && match ? (
                         <CopyBlock

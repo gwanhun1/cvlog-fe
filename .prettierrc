@@ -2,5 +2,19 @@
   "tabWidth": 2,
   "endOfLine": "lf",
   "arrowParens": "avoid",
-  "singleQuote": true
+  "singleQuote": true,
+  "importOrder": [
+    "^react$",
+    "^next/(.*)$",
+    "^@next/(.*)$",
+    "^[a-zA-Z](.*)$",
+    "^@/(.*)$",
+    "^components/(.*)$",
+    "^service/(.*)$",
+    "^public/(.*)$",
+    "^src/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }
