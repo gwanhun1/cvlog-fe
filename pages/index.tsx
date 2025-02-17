@@ -39,6 +39,13 @@ const ButtonGroup = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
+
+    if (!sessionStorage.getItem('cleared')) {
+      localStorage.clear();
+      sessionStorage.clear();
+      sessionStorage.setItem('cleared', 'true');
+    }
+
     if (error === 'auth_failed') {
       alert('잠시 후 다시 로그인 해주세요.');
     }
@@ -47,7 +54,7 @@ const ButtonGroup = () => {
   useEffect(() => {
     setMounted(true);
     token && setAccessToken(token);
-  }, []);
+  }, [token]);
 
   if (!mounted) return null;
 
