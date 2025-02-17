@@ -3,7 +3,7 @@ import { Avatar, Dropdown } from 'flowbite-react';
 import dynamic from 'next/dynamic';
 import { useGetUserInfo } from 'service/hooks/Login';
 import { handleSignOut } from 'utils/auth';
-import Loader from '../Loader';
+import Loader from '../common/Loader';
 
 // 클라이언트 사이드에서만 렌더링되는 드롭다운 컴포넌트
 const ClientDropdown = dynamic(
@@ -53,7 +53,7 @@ const ClientDropdown = dynamic(
         </Dropdown.Item>
       </Dropdown>
     )),
-  { ssr: false },
+  { ssr: false }
 );
 
 const NavPriofile = ({ setAuthority }: Props) => {

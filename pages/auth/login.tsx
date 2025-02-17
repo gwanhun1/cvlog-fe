@@ -28,14 +28,14 @@ export default function LoginCallback() {
               if (response.data?.data?.accessToken) {
                 await LocalStorage.setItem(
                   'CVtoken',
-                  response.data.data.accessToken,
+                  response.data.data.accessToken
                 );
 
                 if (response.data.data.refreshToken) {
                   Cookie.setItem(
                     'refreshToken',
                     response.data.data.refreshToken,
-                    7,
+                    7
                   );
                 }
 
@@ -51,7 +51,7 @@ export default function LoginCallback() {
               if (retryCount < maxRetries) {
                 // 재시도 전 잠시 대기 (시간을 점점 늘림)
                 await new Promise(resolve =>
-                  setTimeout(resolve, retryCount * 1500),
+                  setTimeout(resolve, retryCount * 1500)
                 );
                 continue;
               }

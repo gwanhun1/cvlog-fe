@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import Loader from 'components/Shared/Loader';
+import Loader from 'components/Shared/common/Loader';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 axios.defaults.withCredentials = true;
@@ -12,7 +12,7 @@ const Join = ({ info, cookie }: JoinProps) => {
 
   //쿠키 분해
   const cookies = Object.fromEntries(
-    cookie.split(';').map((cookie: string) => cookie.trim().split('=')),
+    cookie.split(';').map((cookie: string) => cookie.trim().split('='))
   );
 
   //localstorge,쿠키 저장
@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
       {
         withCredentials: true,
         timeout: 5000,
-      },
+      }
     );
 
     const info = response.data;

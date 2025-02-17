@@ -1,65 +1,42 @@
 import { useEffect, useState } from 'react';
 import type { NextPage } from 'next';
 import axios from 'axios';
-import * as Shared from 'components/Shared';
-import LocalStorage from 'public/utils/Localstorage';
-import Introduce from './components/introduce';
+import Introduce from '../../components/pages/about/introduce';
+import Header from '../../components/pages/about/Header';
+import Footer from '../../components/pages/about/Footer';
 
 const About: NextPage = () => {
-  const [aboutData, setAboutData] = useState<IntroduceInterface[]>();
-  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const [aboutData, setAboutData] = useState<IntroduceData[]>();
 
   useEffect(() => {
-    const response = axios
-      .get('/mockData/aboutMockData.json')
-      .then(res => setAboutData(res.data.data));
+    const fetchAboutData = async () => {
+      try {
+        const response = await axios.get('/mockData/aboutMockData.json');
+        setAboutData(response.data.data);
+      } catch (error) {
+        console.error('Failed to fetch about data:', error);
+      }
+    };
+
+    fetchAboutData();
   }, []);
 
   return (
-    <section className=" flex flex-col items-center justify-center">
-      <article className="flex flex-col items-center justify-center w-full p-8 text-center ">
-        <h1 className="mb-1 text-2xl tablet:mb-5 tablet:text-4xl text-ftBlue font-jost-medium">
-          Write. Preview. Publish. Repeat.
-        </h1>
-        <div className="text-xs text-gray-400 tablet:text-sm  tablet:px-0  flex justify-center flex-col">
-          <p>The Ultimate Developer Blogging Platform powered by Markdown.</p>
-          <div className="hidden tablet:block">
-            <p>Experience the New world of Markdown.</p>
-          </div>
-          <div className="justify-center flex">
-            <Shared.LogmeIcon.SymbolLogoIcon
-              alt="logo"
-              width={300}
-              height={160}
-            />
-          </div>
-        </div>
-      </article>
+    <section className="flex flex-col items-center justify-center">
+      <Header />
       <div className="bg-white rounded-xl">
-        {aboutData &&
-          aboutData.map((element: IntroduceInterface) => (
-            <Introduce key={element.id} Element={element} />
-          ))}
+        {aboutData?.map((element: IntroduceData) => (
+          <Introduce key={element.id} Element={element} />
+        ))}
       </div>
-      <section className="w-full pt-4 pb-2 md:pb-20 ">
-        <div className="flex flex-col items-center justify-center w-full">
-          <h2 className="p-3 my-10 text-sm font-light text-center text-gray-400 md:text-lg">
-            You are now all ready.
-            <p>Let&lsquo;s go for try.</p>
-          </h2>
-        </div>
-      </section>
+      <Footer />
     </section>
   );
 };
 
 export default About;
 
-export interface IntroduceType {
-  Element: IntroduceInterface;
-}
-
-export interface IntroduceInterface {
+export interface IntroduceData {
   id: number;
   src: string;
   title: string;

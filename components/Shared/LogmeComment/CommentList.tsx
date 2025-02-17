@@ -1,5 +1,4 @@
 import React from 'react';
-import LocalStorage from 'public/utils/Localstorage';
 import { useGetCommentList } from 'service/hooks/Comment';
 import Comment from './Comment';
 

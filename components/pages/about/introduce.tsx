@@ -1,6 +1,6 @@
-import { IntroduceInterface } from '..';
+import React from 'react';
 
-const Introduce = ({ Element }: { Element: IntroduceInterface }) => {
+const Introduce = ({ Element }: { Element: IntroduceData }) => {
   return (
     <>
       {Element && (
@@ -52,3 +52,15 @@ const Introduce = ({ Element }: { Element: IntroduceInterface }) => {
 };
 
 export default Introduce;
+
+export interface IntroduceProps {
+  Element: IntroduceData;
+}
+
+export interface IntroduceData {
+  id: number;
+  src: string;
+  title: string;
+  message: string;
+  messageBr: string;
+}

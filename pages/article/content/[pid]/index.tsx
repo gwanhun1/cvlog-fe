@@ -7,12 +7,11 @@ import CommentBox from 'components/Shared/LogmeComment';
 import { useGetCommentList } from 'service/hooks/Comment';
 import {
   DeleteDetail,
-  useGetDetail,
   useGetMyDetail,
   usePatchDetail,
 } from 'service/hooks/Detail';
-import Content from './content';
-import Profile from './Profile';
+import Content from '../../../../components/pages/article/content/my/Content';
+import Profile from '../../../../components/pages/article/content/my/Profile';
 import { Badge } from 'flowbite-react';
 import { useGetUserInfo } from 'service/hooks/Login';
 
@@ -81,6 +80,7 @@ const Detail = ({ pid }: { pid: string }) => {
   useEffect(() => {
     getMyDetail.refetch();
     commentList.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pid]);
 
   return (

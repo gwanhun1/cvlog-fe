@@ -2,37 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pagination } from 'flowbite-react';
 import LogmeAllCard, { TagItem } from 'components/Shared/LogmeAllCard';
 import { useGetPublicList } from 'service/hooks/List';
-
-const CardSkeleton = () => (
-  <div className="w-[290px]">
-    <div className="rounded-lg h-[280px] w-full bg-white shadow-md border border-gray-100 overflow-hidden">
-      {/* Image Skeleton */}
-      <div className="h-32 w-full bg-gray-200 animate-pulse" />
-
-      {/* Content Skeleton */}
-      <div className="p-4 flex flex-col h-[calc(280px-128px)]">
-        {/* Title Skeleton */}
-        <div className="h-6 bg-gray-200 rounded w-3/4 mb-2 animate-pulse" />
-
-        {/* Content Skeleton */}
-        <div className="space-y-2 mb-3">
-          <div className="h-4 bg-gray-200 rounded w-full animate-pulse" />
-          <div className="h-4 bg-gray-200 rounded w-5/6 animate-pulse" />
-        </div>
-
-        {/* Tags Skeleton */}
-        <div className="mt-auto">
-          <div className="flex gap-1.5 mb-2">
-            <div className="h-5 w-16 bg-gray-200 rounded-full animate-pulse" />
-            <div className="h-5 w-16 bg-gray-200 rounded-full animate-pulse" />
-          </div>
-          {/* Time Skeleton */}
-          <div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />
-        </div>
-      </div>
-    </div>
-  </div>
-);
+import CardSkeleton from './Skeleton';
 
 const AllView = () => {
   const [page, setPage] = useState<number>(1);
@@ -89,7 +59,7 @@ const AllView = () => {
                     updated_at={post.updated_at}
                   />
                 </div>
-              ),
+              )
             )
           ) : (
             <div className="w-full flex justify-center items-center h-40 text-xl font-bold text-gray-400">

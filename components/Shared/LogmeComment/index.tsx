@@ -1,9 +1,9 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import CommentLayout from 'components/Layout/commentLayout';
 import { useGetCommentList } from 'service/hooks/Comment';
 import CommentItem from './Comment';
 import CommentWrite from './CommentWrite';
+import CommentLayout from './CommentLayout';
 
 const CommentBox = ({ pid }: { pid: string }) => {
   const commentList = useGetCommentList(parseInt(pid));
