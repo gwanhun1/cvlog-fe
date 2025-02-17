@@ -28,7 +28,7 @@ const ReComment = ({
       onError: ({ message }) => {
         console.log(message);
       },
-    }
+    },
   );
 
   //수정 기능
@@ -47,7 +47,7 @@ const ReComment = ({
       onError: ({ message }) => {
         console.log(message);
       },
-    }
+    },
   );
 
   return (
@@ -98,7 +98,7 @@ const ReComment = ({
               </main>
             </div>
           </CommentLayout>
-        )
+        ),
       )}
     </>
   );

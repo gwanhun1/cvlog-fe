@@ -18,6 +18,6 @@ export const useCreatePost = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };

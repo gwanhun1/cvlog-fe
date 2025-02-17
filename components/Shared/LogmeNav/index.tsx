@@ -137,7 +137,7 @@ const Nav = () => {
   useEffect(() => {
     const currentPath = router.asPath;
     const matchedMenu = MENU_ITEMS.find(item =>
-      currentPath.includes(item.name.toLowerCase())
+      currentPath.includes(item.name.toLowerCase()),
     );
     if (matchedMenu) {
       setCurrentPage(matchedMenu.name);

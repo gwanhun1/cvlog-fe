@@ -19,7 +19,7 @@ const Detail = () => {
   } = useRouter();
   const { data: mockData, isLoading } = useQuery('detail', async () => {
     const res = await axios(
-      'https://raw.githubusercontent.com/mxstbr/markdown-test-file/master/TEST.md'
+      'https://raw.githubusercontent.com/mxstbr/markdown-test-file/master/TEST.md',
     );
     return res;
   });

@@ -25,7 +25,7 @@ export const usePostNewComment = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };
 
@@ -47,7 +47,7 @@ export const useModifyComment = (params: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };
 
@@ -69,7 +69,7 @@ export const useDeleteComment = (params: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };
 

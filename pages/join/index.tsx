@@ -12,7 +12,7 @@ const Join = ({ info, cookie }: JoinProps) => {
 
   //쿠키 분해
   const cookies = Object.fromEntries(
-    cookie.split(';').map((cookie: string) => cookie.trim().split('='))
+    cookie.split(';').map((cookie: string) => cookie.trim().split('=')),
   );
 
   //localstorge,쿠키 저장
@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
       {
         withCredentials: true,
         timeout: 5000,
-      }
+      },
     );
 
     const info = response.data;

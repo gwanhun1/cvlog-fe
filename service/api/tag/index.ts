@@ -29,11 +29,11 @@ export const fetchGetTagsFolders = async () => {
 };
 
 export const fetchCreateTagsFolders = async (
-  params: CreateTagsFolderReq
+  params: CreateTagsFolderReq,
 ): Promise<CreateTagsFolderRes> => {
   const { data } = await axios.post<CreateTagsFolderRes>(
     '/tag_folders',
-    params
+    params,
   );
   return data;
 };
@@ -45,7 +45,7 @@ export const fetchRemoveTagsFolders = async (params: number) => {
 
 export const putTagsFolders = async (params: UpdateForm) => {
   const { data } = await axios.put<PutTagsFolderRes>(
-    `/tags/${params.tag_id}/${params.folder_id}`
+    `/tags/${params.tag_id}/${params.folder_id}`,
   );
   return data;
 };

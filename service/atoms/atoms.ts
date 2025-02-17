@@ -38,7 +38,7 @@ export const userIdAtom = atom<UserInfoType>({
     refresh_token: '',
     created_at: '',
     updated_at: '',
-    deleted_at: null
+    deleted_at: null,
   },
   effects_UNSTABLE: [persistAtom],
 });

@@ -53,7 +53,7 @@ const ClientDropdown = dynamic(
         </Dropdown.Item>
       </Dropdown>
     )),
-  { ssr: false }
+  { ssr: false },
 );
 
 const NavPriofile = ({ setAuthority }: Props) => {

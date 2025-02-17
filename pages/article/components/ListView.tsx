@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pagination, Spinner } from 'flowbite-react';
+import { Pagination } from 'flowbite-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
@@ -50,7 +50,8 @@ const ListView = () => {
   const router = useRouter();
   useEffect(() => {
     List.refetch();
-  }, [page]);
+  }, [List, page]);
+
   const [, setListIndex] = useRecoilState(listIndexAtom);
   const saveListIndex = (params: number) => {
     setListIndex(params);

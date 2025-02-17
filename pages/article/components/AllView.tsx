@@ -89,7 +89,7 @@ const AllView = () => {
                     updated_at={post.updated_at}
                   />
                 </div>
-              )
+              ),
             )
           ) : (
             <div className="w-full flex justify-center items-center h-40 text-xl font-bold text-gray-400">
