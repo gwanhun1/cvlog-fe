@@ -2,20 +2,18 @@ import React from 'react';
 import axios from 'axios';
 import { Avatar } from 'flowbite-react';
 import { useMutation } from 'react-query';
-import CommentLayout from 'components/Layout/commentLayout';
+import CommentLayout from 'components/Shared/LogmeComment/CommentLayout';
+import LocalStorage from 'public/utils/Localstorage';
 
-const ReComment = ({
-  id,
-  recomment,
-}: {
-  id: number;
-  recomment: RecommentType;
-}) => {
-  const token = 'dsfdsfsdf';
+const ReComment = ({ recomment }: { recomment: RecommentType }) => {
+  const accessToken = LocalStorage.getItem('CVtoken') as string;
+
   //삭제 기능
   const deleteComment = useMutation(
     (id: number) => {
-      return axios.delete(`api/${id}`, { data: { Authorization: token } });
+      return axios.delete(`api/${id}`, {
+        data: { Authorization: accessToken },
+      });
     },
     {
       onSuccess: () => {
@@ -28,13 +26,13 @@ const ReComment = ({
       onError: ({ message }) => {
         console.log(message);
       },
-    },
+    }
   );
 
   //수정 기능
   const updateComment = useMutation(
     (id: number) => {
-      return axios.put(`api/${id}`, { data: { Authorization: token } });
+      return axios.put(`api/${id}`, { data: { Authorization: accessToken } });
     },
     {
       onSuccess: () => {
@@ -47,7 +45,7 @@ const ReComment = ({
       onError: ({ message }) => {
         console.log(message);
       },
-    },
+    }
   );
 
   return (
@@ -98,7 +96,7 @@ const ReComment = ({
               </main>
             </div>
           </CommentLayout>
-        ),
+        )
       )}
     </>
   );

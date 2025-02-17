@@ -2,7 +2,7 @@ import React, { useState, KeyboardEvent, useRef } from 'react';
 import { Button, Label } from 'flowbite-react';
 import { Modal } from 'flowbite-react';
 import { useQueryClient } from 'react-query';
-import { useCreateFolders, useGetFolders } from 'service/hooks/List';
+import { useCreateFolders } from 'service/hooks/List';
 
 const CVModal = (props: {
   showModal: boolean;
@@ -12,7 +12,6 @@ const CVModal = (props: {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
-  const queryGetTagsFolders = useGetFolders();
   const mutationCreateTagsFolders = useCreateFolders();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,7 +32,7 @@ const CVModal = (props: {
           onError: () => {
             alert('중복된 폴더 이름이거나, 폴더 생성에 실패했습니다.');
           },
-        },
+        }
       );
     } finally {
       setIsLoading(false);

@@ -1,9 +1,9 @@
 import React from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import AllView from './components/AllView';
-import ListView from './components/ListView';
-import SideView from './components/SideView';
+import AllView from '../../components/pages/article/allView/AllView';
+import ListView from '../../components/pages/article/listView/ListView';
+import SideView from '../../components/pages/article/sideView/SideView';
 import LocalStorage from 'public/utils/Localstorage';
 
 const Article: NextPage = () => {
