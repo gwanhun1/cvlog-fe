@@ -44,6 +44,7 @@ const addRefreshSubscriber = (callback: (token: string) => void): void => {
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  timeout: 10000, // 10초로 타임아웃 설정
   headers: {
     'Content-Type': 'application/json',
   },
@@ -146,6 +147,24 @@ axiosInstance.interceptors.response.use(
 
         return Promise.reject(refreshError);
       }
+    }
+
+    // 재시도 로직 추가
+    const config = error.config as CustomAxiosRequestConfig;
+    
+    // 재시도 횟수 초기화
+    if (config._retryCount === undefined) {
+      config._retryCount = 0;
+    }
+
+    // 최대 2번까지 재시도
+    if (config._retryCount < 2 && (error.response?.status === 500 || error.code === 'ECONNABORTED')) {
+      config._retryCount += 1;
+      
+      // 재시도 전 1초 대기
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      return axiosInstance(config);
     }
 
     return Promise.reject(error);

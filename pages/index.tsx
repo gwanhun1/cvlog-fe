@@ -37,6 +37,14 @@ const ButtonGroup = () => {
   const token = LocalStorage.getItem('CVtoken');
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    if (error === 'auth_failed') {
+      alert('잠시 후 다시 로그인 해주세요.');
+    }
+  }, []);
+
+  useEffect(() => {
     setMounted(true);
     token && setAccessToken(token);
   }, []);
