@@ -55,28 +55,7 @@ const CVModal = (props: {
       className="dark:bg-gray-900"
     >
       <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl">
-        <Modal.Header className="px-6 pt-6 pb-0 border-b-0">
-          <button
-            type="button"
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-            onClick={() => setShowModal(false)}
-          >
-            <span className="sr-only">Close</span>
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
-        </Modal.Header>
+        <Modal.Header className="p-4 pb-0 border-b-0" />
         <Modal.Body className="px-6 py-4">
           <div className="space-y-8">
             <div className="text-center">

@@ -1,4 +1,4 @@
-import { useCallback, useState, memo } from 'react';
+import { useCallback, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -6,26 +6,48 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndEvent
+  DragEndEvent,
+  DragStartEvent,
+  DragOverlay,
 } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { useQuery, useQueryClient } from 'react-query';
+import {
+  Folder,
+  PutTagsFolderRes,
+  Tag,
+  UpdateForm,
+} from 'service/api/tag/type';
+import { useGetFolders, usePutTagsFolder } from 'service/hooks/List';
+import { tagsAPI } from 'service/api/tag';
 import LogmeAddModal from 'components/Shared/LogmeTag/LogmeAddModal';
 import LogmeRemoveModal from 'components/Shared/LogmeTag/LogmeRemoveModal';
-import { Folder, UpdateForm } from 'service/api/tag/type';
-import { useGetFolders, usePutTagsFolder } from 'service/hooks/List';
-import FolderItem from './FolderItem';
-import TagItem from './TagItem';
 import SideViewHeader from './SideViewHeader';
 import EmptyState from './EmptyState';
+import NamedFolderList from './NamedFolderList';
+import DefaultFolderList from './DefaultFolderList';
+import UnassignedTagList from './UnassignedTagList';
+import DragOverlayItem from './DragOverlayItem';
+
+interface ActiveTag {
+  tag: Tag;
+  folderId: number;
+}
 
 const SideMenu = () => {
   const queryGetTagsFolders = useGetFolders();
+  const queryGetUnassignedTags = useQuery(
+    'unassignedTags',
+    tagsAPI.getWithoutFolder
+  );
   const mutationUpdateTagsFolders = usePutTagsFolder();
+  const queryClient = useQueryClient();
 
   const [closedIdx, setClosedIdx] = useState<number[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectModal, setSelectModal] = useState<string>('');
+  const [activeTag, setActiveTag] = useState<ActiveTag | null>(null);
+  const [draggedTagName, setDraggedTagName] = useState('');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -36,8 +58,10 @@ const SideMenu = () => {
     useSensor(KeyboardSensor)
   );
 
-  const namedFolder = queryGetTagsFolders.data?.filter(item => item.name !== '') ?? [];
-  const defaultFolder = queryGetTagsFolders.data?.filter(item => item.name === '') ?? [];
+  const namedFolder =
+    queryGetTagsFolders.data?.filter(item => item.name !== '') ?? [];
+  const defaultFolder =
+    queryGetTagsFolders.data?.filter(item => item.name === '') ?? [];
 
   const onClickAccordion = useCallback(
     (id: number) => (e: React.MouseEvent<HTMLDivElement>) => {
@@ -50,25 +74,117 @@ const SideMenu = () => {
     []
   );
 
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      const { active } = event;
+      const [folderId, tagId] = String(active.id).split('-');
+
+      let tag: Tag | undefined;
+
+      if (folderId === 'unassigned') {
+        tag = queryGetUnassignedTags.data?.data?.find(
+          (t: { id: number }) => t.id === Number(tagId)
+        );
+      } else {
+        const folder = queryGetTagsFolders.data?.find(
+          f => f.id === Number(folderId)
+        );
+        tag = folder?.tags.find(t => t.id === Number(tagId));
+      }
+
+      if (tag) {
+        setActiveTag({
+          tag,
+          folderId: folderId === 'unassigned' ? 0 : Number(folderId),
+        });
+        setDraggedTagName(tag.name);
+      }
+    },
+    [queryGetTagsFolders.data, queryGetUnassignedTags.data]
+  );
+
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
+      setActiveTag(null);
+      setDraggedTagName('');
       const { active, over } = event;
-      if (!over || active.id === over.id) return;
+      if (!over) return;
 
       const activeId = String(active.id);
       const overId = String(over.id);
-      
+
+      // 소스 폴더와 태그 ID 추출
       const [sourceFolderId, sourceTagId] = activeId.split('-');
-      const [destinationFolderId] = overId.split('-');
+      const tagId = Number(sourceTagId);
 
-      const setForm: UpdateForm = {
-        tag_id: Number(sourceTagId),
-        folder_id: Number(destinationFolderId),
-      };
+      // 이전 폴더 ID 계산
+      const oldFolderId =
+        sourceFolderId === 'unassigned' ? 0 : Number(sourceFolderId);
 
-      mutationUpdateTagsFolders.mutate(setForm);
+      // 새 폴더 ID 계산
+      const newFolderId = overId === '0' ? 0 : Number(overId);
+
+      // 동일한 폴더로 이동하는 경우 무시
+      if (oldFolderId === newFolderId) return;
+
+      // 낙관적 업데이트
+      mutationUpdateTagsFolders.mutate(
+        { tag_id: tagId, folder_id: newFolderId },
+        {
+          onSuccess: (
+            data: PutTagsFolderRes,
+            variables: UpdateForm,
+            context: { previousData?: Folder[] } | undefined
+          ) => {
+            // 낙관적으로 데이터 업데이트
+            queryClient.setQueryData(
+              ['folders'],
+              (old: Folder[] | undefined) => {
+                if (!old) return [];
+
+                return old.map(folder => {
+                  // 이전 폴더에서 태그 제거
+                  if (folder.id === oldFolderId) {
+                    return {
+                      ...folder,
+                      tags: folder.tags.filter(t => t.id !== variables.tag_id),
+                    };
+                  }
+                  // 새 폴더에 태그 추가
+                  if (folder.id === variables.folder_id) {
+                    const movingTag = context?.previousData
+                      ?.find(f => f.id === oldFolderId)
+                      ?.tags.find(t => t.id === variables.tag_id);
+
+                    if (movingTag) {
+                      return {
+                        ...folder,
+                        tags: [...folder.tags, movingTag],
+                      };
+                    }
+                  }
+                  return folder;
+                });
+              }
+            );
+
+            // 쿼리 무효화
+            queryClient.invalidateQueries('unassignedTags');
+            queryClient.invalidateQueries('folders');
+          },
+          onError: (context: unknown) => {
+            const ctx = context as { previousData?: Folder[] } | undefined;
+            // 에러 발생 시 이전 데이터로 롤백
+            if (ctx?.previousData) {
+              queryClient.setQueryData(['folders'], ctx.previousData);
+            }
+            queryClient.invalidateQueries('unassignedTags');
+            queryClient.invalidateQueries('folders');
+          },
+        }
+      );
     },
-    [mutationUpdateTagsFolders]
+    [mutationUpdateTagsFolders, queryGetTagsFolders, queryClient]
   );
 
   const tryOpenModal = useCallback((name: string) => {
@@ -76,7 +192,7 @@ const SideMenu = () => {
     setShowModal(true);
   }, []);
 
-  if (queryGetTagsFolders.isLoading) {
+  if (queryGetTagsFolders.isLoading || queryGetUnassignedTags.isLoading) {
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
@@ -92,7 +208,7 @@ const SideMenu = () => {
     );
   }
 
-  if (queryGetTagsFolders.isError) {
+  if (queryGetTagsFolders.isError || queryGetUnassignedTags.isError) {
     return (
       <div className="text-center py-12">
         <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-50 flex items-center justify-center">
@@ -110,10 +226,10 @@ const SideMenu = () => {
             />
           </svg>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-sm font-semibold text-gray-900 mb-2">
           데이터를 불러올 수 없습니다
         </h3>
-        <p className="text-gray-500 mb-6">잠시 후 다시 시도해주세요</p>
+        <p className="text-gray-500 mb-6 text-sm">잠시 후 다시 시도해주세요</p>
         <button
           onClick={() => queryGetTagsFolders.refetch()}
           className="inline-flex items-center px-4 py-2 bg-white border border-red-200 rounded-xl text-red-600 hover:bg-red-50 transition-colors duration-300"
@@ -137,7 +253,10 @@ const SideMenu = () => {
     );
   }
 
-  const hasContent = namedFolder.length > 0 || defaultFolder.length > 0;
+  const hasContent =
+    namedFolder.length > 0 ||
+    defaultFolder.length > 0 ||
+    (queryGetUnassignedTags.data?.data?.length ?? 0) > 0;
 
   return (
     <>
@@ -148,7 +267,7 @@ const SideMenu = () => {
         <LogmeRemoveModal showModal={showModal} setShowModal={setShowModal} />
       )}
 
-      <div className="sticky top-24 w-full max-w-[240px] bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+      <div className="sticky top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <SideViewHeader
           hasContent={hasContent}
           onAddClick={() => tryOpenModal('add')}
@@ -162,58 +281,32 @@ const SideMenu = () => {
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
               modifiers={[restrictToVerticalAxis]}
             >
               <div className="space-y-4">
-                {namedFolder.map((folder: Folder) => {
-                  const isOpened = closedIdx.includes(folder.id);
-                  return (
-                    <div key={folder.id} className="mb-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
-                      <FolderItem
-                        folder={folder}
-                        isOpened={isOpened}
-                        onClickAccordion={onClickAccordion}
-                      />
-                      <div
-                        className={`overflow-hidden transition-all duration-300 ${
-                          isOpened ? 'max-h-0' : 'max-h-[500px]'
-                        }`}
-                      >
-                        <SortableContext
-                          items={folder.tags.map(tag => `${folder.id}-${tag.id}`)}
-                          strategy={verticalListSortingStrategy}
-                        >
-                          {folder.tags.map((tag, index) => (
-                            <TagItem
-                              key={`${folder.id}-${tag.id}`}
-                              tag={tag}
-                              index={index}
-                              folderId={folder.id}
-                            />
-                          ))}
-                        </SortableContext>
-                      </div>
-                    </div>
-                  );
-                })}
-                {defaultFolder.map(folder => (
-                  <SortableContext
-                    key={folder.id}
-                    items={folder.tags.map(tag => `${folder.id}-${tag.id}`)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {folder.tags.map((tag, index) => (
-                      <TagItem
-                        key={`${folder.id}-${tag.id}`}
-                        tag={tag}
-                        index={index}
-                        folderId={folder.id}
-                      />
-                    ))}
-                  </SortableContext>
-                ))}
+                <NamedFolderList
+                  folders={namedFolder}
+                  draggedTagName={draggedTagName}
+                  closedIdx={closedIdx}
+                  onClickAccordion={onClickAccordion}
+                />
+
+                <DefaultFolderList
+                  folders={defaultFolder}
+                  draggedTagName={draggedTagName}
+                />
+
+                <UnassignedTagList
+                  tags={queryGetUnassignedTags.data?.data ?? []}
+                  draggedTagName={draggedTagName}
+                />
               </div>
+
+              <DragOverlay>
+                {activeTag && <DragOverlayItem tag={activeTag.tag} />}
+              </DragOverlay>
             </DndContext>
           )}
         </div>
@@ -222,4 +315,4 @@ const SideMenu = () => {
   );
 };
 
-export default memo(SideMenu);
+export default SideMenu;

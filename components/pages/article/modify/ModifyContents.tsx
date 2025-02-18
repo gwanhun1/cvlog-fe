@@ -89,7 +89,7 @@ const ModifyContents = ({
   );
 
   return (
-    <div>
+    <>
       <div
         className={cn(
           css.mde,
@@ -98,17 +98,21 @@ const ModifyContents = ({
         )}
       >
         <SimpleMDE
+          style={{ color: '#fff' }}
           options={isMobile ? MDE_OPTIONMOBILE : MDE_OPTION}
           value={doc.content}
           onChange={handleContentChange}
-          onDrop={handleImageUpload}
+          onDrop={e => {
+            e.preventDefault();
+            handleImageUpload(e);
+          }}
         />
       </div>
       {isVisiblePreview && (
-        <div className="flex justify-center tablet:min-w-[50vw] tablet:w-[50vw]">
+        <div className="flex-1 tablet:min-w-[50vw] tablet:w-[50vw]">
           <div
             ref={containerTopRef}
-            className="w-[70vw] tablet:w-full desktop:pl-8 tablet:pl-5 max-h-[30vh] tablet:max-h-[35vh] desktop:max-h-[75vh] overflow-y-auto"
+            className="w-full h-full px-4 overflow-y-auto tablet:px-8"
           >
             <ReactMarkdown
               rehypePlugins={[rehypeRaw]}
@@ -122,7 +126,7 @@ const ModifyContents = ({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
