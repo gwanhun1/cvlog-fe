@@ -11,7 +11,7 @@ interface CodeProps {
 
 const Content = ({ data }: { data: string }) => {
   return (
-    <div className="w-full min-h-[200px] ">
+    <div className="w-full min-h-[40vh] ">
       <ReactMarkdown
         className="contentMarkdown "
         rehypePlugins={[rehypeRaw]}

@@ -25,7 +25,7 @@ function SafeHydrate({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div suppressHydrationWarning className="bg-[#fafaff]">
+    <div suppressHydrationWarning className="bg-[#fafaff] min-h-screen">
       {children}
     </div>
   );

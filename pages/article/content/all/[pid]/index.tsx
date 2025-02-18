@@ -116,9 +116,9 @@ const Detail = ({ pid }: { pid: string }) => {
         <section>
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-              {info?.id === getDetailData?.data?.post.user_id ||
+              {info?.id === getDetailData?.data?.post.user_id.id ||
               info?.github_id ===
-                getDetailData?.data?.post?.user_id?.github_id ? (
+                getDetailData?.data?.post?.user_id?.github_id.id ? (
                 <>
                   <button
                     className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"

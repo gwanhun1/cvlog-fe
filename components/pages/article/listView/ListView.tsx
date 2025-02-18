@@ -51,7 +51,7 @@ const ListView = () => {
   const router = useRouter();
   useEffect(() => {
     List.refetch();
-  }, [List, page]);
+  }, [page]);
 
   const [, setListIndex] = useRecoilState(listIndexAtom);
   const saveListIndex = (params: number) => {

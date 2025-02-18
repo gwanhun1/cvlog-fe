@@ -14,6 +14,7 @@ import Content from '../../../../components/pages/article/content/my/Content';
 import Profile from '../../../../components/pages/article/content/my/Profile';
 import { Badge } from 'flowbite-react';
 import { useGetUserInfo } from 'service/hooks/Login';
+import { log } from 'console';
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
@@ -112,12 +113,12 @@ const Detail = ({ pid }: { pid: string }) => {
           </time>
         </section>
       </section>
-      <main className="w-full h-full tablet:pb-12">
+      <main className="w-full h-min-screen tablet:pb-12">
         <section>
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-              {info?.id === getMyDetail?.data?.post.user_id ||
-              info?.github_id === getMyDetail?.data?.post.user_id ? (
+              {info?.id === getMyDetail?.data?.post.user_id.id ||
+              info?.github_id === getMyDetail?.data?.post.user_id.id ? (
                 <>
                   <button
                     className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
@@ -127,7 +128,6 @@ const Detail = ({ pid }: { pid: string }) => {
                   >
                     {patchMessage ? '나만보기' : '공개'}
                   </button>
-
                   <button
                     className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick "
                     onClick={() => {
@@ -148,7 +148,6 @@ const Detail = ({ pid }: { pid: string }) => {
               ) : null}
             </article>
           </div>
-
           <div className="flex justify-center">
             {getMyDetail.data && (
               <Content data={getMyDetail.data?.post.content} />
