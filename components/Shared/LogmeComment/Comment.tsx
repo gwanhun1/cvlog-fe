@@ -27,7 +27,7 @@ const CommentItem = ({ id, content, user_id, created_at }: CommentProps) => {
               className="flex justify-start "
             >
               <div className="flex flex-col space-y-1 font-medium dark:text-white">
-                <div className="text-[11px] tablet:text-base text-ftBlick">
+                <div className="text-[11px] tablet:text-base text-ftBlack">
                   {user_id.github_id}
                 </div>
                 <time className="text-[5px] tablet:text-xs overflow-hidden text-gray-500 w-28 tablet:w-40 desktop:w-80 dark:text-gray-400">
@@ -39,13 +39,13 @@ const CommentItem = ({ id, content, user_id, created_at }: CommentProps) => {
           <section className="flex ">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
               <button
-                className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick "
+                className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack "
                 onClick={() => modifyComment()}
               >
                 수정
               </button>
               <button
-                className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlick"
+                className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack"
                 onClick={() => deletComent()}
               >
                 삭제
@@ -54,7 +54,7 @@ const CommentItem = ({ id, content, user_id, created_at }: CommentProps) => {
           </section>
         </div>
       </div>
-      <div className="w-full p-2 pl-6 text-sm desktop:py-5 tablet:text-base mobile:text-md text-ftBlick">
+      <div className="w-full p-2 pl-6 text-sm desktop:py-5 tablet:text-base mobile:text-md text-ftBlack">
         {content}
       </div>
       {/* FIXME 대댓글 기능 구현 후 수정

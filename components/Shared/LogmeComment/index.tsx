@@ -9,7 +9,7 @@ const CommentBox = ({ pid }: { pid: string }) => {
   const commentList = useGetCommentList(parseInt(pid));
   return (
     <section className="flex flex-col w-full p-1 tablet:mt-3 ">
-      <h2 className="flex justify-start my-2 ml-1 text-xs mobile:text-base text-ftBlick">
+      <h2 className="flex justify-start my-2 ml-1 text-xs mobile:text-base text-ftBlack">
         {commentList.data && commentList.data.data.length} 개의 댓글
       </h2>
       <article>

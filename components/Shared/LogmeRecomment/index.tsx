@@ -61,7 +61,7 @@ const ReComment = ({ recomment }: { recomment: RecommentType }) => {
                   className="flex justify-start "
                 >
                   <div className="space-y-1 font-medium dark:text-white ">
-                    <div className="text-[11px] tablet:text-base text-ftBlick">
+                    <div className="text-[11px] tablet:text-base text-ftBlack">
                       {name}
                     </div>
 
@@ -73,7 +73,7 @@ const ReComment = ({ recomment }: { recomment: RecommentType }) => {
                 <section className="flex">
                   <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
                     <div
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick"
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"
                       onClick={() => {
                         updateComment.mutate(id);
                       }}
@@ -81,7 +81,7 @@ const ReComment = ({ recomment }: { recomment: RecommentType }) => {
                       수정
                     </div>
                     <div
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick"
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"
                       onClick={() => {
                         deleteComment.mutate(id);
                       }}
@@ -91,7 +91,7 @@ const ReComment = ({ recomment }: { recomment: RecommentType }) => {
                   </article>
                 </section>
               </div>
-              <main className="w-full p-2 pl-6 text-sm tablet:text-base mobile:text-md desktop:py-5 text-ftBlick">
+              <main className="w-full p-2 pl-6 text-sm tablet:text-base mobile:text-md desktop:py-5 text-ftBlack">
                 {comment}
               </main>
             </div>

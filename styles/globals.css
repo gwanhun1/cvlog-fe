@@ -203,7 +203,7 @@ table {
   }
 
   .btn-secondary {
-    @apply btn bg-gray10 text-gray70 hover:bg-gray20;
+    @apply btn bg-white text-ftGray hover:bg-bgWhite;
   }
 
   .card {
@@ -211,7 +211,7 @@ table {
   }
 
   .input {
-    @apply w-full px-4 py-2 rounded-lg border border-gray20 focus:outline-none focus:ring-2 focus:ring-primary;
+    @apply w-full px-4 py-2 rounded-lg border border-bgWhite focus:outline-none focus:ring-2 focus:ring-primary;
   }
 }
 

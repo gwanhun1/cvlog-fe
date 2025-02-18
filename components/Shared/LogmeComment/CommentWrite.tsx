@@ -37,7 +37,7 @@ const CommentWrite = ({ pid }: { pid: string }) => {
     <>
       <textarea
         spellCheck="false"
-        className="flex justify-center w-full px-2 py-2 mt-1 bg-gray-300  mobile:mt-2 mobile:py-5 text-ftBlick rounded-2xl border-2 border-blue-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-all duration-300  hover:border-blue-300"
+        className="flex justify-center w-full px-2 py-2 mt-1 bg-gray-300  mobile:mt-2 mobile:py-5 text-ftBlack rounded-2xl border-2 border-blue-300 shadow-[0_0_15px_rgba(0,0,0,0.1)] placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-all duration-300  hover:border-blue-300"
         onChange={handleChange}
         value={comment}
       />

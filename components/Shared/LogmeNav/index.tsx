@@ -49,8 +49,8 @@ const NavMenuItem = ({
         fontStyle="semibold"
         className={`px-4 py-2 transition-all duration-200 hover:cursor-pointer ${
           isActive
-            ? 'text-beige30 bg-white rounded-3xl shadow-md'
-            : 'text-gray50 hover:text-gray70'
+            ? 'text-ftBlue bg-white rounded-3xl shadow-md'
+            : 'text-ftGray hover:text-ftGray'
         }`}
       >
         {name}
@@ -137,14 +137,14 @@ const Nav = () => {
   useEffect(() => {
     const currentPath = router.asPath;
     const matchedMenu = MENU_ITEMS.find(item =>
-      currentPath.includes(item.name.toLowerCase()),
+      currentPath.includes(item.name.toLowerCase())
     );
     if (matchedMenu) {
       setCurrentPage(matchedMenu.name);
     }
   }, [router.asPath]);
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-beige10 shadow-gray-200">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-bgWhite shadow-gray-200">
       <div className="grid h-full grid-cols-12 gap-4 px-4 mx-auto max-w-7xl">
         {/* Logo */}
         <div className="flex items-center col-span-4 tablet:col-span-3">
