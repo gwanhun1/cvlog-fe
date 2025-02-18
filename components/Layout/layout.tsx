@@ -17,12 +17,12 @@ const Layout = ({ children }: Props) => {
     <div
       className={cn(
         {
-          'tablet:container tablet:mx-auto px-2':
+          'tablet:container tablet:mx-auto px-20':
             !pathname.startsWith('/article/new') &&
             !pathname.startsWith('/article/modify/'),
         },
         { 'desktop:px-[17.5rem]': isArticleContent },
-        { 'pt-24': isNavVisible },
+        { 'pt-24': isNavVisible }
       )}
     >
       {children}
