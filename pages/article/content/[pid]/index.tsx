@@ -86,25 +86,37 @@ const Detail = ({ pid }: { pid: string }) => {
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
-        <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-5xl ">
-          {getMyDetail?.data?.post.title}
-        </h1>
+        {getMyDetail.isLoading ? (
+          <div className="h-14 bg-gray-200 rounded-lg w-28" />
+        ) : (
+          <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-6xl ">
+            {getMyDetail?.data?.post.title}
+          </h1>
+        )}
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
         <div
           className="flex flex-wrap justify-start w-full text-ftBlack h-9 mb-1"
           onClick={() => alert('v1.1에서 만나요 🥰')}
         >
-          {getMyDetail.data?.post.tags.map((tag: TagType) => (
-            <Badge
-              className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
-              color="default"
-              size="sm"
-              key={tag.id}
-            >
-              {tag.name}
-            </Badge>
-          ))}
+          {getMyDetail.isLoading ? (
+            <>
+              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+            </>
+          ) : (
+            getMyDetail.data?.post.tags.map((tag: TagType) => (
+              <Badge
+                className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                color="default"
+                size="sm"
+                key={tag.id}
+              >
+                {tag.name}
+              </Badge>
+            ))
+          )}
         </div>
         <section className="flex items-end w-28">
           <time className="text-xs text-gray-600 tablet:text-sm mb-1">
@@ -148,12 +160,10 @@ const Detail = ({ pid }: { pid: string }) => {
             </article>
           </div>
           <div className="flex justify-center">
-            {getMyDetail.data && (
-              <Content
-                data={getMyDetail.data?.post.content}
-                isLoading={getMyDetail.isLoading}
-              />
-            )}
+            <Content
+              data={getMyDetail.data?.post.content}
+              isLoading={getMyDetail.isLoading}
+            />
           </div>
         </section>
       </main>
