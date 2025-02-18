@@ -10,7 +10,13 @@ interface CodeProps {
   children?: React.ReactNode;
 }
 
-const Content = ({ data, isLoading }: { data: string; isLoading: boolean }) => {
+const Content = ({
+  data,
+  isLoading,
+}: {
+  data?: string;
+  isLoading: boolean;
+}) => {
   return (
     <div className="w-full min-h-[40vh] ">
       {isLoading ? (

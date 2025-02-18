@@ -3,6 +3,7 @@ import { CopyBlock, dracula } from 'react-code-blocks';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import ContentSkeleton from '../all/Skeleton';
 
 interface CodeProps {
   inline?: boolean;
@@ -10,11 +11,17 @@ interface CodeProps {
   children?: React.ReactNode;
 }
 
-const Content = ({ data, isLoading }: { data: string; isLoading: boolean }) => {
+const Content = ({
+  data,
+  isLoading,
+}: {
+  data?: string;
+  isLoading: boolean;
+}) => {
   return (
     <div className="w-full min-h-[40vh] ">
       {isLoading ? (
-        <Loader />
+        <ContentSkeleton />
       ) : (
         <ReactMarkdown
           className="contentMarkdown "
