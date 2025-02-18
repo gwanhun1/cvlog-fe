@@ -5,10 +5,10 @@ interface EmptyStateProps {
 }
 
 const EmptyState = ({ onAddClick }: EmptyStateProps) => (
-  <div className="text-center py-12">
-    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-50 flex items-center justify-center">
+  <div className="text-center py-8">
+    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50 flex items-center justify-center">
       <svg
-        className="w-10 h-10 text-blue-500"
+        className="w-8 h-8 text-blue-500"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -21,16 +21,16 @@ const EmptyState = ({ onAddClick }: EmptyStateProps) => (
         />
       </svg>
     </div>
-    <h3 className="text-lg font-semibold text-gray-900 mb-2">
+    <h3 className="text-base font-semibold text-gray-900 mb-1">
       태그가 없습니다
     </h3>
-    <p className="text-gray-500 mb-6">첫 번째 태그를 만들어보세요!</p>
+    <p className="text-sm text-gray-500 mb-4">첫 번째 태그를 만들어보세요!</p>
     <button
       onClick={onAddClick}
-      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg shadow-blue-200"
+      className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md shadow-blue-200 text-sm"
     >
       <svg
-        className="w-5 h-5 mr-2"
+        className="w-4 h-4 mr-1.5"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
