@@ -152,12 +152,15 @@ const Detail = ({ pid }: { pid: string }) => {
 
           <div className="flex justify-center">
             {getDetailData.data && (
-              <Content data={getDetailData.data?.post.content} />
+              <Content
+                data={getDetailData.data?.post.content}
+                isLoading={getDetailData.isLoading}
+              />
             )}
           </div>
         </section>
       </main>
-      <section className="flex justify-between w-full px-5 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
+      <section className="flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getDetailData?.data?.post.user_id} />
         </article>

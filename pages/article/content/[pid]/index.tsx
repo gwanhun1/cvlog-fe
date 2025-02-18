@@ -14,7 +14,6 @@ import Content from '../../../../components/pages/article/content/my/Content';
 import Profile from '../../../../components/pages/article/content/my/Profile';
 import { Badge } from 'flowbite-react';
 import { useGetUserInfo } from 'service/hooks/Login';
-import { log } from 'console';
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
@@ -87,13 +86,13 @@ const Detail = ({ pid }: { pid: string }) => {
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
-        <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-4xl ">
+        <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-5xl ">
           {getMyDetail?.data?.post.title}
         </h1>
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
         <div
-          className="flex flex-wrap justify-start w-full text-ftBlack h-9"
+          className="flex flex-wrap justify-start w-full text-ftBlack h-9 mb-1"
           onClick={() => alert('v1.1에서 만나요 🥰')}
         >
           {getMyDetail.data?.post.tags.map((tag: TagType) => (
@@ -150,12 +149,15 @@ const Detail = ({ pid }: { pid: string }) => {
           </div>
           <div className="flex justify-center">
             {getMyDetail.data && (
-              <Content data={getMyDetail.data?.post.content} />
+              <Content
+                data={getMyDetail.data?.post.content}
+                isLoading={getMyDetail.isLoading}
+              />
             )}
           </div>
         </section>
       </main>
-      <section className="flex justify-between w-full px-5 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
+      <section className="flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getMyDetail?.data?.post.user_id} />
         </article>
