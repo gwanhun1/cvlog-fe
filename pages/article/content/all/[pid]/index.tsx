@@ -85,9 +85,9 @@ const Detail = ({ pid }: { pid: string }) => {
 
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
-      <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
+      <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
         {getDetailData.isLoading ? (
-          <div className="h-14 bg-gray-200 rounded-lg w-28" />
+          <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
         ) : (
           <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-6xl ">
             {getDetailData?.data?.post.title}
