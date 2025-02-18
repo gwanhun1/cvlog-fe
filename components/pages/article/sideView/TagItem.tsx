@@ -38,12 +38,12 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors duration-300 group cursor-move"
+      className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 transition-colors duration-300 group cursor-move"
     >
-      <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+      <span className="text-xs font-medium text-gray-700 group-hover:text-gray-900">
         {tag?.name}
       </span>
-      <span className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full group-hover:bg-blue-100">
+      <span className="px-2 py-0.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-full group-hover:bg-blue-100">
         {tag?.postsCount}
       </span>
     </div>

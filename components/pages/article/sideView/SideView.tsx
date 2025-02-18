@@ -148,14 +148,14 @@ const SideMenu = () => {
         <LogmeRemoveModal showModal={showModal} setShowModal={setShowModal} />
       )}
 
-      <div className="sticky top-24 w-full max-w-xs bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+      <div className="sticky top-24 w-full max-w-[240px] bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
         <SideViewHeader
           hasContent={hasContent}
           onAddClick={() => tryOpenModal('add')}
           onDeleteClick={() => tryOpenModal('delete')}
         />
 
-        <div className="p-3">
+        <div className="p-2">
           {!hasContent ? (
             <EmptyState onAddClick={() => tryOpenModal('add')} />
           ) : (
