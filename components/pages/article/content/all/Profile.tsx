@@ -20,7 +20,7 @@ const Profile = ({ getDetailData }: ProfileProps) => {
           )}
         </figure>
         <div className="mb-1 space-y-1 font-medium tablet:mb-5 dark:text-white">
-          <h2 className="text-xs tablet:text-lg text-ftBlick pl-5">
+          <h2 className="text-xs tablet:text-lg text-ftBlack pl-5">
             {getDetailData && getDetailData.name !== null
               ? getDetailData.name
               : getDetailData?.github_id}

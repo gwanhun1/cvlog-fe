@@ -86,13 +86,13 @@ const Detail = ({ pid }: { pid: string }) => {
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
-        <h1 className="mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
+        <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-4xl ">
           {getDetailData?.data?.post.title}
         </h1>
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
         <div
-          className="flex flex-wrap justify-start w-full text-ftBlick h-9"
+          className="flex flex-wrap justify-start w-full text-ftBlack h-9"
           onClick={() => alert('v1.1에서 만나요 🥰')}
         >
           {getDetailData.data?.post.tags.map((tag: TagType) => (
@@ -130,7 +130,7 @@ const Detail = ({ pid }: { pid: string }) => {
                   </button>
 
                   <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick "
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack "
                     onClick={() => {
                       updateCheck();
                     }}
@@ -138,7 +138,7 @@ const Detail = ({ pid }: { pid: string }) => {
                     수정
                   </button>
                   <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlick"
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack"
                     onClick={() => {
                       deleteCheck();
                     }}
@@ -165,7 +165,7 @@ const Detail = ({ pid }: { pid: string }) => {
           <div
             className={`${
               !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
-            } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlick hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
+            } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
           >
             {getDetailData.data?.prevPostInfo && (
               <Link
@@ -187,7 +187,7 @@ const Detail = ({ pid }: { pid: string }) => {
           <div
             className={`${
               !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
-            } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlick mobile:h-12 justify-evenly hover:opacity-70 `}
+            } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack mobile:h-12 justify-evenly hover:opacity-70 `}
           >
             {getDetailData.data?.nextPostInfo && (
               <Link

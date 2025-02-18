@@ -9,16 +9,11 @@ module.exports = {
     enabled: process.env.NODE_ENV === 'production',
     content: [
       './pages/**/*.{js,ts,jsx,tsx}',
-      './components/**/*.{js,ts,jsx,tsx}'
+      './components/**/*.{js,ts,jsx,tsx}',
     ],
     options: {
-      safelist: [
-        'bg-blue-50',
-        'text-blue-500',
-        'bg-gray-200',
-        'animate-pulse',
-      ]
-    }
+      safelist: ['bg-blue-50', 'text-blue-500', 'bg-gray-200', 'animate-pulse'],
+    },
   },
   darkMode: 'class',
   theme: {
@@ -33,19 +28,9 @@ module.exports = {
         bgWhite: '#f1f5f9',
         ftWhite: '#e5e7eb',
         cardFtBlack: '#27272a',
-        ftBlick: '#171717',
+        ftBlack: '#171717',
         ftBlue: '#2657A6',
-        primary: '#134CA9',
-        beige10: '#f1f5f9',
-        beige20: '#F0E5D4',
-        beige30: '#2657A6',
-        gray10: '#F0F3F6',
-        gray20: '#D1D8DE',
-        gray30: '#ACB9C4',
-        gray40: '#959FAC',
-        gray50: '#788699',
-        gray60: '#556073',
-        gray70: '#3C485C',
+        ftGray: '#788699',
       },
       spacing: {
         128: '32rem',
@@ -91,7 +76,7 @@ module.exports = {
         spin: 'spin 1s linear infinite',
         down: 'down 0.3s ease-out',
         right: 'right 0.3s ease-out',
-        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
