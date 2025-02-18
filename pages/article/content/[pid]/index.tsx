@@ -85,9 +85,9 @@ const Detail = ({ pid }: { pid: string }) => {
 
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
-      <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
+      <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
         {getMyDetail.isLoading ? (
-          <div className="h-14 bg-gray-200 rounded-lg w-28" />
+          <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
         ) : (
           <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-6xl ">
             {getMyDetail?.data?.post.title}
@@ -127,7 +127,7 @@ const Detail = ({ pid }: { pid: string }) => {
       <main className="w-full h-min-screen tablet:pb-12">
         <section>
           <div className="flex justify-end w-full">
-            <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
+            <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0  h-10">
               {info?.id === getMyDetail?.data?.post.user_id.id ||
               info?.github_id === getMyDetail?.data?.post.user_id.id ? (
                 <>
