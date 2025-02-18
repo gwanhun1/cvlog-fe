@@ -16,6 +16,8 @@ import {
   CreateTagsFolderReq,
   CreateTagsFolderRes,
   UpdateForm,
+  PutTagsFolderRes,
+  Folder,
 } from 'service/api/tag/type';
 
 export const useGetList = (page: number, userId?: number) => {
@@ -62,7 +64,7 @@ export const useCreateFolders = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    },
+    }
   );
 };
 
@@ -81,7 +83,7 @@ export const useRemoveFolders = (params: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    },
+    }
   );
 };
 
@@ -92,12 +94,16 @@ export const usePutTagsFolder = () => {
       return putTagsFolders(params);
     },
     {
-      onSuccess: () => {
+      onSuccess: (
+        data: PutTagsFolderRes,
+        variables: UpdateForm,
+        context: { previousData?: Folder[] } | undefined
+      ) => {
         return queryClient.invalidateQueries('tagsFolder');
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    },
+    }
   );
 };

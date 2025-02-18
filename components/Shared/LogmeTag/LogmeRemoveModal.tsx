@@ -39,11 +39,12 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
 
     return queryGetTagsFolders.data.filter(
       (folder): folder is Folder =>
-        Array.isArray(folder.tags) && folder.tags.length === 0,
+        Array.isArray(folder.tags) && folder.tags.length === 0
     );
   };
 
   const emptyFolders = getEmptyFolders();
+  console.log(queryGetTagsFolders.data);
 
   return (
     <Modal
@@ -54,18 +55,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
       className="dark:bg-gray-900"
     >
       <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl">
-        <Modal.Header className="px-6 pt-6 pb-0 border-b-0">
-          <button
-            type="button"
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
-            onClick={closeModal}
-          >
-            <span className="sr-only">Close</span>
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </Modal.Header>
+        <Modal.Header className="p-4 pb-0 border-b-0" />
         <Modal.Body className="px-6 py-4">
           <div className="space-y-8">
             <div className="text-center">
@@ -111,7 +101,9 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
                               d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
                             />
                           </svg>
-                          <span className="text-base font-medium">{folder}</span>
+                          <span className="text-base font-medium">
+                            {folder}
+                          </span>
                         </div>
                       </div>
                     ))}

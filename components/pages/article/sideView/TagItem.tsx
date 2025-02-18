@@ -1,18 +1,15 @@
 import { memo } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Tag } from 'service/api/tag/type';
 
 export interface TagItemProps {
-  tag: {
-    id: number;
-    name: string;
-    postsCount: number;
-  };
+  tag: Tag;
   index: number;
   folderId: number;
 }
 
-const TagItem = ({ tag, folderId }: TagItemProps) => {
+const TagItem = ({ tag, index, folderId }: TagItemProps) => {
   const {
     attributes,
     listeners,
@@ -21,15 +18,13 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
     transition,
     isDragging,
   } = useSortable({
-    id: `${folderId}-${tag?.id}`,
+    id: `${folderId === 0 ? 'unassigned' : folderId}-${tag.id}`,
   });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    position: 'relative' as const,
-    zIndex: isDragging ? 999 : 'auto',
   };
 
   return (
@@ -38,14 +33,10 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center justify-between px-3 py-2 hover:bg-gray-50 transition-colors duration-300 group cursor-move"
+      className="flex items-center space-x-2 p-2 mb-1 bg-white rounded-lg border border-gray-100 cursor-move hover:border-gray-200 transition-colors duration-200"
     >
-      <span className="text-xs font-medium text-gray-700 group-hover:text-gray-900">
-        {tag?.name}
-      </span>
-      <span className="px-2 py-0.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-full group-hover:bg-blue-100">
-        {tag?.postsCount}
-      </span>
+      <div className="w-2 h-2 rounded-full bg-gray-300" />
+      <span className="text-sm text-gray-700">{tag.name}</span>
     </div>
   );
 };

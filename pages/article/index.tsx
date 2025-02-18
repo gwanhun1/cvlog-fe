@@ -18,11 +18,11 @@ const Article: NextPage = () => {
             <link rel="icon" href="/favicon.ico" />
           </Head>
 
-          <div className="container mx-auto flex flex-col tablet:flex-row gap-8 pt-3 tablet:p-8">
-            <div className="hidden tablet:block w-60 desktop:w-60 shrink-0">
+          <div className="container mx-auto flex flex-col tablet:flex-row gap-4 pt-3 tablet:p-8 ">
+            <div className="hidden tablet:block w-40 desktop:w-48 shrink-0 ">
               <SideView />
             </div>
-            <div className="flex-1 ">
+            <div className="flex-1">
               <ListView />
             </div>
           </div>
