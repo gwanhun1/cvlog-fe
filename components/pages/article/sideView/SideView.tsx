@@ -1,5 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Droppable, DropResult, DragDropContext } from '@hello-pangea/dnd';
+import { useCallback, useState, memo } from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import LogmeAddModal from 'components/Shared/LogmeTag/LogmeAddModal';
 import LogmeRemoveModal from 'components/Shared/LogmeTag/LogmeRemoveModal';
 import { Folder, UpdateForm } from 'service/api/tag/type';
@@ -7,6 +17,7 @@ import { useGetFolders, usePutTagsFolder } from 'service/hooks/List';
 import FolderItem from './FolderItem';
 import TagItem from './TagItem';
 import SideViewHeader from './SideViewHeader';
+import EmptyState from './EmptyState';
 
 const SideMenu = () => {
   const queryGetTagsFolders = useGetFolders();
@@ -15,12 +26,18 @@ const SideMenu = () => {
   const [closedIdx, setClosedIdx] = useState<number[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectModal, setSelectModal] = useState<string>('');
-  const [winReady, setwinReady] = useState(false);
 
-  const namedFolder =
-    queryGetTagsFolders.data?.filter(item => item.name !== '') ?? [];
-  const defaultFolder =
-    queryGetTagsFolders.data?.filter(item => item.name === '') ?? [];
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
+
+  const namedFolder = queryGetTagsFolders.data?.filter(item => item.name !== '') ?? [];
+  const defaultFolder = queryGetTagsFolders.data?.filter(item => item.name === '') ?? [];
 
   const onClickAccordion = useCallback(
     (id: number) => (e: React.MouseEvent<HTMLDivElement>) => {
@@ -34,38 +51,30 @@ const SideMenu = () => {
   );
 
   const handleDragEnd = useCallback(
-    (result: DropResult) => {
-      const { source, destination } = result;
-      if (!destination) return;
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+      if (!over || active.id === over.id) return;
 
-      const sourceFolder = queryGetTagsFolders.data?.find(
-        folder => folder.id.toString() === source.droppableId
-      );
-
-      const destinationFolder = queryGetTagsFolders.data?.find(
-        folder => folder.id.toString() === destination.droppableId
-      );
+      const activeId = String(active.id);
+      const overId = String(over.id);
+      
+      const [sourceFolderId, sourceTagId] = activeId.split('-');
+      const [destinationFolderId] = overId.split('-');
 
       const setForm: UpdateForm = {
-        tag_id: sourceFolder?.tags[result.source.index].id,
-        folder_id: destinationFolder?.id,
+        tag_id: Number(sourceTagId),
+        folder_id: Number(destinationFolderId),
       };
 
       mutationUpdateTagsFolders.mutate(setForm);
     },
-    [mutationUpdateTagsFolders, queryGetTagsFolders.data]
+    [mutationUpdateTagsFolders]
   );
 
   const tryOpenModal = useCallback((name: string) => {
     setSelectModal(name);
     setShowModal(true);
   }, []);
-
-  useEffect(() => {
-    setwinReady(true);
-  }, []);
-
-  if (!winReady) return null;
 
   if (queryGetTagsFolders.isLoading) {
     return (
@@ -146,117 +155,66 @@ const SideMenu = () => {
           onDeleteClick={() => tryOpenModal('delete')}
         />
 
-        <div className="p-6">
+        <div className="p-3">
           {!hasContent ? (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-blue-50 flex items-center justify-center">
-                <svg
-                  className="w-10 h-10 text-blue-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                태그가 없습니다
-              </h3>
-              <p className="text-gray-500 mb-6">첫 번째 태그를 만들어보세요!</p>
-              <button
-                onClick={() => tryOpenModal('add')}
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg shadow-blue-200"
-              >
-                <svg
-                  className="w-5 h-5 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                새 태그 만들기
-              </button>
-            </div>
+            <EmptyState onAddClick={() => tryOpenModal('add')} />
           ) : (
-            <DragDropContext onDragEnd={handleDragEnd}>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis]}
+            >
               <div className="space-y-4">
                 {namedFolder.map((folder: Folder) => {
                   const isOpened = closedIdx.includes(folder.id);
                   return (
-                    <Droppable
-                      droppableId={folder.id.toString()}
-                      type="SIDEBAR_Folder"
-                      key={folder.id}
-                    >
-                      {provided => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                          className="mb-6 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300"
+                    <div key={folder.id} className="mb-2 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
+                      <FolderItem
+                        folder={folder}
+                        isOpened={isOpened}
+                        onClickAccordion={onClickAccordion}
+                      />
+                      <div
+                        className={`overflow-hidden transition-all duration-300 ${
+                          isOpened ? 'max-h-0' : 'max-h-[500px]'
+                        }`}
+                      >
+                        <SortableContext
+                          items={folder.tags.map(tag => `${folder.id}-${tag.id}`)}
+                          strategy={verticalListSortingStrategy}
                         >
-                          <FolderItem
-                            folder={folder}
-                            isOpened={isOpened}
-                            onClickAccordion={onClickAccordion}
-                          />
-                          <div
-                            className={`overflow-hidden transition-all duration-300 ${
-                              isOpened ? 'max-h-0' : 'max-h-[500px]'
-                            }`}
-                          >
-                            {folder.tags.map((tag, index) => (
-                              <TagItem
-                                key={tag.id}
-                                tag={tag}
-                                index={index}
-                                folderId={folder.id}
-                              />
-                            ))}
-                            {provided.placeholder}
-                          </div>
-                        </div>
-                      )}
-                    </Droppable>
+                          {folder.tags.map((tag, index) => (
+                            <TagItem
+                              key={`${folder.id}-${tag.id}`}
+                              tag={tag}
+                              index={index}
+                              folderId={folder.id}
+                            />
+                          ))}
+                        </SortableContext>
+                      </div>
+                    </div>
                   );
                 })}
                 {defaultFolder.map(folder => (
-                  <Droppable
-                    droppableId={folder.id.toString()}
-                    type="SIDEBAR_Folder"
+                  <SortableContext
                     key={folder.id}
+                    items={folder.tags.map(tag => `${folder.id}-${tag.id}`)}
+                    strategy={verticalListSortingStrategy}
                   >
-                    {provided => (
-                      <div
-                        {...provided.droppableProps}
-                        ref={provided.innerRef}
-                        className="space-y-2 pt-4 border-t border-gray-100"
-                      >
-                        {folder.tags.map((tag, index) => (
-                          <TagItem
-                            key={tag.id}
-                            tag={tag}
-                            index={index}
-                            folderId={folder.id}
-                          />
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
+                    {folder.tags.map((tag, index) => (
+                      <TagItem
+                        key={`${folder.id}-${tag.id}`}
+                        tag={tag}
+                        index={index}
+                        folderId={folder.id}
+                      />
+                    ))}
+                  </SortableContext>
                 ))}
               </div>
-            </DragDropContext>
+            </DndContext>
           )}
         </div>
       </div>
@@ -264,4 +222,4 @@ const SideMenu = () => {
   );
 };
 
-export default SideMenu;
+export default memo(SideMenu);

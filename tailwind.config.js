@@ -3,8 +3,24 @@ module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
+    './node_modules/flowbite-react/**/*.js',
   ],
+  purge: {
+    enabled: process.env.NODE_ENV === 'production',
+    content: [
+      './pages/**/*.{js,ts,jsx,tsx}',
+      './components/**/*.{js,ts,jsx,tsx}'
+    ],
+    options: {
+      safelist: [
+        'bg-blue-50',
+        'text-blue-500',
+        'bg-gray-200',
+        'animate-pulse',
+      ]
+    }
+  },
+  darkMode: 'class',
   theme: {
     screens: {
       mobile: '640px', // 모바일 (기존 360px -> 640px)
@@ -75,8 +91,9 @@ module.exports = {
         spin: 'spin 1s linear infinite',
         down: 'down 0.3s ease-out',
         right: 'right 0.3s ease-out',
+        'pulse': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
     },
   },
-  plugins: [require('flowbite/plugin')],
+  plugins: [require('flowbite/plugin'), require('@tailwindcss/aspect-ratio')],
 };

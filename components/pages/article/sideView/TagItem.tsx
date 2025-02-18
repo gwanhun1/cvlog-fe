@@ -1,5 +1,6 @@
-import React from 'react';
-import { Draggable } from '@hello-pangea/dnd';
+import { memo } from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 export interface TagItemProps {
   tag: {
@@ -11,24 +12,42 @@ export interface TagItemProps {
   folderId: number;
 }
 
-const TagItem = ({ tag, index, folderId }: TagItemProps) => (
-  <Draggable draggableId={folderId + '-' + tag?.id} index={index} key={tag?.id}>
-    {provided => (
-      <div
-        ref={provided.innerRef}
-        {...provided.draggableProps}
-        {...provided.dragHandleProps}
-        className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 border-t border-gray-100 transition-colors duration-300 group"
-      >
-        <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-          {tag?.name}
-        </span>
-        <span className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full group-hover:bg-blue-100">
-          {tag?.postsCount}
-        </span>
-      </div>
-    )}
-  </Draggable>
-);
+const TagItem = ({ tag, folderId }: TagItemProps) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: `${folderId}-${tag?.id}`,
+  });
 
-export default TagItem;
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    position: 'relative' as const,
+    zIndex: isDragging ? 999 : 'auto',
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors duration-300 group cursor-move"
+    >
+      <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
+        {tag?.name}
+      </span>
+      <span className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full group-hover:bg-blue-100">
+        {tag?.postsCount}
+      </span>
+    </div>
+  );
+};
+
+export default memo(TagItem);

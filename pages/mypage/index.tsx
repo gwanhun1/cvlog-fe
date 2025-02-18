@@ -1,17 +1,33 @@
-import React from 'react';
-import { GetServerSideProps } from 'next';
+import React, { useMemo } from 'react';
+import { GetStaticProps } from 'next';
+import dynamic from 'next/dynamic';
 import { FiCalendar, FiBookOpen, FiHeart } from 'react-icons/fi';
+import { dehydrate, QueryClient } from 'react-query';
 import { getUserInfo } from 'service/api/login';
 import { useGetUserInfo } from 'service/hooks/Login';
 import ProfileHeader from '../../components/pages/mypage/ProfileHeader';
 import StatsCard from '../../components/pages/mypage/StatsCard';
 import AboutSection from '../../components/pages/mypage/AboutSection';
-import RecentActivity from '../../components/pages/mypage/RecentActivity';
 import ContactInfo from '../../components/pages/mypage/ContactInfo';
 import AccountManagement from '../../components/pages/mypage/AccountManagement';
 
+// 동적 임포트로 변경
+const RecentActivity = dynamic(
+  () => import('../../components/pages/mypage/RecentActivity'),
+  {
+    loading: () => <div className="animate-pulse bg-white/5 rounded-lg p-8 h-48" />,
+    ssr: false
+  }
+);
+
 const Mypage = () => {
   const { data: info } = useGetUserInfo();
+
+  // 날짜 포맷팅 메모이제이션
+  const formattedDate = useMemo(
+    () => (info?.created_at ? new Date(info.created_at).toLocaleDateString() : '-'),
+    [info?.created_at]
+  );
 
   if (!info) {
     return (
@@ -31,7 +47,7 @@ const Mypage = () => {
           <StatsCard
             icon={FiCalendar}
             title="가입일"
-            value={info.created_at ? new Date(info.created_at).toLocaleDateString() : '-'}
+            value={formattedDate}
           />
           <StatsCard icon={FiBookOpen} title="작성한 글" value="0" />
           <StatsCard icon={FiHeart} title="받은 좋아요" value="0" />
@@ -56,32 +72,16 @@ const Mypage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async context => {
-  const accessToken = context.req.cookies['CVtoken'] || '';
-  const refreshToken = context.req.cookies['refreshToken'] || '';
-
-  if (!accessToken || !refreshToken) {
-    return {
-      props: {
-        error: 'Not authenticated',
-      },
-    };
-  }
-
-  try {
-    const userInfo = await getUserInfo();
-    return {
-      props: {
-        userInfo,
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        error: 'Failed to fetch user info',
-      },
-    };
-  }
+export const getStaticProps: GetStaticProps = async () => {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery(['userInfo'], getUserInfo);
+  
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+    revalidate: 60, // 60초마다 재생성
+  };
 };
 
 export default Mypage;

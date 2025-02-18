@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Folder } from 'service/api/tag/type';
 
 export interface FolderItemProps {
@@ -14,7 +14,7 @@ const FolderItem = ({ folder, isOpened, onClickAccordion }: FolderItemProps) => 
   >
     <span className="font-semibold text-gray-900">{folder.name}</span>
     <svg
-      className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
+      className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${
         !isOpened ? '' : 'rotate-180'
       }`}
       fill="none"
@@ -31,4 +31,10 @@ const FolderItem = ({ folder, isOpened, onClickAccordion }: FolderItemProps) => 
   </div>
 );
 
-export default FolderItem;
+export default memo(FolderItem, (prev, next) => {
+  return (
+    prev.folder.id === next.folder.id &&
+    prev.isOpened === next.isOpened &&
+    prev.folder.name === next.folder.name
+  );
+});
