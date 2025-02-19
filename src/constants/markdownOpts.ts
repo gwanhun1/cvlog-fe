@@ -31,6 +31,15 @@ export const MDE_OPTIONMOBILE: Options = {
   tabSize: 2,
   maxHeight: '30vh',
   status: ['lines', 'words'],
+  renderingConfig: {
+    singleLineBreaks: false,
+    codeSyntaxHighlighting: true,
+  },
+  parsingConfig: {
+    allowAtxHeaderWithoutSpace: false,
+    strikethrough: true,
+    underscoresBreakWords: false,
+  },
 };
 
 export const MDE_OPTION: Options = {
@@ -50,23 +59,24 @@ export const MDE_OPTION: Options = {
     'link',
     'image',
     'table',
-    'horizontal-rule',
+    'code',
     '|',
     'preview',
     'side-by-side',
     'fullscreen',
+    '|',
     'guide',
   ],
-  insertTexts: {
-    horizontalRule: ['', '\n\n-----\n\n'],
-    image: ['![](http://', ')'],
-    link: ['[', '](http://)'],
-    table: [
-      '',
-      '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n',
-    ],
+  renderingConfig: {
+    singleLineBreaks: false,
+    codeSyntaxHighlighting: true,
   },
-  tabSize: 2,
-  maxHeight: 'calc(100vh - 250px)',
-  status: ['lines', 'words'],
+  parsingConfig: {
+    allowAtxHeaderWithoutSpace: false,
+    strikethrough: true,
+    underscoresBreakWords: false,
+  },
+  previewRender: (text: string) => {
+    return text;
+  },
 };

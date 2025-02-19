@@ -61,7 +61,7 @@ const ModifyContents = ({
 
         const editor = e.target as any;
         const cm = editor.simpleMde?.codemirror;
-        
+
         if (cm) {
           const pos = cm.getCursor();
           const imageMarkdown = `![${imageName}](${imageUrl})`;
@@ -108,7 +108,7 @@ const ModifyContents = ({
         )}
       >
         <SimpleMDE
-          style={{ color: '#fff' }}
+          style={{ color: '#2657A6' }}
           options={isMobile ? MDE_OPTIONMOBILE : MDE_OPTION}
           value={doc.content}
           onChange={handleContentChange}

@@ -107,7 +107,7 @@ const NewContents = ({
         )}
       >
         <SimpleMDE
-          style={{ color: '#fff' }}
+          style={{ color: '#2657A6' }}
           options={isMobile ? MDE_OPTIONMOBILE : MDE_OPTION}
           value={doc.content}
           onChange={handleContentChange}
@@ -129,6 +129,13 @@ const NewContents = ({
               remarkPlugins={[remarkGfm]}
               components={{
                 code: renderCodeBlock,
+                ul: ({ node, ...props }) => (
+                  <ul className="list-disc ml-4 my-2" {...props} />
+                ),
+                ol: ({ node, ...props }) => (
+                  <ol className="list-decimal ml-4 my-2" {...props} />
+                ),
+                li: ({ node, ...props }) => <li className="my-1" {...props} />,
               }}
             >
               {doc.content}

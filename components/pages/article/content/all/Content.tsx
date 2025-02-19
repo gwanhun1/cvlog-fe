@@ -1,5 +1,6 @@
-import Loader from 'components/Shared/common/Loader';
 import MarkdownContent from 'components/Shared/MarkdownContent';
+import ContentSkeleton from './Skeleton';
+import LogmeLikeBtn from 'components/Shared/LogmeLikeBtn';
 
 const Content = ({
   data,
@@ -10,7 +11,14 @@ const Content = ({
 }) => {
   return (
     <div className="w-full">
-      {isLoading ? <Loader /> : <MarkdownContent content={data} />}
+      {isLoading ? (
+        <ContentSkeleton />
+      ) : (
+        <div className="flex">
+          <LogmeLikeBtn />
+          <MarkdownContent content={data} />
+        </div>
+      )}
     </div>
   );
 };
