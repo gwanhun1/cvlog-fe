@@ -51,6 +51,7 @@ const ListView = () => {
   const router = useRouter();
   useEffect(() => {
     List.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   const [, setListIndex] = useRecoilState(listIndexAtom);
