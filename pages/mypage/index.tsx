@@ -3,7 +3,7 @@ import { GetStaticProps } from 'next';
 import dynamic from 'next/dynamic';
 import { FiCalendar, FiBookOpen, FiHeart } from 'react-icons/fi';
 import { dehydrate, QueryClient } from 'react-query';
-import { getUserInfo } from 'service/api/login';
+import { <code></code> } from 'service/api/login';
 import { useGetUserInfo } from 'service/hooks/Login';
 import ProfileHeader from '../../components/pages/mypage/ProfileHeader';
 import StatsCard from '../../components/pages/mypage/StatsCard';
