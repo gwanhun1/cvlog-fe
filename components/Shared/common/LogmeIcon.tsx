@@ -230,3 +230,13 @@ export const LogoRectangle = (props: IconProps) => (
     className={props.cn}
   />
 );
+
+export const LikeIcon = (props: IconProps) => (
+  <Image
+    src={ClosePng}
+    alt={props.alt}
+    width={props.width}
+    height={props.height}
+    className={props.cn}
+  />
+);
