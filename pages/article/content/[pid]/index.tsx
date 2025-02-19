@@ -89,7 +89,7 @@ const Detail = ({ pid }: { pid: string }) => {
         {getMyDetail.isLoading ? (
           <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
         ) : (
-          <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-6xl ">
+          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-6xl ">
             {getMyDetail?.data?.post.title}
           </h1>
         )}

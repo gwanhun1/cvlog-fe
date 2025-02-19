@@ -10,10 +10,14 @@ const CommentBox = ({ pid }: { pid: string }) => {
   return (
     <section className="flex flex-col w-full p-1 tablet:mt-3 ">
       <h2 className="flex justify-start my-2 ml-1 text-xs mobile:text-base text-ftBlack">
-        {commentList.data && commentList.data.data.length} 개의 댓글
+        {commentList.data && commentList.data.data
+          ? commentList.data.data.length
+          : 0}{' '}
+        개의 댓글
       </h2>
       <article>
         {commentList.data &&
+          commentList.data.data &&
           commentList.data.data.map(comment => (
             <CommentLayout key={comment.id}>
               <CommentItem {...comment} />
