@@ -26,22 +26,13 @@ interface TextProps {
 
 // TODO: 만들면서 부족한 부분 develop
 const Text = (props: TextProps) => {
-  const {
-    variant,
-    className = '',
-    style,
-    underline,
-    bold,
-    italic,
-    color,
-    children,
-  } = props;
+  const { variant, className = '', children } = props;
 
   if (variant.includes('h')) {
     return createElement(
       variant,
       { className: cn(variant, className) },
-      children,
+      children
     );
   }
 

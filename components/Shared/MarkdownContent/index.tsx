@@ -5,6 +5,8 @@ import remarkGfm from 'remark-gfm';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from 'styles/utils';
 import LogmeLikeBtn from '../LogmeLikeBtn';
+import { useRecoilState } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
 
 interface CodeProps {
   inline?: boolean;
@@ -21,15 +23,19 @@ interface HeadingItem {
 interface MarkdownContentProps {
   content?: string;
   className?: string;
+  writer?: string;
 }
 
 const MarkdownContent = ({
   content = '',
   className = '',
+  writer,
 }: MarkdownContentProps) => {
   const [headings, setHeadings] = useState<HeadingItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
   const contentRef = useRef<HTMLDivElement>(null);
+
+  const [userInfo] = useRecoilState(userIdAtom);
 
   useEffect(() => {
     if (!content) return;
@@ -95,12 +101,14 @@ const MarkdownContent = ({
 
   return (
     <div className={cn('relative flex w-full min-h-[40vh]', className || '')}>
-      <nav className="fixed top-40 right-1/2 translate-x-[-400px] w-64 h-fit ml-8 p-4">
-        <LogmeLikeBtn isOwnPost={false} postId={''} />
-      </nav>
+      {writer && writer !== userInfo?.github_id && (
+        <nav className="fixed top-40 right-1/2 translate-x-[-360px] w-64 h-fit ml-8 p-4">
+          <LogmeLikeBtn isOwnPost={false} postId={''} />
+        </nav>
+      )}
       <div className="flex-1" ref={contentRef}>
         <ReactMarkdown
-          className="contentMarkdown"
+          className="prose prose-slate max-w-none"
           rehypePlugins={[rehypeRaw]}
           remarkPlugins={[remarkGfm]}
           components={{
@@ -167,14 +175,18 @@ const MarkdownContent = ({
             },
             code: ({ inline, className, children, ...props }: CodeProps) => {
               const match = /language-(\w+)/.exec(className || '');
-              return !inline && match ? (
-                <CopyBlock
-                  text={String(children).replace(/\n$/, '')}
-                  language={match[1]}
-                  showLineNumbers={true}
-                  theme={dracula}
-                  codeBlock
-                />
+              const isMultiLine = !inline && match;
+
+              return isMultiLine ? (
+                <div className="max-w-[880px]">
+                  <CopyBlock
+                    text={String(children).replace(/\n$/, '')}
+                    language={match[1]}
+                    showLineNumbers={true}
+                    theme={dracula}
+                    codeBlock
+                  />
+                </div>
               ) : (
                 <code className={className} {...props}>
                   {children}

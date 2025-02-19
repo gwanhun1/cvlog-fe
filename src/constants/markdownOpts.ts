@@ -45,6 +45,8 @@ export const MDE_OPTIONMOBILE: Options = {
 export const MDE_OPTION: Options = {
   spellChecker: false,
   sideBySideFullscreen: false,
+  maxHeight: '50vh',
+  minHeight: '200px',
   toolbar: [
     'bold',
     'italic',

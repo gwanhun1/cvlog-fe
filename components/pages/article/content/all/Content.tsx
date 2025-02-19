@@ -4,13 +4,19 @@ import ContentSkeleton from './Skeleton';
 const Content = ({
   data,
   isLoading,
+  writer,
 }: {
   data?: string;
   isLoading: boolean;
+  writer: string;
 }) => {
   return (
     <div className="w-full">
-      {isLoading ? <ContentSkeleton /> : <MarkdownContent content={data} />}
+      {isLoading ? (
+        <ContentSkeleton />
+      ) : (
+        <MarkdownContent content={data} writer={writer} />
+      )}
     </div>
   );
 };

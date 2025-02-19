@@ -14,7 +14,6 @@ import Content from '../../../../../components/pages/article/content/all/Content
 import Profile from '../../../../../components/pages/article/content/all/Profile';
 import { Badge } from 'flowbite-react';
 import { useGetUserInfo } from 'service/hooks/Login';
-import LogmeLikeBtn from 'components/Shared/LogmeLikeBtn';
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
@@ -167,18 +166,12 @@ const Detail = ({ pid }: { pid: string }) => {
             <Content
               data={getDetailData.data?.post.content}
               isLoading={getDetailData.isLoading}
+              writer={getDetailData?.data?.post.user_id.github_id}
             />
           </div>
         </section>
       </main>
       <section className="relative flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
-        <LogmeLikeBtn
-          isOwnPost={
-            info?.id === getDetailData?.data?.post.user_id.id ||
-            info?.github_id === getDetailData?.data?.post?.user_id?.github_id.id
-          }
-          postId={pid}
-        />
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getDetailData?.data?.post.user_id} />
         </article>

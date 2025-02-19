@@ -53,7 +53,7 @@ const LogmeLikeBtn = ({ isOwnPost, postId }: LogmeLikeBtnProps) => {
   if (isOwnPost) return null;
 
   return (
-    <div className="flex gap-3 flex-col items-center justify-center border border-gray-200 rounded-lg w-24 h-44">
+    <div className="flex gap-3 flex-col items-center justify-center border border-gray-200 rounded-lg w-20 h-40">
       <button
         onClick={() => handleLikeClick('like')}
         disabled={isLoading}
@@ -61,7 +61,7 @@ const LogmeLikeBtn = ({ isOwnPost, postId }: LogmeLikeBtnProps) => {
           isLiked ? 'text-blue-500 scale-110' : 'text-gray-500'
         }`}
       >
-        <Shared.LogmeIcon.LikeIcon alt="like" width={70} height={70} />
+        <Shared.LogmeIcon.LikeIcon alt="like" width={60} height={60} />
       </button>
       <button
         onClick={() => handleLikeClick('dislike')}
@@ -70,7 +70,7 @@ const LogmeLikeBtn = ({ isOwnPost, postId }: LogmeLikeBtnProps) => {
           isDisliked ? 'text-red-500 scale-110' : 'text-gray-500'
         }`}
       >
-        <Shared.LogmeIcon.DisLikeIcon alt="disLike" width={70} height={70} />
+        <Shared.LogmeIcon.DisLikeIcon alt="disLike" width={60} height={60} />
       </button>
     </div>
   );
