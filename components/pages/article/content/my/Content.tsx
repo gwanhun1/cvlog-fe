@@ -1,15 +1,5 @@
-import Loader from 'components/Shared/common/Loader';
-import { CopyBlock, dracula } from 'react-code-blocks';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
 import ContentSkeleton from '../all/Skeleton';
-
-interface CodeProps {
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-}
+import MarkdownContent from 'components/Shared/MarkdownContent';
 
 const Content = ({
   data,
@@ -19,36 +9,8 @@ const Content = ({
   isLoading: boolean;
 }) => {
   return (
-    <div className="w-full min-h-[40vh] ">
-      {isLoading ? (
-        <ContentSkeleton />
-      ) : (
-        <ReactMarkdown
-          className="contentMarkdown "
-          rehypePlugins={[rehypeRaw]}
-          remarkPlugins={[remarkGfm]}
-          components={{
-            code: ({ inline, className, children, ...props }: CodeProps) => {
-              const match = /language-(\w+)/.exec(className || '');
-              return !inline && match ? (
-                <CopyBlock
-                  text={String(children).replace(/\n$/, '')}
-                  language={match[1]}
-                  showLineNumbers={true}
-                  theme={dracula}
-                  codeBlock
-                />
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-        >
-          {data}
-        </ReactMarkdown>
-      )}
+    <div className="w-full">
+      {isLoading ? <ContentSkeleton /> : <MarkdownContent content={data} />}
     </div>
   );
 };
