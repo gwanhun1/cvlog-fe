@@ -67,21 +67,21 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
   const cleanContent = removeImageFromContent(content);
 
   return (
-    <article className="w-full overflow-hidden transition-all duration-300 bg-white border rounded-lg shadow-sm hover:shadow-lg relative">
+    <article className="block w-full overflow-hidden transition-all duration-300 bg-white border rounded-lg shadow-sm hover:shadow-lg relative">
       <div
         className={`flex flex-col tablet:flex-row ${
-          imageUrl ? 'tablet:h-[250px]' : 'tablet:h-[180px]'
+          imageUrl ? 'tablet:h-[280px]' : 'tablet:h-[200px]'
         }`}
       >
         <div className="flex flex-col justify-between p-5 w-full">
           <div className="h-full flex flex-col">
-            <h3 className="mb-1 text-2xl font-bold leading-tight text-gray-900 hover:text-blue-600 line-clamp-2">
+            <h3 className="mb-2 text-2xl font-bold leading-tight text-gray-900 hover:text-blue-600 line-clamp-2">
               {title}
             </h3>
             <p
-              className={`mb-3 text-gray-600 ${
-                imageUrl ? 'line-clamp-3' : 'line-clamp-2'
-              } flex-grow`}
+              className={`text-gray-600 ${
+                imageUrl ? 'line-clamp-4' : 'line-clamp-3'
+              } overflow-hidden`}
             >
               {markdownToText(cleanContent)}
             </p>
