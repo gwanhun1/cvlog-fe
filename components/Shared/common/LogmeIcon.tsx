@@ -1,5 +1,7 @@
 import React from 'react';
 import AddPng from '/public/assets/add.png';
+import LikePng from '/public/assets/like.png';
+import DisLikePng from '/public/assets/disLike.png';
 import ArrowSvg from '/public/assets/Arrow.svg';
 import ClosePng from '/public/assets/close.png';
 import EyePng from '/public/assets/eye.png';
@@ -233,7 +235,17 @@ export const LogoRectangle = (props: IconProps) => (
 
 export const LikeIcon = (props: IconProps) => (
   <Image
-    src={ClosePng}
+    src={LikePng}
+    alt={props.alt}
+    width={props.width}
+    height={props.height}
+    className={props.cn}
+  />
+);
+
+export const DisLikeIcon = (props: IconProps) => (
+  <Image
+    src={DisLikePng}
     alt={props.alt}
     width={props.width}
     height={props.height}

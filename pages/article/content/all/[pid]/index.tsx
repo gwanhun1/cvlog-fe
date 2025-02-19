@@ -90,7 +90,7 @@ const Detail = ({ pid }: { pid: string }) => {
         {getDetailData.isLoading ? (
           <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
         ) : (
-          <h1 className="mr-1 text-xl truncate text-ftBlack mobile:text-3xl tablet:text-6xl ">
+          <h1 className="mr-1 text-xl  text-ftBlack mobile:text-3xl tablet:text-6xl ">
             {getDetailData?.data?.post.title}
           </h1>
         )}
@@ -172,11 +172,12 @@ const Detail = ({ pid }: { pid: string }) => {
         </section>
       </main>
       <section className="relative flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
-        <LogmeLikeBtn 
+        <LogmeLikeBtn
           isOwnPost={
             info?.id === getDetailData?.data?.post.user_id.id ||
             info?.github_id === getDetailData?.data?.post?.user_id?.github_id.id
           }
+          postId={pid}
         />
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getDetailData?.data?.post.user_id} />
