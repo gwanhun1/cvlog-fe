@@ -58,7 +58,17 @@ const NewContents = ({
         const file = e.dataTransfer.files[0];
         const { url: imageUrl, name: imageName } = await uploadImage(file);
 
-        handleContentChange(`![${imageName}](${imageUrl})`);
+        const editor = e.target as any;
+        const cm = editor.simpleMde?.codemirror;
+
+        if (cm) {
+          const pos = cm.getCursor();
+          const imageMarkdown = `![${imageName}](${imageUrl})`;
+          cm.replaceRange(imageMarkdown, pos);
+        } else {
+          handleContentChange(`![${imageName}](${imageUrl})`);
+        }
+
         setImageArr(prev => [...prev, imageUrl]);
       } catch (error) {
         console.error('이미지 업로드 실패:', error);
