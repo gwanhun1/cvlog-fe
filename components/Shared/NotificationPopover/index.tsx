@@ -31,7 +31,7 @@ const NotificationPopover = () => {
 
   const fetchNotifications = async () => {
     if (!userInfo?.id) return;
-    
+
     try {
       const response = await axios.get('/api/notifications');
       setNotifications(response.data);
