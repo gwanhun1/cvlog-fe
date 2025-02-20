@@ -47,7 +47,7 @@ const NewBtn = ({
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (!tag || e.key !== KeyMap.ENTER || e.nativeEvent.isComposing) return;
 
-      if (tag.length >= EDITOR_CONSTANTS.TAG_MAX_LENGTH) {
+      if (tag && tag.length >= EDITOR_CONSTANTS.TAG_MAX_LENGTH) {
         alert(ERROR_MESSAGES.TAG_TOO_LONG);
       } else if (doc.tags.includes(tag)) {
         alert(ERROR_MESSAGES.DUPLICATE_TAG);

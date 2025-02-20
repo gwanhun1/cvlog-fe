@@ -254,8 +254,8 @@ const SideMenu = () => {
   }
 
   const hasContent =
-    namedFolder.length > 0 ||
-    defaultFolder.length > 0 ||
+    (namedFolder && namedFolder.length > 0) ||
+    (defaultFolder && defaultFolder.length > 0) ||
     (queryGetUnassignedTags.data?.data?.length ?? 0) > 0;
 
   return (
