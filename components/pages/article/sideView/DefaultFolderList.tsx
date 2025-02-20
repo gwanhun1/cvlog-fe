@@ -1,4 +1,7 @@
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { Folder } from 'service/api/tag/type';
 import DroppableFolder from './DroppableFolder';
 import TagItem from './TagItem';
@@ -8,7 +11,10 @@ interface DefaultFolderListProps {
   draggedTagName: string;
 }
 
-const DefaultFolderList = ({ folders, draggedTagName }: DefaultFolderListProps) => {
+const DefaultFolderList = ({
+  folders,
+  draggedTagName,
+}: DefaultFolderListProps) => {
   return (
     <>
       {folders.map(folder => (
@@ -22,8 +28,12 @@ const DefaultFolderList = ({ folders, draggedTagName }: DefaultFolderListProps) 
               rounded-lg px-2 py-1
               border border-gray-100
               transition-colors duration-200
-              ${folder.tags.length === 0 ? 'min-h-[60px]' : ''}
-              ${folder.tags.length === 0 ? 'bg-gray-50/50' : 'bg-white'}
+              ${folder.tags && folder.tags.length === 0 ? 'min-h-[60px]' : ''}
+              ${
+                folder.tags && folder.tags.length === 0
+                  ? 'bg-gray-50/50'
+                  : 'bg-white'
+              }
             `}
           >
             <SortableContext

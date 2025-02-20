@@ -199,7 +199,7 @@ const MarkdownContent = ({
         </ReactMarkdown>
       </div>
 
-      {headings.length > 0 && (
+      {headings && headings.length > 0 && (
         <nav className="fixed top-40 left-1/2 translate-x-[440px] w-64 h-fit ml-8 p-4 border-l border-gray-200">
           <ul className="space-y-2">
             {headings.map(heading => (

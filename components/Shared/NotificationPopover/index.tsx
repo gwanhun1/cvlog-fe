@@ -52,11 +52,13 @@ const NotificationPopover = () => {
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       await axios.put(`/api/notifications/${notificationId}/read`);
-      setNotifications(notifications.map(notification => 
-        notification._id === notificationId 
-          ? { ...notification, read: true }
-          : notification
-      ));
+      setNotifications(
+        notifications.map(notification =>
+          notification._id === notificationId
+            ? { ...notification, read: true }
+            : notification
+        )
+      );
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -66,7 +68,9 @@ const NotificationPopover = () => {
   const handleMarkAllAsRead = async () => {
     try {
       await axios.put('/api/notifications/read-all');
-      setNotifications(notifications.map(notification => ({ ...notification, read: true })));
+      setNotifications(
+        notifications.map(notification => ({ ...notification, read: true }))
+      );
       setUnreadCount(0);
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
@@ -126,7 +130,7 @@ const NotificationPopover = () => {
             </div>
           </div>
           <div className="divide-y divide-gray-200">
-            {notifications.length === 0 ? (
+            {notifications && notifications.length === 0 ? (
               <div className="p-4 text-center text-gray-500">
                 새로운 알림이 없습니다
               </div>
@@ -137,18 +141,26 @@ const NotificationPopover = () => {
                   className={`p-4 hover:bg-gray-50 ${
                     !notification.read ? 'bg-blue-50' : ''
                   }`}
-                  onClick={() => !notification.read && handleMarkAsRead(notification._id)}
+                  onClick={() =>
+                    !notification.read && handleMarkAsRead(notification._id)
+                  }
                 >
                   <Link href={`/article/content/all/${notification.post._id}`}>
                     <div className="flex items-start space-x-3">
-                      <span className="text-2xl">{getNotificationIcon(notification.type)}</span>
+                      <span className="text-2xl">
+                        {getNotificationIcon(notification.type)}
+                      </span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">
                           {notification.sender.name}
                         </p>
-                        <p className="text-sm text-gray-500">{notification.message}</p>
+                        <p className="text-sm text-gray-500">
+                          {notification.message}
+                        </p>
                         <p className="text-xs text-gray-400 mt-1">
-                          {format(new Date(notification.created_at), 'PPP p', { locale: ko })}
+                          {format(new Date(notification.created_at), 'PPP p', {
+                            locale: ko,
+                          })}
                         </p>
                       </div>
                     </div>

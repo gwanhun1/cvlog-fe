@@ -1,9 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
-import { Notification } from './types';
 import { useRouter } from 'next/router';
+import { useQuery } from 'react-query';
 
 interface Notification {
   id: number;
@@ -33,10 +32,10 @@ const NotificationItem = styled.div<{ read: boolean }>`
   padding: 12px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
-  background-color: ${props => props.read ? 'white' : '#f0f7ff'};
-  
+  background-color: ${props => (props.read ? 'white' : '#f0f7ff')};
+
   &:hover {
-    background-color: ${props => props.read ? '#f5f5f5' : '#e6f0ff'};
+    background-color: ${props => (props.read ? '#f5f5f5' : '#e6f0ff')};
   }
 
   &:last-child {
@@ -85,7 +84,7 @@ const NotificationTooltip = () => {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    
+
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
@@ -98,8 +97,8 @@ const NotificationTooltip = () => {
 
   return (
     <TooltipContainer>
-      {notifications?.length ? (
-        notifications.map(notification => (
+      {notifications && notifications?.length ? (
+        notifications.map((notification: Notification) => (
           <NotificationItem
             key={notification.id}
             read={notification.read}

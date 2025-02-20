@@ -87,7 +87,7 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
             </p>
             <div className="flex items-center mt-auto">
               <div className="flex-1">
-                {tags?.length > 0 && (
+                {tags && tags?.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {tags.map(tag => (
                       <Badge

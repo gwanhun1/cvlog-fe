@@ -114,7 +114,7 @@ const LogmeAllCard: React.FC<CardProps> = ({
         {/* Tags and Time */}
         <div className="mt-auto">
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {tags.slice(0, 2).map(tag => (
+            {tags?.slice(0, 2).map(tag => (
               <Badge
                 key={tag.id}
                 className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700"
@@ -124,7 +124,7 @@ const LogmeAllCard: React.FC<CardProps> = ({
                 {tag.name}
               </Badge>
             ))}
-            {tags.length > 2 && (
+            {tags && tags.length > 2 && (
               <Badge
                 className="px-2 py-0.5 text-xs bg-gray-50 text-gray-600"
                 color="gray"

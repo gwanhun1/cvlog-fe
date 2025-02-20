@@ -39,7 +39,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
 
     return queryGetTagsFolders.data.filter(
       (folder): folder is Folder =>
-        Array.isArray(folder.tags) && folder.tags.length === 0
+        folder && Array.isArray(folder.tags) && folder.tags.length === 0
     );
   };
 
@@ -62,7 +62,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                 폴더 삭제
               </h3>
-              {emptyFolders.length > 0 ? (
+              {emptyFolders && emptyFolders.length > 0 ? (
                 <p className="text-base text-gray-600 dark:text-gray-400">
                   삭제할 폴더를 선택하세요.
                 </p>
@@ -70,7 +70,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
             </div>
 
             <div className="flex flex-col items-center">
-              {emptyFolders.length > 0 ? (
+              {emptyFolders && emptyFolders.length > 0 ? (
                 <>
                   <div className="w-full max-h-60 overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
                     {emptyFolders.map(({ id: folderId, name: folder }) => (
