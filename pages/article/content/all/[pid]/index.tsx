@@ -13,13 +13,14 @@ import {
 import Content from '../../../../../components/pages/article/content/all/Content';
 import Profile from '../../../../../components/pages/article/content/all/Profile';
 import { Badge } from 'flowbite-react';
-import { useGetUserInfo } from 'service/hooks/Login';
+import { useRecoilValue } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
-  const info = useGetUserInfo().data;
+  const userInfo = useRecoilValue(userIdAtom);
 
   // 데이터 받기
   const getDetailData = useGetDetail(parseInt(pid));
@@ -128,8 +129,8 @@ const Detail = ({ pid }: { pid: string }) => {
         <section>
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-              {info?.id === getDetailData?.data?.post.user_id.id ||
-              info?.github_id ===
+              {userInfo?.id === getDetailData?.data?.post.user_id.id ||
+              userInfo?.github_id ===
                 getDetailData?.data?.post?.user_id?.github_id.id ? (
                 <>
                   <button

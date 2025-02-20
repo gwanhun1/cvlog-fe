@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
 import Link from 'next/link';
-import { useGetUserInfo } from 'service/hooks/Login';
+import { useRecoilValue } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
 
 interface Notification {
   _id: string;
@@ -28,9 +27,11 @@ const NotificationPopover = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
-  const { info } = useGetUserInfo();
+  const userInfo = useRecoilValue(userIdAtom);
 
   const fetchNotifications = async () => {
+    if (!userInfo?.id) return;
+    
     try {
       const response = await axios.get('/api/notifications');
       setNotifications(response.data);
@@ -41,13 +42,13 @@ const NotificationPopover = () => {
   };
 
   useEffect(() => {
-    if (info?.id) {
+    if (userInfo && userInfo?.id) {
       fetchNotifications();
       // 1분마다 알림 갱신
       const interval = setInterval(fetchNotifications, 60000);
       return () => clearInterval(interval);
     }
-  }, [info?.id]);
+  }, [userInfo, userInfo?.id]);
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
@@ -158,9 +159,9 @@ const NotificationPopover = () => {
                           {notification.message}
                         </p>
                         <p className="text-xs text-gray-400 mt-1">
-                          {format(new Date(notification.created_at), 'PPP p', {
+                          {/* {format(new Date(notification.created_at), 'PPP p', {
                             locale: ko,
-                          })}
+                          })} */}
                         </p>
                       </div>
                     </div>

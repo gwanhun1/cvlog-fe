@@ -1,9 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Avatar, Dropdown } from 'flowbite-react';
 import dynamic from 'next/dynamic';
-import { useGetUserInfo } from 'service/hooks/Login';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
+import { userIdAtom } from 'service/atoms/atoms';
+import { useRecoilValue } from 'recoil';
 
 // 클라이언트 사이드에서만 렌더링되는 드롭다운 컴포넌트
 const ClientDropdown = dynamic(
@@ -57,7 +58,8 @@ const ClientDropdown = dynamic(
 );
 
 const NavPriofile = ({ setAuthority }: Props) => {
-  const { data: info, isLoading } = useGetUserInfo();
+  const userInfo = useRecoilValue(userIdAtom);
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -72,18 +74,18 @@ const NavPriofile = ({ setAuthority }: Props) => {
     return null;
   }
 
-  if (isLoading) {
-    return (
-      <nav>
-        <Loader />
-      </nav>
-    );
-  }
+  // if (userInfo) {
+  //   return (
+  //     <nav>
+  //       <Loader />
+  //     </nav>
+  //   );
+  // }
 
   return (
     <nav>
-      {info ? (
-        <ClientDropdown info={info} onClickLogout={onClickLogout} />
+      {userInfo ? (
+        <ClientDropdown info={userInfo} onClickLogout={onClickLogout} />
       ) : (
         <Loader />
       )}

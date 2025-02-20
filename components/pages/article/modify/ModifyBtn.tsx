@@ -6,7 +6,8 @@ import { useModifyPost } from 'service/hooks/Detail';
 import { DocType } from 'pages/article/modify/[pid]';
 import LocalStorage from 'public/utils/Localstorage';
 import { useCallback, useState } from 'react';
-import { useGetUserInfo } from 'service/hooks/Login';
+import { userIdAtom } from 'service/atoms/atoms';
+import { useRecoilValue } from 'recoil';
 
 interface ModifyBtnProps {
   doc: DocType;
@@ -28,7 +29,8 @@ const ModifyBtn = ({
   const router = useRouter();
   const accessToken = LocalStorage.getItem('CVtoken') as string;
   const [tag, setTag] = useState('');
-  const getUserInfo = useGetUserInfo();
+  const userInfo = useRecoilValue(userIdAtom);
+
   const mutationCreatModifyPost = useModifyPost(parseInt(pid));
   const [isLoading, setIsLoading] = useState(false);
 
@@ -81,7 +83,7 @@ const ModifyBtn = ({
   );
 
   const handleSavePost = useCallback(() => {
-    const userId = getUserInfo.data?.id;
+    const userId = userInfo?.id;
     if (!userId || !accessToken) {
       alert(ERROR_MESSAGES.LOGIN_REQUIRED);
       return;
@@ -102,13 +104,7 @@ const ModifyBtn = ({
         setIsLoading(false);
       },
     });
-  }, [
-    doc,
-    imageArr,
-    getUserInfo.data?.id,
-    accessToken,
-    mutationCreatModifyPost,
-  ]);
+  }, [doc, imageArr, userInfo?.id, accessToken, mutationCreatModifyPost]);
 
   return (
     <>
