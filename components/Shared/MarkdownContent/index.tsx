@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from 'styles/utils';
 import LogmeLikeBtn from '../LogmeLikeBtn';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 
 interface CodeProps {
@@ -35,7 +35,7 @@ const MarkdownContent = ({
   const [activeId, setActiveId] = useState<string>('');
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const [userInfo] = useRecoilState(userIdAtom);
+  const userInfo = useRecoilValue(userIdAtom);
 
   useEffect(() => {
     if (!content) return;

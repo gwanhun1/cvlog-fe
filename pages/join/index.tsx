@@ -22,21 +22,24 @@ const Join = ({ info, cookie }: JoinProps) => {
   useEffect(() => {
     LocalStorage.setItem('CVtoken', info.data.accessToken);
     Cookie.setItem('refreshToken', cookies.refreshToken, 1);
-    
+
     // 사용자 정보 가져오기
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${info.data.accessToken}`,
-          },
-        });
-        setUserInfo(response.data);
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/info`,
+          {
+            headers: {
+              Authorization: `Bearer ${info.data.accessToken}`,
+            },
+          }
+        );
+        setUserInfo(response.data.data);
       } catch (error) {
         console.error('Error fetching user info:', error);
       }
     };
-    
+
     fetchUserInfo();
   }, [cookies.refreshToken, info.data.accessToken, setUserInfo]);
 

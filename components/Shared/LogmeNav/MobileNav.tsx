@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Dropdown } from 'flowbite-react';
 import Link from 'next/link';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import * as Shared from 'components/Shared';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
-import { authorityState } from 'service/atoms/atoms';
-import { useGetUserInfo } from 'service/hooks/Login';
+import { authorityState, userIdAtom } from 'service/atoms/atoms';
 import { handleSignOut } from 'utils/auth';
 
 const MobileNav = () => {
@@ -18,8 +17,8 @@ const MobileNav = () => {
 
   const refreshToken = Cookie.getItem('refreshToken');
   const [cvRefreshToken, setCvRefreshToken] = useState(refreshToken);
-  const info = useGetUserInfo().data;
-  const [authority, setAuthority] = useRecoilState(authorityState);
+  const [_, setAuthority] = useRecoilState(authorityState);
+  const userInfo = useRecoilValue(userIdAtom);
 
   useEffect(() => {
     setToken(accessToken);
@@ -32,7 +31,7 @@ const MobileNav = () => {
 
   return (
     <nav>
-      {info && (
+      {userInfo.id && (
         <>
           <Dropdown
             arrowIcon={false}
@@ -51,16 +50,18 @@ const MobileNav = () => {
                 <div className="flex flex-col ">
                   <Avatar
                     alt="User settings"
-                    img={`${info ? info.profile_image : '/images/github.png'}`}
+                    img={`${
+                      userInfo ? userInfo.profile_image : '/images/github.png'
+                    }`}
                     size="sm"
                     rounded={true}
                   />
                   <div className="flex items-end truncate text-[10px] justify-center">
-                    {info ? info.github_id : '아이디가 없어요'}
+                    {userInfo ? userInfo.github_id : '아이디가 없어요'}
                   </div>
                   <div className="flex items-end truncate text-[10px] justify-center">
-                    {info && info.name !== null
-                      ? info.name + '님 환영합니다'
+                    {userInfo && userInfo.name !== null
+                      ? userInfo.name + '님 환영합니다'
                       : '이름을 등록해주세요.'}
                   </div>
                 </div>

@@ -1,18 +1,22 @@
 import React from 'react';
-import { useGetUserInfo } from 'service/hooks/Login';
 import { SkeletonLayout } from '../../components/pages/github/Skeleton';
 import ContributionChart from '../../components/pages/github/ContributionChart';
 import StatsSection from '../../components/pages/github/StatsSection';
-import { StreakStats, TrophyStats } from '../../components/pages/github/ActivityStats';
+import {
+  StreakStats,
+  TrophyStats,
+} from '../../components/pages/github/ActivityStats';
+import { useRecoilValue } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
 
 const Github = () => {
-  const { data: info, isLoading } = useGetUserInfo();
+  const userInfo = useRecoilValue(userIdAtom);
 
-  if (isLoading) {
+  if (!userInfo) {
     return <SkeletonLayout />;
   }
 
-  if (!info?.github_id) {
+  if (!userInfo?.github_id) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[90vh] text-center text-gray-400">
         <p className="text-2xl font-semibold mb-2">GitHub 연동 정보 없음 😢</p>
@@ -24,10 +28,10 @@ const Github = () => {
   return (
     <div className="container mx-auto px-4 py-8 min-h-[90vh]">
       <div className="max-w-4xl mx-auto space-y-6">
-        <ContributionChart githubId={info.github_id} />
-        <StatsSection githubId={info.github_id} />
-        <StreakStats githubId={info.github_id} />
-        <TrophyStats githubId={info.github_id} />
+        <ContributionChart githubId={userInfo.github_id} />
+        <StatsSection githubId={userInfo.github_id} />
+        <StreakStats githubId={userInfo.github_id} />
+        <TrophyStats githubId={userInfo.github_id} />
       </div>
     </div>
   );

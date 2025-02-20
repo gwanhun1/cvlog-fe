@@ -4,9 +4,10 @@ import { KeyboardEvent, useCallback, useState } from 'react';
 import * as Shared from 'components/Shared';
 import { EDITOR_CONSTANTS, ERROR_MESSAGES, KeyMap } from 'lib/constants';
 import LocalStorage from 'public/utils/Localstorage';
-import { useGetUserInfo } from 'service/hooks/Login';
 import { useCreatePost } from 'service/hooks/New';
 import { DocType } from 'pages/article/new';
+import { useRecoilValue } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
 
 interface NewBtnProps {
   doc: DocType;
@@ -26,7 +27,8 @@ const NewBtn = ({
   const [tag, setTag] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const getUserInfo = useGetUserInfo();
+  const userInfo = useRecoilValue(userIdAtom);
+
   const mutationCreateNewPost = useCreatePost();
   const accessToken = LocalStorage.getItem('CVtoken') as string;
 
@@ -70,7 +72,7 @@ const NewBtn = ({
   );
 
   const saveNewPost = useCallback(() => {
-    const userId = getUserInfo.data?.id;
+    const userId = userInfo?.id;
 
     if (!doc.title.trim()) {
       alert(ERROR_MESSAGES.TITLE_REQUIRED);
@@ -107,7 +109,7 @@ const NewBtn = ({
       console.error('게시글 저장 중 오류 발생:', error);
       alert(ERROR_MESSAGES.POST_SAVE_FAILED);
     }
-  }, [doc, imageArr, getUserInfo.data?.id, mutationCreateNewPost]);
+  }, [doc, imageArr, userInfo?.id, mutationCreateNewPost]);
 
   return (
     <>

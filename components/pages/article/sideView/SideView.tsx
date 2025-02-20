@@ -184,7 +184,7 @@ const SideMenu = () => {
         }
       );
     },
-    [mutationUpdateTagsFolders, queryGetTagsFolders, queryClient]
+    [mutationUpdateTagsFolders, queryClient]
   );
 
   const tryOpenModal = useCallback((name: string) => {
