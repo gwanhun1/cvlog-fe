@@ -17,7 +17,7 @@ const Layout = ({ children }: Props) => {
     <div
       className={cn(
         {
-          'tablet:container tablet:mx-auto px-20':
+          'px-4 tablet:px-20 tablet:container tablet:mx-auto':
             !pathname.startsWith('/article/new') &&
             !pathname.startsWith('/article/modify/'),
         },

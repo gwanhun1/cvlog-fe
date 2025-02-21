@@ -33,7 +33,7 @@ const TagItem = ({ tag, index, folderId }: TagItemProps) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="flex items-center space-x-2 p-2 mb-1 bg-white rounded-lg border border-gray-100 cursor-move hover:border-gray-200 transition-colors duration-200"
+      className="flex items-center space-x-2 mx-1 p-2 mb-1 bg-white rounded-lg border border-gray-100 cursor-move hover:border-gray-200 transition-colors duration-200"
     >
       <div className="w-2 h-2 rounded-full bg-gray-300" />
       <span className="text-sm text-gray-700">{tag.name}</span>

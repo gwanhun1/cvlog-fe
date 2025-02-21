@@ -173,49 +173,57 @@ const Detail = ({ pid }: { pid: string }) => {
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getMyDetail?.data?.post.user_id} />
         </article>
-        <div className="flex items-center justify-around tablet:w-96 w-60">
+        <div className="flex items-center justify-around w-full">
           <div
             className={`${
               !getMyDetail.data?.prevPostInfo && 'hover:cursor-not-allowed'
             } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
+            onClick={() => {
+              if (getMyDetail.data?.prevPostInfo) {
+                router.push(
+                  `/article/content/${getMyDetail.data.prevPostInfo.id}`
+                );
+              }
+            }}
           >
             {getMyDetail.data?.prevPostInfo && (
-              <Link
-                href={`/article/content/${getMyDetail.data?.prevPostInfo?.id}}`}
-                className="flex items-center cursor-pointer hover:opacity-70 "
-              >
-                <div className="ml-1 tablet:ml-3">←</div>
+              <div className="flex items-center cursor-pointer hover:opacity-70">
+                <div className="ml-1 tablet:ml-3 mobile:hidden">←</div>
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                  <div className="text-xs text-center tablet:text-sm ">
+                  <div className="text-xs text-center tablet:text-sm text-gray-500">
                     이전 포스트
                   </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
+                  <div className="h-5 mx-1 overflow-hidden text-xs font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px] truncate">
                     {getMyDetail.data?.prevPostInfo?.title}
                   </div>
                 </div>
-              </Link>
+              </div>
             )}
           </div>
           <div
             className={`${
               !getMyDetail.data?.nextPostInfo && 'hover:cursor-not-allowed'
             } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack mobile:h-12 justify-evenly hover:opacity-70 `}
+            onClick={() => {
+              if (getMyDetail.data?.nextPostInfo) {
+                router.push(
+                  `/article/content/${getMyDetail.data.nextPostInfo.id}`
+                );
+              }
+            }}
           >
             {getMyDetail.data?.nextPostInfo && (
-              <Link
-                href={`/article/content/${getMyDetail.data?.nextPostInfo?.id}}`}
-                className="flex items-center cursor-pointer hover:opacity-70"
-              >
+              <div className="flex items-center cursor-pointer hover:opacity-70">
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                  <div className="text-xs text-center tablet:text-sm">
+                  <div className="text-xs text-center tablet:text-sm text-gray-500">
                     다음 포스트
                   </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
+                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px] truncate">
                     {getMyDetail.data?.nextPostInfo?.title}
                   </div>
                 </div>
-                <div className="w-100%  mr-1 tablet:mr-3 ">→</div>
-              </Link>
+                <div className="w-100%  mr-1 tablet:mr-3 mobile:hidden">→</div>
+              </div>
             )}
           </div>
         </div>
