@@ -1,4 +1,7 @@
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { Folder } from 'service/api/tag/type';
 import DroppableFolder from './DroppableFolder';
 import FolderItem from './FolderItem';
@@ -8,7 +11,9 @@ interface NamedFolderListProps {
   folders: Folder[];
   draggedTagName: string;
   closedIdx: number[];
-  onClickAccordion: (id: number) => (e: React.MouseEvent<HTMLDivElement>) => void;
+  onClickAccordion: (
+    id: number
+  ) => (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const NamedFolderList = ({
@@ -32,7 +37,7 @@ const NamedFolderList = ({
               onClickAccordion={onClickAccordion}
             />
             <div
-              className={`transition-all duration-300 ${
+              className={`mt-1  transition-all duration-300 ${
                 closedIdx.includes(folder.id)
                   ? 'max-h-0 overflow-hidden'
                   : 'max-h-[500px]'

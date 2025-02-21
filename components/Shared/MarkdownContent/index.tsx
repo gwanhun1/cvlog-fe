@@ -100,13 +100,13 @@ const MarkdownContent = ({
   };
 
   return (
-    <div className={cn('relative flex w-full min-h-[40vh]', className || '')}>
+    <div className={cn('relative flex w-full min-h-[40vh] overflow-x-hidden', className || '')}>
       {writer && writer !== userInfo?.github_id && (
-        <nav className="fixed top-40 right-1/2 translate-x-[-360px] w-64 h-fit ml-8 p-4">
+        <nav className="hidden tablet:fixed tablet:top-40 tablet:right-1/2 tablet:translate-x-[-360px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4">
           <LogmeLikeBtn isOwnPost={false} postId={''} />
         </nav>
       )}
-      <div className="flex-1" ref={contentRef}>
+      <div className="flex-1 w-full" ref={contentRef}>
         <ReactMarkdown
           className="prose prose-slate max-w-none"
           rehypePlugins={[rehypeRaw]}
@@ -178,7 +178,7 @@ const MarkdownContent = ({
               const isMultiLine = !inline && match;
 
               return isMultiLine ? (
-                <div className="max-w-[880px]">
+                <div className="w-full tablet:max-w-[880px] overflow-x-auto">
                   <CopyBlock
                     text={String(children).replace(/\n$/, '')}
                     language={match[1]}
@@ -200,7 +200,7 @@ const MarkdownContent = ({
       </div>
 
       {headings && headings.length > 0 && (
-        <nav className="fixed top-40 left-1/2 translate-x-[440px] w-64 h-fit ml-8 p-4 border-l border-gray-200">
+        <nav className="hidden tablet:fixed tablet:top-40 tablet:left-1/2 tablet:translate-x-[440px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4 tablet:border-l tablet:border-gray-200">
           <ul className="space-y-2">
             {headings.map(heading => (
               <li
