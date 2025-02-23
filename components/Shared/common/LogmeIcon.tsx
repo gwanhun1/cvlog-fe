@@ -7,6 +7,7 @@ import GithubSvg from '/public/assets/github.svg';
 import GooglePng from '/public/assets/google.png';
 import KakaoSvg from '/public/assets/kakao.svg';
 import LensPng from '/public/assets/lens.png';
+import WriteSvg from '/public/assets/write.png';
 import NaverSvg from '/public/assets/naver.svg';
 import LogmeLogoSvg from '/public/assets/logmelogo.svg';
 import LogoPng from '/public/assets/logo.png';
@@ -97,6 +98,15 @@ export const KakaoIcon = (props: IconProps) => (
 export const LensIcon = (props: IconProps) => (
   <Image
     src={LensPng}
+    alt={props.alt}
+    width={props.width}
+    height={props.height}
+    className={props.cn}
+  />
+);
+export const WriteIcon = (props: IconProps) => (
+  <Image
+    src={WriteSvg}
     alt={props.alt}
     width={props.width}
     height={props.height}

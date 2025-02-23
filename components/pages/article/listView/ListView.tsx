@@ -80,40 +80,40 @@ const ListView = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 ">
+    <div className="flex flex-col gap-4 ">
       {/* Search and New Post Section */}
-      <div className="flex flex-col tablet:flex-row tablet:items-center gap-4 w-full">
-        <div className="flex-1 relative">
-          <input
-            className="w-full h-12 mobile:h-14 px-6 text-gray-700 text-lg mobile:text-xl tablet:text-2xl bg-white/90 backdrop-blur-sm rounded-2xl border-2 border-blue-300 shadow-lg placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,0,0,0.15)] hover:border-blue-300"
-            name="title"
-            placeholder="Search for articles..."
-            onKeyUp={handleKeyDown}
-          />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <Shared.LogmeIcon.LensIcon
-              alt="search"
-              width={24}
-              height={24}
-              onClick={() => alert('v1.1에서 만나요 🥰')}
-              cn="hover:cursor-not-allowed [filter:brightness(0)_saturate(100%)_invert(83%)_sepia(8%)_saturate(0%)_hue-rotate(177deg)_brightness(89%)_contrast(84%)]"
+      <div className="flex flex-col gap-6">
+        {/* Search and New Post Section */}
+        <div className="flex flex-col tablet:flex-row tablet:items-end gap-4 w-full">
+          <div className="flex-1 relative">
+            <input
+              className="w-full h-8 mobile:h-12 pl-6 text-gray-800 text-md mobile:text-lg tablet:text-xl bg-white/90 backdrop-blur-sm rounded-xl border-2 border-blue-300 shadow-lg placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 hover:shadow-xl hover:border-blue-500"
+              name="title"
+              placeholder="Search for articles..."
+              onKeyUp={handleKeyDown}
             />
+            <div
+              className="absolute -right-2 top-1/2 -translate-y-1/2 text-gray-500 bg-blue-600 p-4 rounded-full hover:cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:translate-y-1 active:shadow-lg"
+              onClick={() => alert('v1.1에서 만나요 🥰')}
+            >
+              <Shared.LogmeIcon.LensIcon alt="search" width={30} height={30} />
+            </div>
           </div>
-        </div>
-        <div className="w-full tablet:w-auto flex justify-end">
-          <Shared.LogmeButton
-            variant="classic"
-            size="big"
+
+          <div
+            className="hover:cursor-pointer hover:scale-105 group relative inline-flex translate-y-1 h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-blue-500 px-6 font-medium bg-blue-600 transition-all duration-100 [box-shadow:2px_3px_3px_#2536eb] active:translate-x-[3px] active:translate-y-[3px] active:[box-shadow:0px_0px_rgb(82_82_82)]"
             onClick={handleNewPost}
           >
-            <Shared.LogmeHeadline
-              type="medium"
-              fontStyle="semibold"
-              style={{ color: '#fff' }}
-            >
+            <span className="tooltip absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 group-hover:block w-max px-3 py-1 rounded bg-blue-800 text-white text-sm transition-all duration-200">
               글 작성하기
-            </Shared.LogmeHeadline>
-          </Shared.LogmeButton>
+            </span>
+            <Shared.LogmeIcon.WriteIcon
+              alt="search"
+              width={50}
+              height={50}
+              cn="text-white translate-x-1"
+            />
+          </div>
         </div>
       </div>
 

@@ -22,7 +22,7 @@ const Article: NextPage = () => {
             <div className="hidden tablet:block w-40 desktop:w-48 shrink-0 ">
               <SideView />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 pt-2">
               <ListView />
             </div>
           </div>

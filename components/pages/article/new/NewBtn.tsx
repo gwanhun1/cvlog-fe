@@ -120,46 +120,46 @@ const NewBtn = ({
       )}
       <div className="bg-[#f8f9fa]">
         <div className="tablet:pt-2">
-          <div className="flex items-center justify-end gap-2 px-4 py-2">
-            <Shared.LogmeButton
-              variant="ghost"
-              size="small"
-              onClick={() =>
-                accessToken ? router.push('/article') : router.push('/')
-              }
-            >
-              <Shared.LogmeHeadline type="medium" fontStyle="semibold">
-                취소
-              </Shared.LogmeHeadline>
-            </Shared.LogmeButton>
-
-            <Shared.LogmeButton
-              variant="classic"
-              size="small"
-              onClick={() =>
-                accessToken
-                  ? saveNewPost()
-                  : alert(ERROR_MESSAGES.LOGIN_REQUIRED)
-              }
-            >
-              <Shared.LogmeHeadline
-                type="medium"
-                fontStyle="semibold"
-                style={{ color: '#fff' }}
-              >
-                저장
-              </Shared.LogmeHeadline>
-            </Shared.LogmeButton>
-          </div>
-          <div className="relative px-2 border-b tablet:pt-2 border-gray">
+          <div className="flex relative px-2 border-b tablet:pt-2 border-gray">
             <input
               className="w-full h-10 text-gray-600 placeholder:text-gray-300 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
               name="title"
               value={doc.title}
-              placeholder="오늘은 어떤 주제로 모두를 놀라게 해주실 건가요? 🥰"
+              placeholder="오늘의 특별한 주제는 무엇인가요? 🌟"
               onKeyDown={changeFocusContent}
               onChange={onChangeTextarea}
             />
+            <div className="flex items-center justify-end gap-2 px-4 py-2">
+              <Shared.LogmeButton
+                variant="ghost"
+                size="small"
+                onClick={() =>
+                  accessToken ? router.push('/article') : router.push('/')
+                }
+              >
+                <Shared.LogmeHeadline type="medium" fontStyle="semibold">
+                  취소
+                </Shared.LogmeHeadline>
+              </Shared.LogmeButton>
+
+              <Shared.LogmeButton
+                variant="classic"
+                size="small"
+                onClick={() =>
+                  accessToken
+                    ? saveNewPost()
+                    : alert(ERROR_MESSAGES.LOGIN_REQUIRED)
+                }
+              >
+                <Shared.LogmeHeadline
+                  type="medium"
+                  fontStyle="semibold"
+                  style={{ color: '#fff' }}
+                >
+                  저장
+                </Shared.LogmeHeadline>
+              </Shared.LogmeButton>
+            </div>
           </div>
           <div className="min-h-[83px]">
             <div className="relative flex px-2 pt-4 border-b border-gray">
@@ -174,7 +174,7 @@ const NewBtn = ({
             </div>
             <div className="flex justify-between mt-2">
               <div
-                className="h-10 overflow-x-scroll w-11/12 mb-1 whitespace-nowrap"
+                className="h-10 overflow-x-scroll mb-1 whitespace-nowrap"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 {doc.tags.map((tag, index) => (
@@ -197,7 +197,7 @@ const NewBtn = ({
                 ))}
               </div>
 
-              <div className="flex items-center w-10">
+              {/* <div className="flex items-center w-10">
                 <Shared.LogmeIcon.EyeIcon
                   alt="eye"
                   width={30}
@@ -207,7 +207,7 @@ const NewBtn = ({
                     !isVisiblePreview ? 'bg-gray-300 rounded-full' : ''
                   }`}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
