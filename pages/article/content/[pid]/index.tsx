@@ -66,6 +66,7 @@ const Detail = ({ pid }: { pid: string }) => {
     if (check == true) {
       await deleteContent.mutate();
       await queryClient.invalidateQueries('tagsFolder');
+      await queryClient.invalidateQueries('list');
       alert('삭제되었습니다.');
       router.push('/article');
     }

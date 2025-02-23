@@ -3,6 +3,7 @@ import { Button } from 'flowbite-react';
 import { Modal } from 'flowbite-react';
 import { Folder } from 'service/api/tag/type';
 import { useGetFolders, useRemoveFolders } from 'service/hooks/List';
+import { useQueryClient } from 'react-query';
 
 interface CVRemoveModalProps {
   showModal: boolean;
@@ -17,6 +18,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
 
   const removeTagsFolders = useRemoveFolders(selectFolder);
   const queryGetTagsFolders = useGetFolders();
+  const queryClient = useQueryClient();
 
   const closeModal = () => {
     setShowModal(false);
@@ -29,6 +31,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
       await removeTagsFolders.mutate();
       setSelectFolder(0);
       setShowModal(false);
+      await queryClient.invalidateQueries('tagsFolder');
     } catch (error) {
       console.error('Error removing folder:', error);
     }
@@ -44,7 +47,6 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
   };
 
   const emptyFolders = getEmptyFolders();
-  console.log(queryGetTagsFolders.data);
 
   return (
     <Modal
