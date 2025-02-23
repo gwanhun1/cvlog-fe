@@ -1,5 +1,17 @@
 import React from 'react';
 
+export interface IntroduceProps {
+  Element: IntroduceData;
+}
+
+export interface IntroduceData {
+  id: number;
+  src: string;
+  title: string;
+  message: string;
+  messageBr: string;
+}
+
 const Introduce = ({ Element }: { Element: IntroduceData }) => {
   return (
     <>
@@ -9,7 +21,6 @@ const Introduce = ({ Element }: { Element: IntroduceData }) => {
             Element.id % 2 === 0 ? 'tablet:flex-row-reverse' : ''
           } items-center justify-center w-full gap-8 tablet:gap-12 py-8 tablet:py-16 shadow-lg`}
         >
-          {/* Video Section */}
           <article className="flex justify-center w-full px-4 tablet:px-8 tablet:w-3/5">
             <video
               src={Element.src}
@@ -21,10 +32,8 @@ const Introduce = ({ Element }: { Element: IntroduceData }) => {
             />
           </article>
 
-          {/* Content Section */}
           <article className="flex items-start w-full px-4 tablet:px-0 tablet:w-2/5">
             <div className="flex flex-col w-full gap-4 tablet:gap-6">
-              {/* Title Section */}
               <div className="flex items-center gap-4">
                 <div className="hidden tablet:flex items-center justify-center w-12 h-12 text-2xl font-medium text-white rounded-full bg-ftBlue">
                   {Element.id + 1}
@@ -34,7 +43,6 @@ const Introduce = ({ Element }: { Element: IntroduceData }) => {
                 </h1>
               </div>
 
-              {/* Message Section */}
               <div className="flex flex-col gap-4">
                 <p className="text-sm tablet:text-base text-gray-700">
                   {Element.message}
@@ -52,15 +60,3 @@ const Introduce = ({ Element }: { Element: IntroduceData }) => {
 };
 
 export default Introduce;
-
-export interface IntroduceProps {
-  Element: IntroduceData;
-}
-
-export interface IntroduceData {
-  id: number;
-  src: string;
-  title: string;
-  message: string;
-  messageBr: string;
-}

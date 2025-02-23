@@ -158,11 +158,6 @@ const NotificationPopover = () => {
                         <p className="text-sm text-gray-500">
                           {notification.message}
                         </p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {/* {format(new Date(notification.created_at), 'PPP p', {
-                            locale: ko,
-                          })} */}
-                        </p>
                       </div>
                     </div>
                   </Link>
