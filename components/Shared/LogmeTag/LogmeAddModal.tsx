@@ -1,32 +1,32 @@
 import React, { useState, KeyboardEvent, useRef } from 'react';
-import { Button, Label } from 'flowbite-react';
-import { Modal } from 'flowbite-react';
+import { Button, Label, Modal } from 'flowbite-react';
 import { useQueryClient } from 'react-query';
 import { useCreateFolders } from 'service/hooks/List';
 
-const CVModal = (props: {
+const CVModal = ({
+  showModal,
+  setShowModal,
+}: {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { showModal, setShowModal } = props;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const mutationCreateTagsFolders = useCreateFolders();
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const handleAddFolder = async () => {
-    if (!inputRef.current?.value.trim()) return;
+    const folderName = inputRef.current?.value.trim();
+    if (!folderName) return;
 
     setIsLoading(true);
     try {
       await mutationCreateTagsFolders.mutateAsync(
-        { name: inputRef.current.value.trim() },
+        { name: folderName },
         {
           onSuccess: () => {
             queryClient.invalidateQueries(['tagsFolder']);
-            if (inputRef.current) inputRef.current.value = '';
+            inputRef.current!.value = ''; // Clear input after success
             setShowModal(false);
           },
           onError: () => {
@@ -57,15 +57,13 @@ const CVModal = (props: {
       <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl">
         <Modal.Header className="p-4 pb-0 border-b-0" />
         <Modal.Body className="px-6 py-4">
-          <div className="space-y-8">
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                새 폴더 만들기
-              </h3>
-              <p className="text-base text-gray-600 dark:text-gray-400">
-                태그를 구성할 새로운 폴더를 만들어보세요
-              </p>
-            </div>
+          <div className="space-y-8 text-center">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+              새 폴더 만들기
+            </h3>
+            <p className="text-base text-gray-600 dark:text-gray-400">
+              태그를 구성할 새로운 폴더를 만들어보세요
+            </p>
 
             <div className="space-y-3">
               <Label
@@ -73,31 +71,29 @@ const CVModal = (props: {
                 value="폴더 이름"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               />
-              <div className="relative">
-                <input
-                  ref={inputRef}
-                  id="folderName"
-                  type="text"
-                  className="w-full px-4 py-3 text-base text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all duration-200 placeholder-gray-400"
-                  placeholder="폴더 이름을 입력하세요"
-                  onKeyPress={handleKeyPress}
-                  autoFocus
-                />
-              </div>
+              <input
+                ref={inputRef}
+                id="folderName"
+                type="text"
+                className="w-full px-4 py-3 text-base text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                placeholder="폴더 이름을 입력하세요"
+                onKeyPress={handleKeyPress}
+                autoFocus
+              />
             </div>
 
             <div className="flex space-x-4 pt-2">
-              <button
+              <Button
                 type="button"
-                className="w-full px-4 py-3 text-base font-medium rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200"
+                className="w-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
                 onClick={() => setShowModal(false)}
               >
                 취소
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className={`w-full px-4 py-3 text-base font-medium rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  isLoading ? 'cursor-not-allowed' : ''
+                className={`w-full bg-blue-600 text-white hover:bg-blue-700 ${
+                  isLoading ? 'cursor-not-allowed opacity-50' : ''
                 }`}
                 onClick={handleAddFolder}
                 disabled={isLoading}
@@ -128,7 +124,7 @@ const CVModal = (props: {
                 ) : (
                   '폴더 만들기'
                 )}
-              </button>
+              </Button>
             </div>
           </div>
         </Modal.Body>

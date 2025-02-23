@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Button } from 'flowbite-react';
 import { Modal } from 'flowbite-react';
 import { Folder } from 'service/api/tag/type';
 import { useGetFolders, useRemoveFolders } from 'service/hooks/List';
@@ -16,13 +15,12 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
 }) => {
   const [selectFolder, setSelectFolder] = useState<number>(0);
 
-  const removeTagsFolders = useRemoveFolders(selectFolder);
-  const queryGetTagsFolders = useGetFolders();
+  const { data: folders } = useGetFolders();
   const queryClient = useQueryClient();
 
-  const closeModal = () => {
-    setShowModal(false);
-  };
+  const removeTagsFolders = useRemoveFolders(selectFolder);
+
+  const closeModal = () => setShowModal(false);
 
   const removeFolder = async () => {
     if (selectFolder === 0) return;
@@ -31,22 +29,17 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
       await removeTagsFolders.mutate();
       setSelectFolder(0);
       setShowModal(false);
-      await queryClient.invalidateQueries('tagsFolder');
+      queryClient.invalidateQueries('tagsFolder');
     } catch (error) {
       console.error('Error removing folder:', error);
     }
   };
 
-  const getEmptyFolders = () => {
-    if (!queryGetTagsFolders.data) return [];
-
-    return queryGetTagsFolders.data.filter(
+  const emptyFolders =
+    folders?.filter(
       (folder): folder is Folder =>
         folder && Array.isArray(folder.tags) && folder.tags.length === 0
-    );
-  };
-
-  const emptyFolders = getEmptyFolders();
+    ) || [];
 
   return (
     <Modal
@@ -64,18 +57,18 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                 폴더 삭제
               </h3>
-              {emptyFolders && emptyFolders.length > 0 ? (
+              {emptyFolders.length > 0 && (
                 <p className="text-base text-gray-600 dark:text-gray-400">
                   삭제할 폴더를 선택하세요.
                 </p>
-              ) : null}
+              )}
             </div>
 
             <div className="flex flex-col items-center">
-              {emptyFolders && emptyFolders.length > 0 ? (
+              {emptyFolders.length > 0 ? (
                 <>
                   <div className="w-full max-h-60 overflow-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
-                    {emptyFolders.map(({ id: folderId, name: folder }) => (
+                    {emptyFolders.map(({ id: folderId, name }) => (
                       <div
                         key={folderId}
                         className={`group flex justify-between items-center h-14 px-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 last:mb-0 ${
@@ -103,9 +96,7 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
                               d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
                             />
                           </svg>
-                          <span className="text-base font-medium">
-                            {folder}
-                          </span>
+                          <span className="text-base font-medium">{name}</span>
                         </div>
                       </div>
                     ))}
