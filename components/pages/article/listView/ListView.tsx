@@ -85,6 +85,7 @@ const ListView = () => {
         <div className="flex flex-col tablet:flex-row tablet:items-end gap-4 w-full">
           <div className="flex-1 relative">
             <input
+              style={{ border: '1px solid #dbeafe' }}
               className="w-full h-8 mobile:h-12 pl-6 text-gray-800 text-md mobile:text-lg tablet:text-xl bg-white/90 backdrop-blur-sm rounded-xl border-2 border-blue-300 shadow-lg placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 hover:shadow-xl hover:border-blue-500"
               name="title"
               placeholder="Search for articles..."
@@ -97,21 +98,12 @@ const ListView = () => {
               <Shared.LogmeIcon.LensIcon alt="search" width={30} height={30} />
             </div>
           </div>
-
-          <div
-            className="hover:cursor-pointer hover:scale-105 group relative inline-flex translate-y-1 h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-blue-500 px-6 font-medium bg-blue-600 transition-all duration-100 [box-shadow:2px_3px_3px_#2536eb] active:translate-x-[3px] active:translate-y-[3px] active:[box-shadow:0px_0px_rgb(82_82_82)]"
+          <button
+            className="font-bold bg-blue-600 text-white rounded-4xl p-6 text-xl hover:bg-white hover:opacity-70 hover:text-blue-600 active:bg-blue-700 translate-y-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 hover:outline hover:outline-2  hover:outline-blue-400"
             onClick={handleNewPost}
           >
-            <span className="tooltip absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 group-hover:block w-max px-3 py-1 rounded bg-blue-800 text-white text-sm transition-all duration-200">
-              글 작성하기
-            </span>
-            <Shared.LogmeIcon.WriteIcon
-              alt="search"
-              width={50}
-              height={50}
-              cn="text-white translate-x-1"
-            />
-          </div>
+            글 작성하기
+          </button>
         </div>
       </div>
 

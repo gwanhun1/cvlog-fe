@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AccountManagement = () => (
-  <section className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+  <section className="bg-white rounded-xl p-8 shadow-sm border border-blue-100">
     <h2 className="text-xl font-semibold text-gray-900 mb-6">계정 관리</h2>
     <div className="space-y-4">
       <button
