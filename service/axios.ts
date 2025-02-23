@@ -44,6 +44,7 @@ const addRefreshSubscriber = (callback: (token: string) => void): void => {
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  timeout: 10000, // 10초로 타임아웃 설정
   headers: {
     'Content-Type': 'application/json',
   },
@@ -63,7 +64,7 @@ axiosInstance.interceptors.request.use(
   },
   (error: AxiosError): Promise<AxiosError> => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // 응답 인터셉터
@@ -116,7 +117,7 @@ axiosInstance.interceptors.response.use(
               refreshToken: refreshToken,
               Authorization: `Bearer ${accessToken}`,
             },
-          }
+          },
         );
 
         const newAccessToken = response.data.data.accessToken;
@@ -125,9 +126,8 @@ axiosInstance.interceptors.response.use(
           LocalStorage.setItem('CVtoken', newAccessToken);
         }
 
-        axiosInstance.defaults.headers.common[
-          'Authorization'
-        ] = `Bearer ${newAccessToken}`;
+        axiosInstance.defaults.headers.common['Authorization'] =
+          `Bearer ${newAccessToken}`;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         isRefreshing = false;
@@ -148,8 +148,29 @@ axiosInstance.interceptors.response.use(
       }
     }
 
+    // 재시도 로직 추가
+    const config = error.config as CustomAxiosRequestConfig;
+
+    // 재시도 횟수 초기화
+    if (config._retryCount === undefined) {
+      config._retryCount = 0;
+    }
+
+    // 최대 2번까지 재시도
+    if (
+      config._retryCount < 2 &&
+      (error.response?.status === 500 || error.code === 'ECONNABORTED')
+    ) {
+      config._retryCount += 1;
+
+      // 재시도 전 1초 대기
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      return axiosInstance(config);
+    }
+
     return Promise.reject(error);
-  }
+  },
 );
 
 // For development fallback

@@ -55,8 +55,8 @@ export interface PutTagsFolderRes {
 }
 
 export interface UpdateForm {
-  tag_id: number | undefined;
-  folder_id: number | undefined;
+  tag_id: number;
+  folder_id: number;
 }
 
 export interface GetNewToken {

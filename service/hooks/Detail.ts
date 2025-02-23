@@ -48,7 +48,7 @@ export const DeleteDetail = (params: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };
 
@@ -61,7 +61,7 @@ export const usePatchDetail = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };
 
@@ -80,6 +80,6 @@ export const useModifyPost = (pid: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    }
+    },
   );
 };

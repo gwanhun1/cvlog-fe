@@ -2,6 +2,7 @@ import React from 'react';
 import { Badge } from 'flowbite-react';
 import markdownToText from 'markdown-to-text';
 import Image from 'next/image';
+import { formatTimeAgo } from 'styles/utils/timeCheck';
 
 export interface TagItem {
   id: number;
@@ -26,40 +27,6 @@ const removeImageFromContent = (content: string): string => {
   return cleanContent.replace(/\n\s*\n/g, '\n');
 };
 
-const formatTimeAgo = (date: string): string => {
-  try {
-    const now = new Date();
-    const past = new Date(date);
-    const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
-
-    const minute = 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-    const week = day * 7;
-    const month = day * 30;
-    const year = day * 365;
-
-    switch (true) {
-      case diff < minute:
-        return `${diff}초 전`;
-      case diff < hour:
-        return `${Math.floor(diff / minute)}분 전`;
-      case diff < day:
-        return `${Math.floor(diff / hour)}시간 전`;
-      case diff < week:
-        return `${Math.floor(diff / day)}일 전`;
-      case diff < month:
-        return `${Math.floor(diff / week)}주 전`;
-      case diff < year:
-        return `${Math.floor(diff / month)}개월 전`;
-      default:
-        return `${Math.floor(diff / year)}년 전`;
-    }
-  } catch {
-    return '';
-  }
-};
-
 const LogmeAllCard: React.FC<CardProps> = ({
   title,
   content,
@@ -71,7 +38,6 @@ const LogmeAllCard: React.FC<CardProps> = ({
 
   return (
     <div className="rounded-lg h-[280px] w-full bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
-      {/* Image or Content Section */}
       <div
         className={`relative ${
           imageUrl
@@ -95,7 +61,6 @@ const LogmeAllCard: React.FC<CardProps> = ({
         ) : null}
       </div>
 
-      {/* Content Section */}
       <div
         className={`rounded-lg p-4 flex flex-col ${
           imageUrl
@@ -111,10 +76,9 @@ const LogmeAllCard: React.FC<CardProps> = ({
           {markdownToText(cleanContent)}
         </p>
 
-        {/* Tags and Time */}
         <div className="mt-auto">
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {tags.slice(0, 2).map(tag => (
+            {tags?.slice(0, 2).map(tag => (
               <Badge
                 key={tag.id}
                 className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700"
@@ -124,7 +88,7 @@ const LogmeAllCard: React.FC<CardProps> = ({
                 {tag.name}
               </Badge>
             ))}
-            {tags.length > 2 && (
+            {tags && tags.length > 2 && (
               <Badge
                 className="px-2 py-0.5 text-xs bg-gray-50 text-gray-600"
                 color="gray"

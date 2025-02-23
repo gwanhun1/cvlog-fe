@@ -1,21 +1,34 @@
 import React from 'react';
 import axios from 'axios';
 import { Avatar } from 'flowbite-react';
-import { useMutation } from 'react-query';
-import CommentLayout from 'components/Layout/commentLayout';
+import { useMutation, useQueryClient } from 'react-query';
+import CommentLayout from 'components/Shared/LogmeComment/CommentLayout';
+import LocalStorage from 'public/utils/Localstorage';
 
-const ReComment = ({
-  id,
-  recomment,
-}: {
+interface ReCommentProps {
+  reComment: ReCommentType;
+}
+
+export interface ReComment {
   id: number;
-  recomment: RecommentType;
-}) => {
-  const token = 'dsfdsfsdf';
+  comment: string;
+  profile_image: string;
+  name: string;
+}
+export interface ReCommentType {
+  reComment: ReComment[];
+}
+
+const ReComment = ({ reComment }: ReCommentProps) => {
+  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const queryClient = useQueryClient();
+
   //삭제 기능
   const deleteComment = useMutation(
     (id: number) => {
-      return axios.delete(`api/${id}`, { data: { Authorization: token } });
+      return axios.delete(`api/${id}`, {
+        data: { Authorization: accessToken },
+      });
     },
     {
       onSuccess: () => {
@@ -34,7 +47,7 @@ const ReComment = ({
   //수정 기능
   const updateComment = useMutation(
     (id: number) => {
-      return axios.put(`api/${id}`, { data: { Authorization: token } });
+      return axios.put(`api/${id}`, { data: { Authorization: accessToken } });
     },
     {
       onSuccess: () => {
@@ -52,8 +65,8 @@ const ReComment = ({
 
   return (
     <>
-      {recomment.recomment.map(
-        ({ id, profile_image, name, comment }: Recomment) => (
+      {reComment.reComment.map(
+        ({ id, profile_image, name, comment }: ReComment) => (
           <CommentLayout key={id}>
             <div className="mobile:mt-3">
               <div className="flex justify-between w-full ">
@@ -63,7 +76,7 @@ const ReComment = ({
                   className="flex justify-start "
                 >
                   <div className="space-y-1 font-medium dark:text-white ">
-                    <div className="text-[11px] tablet:text-base text-ftBlick">
+                    <div className="text-[11px] tablet:text-base text-ftBlack">
                       {name}
                     </div>
 
@@ -75,7 +88,7 @@ const ReComment = ({
                 <section className="flex">
                   <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
                     <div
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick"
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"
                       onClick={() => {
                         updateComment.mutate(id);
                       }}
@@ -83,9 +96,10 @@ const ReComment = ({
                       수정
                     </div>
                     <div
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick"
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"
                       onClick={() => {
                         deleteComment.mutate(id);
+                        queryClient.invalidateQueries('commentList');
                       }}
                     >
                       삭제
@@ -93,7 +107,7 @@ const ReComment = ({
                   </article>
                 </section>
               </div>
-              <main className="w-full p-2 pl-6 text-sm tablet:text-base mobile:text-md desktop:py-5 text-ftBlick">
+              <main className="w-full p-2 pl-6 text-sm tablet:text-base mobile:text-md desktop:py-5 text-ftBlack">
                 {comment}
               </main>
             </div>
@@ -105,16 +119,6 @@ const ReComment = ({
 };
 
 export default ReComment;
-
-export interface Recomment {
-  id: number;
-  comment: string;
-  profile_image: string;
-  name: string;
-}
-export interface RecommentType {
-  recomment: Recomment[];
-}
 
 //FIXME 백엔드 통신 시 삭제 될 목 데이터입니다.
 

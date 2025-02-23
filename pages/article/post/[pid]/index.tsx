@@ -1,1 +1,1 @@
-export { default } from './Detail';
+export { default } from '../../../../components/pages/article/post/Detail';

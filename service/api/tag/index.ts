@@ -1,4 +1,4 @@
-import { axiosInstance as axios } from 'service/axios';
+import { axiosInstance } from 'service/axios';
 import {
   GetTagsFolderRes,
   CreateTagsFolderReq,
@@ -6,24 +6,24 @@ import {
   PutTagsFolderRes,
   UpdateForm,
 } from './type';
-import { GetListType } from 'pages/article/components/ListView';
+import { GetListType } from 'components/pages/article/listView/ListView';
 
 export const getList = async (page: number, userId?: number) => {
   const url = userId
     ? `/posts/page/${page}?userId=${userId}`
     : `/posts/page/${page}`;
-  const { data } = await axios.get<GetListType>(url);
+  const { data } = await axiosInstance.get<GetListType>(url);
 
   return data.data;
 };
 
 export const getPublicList = async (page: number) => {
-  const { data } = await axios.get<GetListType>(`/posts/public/page/${page}`);
+  const { data } = await axiosInstance.get<GetListType>(`/posts/public/page/${page}`);
   return data.data;
 };
 
 export const fetchGetTagsFolders = async () => {
-  const { data } = await axios.get<GetTagsFolderRes>('/tag_folders');
+  const { data } = await axiosInstance.get<GetTagsFolderRes>('/tag_folders');
 
   return data.data;
 };
@@ -31,7 +31,7 @@ export const fetchGetTagsFolders = async () => {
 export const fetchCreateTagsFolders = async (
   params: CreateTagsFolderReq
 ): Promise<CreateTagsFolderRes> => {
-  const { data } = await axios.post<CreateTagsFolderRes>(
+  const { data } = await axiosInstance.post<CreateTagsFolderRes>(
     '/tag_folders',
     params
   );
@@ -39,13 +39,25 @@ export const fetchCreateTagsFolders = async (
 };
 
 export const fetchRemoveTagsFolders = async (params: number) => {
-  const { data } = await axios.delete(`/tag_folders/${params}`);
+  const { data } = await axiosInstance.delete(`/tag_folders/${params}`);
   return data;
 };
 
 export const putTagsFolders = async (params: UpdateForm) => {
-  const { data } = await axios.put<PutTagsFolderRes>(
+  const { data } = await axiosInstance.put<PutTagsFolderRes>(
     `/tags/${params.tag_id}/${params.folder_id}`
   );
   return data;
+};
+
+export const tagsAPI = {
+  getAll: async () => {
+    const response = await axiosInstance.get('/tags');
+    return response.data;
+  },
+
+  getWithoutFolder: async () => {
+    const response = await axiosInstance.get('/tags/without-folder');
+    return response.data;
+  },
 };

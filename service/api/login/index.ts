@@ -21,7 +21,7 @@ export const handleGetErrors = async (error: ErrorResponse) => {
 };
 
 export const handleMutateErrors = async (
-  error: ErrorResponse
+  error: ErrorResponse,
 ): Promise<void> => {
   const accessToken = LocalStorage.getItem('CVtoken') as string;
   const refreshToken = Cookie.getItem('refreshToken') as string;

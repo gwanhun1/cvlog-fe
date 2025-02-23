@@ -2,6 +2,8 @@ import React from 'react';
 import { Badge } from 'flowbite-react';
 import markdownToText from 'markdown-to-text';
 import Image from 'next/image';
+import TagList from './TagList';
+import { formatTimeAgo } from 'styles/utils/timeCheck';
 
 export interface TagItem {
   id: number;
@@ -28,79 +30,32 @@ const removeImageFromContent = (content: string): string => {
   return cleanContent.replace(/\n\s*\n/g, '\n');
 };
 
-const formatTimeAgo = (date: string): string => {
-  try {
-    const now = new Date();
-    const past = new Date(date);
-    const diff = Math.floor((now.getTime() - past.getTime()) / 1000);
-
-    const minute = 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-    const week = day * 7;
-    const month = day * 30;
-    const year = day * 365;
-
-    switch (true) {
-      case diff < minute:
-        return `${diff}초 전`;
-      case diff < hour:
-        return `${Math.floor(diff / minute)}분 전`;
-      case diff < day:
-        return `${Math.floor(diff / hour)}시간 전`;
-      case diff < week:
-        return `${Math.floor(diff / day)}일 전`;
-      case diff < month:
-        return `${Math.floor(diff / week)}주 전`;
-      case diff < year:
-        return `${Math.floor(diff / month)}개월 전`;
-      default:
-        return `${Math.floor(diff / year)}년 전`;
-    }
-  } catch {
-    return '';
-  }
-};
-
 const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
 
   return (
-    <article className="w-full overflow-hidden transition-all duration-300 bg-white border rounded-lg shadow-sm hover:shadow-lg relative">
+    <article className="block w-full overflow-hidden transition-all duration-300 bg-white border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative">
       <div
         className={`flex flex-col tablet:flex-row ${
-          imageUrl ? 'tablet:h-[250px]' : 'tablet:h-[180px]'
+          imageUrl ? 'tablet:h-[280px]' : 'tablet:h-[200px]'
         }`}
       >
         <div className="flex flex-col justify-between p-5 w-full">
           <div className="h-full flex flex-col">
-            <h3 className="mb-1 text-2xl font-bold leading-tight text-gray-900 hover:text-blue-600 line-clamp-2">
+            <h3 className="mb-2 text-2xl font-bold leading-tight text-gray-900 hover:text-blue-600 line-clamp-2">
               {title}
             </h3>
             <p
-              className={`mb-3 text-gray-600 ${
-                imageUrl ? 'line-clamp-3' : 'line-clamp-2'
-              } flex-grow`}
+              className={`text-gray-600 ${
+                imageUrl ? 'line-clamp-4' : 'line-clamp-3'
+              } overflow-hidden`}
             >
               {markdownToText(cleanContent)}
             </p>
             <div className="flex items-center mt-auto">
               <div className="flex-1">
-                {tags?.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map(tag => (
-                      <Badge
-                        key={tag.id}
-                        className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
-                        color="default"
-                        size="sm"
-                      >
-                        {tag.name}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
+                <TagList tags={tags} />
               </div>
             </div>
           </div>

@@ -10,9 +10,10 @@ import {
   useGetDetail,
   usePatchDetail,
 } from 'service/hooks/Detail';
-import Content from './content';
-import Profile from './Profile';
+import Content from '../../../../../components/pages/article/content/all/Content';
+import Profile from '../../../../../components/pages/article/content/all/Profile';
 import { Badge } from 'flowbite-react';
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 import { useGetUserInfo } from 'service/hooks/Login';
 =======
@@ -20,12 +21,16 @@ import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import Head from 'next/head';
 >>>>>>> Stashed changes
+=======
+import { useRecoilValue } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
+>>>>>>> eb3dd71bc9025702f4bd551a3c46aa124f0273b3
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
-  const info = useGetUserInfo().data;
+  const userInfo = useRecoilValue(userIdAtom);
 
   // 데이터 받기
   const getDetailData = useGetDetail(parseInt(pid));
@@ -70,6 +75,7 @@ const Detail = ({ pid }: { pid: string }) => {
     if (check == true) {
       await deleteContent.mutate();
       await queryClient.invalidateQueries('tagsFolder');
+      await queryClient.invalidateQueries('list');
       alert('삭제되었습니다.');
       router.push('/article');
     }
@@ -86,31 +92,44 @@ const Detail = ({ pid }: { pid: string }) => {
   useEffect(() => {
     getDetailData.refetch();
     commentList.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pid]);
 
   return (
 <<<<<<< Updated upstream
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
-      <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
-        <h1 className="mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
-          {getDetailData?.data?.post.title}
-        </h1>
+      <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
+        {getDetailData.isLoading ? (
+          <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
+        ) : (
+          <h1 className="mr-1 text-xl  text-ftBlack mobile:text-3xl tablet:text-6xl ">
+            {getDetailData?.data?.post.title}
+          </h1>
+        )}
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
         <div
-          className="flex flex-wrap justify-start w-full text-ftBlick h-9"
+          className="flex flex-wrap justify-start w-full text-ftBlack h-9"
           onClick={() => alert('v1.1에서 만나요 🥰')}
         >
-          {getDetailData.data?.post.tags.map((tag: TagType) => (
-            <Badge
-              className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
-              color="default"
-              size="sm"
-              key={tag.id}
-            >
-              {tag.name}
-            </Badge>
-          ))}
+          {getDetailData.isLoading ? (
+            <>
+              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+            </>
+          ) : (
+            getDetailData.data?.post.tags.map((tag: TagType) => (
+              <Badge
+                className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                color="default"
+                size="sm"
+                key={tag.id}
+              >
+                {tag.name}
+              </Badge>
+            ))
+          )}
         </div>
         <section className="flex items-end w-28">
           <time className="text-xs text-gray-600 tablet:text-sm mb-1">
@@ -122,9 +141,9 @@ const Detail = ({ pid }: { pid: string }) => {
         <section>
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-              {info?.id === getDetailData?.data?.post.user_id ||
-              info?.github_id ===
-                getDetailData?.data?.post?.user_id?.github_id ? (
+              {userInfo?.id === getDetailData?.data?.post.user_id.id ||
+              userInfo?.github_id ===
+                getDetailData?.data?.post?.user_id?.github_id.id ? (
                 <>
                   <button
                     className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
@@ -136,7 +155,7 @@ const Detail = ({ pid }: { pid: string }) => {
                   </button>
 
                   <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlick "
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack "
                     onClick={() => {
                       updateCheck();
                     }}
@@ -144,7 +163,7 @@ const Detail = ({ pid }: { pid: string }) => {
                     수정
                   </button>
                   <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlick"
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack"
                     onClick={() => {
                       deleteCheck();
                     }}
@@ -157,13 +176,15 @@ const Detail = ({ pid }: { pid: string }) => {
           </div>
 
           <div className="flex justify-center">
-            {getDetailData.data && (
-              <Content data={getDetailData.data?.post.content} />
-            )}
+            <Content
+              data={getDetailData.data?.post.content}
+              isLoading={getDetailData.isLoading}
+              writer={getDetailData?.data?.post.user_id.github_id}
+            />
           </div>
         </section>
       </main>
-      <section className="flex justify-between w-full px-5 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
+      <section className="relative flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getDetailData?.data?.post.user_id} />
         </article>
@@ -171,6 +192,7 @@ const Detail = ({ pid }: { pid: string }) => {
           <div
             className={`${
               !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
+<<<<<<< HEAD
             } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlick hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
 =======
     <>
@@ -210,6 +232,9 @@ const Detail = ({ pid }: { pid: string }) => {
             className="flex flex-wrap justify-start w-full text-ftBlack h-9"
             onClick={() => alert('v1.1에서 만나요 🥰')}
 >>>>>>> Stashed changes
+=======
+            } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
+>>>>>>> eb3dd71bc9025702f4bd551a3c46aa124f0273b3
           >
             {getDetailData.isLoading ? (
               <>
@@ -234,7 +259,7 @@ const Detail = ({ pid }: { pid: string }) => {
           <div
             className={`${
               !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
-            } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlick mobile:h-12 justify-evenly hover:opacity-70 `}
+            } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack mobile:h-12 justify-evenly hover:opacity-70 `}
           >
             {getDetailData.data?.nextPostInfo && (
               <Link

@@ -1,5 +1,6 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   distDir: '.next',
   images: {
     remotePatterns: [
@@ -10,17 +11,18 @@ const nextConfig = {
         pathname: '/**/**',
       },
     ],
-    domains: [
-      'cvlog-bucket.s3.amazonaws.com',
-      'avatars.githubusercontent.com',
-      'user-images.githubusercontent.com',
-      'logme-bucket.s3.amazonaws.com',
-      'res.cloudinary.com',
-    ],
+    domains: ['github.com', 'avatars.githubusercontent.com', 'cvlog-bucket.s3.amazonaws.com', 'user-images.githubusercontent.com', 'logme-bucket.s3.amazonaws.com', 'res.cloudinary.com'],
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    formats: ['image/webp'],
   },
   eslint: {
-    ignoreDuringBuilds: true
-  }
+    ignoreDuringBuilds: true,
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  swcMinify: true,
 };
 
 module.exports = nextConfig;

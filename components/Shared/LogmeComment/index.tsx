@@ -1,24 +1,29 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
-import CommentLayout from 'components/Layout/commentLayout';
 import { useGetCommentList } from 'service/hooks/Comment';
 import CommentItem from './Comment';
 import CommentWrite from './CommentWrite';
+import CommentLayout from './CommentLayout';
+import { CommentProps } from 'service/api/comment/type';
 
 const CommentBox = ({ pid }: { pid: string }) => {
   const commentList = useGetCommentList(parseInt(pid));
+
   return (
     <section className="flex flex-col w-full p-1 tablet:mt-3 ">
-      <h2 className="flex justify-start my-2 ml-1 text-xs mobile:text-base text-ftBlick">
-        {commentList.data && commentList.data.data.length} 개의 댓글
+      <h2 className="flex justify-start my-2 ml-1 text-xs mobile:text-base text-ftBlack">
+        {commentList && commentList.data ? commentList.data.length : 0} 개의
+        댓글
       </h2>
       <article>
         {commentList.data &&
-          commentList.data.data.map(comment => (
-            <CommentLayout key={comment.id}>
-              <CommentItem {...comment} />
-            </CommentLayout>
-          ))}
+          commentList.data.map(
+            (comment: React.JSX.IntrinsicAttributes & CommentProps) => (
+              <CommentLayout key={comment.id}>
+                <CommentItem {...comment} />
+              </CommentLayout>
+            )
+          )}
       </article>
       <CommentWrite pid={pid} />
     </section>

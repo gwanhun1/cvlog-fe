@@ -2,6 +2,7 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function Document() {
   return (
+<<<<<<< HEAD
     <Html lang="ko">
       <Head>
         <meta charSet="UTF-8" />
@@ -18,6 +19,11 @@ export default function Document() {
         
         {/* 네이버 웹마스터 도구 인증 */}
         <meta name="naver-site-verification" content="네이버 웹마스터 인증 코드" />
+=======
+    <Html>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+>>>>>>> eb3dd71bc9025702f4bd551a3c46aa124f0273b3
       </Head>
       <body>
         <Main />
