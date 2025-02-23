@@ -5,7 +5,21 @@ import { useMutation, useQueryClient } from 'react-query';
 import CommentLayout from 'components/Shared/LogmeComment/CommentLayout';
 import LocalStorage from 'public/utils/Localstorage';
 
-const ReComment = ({ recomment }: { recomment: RecommentType }) => {
+interface ReCommentProps {
+  reComment: ReCommentType;
+}
+
+export interface ReComment {
+  id: number;
+  comment: string;
+  profile_image: string;
+  name: string;
+}
+export interface ReCommentType {
+  reComment: ReComment[];
+}
+
+const ReComment = ({ reComment }: ReCommentProps) => {
   const accessToken = LocalStorage.getItem('CVtoken') as string;
   const queryClient = useQueryClient();
 
@@ -51,8 +65,8 @@ const ReComment = ({ recomment }: { recomment: RecommentType }) => {
 
   return (
     <>
-      {recomment.recomment.map(
-        ({ id, profile_image, name, comment }: Recomment) => (
+      {reComment.reComment.map(
+        ({ id, profile_image, name, comment }: ReComment) => (
           <CommentLayout key={id}>
             <div className="mobile:mt-3">
               <div className="flex justify-between w-full ">
@@ -105,16 +119,6 @@ const ReComment = ({ recomment }: { recomment: RecommentType }) => {
 };
 
 export default ReComment;
-
-export interface Recomment {
-  id: number;
-  comment: string;
-  profile_image: string;
-  name: string;
-}
-export interface RecommentType {
-  recomment: Recomment[];
-}
 
 //FIXME 백엔드 통신 시 삭제 될 목 데이터입니다.
 
