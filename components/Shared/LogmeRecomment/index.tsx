@@ -1,12 +1,13 @@
 import React from 'react';
 import axios from 'axios';
 import { Avatar } from 'flowbite-react';
-import { useMutation } from 'react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import CommentLayout from 'components/Shared/LogmeComment/CommentLayout';
 import LocalStorage from 'public/utils/Localstorage';
 
 const ReComment = ({ recomment }: { recomment: RecommentType }) => {
   const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const queryClient = useQueryClient();
 
   //삭제 기능
   const deleteComment = useMutation(
@@ -84,6 +85,7 @@ const ReComment = ({ recomment }: { recomment: RecommentType }) => {
                       className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"
                       onClick={() => {
                         deleteComment.mutate(id);
+                        queryClient.invalidateQueries('commentList');
                       }}
                     >
                       삭제
