@@ -13,7 +13,13 @@ import {
 import Content from './content';
 import Profile from './Profile';
 import { Badge } from 'flowbite-react';
+<<<<<<< Updated upstream
 import { useGetUserInfo } from 'service/hooks/Login';
+=======
+import { useRecoilValue } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
+import Head from 'next/head';
+>>>>>>> Stashed changes
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
@@ -83,6 +89,7 @@ const Detail = ({ pid }: { pid: string }) => {
   }, [pid]);
 
   return (
+<<<<<<< Updated upstream
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden tablet:pl-2 ">
         <h1 className="mr-1 text-xl truncate text-ftBlick mobile:text-3xl tablet:text-4xl ">
@@ -165,24 +172,65 @@ const Detail = ({ pid }: { pid: string }) => {
             className={`${
               !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
             } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlick hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
+=======
+    <>
+      <Head>
+        <title>{`${getDetailData.data?.post.title} | CVLog`}</title>
+        <meta name="description" content={getDetailData.data?.post.content.substring(0, 150) + '...'} />
+        <meta name="author" content={getDetailData.data?.post.user_id.github_id} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={`${getDetailData.data?.post.title} | CVLog`} />
+        <meta property="og:description" content={getDetailData.data?.post.content.substring(0, 150) + '...'} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://[your-domain]/article/content/all/${pid}`} />
+        
+        {/* Article 전용 메타태그 */}
+        <meta property="article:published_time" content={getDetailData.data?.post.created_at} />
+        <meta property="article:author" content={getDetailData.data?.post.user_id.github_id} />
+        <meta property="article:section" content="Technology" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={`${getDetailData.data?.post.title} | CVLog`} />
+        <meta name="twitter:description" content={getDetailData.data?.post.content.substring(0, 150) + '...'} />
+      </Head>
+      <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
+        <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
+          {getDetailData.isLoading ? (
+            <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
+          ) : (
+            <h1 className="mr-1 text-xl  text-ftBlack mobile:text-3xl tablet:text-6xl ">
+              {getDetailData?.data?.post.title}
+            </h1>
+          )}
+        </header>
+        <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
+          <div
+            className="flex flex-wrap justify-start w-full text-ftBlack h-9"
+            onClick={() => alert('v1.1에서 만나요 🥰')}
+>>>>>>> Stashed changes
           >
-            {getDetailData.data?.prevPostInfo && (
-              <Link
-                href={`/article/content/all/${getDetailData.data.prevPostInfo.id}}`}
-                className="flex items-center cursor-pointer hover:opacity-70 "
-              >
-                <div className="ml-1 tablet:ml-3">←</div>
-                <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                  <div className="text-xs text-center tablet:text-sm ">
-                    이전 포스트
-                  </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
-                    {getDetailData.data.prevPostInfo.title}
-                  </div>
-                </div>
-              </Link>
+            {getDetailData.isLoading ? (
+              <>
+                <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+                <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+                <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+              </>
+            ) : (
+              getDetailData.data?.post.tags.map((tag: TagType) => (
+                <Badge
+                  className="relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                  color="default"
+                  size="sm"
+                  key={tag.id}
+                >
+                  {tag.name}
+                </Badge>
+              ))
             )}
           </div>
+<<<<<<< Updated upstream
           <div
             className={`${
               !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
@@ -196,19 +244,115 @@ const Detail = ({ pid }: { pid: string }) => {
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
                   <div className="text-xs text-center tablet:text-sm">
                     다음 포스트
+=======
+          <section className="flex items-end w-28">
+            <time className="text-xs text-gray-600 tablet:text-sm mb-1">
+              {getDetailData && getDetailData.data?.post.created_at.slice(0, 10)}
+            </time>
+          </section>
+        </section>
+        <main className="w-full h-full tablet:pb-12">
+          <section>
+            <div className="flex justify-end w-full">
+              <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
+                {userInfo?.id === getDetailData?.data?.post.user_id.id ||
+                userInfo?.github_id ===
+                  getDetailData?.data?.post?.user_id?.github_id.id ? (
+                  <>
+                    <button
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
+                      onClick={() => {
+                        handlePrivateToggle();
+                      }}
+                    >
+                      {patchMessage ? '나만보기' : '공개'}
+                    </button>
+
+                    <button
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack "
+                      onClick={() => {
+                        updateCheck();
+                      }}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack"
+                      onClick={() => {
+                        deleteCheck();
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </>
+                ) : null}
+              </article>
+            </div>
+
+            <div className="flex justify-center">
+              <Content
+                data={getDetailData.data?.post.content}
+                isLoading={getDetailData.isLoading}
+                writer={getDetailData?.data?.post.user_id.github_id}
+              />
+            </div>
+          </section>
+        </main>
+        <section className="relative flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
+          <article className="mb-4 mobile:mb-0">
+            <Profile getDetailData={getDetailData?.data?.post.user_id} />
+          </article>
+          <div className="flex items-center justify-around tablet:w-96 w-60">
+            <div
+              className={`${
+                !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
+              } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
+            >
+              {getDetailData.data?.prevPostInfo && (
+                <Link
+                  href={`/article/content/all/${getDetailData.data.prevPostInfo.id}}`}
+                  className="flex items-center cursor-pointer hover:opacity-70 "
+                >
+                  <div className="ml-1 tablet:ml-3">←</div>
+                  <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
+                    <div className="text-xs text-center tablet:text-sm ">
+                      이전 포스트
+                    </div>
+                    <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
+                      {getDetailData.data.prevPostInfo.title}
+                    </div>
+>>>>>>> Stashed changes
                   </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
-                    {getDetailData.data.nextPostInfo.title}
+                </Link>
+              )}
+            </div>
+            <div
+              className={`${
+                !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
+              } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack mobile:h-12 justify-evenly hover:opacity-70 `}
+            >
+              {getDetailData.data?.nextPostInfo && (
+                <Link
+                  href={`/article/content/all/${getDetailData.data.nextPostInfo.id}}`}
+                  className="flex items-center cursor-pointer hover:opacity-70"
+                >
+                  <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
+                    <div className="text-xs text-center tablet:text-sm">
+                      다음 포스트
+                    </div>
+                    <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
+                      {getDetailData.data.nextPostInfo.title}
+                    </div>
                   </div>
-                </div>
-                <div className="w-100%  mr-1 tablet:mr-3 ">→</div>
-              </Link>
-            )}
+                  <div className="w-100%  mr-1 tablet:mr-3 ">→</div>
+                </Link>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
-      <CommentBox pid={pid} />
-    </div>
+        </section>
+        <CommentBox pid={pid} />
+      </div>
+    </>
   );
 };
 
