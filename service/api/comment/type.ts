@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 export interface NewPostComment {
   post_id: number;
   content: string;
@@ -10,6 +12,12 @@ export interface User_id {
 }
 
 export interface CommentType {
+  map(
+    arg0: (
+      comment: React.JSX.IntrinsicAttributes & CommentProps
+    ) => import('react').JSX.Element
+  ): ReactNode;
+  length: ReactNode;
   success: boolean;
   data: CommentProps[];
 }

@@ -67,7 +67,7 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
   const cleanContent = removeImageFromContent(content);
 
   return (
-    <article className="block w-full overflow-hidden transition-all duration-300 bg-white border rounded-lg shadow-sm hover:shadow-lg relative">
+    <article className="block w-full overflow-hidden transition-all duration-300 bg-white border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative">
       <div
         className={`flex flex-col tablet:flex-row ${
           imageUrl ? 'tablet:h-[280px]' : 'tablet:h-[200px]'

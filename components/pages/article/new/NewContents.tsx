@@ -188,7 +188,7 @@ const NewContents = ({
           `${isVisiblePreview ? 'tablet:w-1/2' : 'tablet:w-full'}`,
           'w-full overflow-hidden'
         )}
-        style={{ height: 'calc(100vh - 210px)' }}
+        style={{ height: 'calc(100vh - 180px)' }}
       >
         <SimpleMDE
           style={{ color: '#2657A6', height: '100%' }}
@@ -206,11 +206,11 @@ const NewContents = ({
       </div>
 
       {isVisiblePreview && (
-        <div className="flex-1 tablet:min-w-[50vw] tablet:w-[50vw] overflow-hidden h-[75vh]">
+        <div className="flex-1 tablet:min-w-[50vw] tablet:w-[50vw] overflow-hidden h-[80vh]">
           <div
             ref={containerTopRef}
             className="w-full px-4 overflow-y-auto tablet:px-8"
-            style={{ height: 'calc(100vh - 200px)' }}
+            style={{ height: 'calc(100vh - 190px)' }}
           >
             <ReactMarkdown
               rehypePlugins={[rehypeRaw]}

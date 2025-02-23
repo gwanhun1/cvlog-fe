@@ -17,7 +17,6 @@ export const MDE_OPTIONMOBILE: Options = {
     'table',
     '|',
     'preview',
-    'guide',
   ],
   insertTexts: {
     horizontalRule: ['', '\n\n-----\n\n'],
@@ -45,7 +44,7 @@ export const MDE_OPTIONMOBILE: Options = {
 export const MDE_OPTION: Options = {
   spellChecker: false,
   sideBySideFullscreen: false,
-  maxHeight: '65vh',
+  maxHeight: '70vh',
   minHeight: '200px',
   toolbar: [
     'bold',
@@ -64,10 +63,7 @@ export const MDE_OPTION: Options = {
     'code',
     '|',
     'preview',
-    'side-by-side',
     'fullscreen',
-    '|',
-    'guide',
   ],
   renderingConfig: {
     singleLineBreaks: false,

@@ -114,43 +114,43 @@ const ModifyBtn = ({
         </div>
       )}
       <div className="tablet:pt-2">
-        <div className="flex items-center justify-end gap-2 px-4 py-2">
-          <Shared.LogmeButton
-            variant="ghost"
-            size="small"
-            onClick={() =>
-              accessToken ? router.push('/article') : router.push('/')
-            }
-          >
-            <Shared.LogmeHeadline type="medium" fontStyle="semibold">
-              취소
-            </Shared.LogmeHeadline>
-          </Shared.LogmeButton>
-
-          <Shared.LogmeButton
-            variant="classic"
-            size="small"
-            onClick={() =>
-              accessToken ? handleSavePost() : alert('로그인 먼저 해주세요..')
-            }
-          >
-            <Shared.LogmeHeadline
-              type="medium"
-              fontStyle="semibold"
-              style={{ color: '#fff' }}
-            >
-              저장
-            </Shared.LogmeHeadline>
-          </Shared.LogmeButton>
-        </div>
-        <div className="relative px-2 border-b tablet:pt-2 border-gray">
+        <div className="flex relative px-2 border-b tablet:pt-2 border-gray">
           <input
             className="w-full h-10 text-gray-600 placeholder:text-gray-300 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
             name="title"
             value={doc.title}
-            placeholder="오늘은 어떤 주제로 모두를 놀라게 해주실 건가요? 🥰"
+            placeholder="오늘의 특별한 주제는 무엇인가요? 🌟"
             onChange={handleTitleChange}
           />
+          <div className="flex items-center justify-end gap-2 px-4 py-2">
+            <Shared.LogmeButton
+              variant="ghost"
+              size="small"
+              onClick={() =>
+                accessToken ? router.push('/article') : router.push('/')
+              }
+            >
+              <Shared.LogmeHeadline type="medium" fontStyle="semibold">
+                취소
+              </Shared.LogmeHeadline>
+            </Shared.LogmeButton>
+
+            <Shared.LogmeButton
+              variant="classic"
+              size="small"
+              onClick={() =>
+                accessToken ? handleSavePost() : alert('로그인 먼저 해주세요..')
+              }
+            >
+              <Shared.LogmeHeadline
+                type="medium"
+                fontStyle="semibold"
+                style={{ color: '#fff' }}
+              >
+                저장
+              </Shared.LogmeHeadline>
+            </Shared.LogmeButton>
+          </div>
         </div>
         <div className="min-h-[83px]">
           <div className="relative flex px-2 pt-4 border-b border-gray">
@@ -165,7 +165,7 @@ const ModifyBtn = ({
           </div>
           <div className="flex justify-between mt-2 ">
             <div
-              className="h-10 overflow-x-scroll w-11/12 mb-1 whitespace-nowrap"
+              className="h-10 overflow-x-scroll mb-1 whitespace-nowrap"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {doc.tags.map((tag, index) => (
@@ -191,7 +191,7 @@ const ModifyBtn = ({
                 </Badge>
               ))}
             </div>
-            <label className=" text-gray-400 top-[-35px] right-4  flex justify-end w-10 h-8">
+            {/* <label className=" text-gray-400 top-[-35px] right-4  flex justify-end w-10 h-8">
               <Shared.LogmeIcon.EyeIcon
                 cn={`w-4 m-2 hover:cursor-pointer ${
                   !isVisiblePreview ? 'bg-gray-300 rounded-full' : ''
@@ -201,7 +201,7 @@ const ModifyBtn = ({
                 height={30}
                 onClick={() => setIsVisiblePreview(!isVisiblePreview)}
               />
-            </label>
+            </label> */}
           </div>
         </div>
       </div>
