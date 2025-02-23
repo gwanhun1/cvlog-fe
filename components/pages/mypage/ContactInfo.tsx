@@ -6,7 +6,7 @@ interface ContactInfoProps {
 }
 
 const ContactInfo = ({ githubId }: ContactInfoProps) => (
-  <section className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
+  <section className="bg-white rounded-xl p-8 shadow-sm border border-blue-100">
     <h2 className="text-xl font-semibold text-gray-900 mb-6">연락처 정보</h2>
     <div className="space-y-6">
       <div className="flex items-center gap-4">
