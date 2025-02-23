@@ -53,22 +53,18 @@ const Mypage = () => {
           githubId={userInfo.github_id}
         />
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 mobile:grid-cols-2 tablet:grid-cols-3 gap-6 mb-8">
           <StatsCard icon={FiCalendar} title="가입일" value={formattedDate} />
           <StatsCard icon={FiBookOpen} title="작성한 글" value="0" />
           <StatsCard icon={FiHeart} title="받은 좋아요" value="0" />
         </div>
 
-        {/* Main Content */}
         <div className="grid grid-cols-1 tablet:grid-cols-3 gap-8">
-          {/* Left Column */}
           <div className="tablet:col-span-2 space-y-8">
             <AboutSection description={userInfo.description} />
             <RecentActivity />
           </div>
 
-          {/* Right Column */}
           <div className="space-y-8">
             <ContactInfo githubId={userInfo.github_id} />
             <AccountManagement />

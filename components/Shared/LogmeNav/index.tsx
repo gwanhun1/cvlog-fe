@@ -146,7 +146,6 @@ const Nav = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-bgWhite shadow-gray-200">
       <div className="grid h-full grid-cols-12 gap-4 px-4 mx-auto max-w-7xl">
-        {/* Logo */}
         <div className="flex items-center col-span-4 tablet:col-span-3">
           <Link
             href="/about"
@@ -157,7 +156,6 @@ const Nav = () => {
           </Link>
         </div>
 
-        {/* Navigation Menu */}
         <nav className="items-center justify-center hidden col-span-6 tablet:flex">
           <div className="flex items-center justify-center gap-2">
             {MENU_ITEMS.map(item => (
@@ -174,7 +172,6 @@ const Nav = () => {
           </div>
         </nav>
 
-        {/* Right Actions */}
         <div className="flex items-center justify-end col-span-8 gap-6 tablet:col-span-3">
           <div className="tablet:hidden">
             {localAccessToken && <MobileNav />}

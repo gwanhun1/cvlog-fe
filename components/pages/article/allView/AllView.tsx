@@ -110,7 +110,6 @@ const AllView = () => {
         </div>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-center py-6">
         {List && List.maxPage && List.maxPage !== 1 && (
           <Pagination

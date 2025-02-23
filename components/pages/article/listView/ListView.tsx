@@ -81,9 +81,7 @@ const ListView = () => {
 
   return (
     <div className="flex flex-col gap-4 ">
-      {/* Search and New Post Section */}
       <div className="flex flex-col gap-6">
-        {/* Search and New Post Section */}
         <div className="flex flex-col tablet:flex-row tablet:items-end gap-4 w-full">
           <div className="flex-1 relative">
             <input
@@ -117,7 +115,6 @@ const ListView = () => {
         </div>
       </div>
 
-      {/* Cards Grid */}
       <div
         className={`grid gap-2 tablet:gap-6 ${
           List && List.data && List.data?.posts.length < 0
@@ -192,7 +189,6 @@ const ListView = () => {
         )}
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-center py-6">
         {List && List.data?.maxPage && List.data?.maxPage !== 1 && (
           <Pagination
