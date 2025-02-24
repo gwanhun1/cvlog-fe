@@ -99,7 +99,7 @@ const ListView = () => {
             </div>
           </div>
           <button
-            className="font-bold bg-blue-600 text-white rounded-4xl p-6 text-xl hover:bg-white hover:opacity-70 hover:text-blue-600 active:bg-blue-700 translate-y-2 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 hover:outline hover:outline-2  hover:outline-blue-400"
+            className="font-bold bg-blue-600 text-white rounded-4xl p-6 text-xl transition-all duration-300 transform hover:scale-105 hover:bg-blue-100 hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95 translate-y-2 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
             onClick={handleNewPost}
           >
             글 작성하기

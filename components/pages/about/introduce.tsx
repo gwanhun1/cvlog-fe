@@ -36,7 +36,7 @@ const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
           <article className="flex items-start w-full px-4 tablet:px-0 tablet:w-2/5">
             <div className="flex flex-col w-full gap-4 tablet:gap-6">
               <div className="flex items-center gap-4">
-                <div className="hidden tablet:flex items-center justify-center w-12 h-12 text-2xl font-medium text-white rounded-full bg-ftBlue">
+                <div className="hidden tablet:flex items-center justify-center w-20 h-11  text-2xl font-medium text-white rounded-full bg-ftBlue">
                   {Element.id + 1}
                 </div>
                 <h1 className="text-xl tablet:text-3xl font-medium text-ftBlue">
