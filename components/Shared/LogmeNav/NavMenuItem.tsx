@@ -28,6 +28,7 @@ const NavMenuItem = ({
     <Link
       href={requiresAuth && !isAuthenticated ? '' : path}
       onClick={handleClick}
+      prefetch={true}
     >
       <Shared.LogmeHeadline
         type="medium"

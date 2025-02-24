@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
@@ -187,6 +187,7 @@ const Detail = ({ pid }: { pid: string }) => {
               <Link
                 href={`/article/content/all/${getDetailData.data.prevPostInfo.id}}`}
                 className="flex items-center cursor-pointer hover:opacity-70 "
+                prefetch={true}
               >
                 <div className="ml-1 tablet:ml-3">←</div>
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
@@ -209,6 +210,7 @@ const Detail = ({ pid }: { pid: string }) => {
               <Link
                 href={`/article/content/all/${getDetailData.data.nextPostInfo.id}}`}
                 className="flex items-center cursor-pointer hover:opacity-70"
+                prefetch={true}
               >
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
                   <div className="text-xs text-center tablet:text-sm">
@@ -231,10 +233,30 @@ const Detail = ({ pid }: { pid: string }) => {
 
 export default Detail;
 
-export const getServerSideProps: GetServerSideProps = async context => {
-  const pid = context.params?.pid;
-  return { props: { pid } };
+export const getStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
 };
+
+export const getStaticProps = async ({ params }: any) => {
+  const pid = params?.pid;
+
+  if (!pid) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props: {
+      pid,
+    },
+    revalidate: 60, // 60초마다 재생성
+  };
+};
+
 export interface Content {
   success: boolean;
   data: {

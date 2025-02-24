@@ -1,26 +1,21 @@
-import { useEffect, useState } from 'react';
-import type { NextPage } from 'next';
-import axios from 'axios';
+import type { GetStaticProps, NextPage } from 'next';
 import Introduce from '../../components/pages/about/introduce';
 import Header from '../../components/pages/about/Header';
 import Footer from '../../components/pages/about/Footer';
 
-const About: NextPage = () => {
-  const [aboutData, setAboutData] = useState<IntroduceData[]>();
+export interface IntroduceData {
+  id: number;
+  src: string;
+  title: string;
+  message: string;
+  messageBr: string;
+}
 
-  useEffect(() => {
-    const fetchAboutData = async () => {
-      try {
-        const response = await axios.get('/mockData/aboutMockData.json');
-        setAboutData(response.data.data);
-      } catch (error) {
-        console.error('Failed to fetch about data:', error);
-      }
-    };
+interface AboutProps {
+  aboutData: IntroduceData[];
+}
 
-    fetchAboutData();
-  }, []);
-
+const About: NextPage<AboutProps> = ({ aboutData }) => {
   return (
     <section className="flex flex-col items-center justify-center">
       <Header />
@@ -34,12 +29,23 @@ const About: NextPage = () => {
   );
 };
 
-export default About;
+export const getStaticProps: GetStaticProps = async () => {
+  try {
+    const response = await import('../../public/mockData/aboutMockData.json');
+    return {
+      props: {
+        aboutData: response.data,
+      },
+      revalidate: 60 * 60, // 1시간마다 재생성
+    };
+  } catch (error) {
+    console.error('Failed to fetch about data:', error);
+    return {
+      props: {
+        aboutData: [],
+      },
+    };
+  }
+};
 
-export interface IntroduceData {
-  id: number;
-  src: string;
-  title: string;
-  message: string;
-  messageBr: string;
-}
+export default About;

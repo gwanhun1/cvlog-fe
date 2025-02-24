@@ -49,7 +49,7 @@ const Nav = () => {
     <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-bgWhite shadow-gray-200">
       <div className="grid h-full grid-cols-12 gap-4 px-4 mx-auto max-w-7xl">
         <div className="flex items-center col-span-4 tablet:col-span-3">
-          <Link href="/about" className="flex items-center">
+          <Link href="/about" className="flex items-center" prefetch={true}>
             <Shared.LogmeIcon.NavLogo alt="로고" width={70} height={70} />
           </Link>
         </div>

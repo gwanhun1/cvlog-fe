@@ -122,6 +122,7 @@ const ListView = () => {
                   href={`/article/content/${id}`}
                   key={id}
                   onClick={() => saveListIndex(index)}
+                  prefetch={true}
                 >
                   <Card
                     title={title}

@@ -9,7 +9,7 @@ import LocalStorage from 'public/utils/Localstorage';
 
 const API_URL: string =
   process.env.NODE_ENV === 'production'
-    ? 'https://cvlog-be.onrender.com'
+    ? 'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app'
     : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 // 토큰 갱신 중인지 확인하는 플래그
@@ -47,7 +47,16 @@ export const axiosInstance: AxiosInstance = axios.create({
   timeout: 10000, // 10초로 타임아웃 설정
   headers: {
     'Content-Type': 'application/json',
+    'Cache-Control': 'max-age=300', // 5분 캐시
   },
+  // 요청 중복 방지
+  // transitional: {
+  //   silentJSONParsing: false,
+  //   forcedJSONParsing: true,
+  //   clarifyTimeoutError: true,
+  // },
+  // 응답 압축
+  decompress: true,
 });
 
 // 요청 인터셉터
@@ -64,12 +73,18 @@ axiosInstance.interceptors.request.use(
   },
   (error: AxiosError): Promise<AxiosError> => {
     return Promise.reject(error);
-  },
+  }
 );
 
 // 응답 인터셉터
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse): AxiosResponse => response,
+  (response: AxiosResponse) => {
+    if (response.headers['cache-control']) {
+      const cache = response.headers['cache-control'];
+      response.headers['cache-control'] = `${cache}, max-age=300`;
+    }
+    return response;
+  },
   async (error: AxiosError): Promise<any> => {
     const originalRequest = error.config as CustomAxiosRequestConfig;
 
@@ -117,7 +132,7 @@ axiosInstance.interceptors.response.use(
               refreshToken: refreshToken,
               Authorization: `Bearer ${accessToken}`,
             },
-          },
+          }
         );
 
         const newAccessToken = response.data.data.accessToken;
@@ -126,8 +141,9 @@ axiosInstance.interceptors.response.use(
           LocalStorage.setItem('CVtoken', newAccessToken);
         }
 
-        axiosInstance.defaults.headers.common['Authorization'] =
-          `Bearer ${newAccessToken}`;
+        axiosInstance.defaults.headers.common[
+          'Authorization'
+        ] = `Bearer ${newAccessToken}`;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         isRefreshing = false;
@@ -170,7 +186,7 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  },
+  }
 );
 
 // For development fallback
