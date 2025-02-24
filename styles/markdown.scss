@@ -3,79 +3,74 @@
 */
 .contentMarkdown {
   width: 100%;
-  word-wrap: break-word;
-  color: black;
+  word-break: break-word;
+  color: #000;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
 
   h1 {
     font-size: 32px;
     font-weight: 700;
+    margin: 24px 0 16px;
   }
 
   h2 {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 700;
+    margin: 22px 0 14px;
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
+    margin: 20px 0 12px;
   }
 
   h4 {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 700;
+    margin: 18px 0 10px;
   }
 
   h5 {
-    font-size: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 16px 0 8px;
+  }
 
-    font-weight: 400;
+  h6 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 14px 0 6px;
   }
 
   ol {
-    padding-left: 35px;
-    list-style-position: inside;
+    padding-left: 40px;
+    list-style: decimal;
 
     li {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       font-size: 16px;
-      line-height: 25px;
-      list-style: decimal;
-
-      &::marker {
-        display: inline-block;
-        width: 2em;
-        list-style-position: inside;
-        text-align: center;
-      }
+      line-height: 1.5;
 
       p {
         margin-bottom: 0;
-        padding: 0;
       }
     }
   }
 
   ul {
     margin: 20px 0;
-    padding-left: 35px;
+    padding-left: 40px;
+    list-style: disc;
 
     li {
-      margin-bottom: 10px;
-      font-size: 14px;
-      line-height: 18px;
-      list-style: initial;
-
-      &::marker {
-        display: inline-block;
-        width: 2em;
-        list-style-position: inside;
-        text-align: center;
-      }
+      margin-bottom: 8px;
+      font-size: 16px;
+      line-height: 1.5;
 
       p {
         margin-bottom: 0;
-        padding: 0;
       }
 
       ul {
@@ -86,19 +81,20 @@
   }
 
   hr {
-    height: 0.5px;
-    margin: 20px 0;
-    background-color: #888;
+    height: 1px;
+    margin: 24px 0;
+    border: none;
+    background-color: #ccc;
   }
 
   blockquote {
-    margin: 10px 0;
-    padding: 0 10px;
-    border-left: 3px solid currentcolor;
+    margin: 16px 0;
+    padding: 10px 15px;
+    border-left: 4px solid #888;
+    background-color: #f9f9f9;
 
     p {
-      margin-bottom: 20px;
-      padding: 0;
+      margin-bottom: 10px;
 
       a {
         color: #1c1c1e;
