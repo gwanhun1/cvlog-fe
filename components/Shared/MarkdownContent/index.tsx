@@ -7,6 +7,7 @@ import { cn } from 'styles/utils';
 import LogmeLikeBtn from '../LogmeLikeBtn';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
+import styles from '../../../styles/markdown.module.scss';
 
 interface CodeProps {
   inline?: boolean;
@@ -100,7 +101,12 @@ const MarkdownContent = ({
   };
 
   return (
-    <div className={cn('relative flex w-full min-h-[40vh] overflow-x-hidden', className || '')}>
+    <div
+      className={cn(
+        'relative flex w-full min-h-[40vh] overflow-x-hidden',
+        className || ''
+      )}
+    >
       {writer && writer !== userInfo?.github_id && (
         <nav className="hidden tablet:fixed tablet:top-40 tablet:right-1/2 tablet:translate-x-[-360px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4">
           <LogmeLikeBtn isOwnPost={false} postId={''} />
@@ -108,7 +114,7 @@ const MarkdownContent = ({
       )}
       <div className="flex-1 w-full" ref={contentRef}>
         <ReactMarkdown
-          className="prose prose-slate max-w-none"
+          className={styles.contentMarkdown}
           rehypePlugins={[rehypeRaw]}
           remarkPlugins={[remarkGfm]}
           components={{

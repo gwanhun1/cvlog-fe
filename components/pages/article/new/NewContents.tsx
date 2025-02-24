@@ -9,6 +9,7 @@ import { DocType } from 'pages/article/new';
 import { MDE_OPTION, MDE_OPTIONMOBILE } from 'src/constants/markdownOpts';
 import { useImageUpload } from 'hooks/useImageUpload';
 import dynamic from 'next/dynamic';
+import styles from '../../../../styles/markdown.module.scss';
 
 interface NewContentsProps {
   doc: DocType;
@@ -215,6 +216,7 @@ const NewContents = ({
             <ReactMarkdown
               rehypePlugins={[rehypeRaw]}
               remarkPlugins={[remarkGfm]}
+              className={styles.contentMarkdown}
               components={{
                 code: renderCodeBlock,
                 ul: ({ node, ...props }) => (
