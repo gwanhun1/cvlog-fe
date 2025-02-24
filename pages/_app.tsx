@@ -7,7 +7,7 @@ import Nav from 'components/Shared/LogmeNav';
 import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import 'styles/globals.css';
-import 'styles/markdown.scss';
+import 'styles/markdown.module.scss';
 import dynamic from 'next/dynamic';
 
 // Nav 컴포넌트를 클라이언트 사이드에서만 렌더링

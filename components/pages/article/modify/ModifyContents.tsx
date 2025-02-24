@@ -7,8 +7,9 @@ import { MDE_OPTION, MDE_OPTIONMOBILE } from 'src/constants/markdownOpts';
 import css from './new.module.scss';
 import dynamic from 'next/dynamic';
 import { DocType } from 'pages/article/modify/[pid]';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useImageUpload } from 'hooks/useImageUpload';
+import styles from '../../../../styles/markdown.module.scss';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
@@ -213,6 +214,7 @@ const ModifyContents = ({
             style={{ height: 'calc(100vh - 190px)' }}
           >
             <ReactMarkdown
+              className={styles.contentMarkdown}
               rehypePlugins={[rehypeRaw]}
               remarkPlugins={[remarkGfm]}
               components={{
