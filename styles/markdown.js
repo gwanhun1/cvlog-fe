@@ -1,9 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  charset: 'UTF-8',
-  // * 
-* TODO: 논의 필요 (issue: #47)  추가적인 세세한 스타일링
   'contentMarkdown': {
     'width': [{ 'unit': '%H', 'value': 1 }],
     'wordBreak': 'break-word',
