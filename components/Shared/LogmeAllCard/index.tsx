@@ -37,7 +37,7 @@ const LogmeAllCard: React.FC<CardProps> = ({
   const cleanContent = removeImageFromContent(content);
 
   return (
-    <div className="rounded-lg h-[280px] w-full bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
+    <article className="hover:bg-blue-50 group rounded-lg h-[280px] w-full bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
       <div
         className={`relative ${
           imageUrl
@@ -68,11 +68,11 @@ const LogmeAllCard: React.FC<CardProps> = ({
             : 'h-[calc(280px-0px)] -mt-[280px] relative z-10 bg-white'
         }`}
       >
-        <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors line-clamp-2 mb-2">
+        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-2">
           {title}
         </h3>
 
-        <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+        <p className="text-sm text-gray-600 line-clamp-2 mb-3 group-hover:text-blue-600">
           {markdownToText(cleanContent)}
         </p>
 
@@ -81,7 +81,7 @@ const LogmeAllCard: React.FC<CardProps> = ({
             {tags?.slice(0, 2).map(tag => (
               <Badge
                 key={tag.id}
-                className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700"
+                className="px-2 py-0.5 text-xs bg-blue-50 group-hover:text-blue-600"
                 color="info"
                 size="sm"
               >
@@ -106,7 +106,7 @@ const LogmeAllCard: React.FC<CardProps> = ({
           )}
         </div>
       </div>
-    </div>
+    </article>
   );
 };
 
