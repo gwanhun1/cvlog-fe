@@ -67,8 +67,9 @@ const MobileNav = () => {
           {menu.map(list => (
             <Link
               key={list}
-              href={`/${list !== 'About' ? list.toLowerCase() : ''}`}
+              href={`/${list.toLowerCase()}`}
               className="flex justify-center px-4 py-1"
+              prefetch={true}
             >
               <input
                 type="button"
@@ -81,40 +82,46 @@ const MobileNav = () => {
             </Link>
           ))}
 
-          <div className="flex flex-col justify-center w-28">
-            {token ? (
-              <>
-                <button
-                  className="flex w-full items-center justify-center rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
-                  onClick={onClickLogout}
+          {token ? (
+            <>
+              <button
+                className="flex w-full items-center justify-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-100"
+                onClick={onClickLogout}
+              >
+                로그아웃
+              </button>
+              <Dropdown.Item className="flex justify-center">
+                <Link href="/mypage" prefetch={true}>
+                  Setting
+                </Link>
+              </Dropdown.Item>
+            </>
+          ) : (
+            <>
+              <Dropdown.Item className="flex justify-center">
+                <Link href="/about" prefetch={true}>
+                  로그인
+                </Link>
+              </Dropdown.Item>
+              <Dropdown.Item className="flex justify-center">
+                <Link
+                  href="/"
+                  onClick={() => alert('로그인 먼저 해주세요.')}
+                  prefetch={true}
                 >
-                  로그아웃
-                </button>
-                <Dropdown.Item className="flex justify-center">
-                  <Link href="/mypage">Setting</Link>
-                </Dropdown.Item>
-              </>
-            ) : (
-              <>
-                <Dropdown.Item className="flex justify-center">
-                  <Link href="/about">로그인</Link>
-                </Dropdown.Item>
-                <Dropdown.Item className="flex justify-center">
-                  <Link href="/" onClick={() => alert('로그인 먼저 해주세요.')}>
-                    Setting
-                  </Link>
-                </Dropdown.Item>
-              </>
-            )}
-            <Dropdown.Item className="flex justify-center">
-              Alarm
-              <div
-                className={`w-2 h-2 mb-4 bg-blue-700 rounded-full ${
-                  token ? 'animate-ping' : 'hidden'
-                }`}
-              ></div>
-            </Dropdown.Item>
-          </div>
+                  Setting
+                </Link>
+              </Dropdown.Item>
+            </>
+          )}
+          <Dropdown.Item className="flex justify-center">
+            Alarm
+            <div
+              className={`w-2 h-2 mb-4 bg-blue-700 rounded-full ${
+                token ? 'animate-ping' : 'hidden'
+              }`}
+            ></div>
+          </Dropdown.Item>
         </Dropdown>
       )}
     </nav>

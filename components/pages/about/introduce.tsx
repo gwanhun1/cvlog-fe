@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 export interface IntroduceProps {
   Element: IntroduceData;
@@ -12,7 +12,7 @@ export interface IntroduceData {
   messageBr: string;
 }
 
-const Introduce = ({ Element }: { Element: IntroduceData }) => {
+const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
   return (
     <>
       {Element && (
@@ -28,6 +28,7 @@ const Introduce = ({ Element }: { Element: IntroduceData }) => {
               loop
               muted
               playsInline
+              preload="none"
               className="w-full max-w-2xl rounded-xl shadow-xl aspect-video object-cover"
             />
           </article>
@@ -57,6 +58,8 @@ const Introduce = ({ Element }: { Element: IntroduceData }) => {
       )}
     </>
   );
-};
+});
+
+Introduce.displayName = 'Introduce';
 
 export default Introduce;

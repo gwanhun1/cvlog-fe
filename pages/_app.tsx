@@ -38,6 +38,8 @@ export default function App({ Component, pageProps }: AppProps) {
         retry: false,
         refetchOnWindowFocus: false,
         staleTime: 1000 * 60 * 5, // 5분
+        cacheTime: 1000 * 60 * 30, // 30분
+        useErrorBoundary: true,
       },
     },
   });

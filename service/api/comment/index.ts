@@ -20,7 +20,7 @@ export const deleteComment = async (params: number) => {
 };
 
 export const getCommentList = async (params: number) => {
-  const { data } = await axios.get<CommentType>(`/comments/${params}`);
+  const { data } = await axios.get(`/comments/${params}`);
 
   return data;
 };

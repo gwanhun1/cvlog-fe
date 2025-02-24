@@ -13,7 +13,11 @@ const DesktopNavActions = ({
   if (isAuthenticated) {
     return (
       <div className="items-center hidden gap-6 tablet:flex">
-        <Link href="/mypage" className="transition-opacity hover:opacity-80">
+        <Link
+          href="/mypage"
+          className="transition-opacity hover:opacity-80"
+          prefetch={true}
+        >
           <Shared.LogmeIcon.SettingsIcon alt="설정" width={28} height={28} />
         </Link>
 
@@ -32,7 +36,7 @@ const DesktopNavActions = ({
 
   return (
     <div className="items-center hidden tablet:flex">
-      <Link href="/">
+      <Link href="/" prefetch={true}>
         <Shared.LogmeButton
           variant="classic"
           size="small"
