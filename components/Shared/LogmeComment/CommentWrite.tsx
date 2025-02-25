@@ -1,11 +1,14 @@
 import * as Shared from 'components/Shared';
 import React, { ChangeEvent, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { userIdAtom } from 'service/atoms/atoms';
 import { useGetCommentList, usePostNewComment } from 'service/hooks/Comment';
 
 const CommentWrite = ({ pid }: { pid: string }) => {
   const [comment, setComment] = useState('');
   const { refetch } = useGetCommentList(parseInt(pid));
   const postNewComment = usePostNewComment();
+  const userInfo = useRecoilValue(userIdAtom);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) =>
     setComment(e.target.value);
@@ -30,7 +33,7 @@ const CommentWrite = ({ pid }: { pid: string }) => {
       />
       <div className="flex justify-end mt-1 mobile:mt-2 mobile:mb-5">
         <Shared.LogmeButton
-          variant="classic"
+          variant={userInfo.github_id === '' ? 'disabled' : 'classic'}
           size="medium"
           onClick={handleSubmit}
         >
