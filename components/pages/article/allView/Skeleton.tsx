@@ -1,9 +1,9 @@
 const CardSkeleton = () => (
-  <div className="w-[290px]">
-    <div className="rounded-lg h-[280px] w-full bg-white shadow-md border border-gray-100 overflow-hidden">
+  <div>
+    <div className="rounded-lg h-[320px] w-full bg-white shadow-md border border-gray-100 overflow-hidden">
       <div className="h-32 w-full bg-gray-200 animate-pulse" />
 
-      <div className="p-4 flex flex-col h-[calc(280px-128px)]">
+      <div className="p-4 flex flex-col h-[calc(320px-128px)]">
         <div className="h-6 bg-gray-200 rounded w-3/4 mb-2 animate-pulse" />
 
         <div className="space-y-2 mb-3">

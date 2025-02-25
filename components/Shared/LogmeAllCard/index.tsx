@@ -37,7 +37,7 @@ const LogmeAllCard: React.FC<CardProps> = ({
   const cleanContent = removeImageFromContent(content);
 
   return (
-    <article className="hover:bg-blue-50 group rounded-lg h-[280px] w-full bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
+    <article className="hover:bg-blue-50 group rounded-lg h-[320px] w-full bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer border border-gray-100">
       <div
         className={`relative ${
           imageUrl
@@ -64,8 +64,8 @@ const LogmeAllCard: React.FC<CardProps> = ({
       <div
         className={`rounded-lg p-4 flex flex-col ${
           imageUrl
-            ? 'h-[calc(280px-128px)]'
-            : 'h-[calc(280px-0px)] -mt-[280px] relative z-10 bg-white'
+            ? 'h-[calc(320px-128px)]'
+            : 'h-[calc(320px-0px)] -mt-[320px] relative z-10 bg-white hover:bg-blue-50'
         }`}
       >
         <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 mb-2">

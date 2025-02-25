@@ -12,8 +12,7 @@ export const handleSignOut = async (
     await apiSignOut();
 
     // 로컬 스토리지 초기화
-    LocalStorage.removeItem('access_token');
-    LocalStorage.removeItem('cv_refresh_token');
+    LocalStorage.removeItem('CVtoken');
     LocalStorage.removeItem('user_info');
     Sessionstorage.removeItem('recoil-persist');
 
