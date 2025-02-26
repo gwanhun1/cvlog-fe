@@ -1,8 +1,6 @@
 import React from 'react';
 import LogmeLogoSvg from '/public/assets/logmelogo.svg';
 import LogoPng from '/public/assets/logo.png';
-import MirrorPng from '/public/assets/mirror.png';
-import MorePng from '/public/assets/more.png';
 import SymbolLogoSvg from '/public/assets/symbol-logo.svg';
 import Image from 'next/image';
 import LogmeNewNavLogo from 'public/assets/NavLogo.svg';
@@ -27,25 +25,6 @@ export const LogmeLogoIcon = (props: IconProps) => (
 export const LogoIcon = (props: IconProps) => (
   <Image
     src={LogoPng}
-    alt={props.alt}
-    width={props.width}
-    height={props.height}
-    className={props.cn}
-  />
-);
-
-export const MirrorIcon = (props: IconProps) => (
-  <Image
-    src={MirrorPng}
-    alt={props.alt}
-    width={props.width}
-    height={props.height}
-    className={props.cn}
-  />
-);
-export const MoreIcon = (props: IconProps) => (
-  <Image
-    src={MorePng}
     alt={props.alt}
     width={props.width}
     height={props.height}
