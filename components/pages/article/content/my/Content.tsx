@@ -1,16 +1,20 @@
 import ContentSkeleton from '../all/Skeleton';
 import MarkdownContent from 'components/Shared/MarkdownContent';
 
-const Content = ({
-  data,
-  isLoading,
-}: {
+interface ContentProps {
+  id?: number;
   data?: string;
   isLoading: boolean;
-}) => {
+}
+
+const Content = ({ id, data, isLoading }: ContentProps) => {
   return (
     <div className="w-full">
-      {isLoading ? <ContentSkeleton /> : <MarkdownContent content={data} />}
+      {isLoading ? (
+        <ContentSkeleton />
+      ) : (
+        <MarkdownContent content={data} id={id} />
+      )}
     </div>
   );
 };

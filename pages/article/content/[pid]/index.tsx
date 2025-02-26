@@ -164,6 +164,7 @@ const Detail = ({ pid }: { pid: string }) => {
           </div>
           <div className="flex justify-center">
             <Content
+              id={getMyDetail.data?.post.id}
               data={getMyDetail.data?.post.content}
               isLoading={getMyDetail.isLoading}
             />
