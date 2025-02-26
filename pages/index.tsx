@@ -17,7 +17,6 @@ const Home = () => {
             alt={'logo'}
             width={500}
             height={500}
-            // className="drop-shadow-2xl"
           />
         </div>
 

@@ -19,7 +19,7 @@ const About: NextPage<AboutProps> = ({ aboutData }) => {
   return (
     <section className="flex flex-col items-center justify-center">
       <Header />
-      <div className="px-20">
+      <div className="tablet:px-20">
         {aboutData?.map((element: IntroduceData) => (
           <Introduce key={element.id} Element={element} />
         ))}

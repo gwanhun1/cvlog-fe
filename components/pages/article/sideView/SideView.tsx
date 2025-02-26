@@ -73,7 +73,7 @@ const SideMenu = () => {
         <LogmeRemoveModal showModal={showModal} setShowModal={setShowModal} />
       )}
 
-      <div className="sticky mt-10 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden">
+      <div className="sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden">
         <SideViewHeader
           hasContent={hasContent}
           onAddClick={() => tryOpenModal('add')}

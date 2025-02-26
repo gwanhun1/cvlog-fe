@@ -1,4 +1,3 @@
-import * as Shared from 'components/Shared';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -60,18 +59,14 @@ const LogmeLikeBtn = ({ isOwnPost, postId }: LogmeLikeBtnProps) => {
         className={`transform transition-all duration-200 hover:scale-110 ${
           isLiked ? 'text-blue-500 scale-110' : 'text-gray-500'
         }`}
-      >
-        <Shared.LogmeIcon.LikeIcon alt="like" width={60} height={60} />
-      </button>
+      ></button>
       <button
         onClick={() => handleLikeClick('dislike')}
         disabled={isLoading}
         className={`opacity-20 transform transition-all duration-200 hover:scale-110 ${
           isDisliked ? 'text-red-500 scale-110' : 'text-gray-500'
         }`}
-      >
-        <Shared.LogmeIcon.DisLikeIcon alt="disLike" width={60} height={60} />
-      </button>
+      ></button>
     </div>
   );
 };

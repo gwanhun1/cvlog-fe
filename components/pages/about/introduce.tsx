@@ -21,7 +21,7 @@ const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
             Element.id % 2 === 0 ? 'tablet:flex-row-reverse' : ''
           } items-center justify-center w-full gap-8 tablet:gap-12 py-8 tablet:py-16 shadow-lg`}
         >
-          <article className="flex justify-center w-full px-4 tablet:px-8 tablet:w-3/5">
+          <article className="relative flex justify-center w-full h-[300px] tablet:w-3/5 tablet:h-[400px] px-4 tablet:px-8">
             <video
               src={Element.src}
               autoPlay
@@ -29,7 +29,7 @@ const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
               muted
               playsInline
               preload="none"
-              className="w-full max-w-2xl rounded-xl shadow-xl aspect-video object-cover"
+              className="absolute inset-0 w-full h-full rounded-xl shadow-xl object-cover"
             />
           </article>
 

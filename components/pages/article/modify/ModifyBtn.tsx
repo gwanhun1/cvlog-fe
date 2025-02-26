@@ -1,3 +1,4 @@
+import { IoIosCloseCircle } from 'react-icons/io';
 import { useRouter } from 'next/router';
 import { EDITOR_CONSTANTS, ERROR_MESSAGES, KeyMap } from 'lib/constants';
 import * as Shared from 'components/Shared';
@@ -181,27 +182,11 @@ const ModifyBtn = ({
                       handleRemoveTag(tag);
                     }}
                   >
-                    <Shared.LogmeIcon.CloseIcon
-                      alt="close"
-                      width={50}
-                      height={50}
-                      cn="absolute w-3 h-3 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-blue-800 hover:text-blue-700 transition-all duration-200 transform hover:scale-110"
-                    />
+                    <IoIosCloseCircle className="absolute w-4 h-4 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-red-600 hover:text-red-700 transition-all duration-200 transform hover:scale-110" />
                   </button>
                 </Badge>
               ))}
             </div>
-            {/* <label className=" text-gray-400 top-[-35px] right-4  flex justify-end w-10 h-8">
-              <Shared.LogmeIcon.EyeIcon
-                cn={`w-4 m-2 hover:cursor-pointer ${
-                  !isVisiblePreview ? 'bg-gray-300 rounded-full' : ''
-                }`}
-                alt="no-preview"
-                width={30}
-                height={30}
-                onClick={() => setIsVisiblePreview(!isVisiblePreview)}
-              />
-            </label> */}
           </div>
         </div>
       </div>
