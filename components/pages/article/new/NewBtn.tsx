@@ -8,6 +8,7 @@ import { useCreatePost } from 'service/hooks/New';
 import { DocType } from 'pages/article/new';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
+import { IoIosCloseCircle } from 'react-icons/io';
 
 interface NewBtnProps {
   doc: DocType;
@@ -186,28 +187,11 @@ const NewBtn = ({
                   >
                     {tag}
                     <button onClick={() => handleRemoveTag(tag)}>
-                      <Shared.LogmeIcon.CloseIcon
-                        alt="close"
-                        width={50}
-                        height={50}
-                        cn="absolute w-3 h-3 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-blue-800 hover:text-blue-700 transition-all duration-200 transform hover:scale-110"
-                      />
+                      <IoIosCloseCircle className="absolute w-4 h-4 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-red-600 hover:text-red-700 transition-all duration-200 transform hover:scale-110" />
                     </button>
                   </Badge>
                 ))}
               </div>
-
-              {/* <div className="flex items-center w-10">
-                <Shared.LogmeIcon.EyeIcon
-                  alt="eye"
-                  width={30}
-                  height={30}
-                  onClick={() => setIsVisiblePreview(!isVisiblePreview)}
-                  cn={`w-4 hover:cursor-pointer ${
-                    !isVisiblePreview ? 'bg-gray-300 rounded-full' : ''
-                  }`}
-                />
-              </div> */}
             </div>
           </div>
         </div>

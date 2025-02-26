@@ -69,11 +69,9 @@ const Nav = () => {
         </nav>
 
         <div className="flex items-center justify-end col-span-8 gap-6 tablet:col-span-3">
-          {isAuthenticated && (
-            <div className="tablet:hidden">
-              <MobileNav />
-            </div>
-          )}
+          <div className="tablet:hidden">
+            <MobileNav />
+          </div>
           <DesktopNavActions
             isAuthenticated={isAuthenticated}
             setAuthority={() => {}}

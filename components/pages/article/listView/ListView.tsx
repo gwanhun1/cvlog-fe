@@ -1,9 +1,9 @@
+import { IoMdSearch } from 'react-icons/io';
 import { useEffect, useState } from 'react';
 import { Pagination } from 'flowbite-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
-import * as Shared from 'components/Shared';
 import Card from 'components/Shared/LogmeCard';
 import { listIndexAtom } from 'service/atoms/atoms';
 import { useGetList } from 'service/hooks/List';
@@ -84,22 +84,21 @@ const ListView = () => {
       <div className="flex flex-col gap-6">
         <div className="flex flex-col tablet:flex-row tablet:items-end gap-4 w-full">
           <div className="flex-1 relative">
-            <input
-              style={{ border: '1px solid #dbeafe' }}
-              className="w-full h-8 mobile:h-12 pl-6 text-gray-800 text-md mobile:text-lg tablet:text-xl bg-white/90 backdrop-blur-sm rounded-xl border-2 border-blue-300 shadow-lg placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 hover:shadow-xl hover:border-blue-500"
-              name="title"
-              placeholder="Search for articles..."
-              onKeyUp={handleKeyDown}
-            />
-            <div
-              className="absolute -right-2 top-1/2 -translate-y-1/2 text-gray-500 bg-blue-600 p-4 rounded-full hover:cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-2xl active:translate-y-1 active:shadow-lg"
-              onClick={() => alert('v1.1에서 만나요 🥰')}
-            >
-              <Shared.LogmeIcon.LensIcon alt="search" width={30} height={30} />
+            <div className="relative w-full">
+              <input
+                style={{ border: '1px solid #dbeafe' }}
+                className="w-full h-10 mobile:h-12 pl-14 pr-6 text-gray-800 text-md mobile:text-lg tablet:text-xl bg-white/90 backdrop-blur-sm rounded-xl border-2 border-blue-300 shadow-lg placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 hover:shadow-xl hover:border-blue-500"
+                name="title"
+                placeholder="Search for articles..."
+                onKeyUp={handleKeyDown}
+              />
+              <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-blue-500 rounded-full transition-all duration-300  hover:scale-105 cursor-pointer hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95  active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+                <IoMdSearch className="text-white w-5 h-5" />
+              </div>
             </div>
           </div>
           <button
-            className="font-bold bg-blue-600 text-white rounded-4xl p-6 text-xl transition-all duration-300 transform hover:scale-105 hover:bg-blue-100 hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95 translate-y-2 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+            className="font-bold bg-blue-500 border border-blue-50 text-white rounded-2xl p-4 text-lg transition-all duration-300 transform hover:scale-105 hover:bg-blue-100 hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95  active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
             onClick={handleNewPost}
           >
             글 작성하기

@@ -1,3 +1,4 @@
+import { CiSettings, CiBellOn } from 'react-icons/ci';
 import { Dispatch, SetStateAction } from 'react';
 import * as Shared from 'components/Shared';
 import Link from 'next/link';
@@ -12,21 +13,17 @@ const DesktopNavActions = ({
 }) => {
   if (isAuthenticated) {
     return (
-      <div className="items-center hidden gap-6 tablet:flex">
+      <div className="items-center hidden gap-4 tablet:flex">
         <Link
           href="/mypage"
           className="transition-opacity hover:opacity-80"
           prefetch={true}
         >
-          <Shared.LogmeIcon.SettingsIcon alt="설정" width={28} height={28} />
+          <CiSettings className="w-8 h-8" color="grey" />
         </Link>
 
         <button className="transition-opacity hover:opacity-80">
-          <Shared.LogmeIcon.NotificationIcon
-            alt="알람"
-            width={28}
-            height={28}
-          />
+          <CiBellOn className="w-8 h-8" color="grey" />
         </button>
 
         <NavPriofile setAuthority={setAuthority} />

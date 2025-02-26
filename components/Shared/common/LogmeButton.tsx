@@ -1,15 +1,6 @@
 import React from 'react';
 import { styled } from 'styled-components';
 
-export interface LogmeButtonProps {
-  size: 'big' | 'medium' | 'small';
-  variant?: 'classic' | 'ghost' | 'error' | 'success' | 'disabled';
-  children: React.ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-  onClick?: React.MouseEventHandler<HTMLElement>;
-}
-
 interface BaseButtonProps {
   size: 'big' | 'medium' | 'small';
   variant: 'classic' | 'ghost' | 'error' | 'success' | 'disabled';
@@ -89,9 +80,20 @@ const GhostButton = styled(BaseButton)`
   }
 `;
 
+export interface LogmeButtonProps {
+  size: 'big' | 'medium' | 'small';
+  variant?: 'classic' | 'ghost' | 'error' | 'success' | 'disabled';
+  disabled?: boolean; // 추가
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLElement>;
+}
+
 const LogmeButton = ({
   size,
   variant = 'classic',
+  disabled = false, // 기본값 false
   children,
   className,
   style,
@@ -103,7 +105,7 @@ const LogmeButton = ({
     className,
     style,
     onClick,
-    disabled: variant === 'disabled',
+    disabled: disabled || variant === 'disabled', // 사용자가 직접 설정 가능
   };
 
   return variant === 'ghost' ? (
