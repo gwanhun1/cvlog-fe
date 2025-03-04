@@ -9,7 +9,7 @@ import AboutSection from '../../components/pages/mypage/AboutSection';
 import ContactInfo from '../../components/pages/mypage/ContactInfo';
 import AccountManagement from '../../components/pages/mypage/AccountManagement';
 import { getUserInfo } from 'service/api/login';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { useGetList } from 'service/hooks/List';
 

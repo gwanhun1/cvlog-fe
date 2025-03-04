@@ -70,6 +70,7 @@ export default function LoginCallback() {
     if (router.query.code) {
       handleCallback();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.code]);
 
   return (
