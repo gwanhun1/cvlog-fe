@@ -1,41 +1,22 @@
 import React, { useState } from 'react';
-import { FiBookOpen } from 'react-icons/fi';
-
-interface ActivityItem {
-  id: number;
-  title: string;
-  time: string;
-}
+import { useGetList } from 'service/hooks/List';
+import MypageTaskSkeleton from './Skeleton';
+import { formatRelativeTime } from 'service/utils/timer';
+import ActivityRow from './ActivityRow';
 
 const ITEMS_PER_PAGE = 5;
 
-const DUMMY_ACTIVITIES: ActivityItem[] = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
-  title: `활동 ${i + 1}`,
-  time: `${Math.floor(Math.random() * 24)}시간 전`,
-}));
-
-const ActivityRow = React.memo(
-  ({ title, time }: { title: string; time: string }) => (
-    <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-lg mb-4 transition-colors hover:bg-gray-100">
-      <div className="p-3 bg-blue-100 rounded-lg">
-        <FiBookOpen className="w-5 h-5 text-blue-600" aria-hidden="true" />
-      </div>
-      <div>
-        <p className="text-gray-900 font-medium mb-1">{title}</p>
-        <p className="text-sm text-gray-500">{time}</p>
-      </div>
-    </div>
-  )
-);
-
-ActivityRow.displayName = 'ActivityRow';
-
 const RecentActivity: React.FC = () => {
   const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(DUMMY_ACTIVITIES.length / ITEMS_PER_PAGE);
+  const List = useGetList(1);
 
-  const displayedActivities = DUMMY_ACTIVITIES.slice(
+  if (!List.data) {
+    return <MypageTaskSkeleton />;
+  }
+
+  const totalPages = Math.ceil(List.data.posts.length / ITEMS_PER_PAGE);
+
+  const displayedActivities = List.data.posts.slice(
     page * ITEMS_PER_PAGE,
     (page + 1) * ITEMS_PER_PAGE
   );
@@ -48,7 +29,8 @@ const RecentActivity: React.FC = () => {
           <ActivityRow
             key={activity.id}
             title={activity.title}
-            time={activity.time}
+            time={formatRelativeTime(activity.updated_at)}
+            id={activity.id}
           />
         ))}
       </div>

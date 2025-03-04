@@ -21,7 +21,6 @@ const Detail = ({ pid }: { pid: string }) => {
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
   const userInfo = useRecoilValue(userIdAtom);
-
   // 데이터 받기
   const getDetailData = useGetDetail(parseInt(pid));
   const commentList = useGetCommentList(parseInt(pid));
@@ -169,6 +168,7 @@ const Detail = ({ pid }: { pid: string }) => {
               data={getDetailData.data?.post.content}
               isLoading={getDetailData.isLoading}
               writer={getDetailData?.data?.post.user_id.github_id}
+              id={getDetailData.data?.post.id}
             />
           </div>
         </section>
@@ -177,51 +177,55 @@ const Detail = ({ pid }: { pid: string }) => {
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getDetailData?.data?.post.user_id} />
         </article>
-        <div className="flex items-center justify-around tablet:w-96 w-60">
+        <div className="flex items-center justify-around tablet:w-128 w-60">
           <div
             className={`${
               !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
             } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
+            onClick={() =>
+              getDetailData?.data?.prevPostInfo &&
+              router.push(
+                `/article/content/all/${getDetailData.data.prevPostInfo.id}`
+              )
+            }
           >
             {getDetailData.data?.prevPostInfo && (
-              <Link
-                href={`/article/content/all/${getDetailData.data.prevPostInfo.id}}`}
-                className="flex items-center cursor-pointer hover:opacity-70 "
-                prefetch={true}
-              >
-                <div className="ml-1 tablet:ml-3">←</div>
+              <>
+                <div className="pr-2 tablet:ml-3">←</div>
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
                   <div className="text-xs text-center tablet:text-sm ">
                     이전 포스트
                   </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
+                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap mt-[2px] truncate">
                     {getDetailData.data.prevPostInfo.title}
                   </div>
                 </div>
-              </Link>
+              </>
             )}
           </div>
           <div
             className={`${
               !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
             } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack mobile:h-12 justify-evenly hover:opacity-70 `}
+            onClick={() =>
+              getDetailData?.data?.nextPostInfo &&
+              router.push(
+                `/article/content/all/${getDetailData.data.nextPostInfo.id}`
+              )
+            }
           >
             {getDetailData.data?.nextPostInfo && (
-              <Link
-                href={`/article/content/all/${getDetailData.data.nextPostInfo.id}}`}
-                className="flex items-center cursor-pointer hover:opacity-70"
-                prefetch={true}
-              >
-                <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
+              <>
+                <div className="flex-col  hidden w-[90px] tablet:w-full mobile:flex truncate ">
                   <div className="text-xs text-center tablet:text-sm">
                     다음 포스트
                   </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px]">
+                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap mt-[2px] truncate">
                     {getDetailData.data.nextPostInfo.title}
                   </div>
                 </div>
                 <div className="w-100%  mr-1 tablet:mr-3 ">→</div>
-              </Link>
+              </>
             )}
           </div>
         </div>

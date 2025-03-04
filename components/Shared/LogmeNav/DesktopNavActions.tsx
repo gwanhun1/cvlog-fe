@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from 'react';
 import * as Shared from 'components/Shared';
 import Link from 'next/link';
 import NavPriofile from './Profile';
+import { useRouter } from 'next/router';
 
 const DesktopNavActions = ({
   isAuthenticated,
@@ -11,18 +12,22 @@ const DesktopNavActions = ({
   isAuthenticated: boolean;
   setAuthority: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const router = useRouter();
+
   if (isAuthenticated) {
     return (
       <div className="items-center hidden gap-4 tablet:flex">
-        <Link
-          href="/mypage"
-          className="transition-opacity hover:opacity-80"
-          prefetch={true}
+        <button
+          className="transition-all duration-300 ease-in-out opacity-100 hover:opacity-50 transform hover:scale-110 hover:bg-gray-100 rounded-full"
+          onClick={() => router.push('/mypage')}
         >
           <CiSettings className="w-8 h-8" color="grey" />
-        </Link>
+        </button>
 
-        <button className="transition-opacity hover:opacity-80">
+        <button
+          className="transition-all duration-300 ease-in-out opacity-100 hover:opacity-50 transform hover:scale-110 hover:bg-gray-100 rounded-full"
+          onClick={() => alert('v1.1에서 만나요 🥰')}
+        >
           <CiBellOn className="w-8 h-8" color="grey" />
         </button>
 

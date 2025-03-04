@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import { cn } from 'styles/utils';
-import { MDE_OPTION, MDE_OPTIONMOBILE } from 'src/constants/markdownOpts';
+import { MDE_OPTION, MDE_OPTIONMOBILE } from 'service/constants/markdownOpts';
 import css from './new.module.scss';
 import dynamic from 'next/dynamic';
 import { DocType } from 'pages/article/modify/[pid]';

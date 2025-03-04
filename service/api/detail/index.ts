@@ -31,8 +31,18 @@ export const patchDetail = async (params: number, public_status: boolean) => {
 
 export const fetchCreateModifyPost = async (
   params: CreateNewPostReq,
-  pid: number,
+  pid: number
 ) => {
   const { data } = await axios.put<CreateNewPostReq>(`/posts/${pid}`, params);
+  return data;
+};
+
+export const getLikePost = async (params: number) => {
+  const { data } = await axios.get(`/likes/${params}`);
+  return data;
+};
+
+export const postLikePost = async (params: number, type: string) => {
+  const { data } = await axios.post(`/likes/${params}`, { type });
   return data;
 };
