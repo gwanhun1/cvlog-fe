@@ -43,7 +43,7 @@ export default function LoginCallback() {
                   setUserInfo(response.data.data.userInfo);
                 }
 
-                router.push('/about');
+                router.push('/');
                 return; // 성공하면 즉시 종료
               }
             } catch (err) {

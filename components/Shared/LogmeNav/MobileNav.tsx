@@ -8,7 +8,7 @@ import LocalStorage from 'public/utils/Localstorage';
 import { authorityState, userIdAtom } from 'service/atoms/atoms';
 import { handleSignOut } from 'utils/auth';
 
-const menu = ['About', 'Article', 'Resume', 'Github'];
+const menu = ['Home', 'Article', 'Resume', 'Github'];
 
 const MobileNav = () => {
   const [page, setPage] = useState(menu[0]);
@@ -93,13 +93,13 @@ const MobileNav = () => {
         ) : (
           <>
             <Dropdown.Item className="flex justify-center">
-              <Link href="/about" prefetch={true}>
+              <Link href="/login" prefetch={true}>
                 로그인
               </Link>
             </Dropdown.Item>
             <Dropdown.Item className="flex justify-center">
               <Link
-                href="/"
+                href="/mypage"
                 onClick={() => alert('로그인 먼저 해주세요.')}
                 prefetch={true}
               >

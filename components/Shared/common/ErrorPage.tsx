@@ -35,7 +35,7 @@ const ErrorBoundary: React.FC<Props> = ({ children }) => {
         <Shared.LogmeButton
           variant="classic"
           size="small"
-          onClick={() => handleNavigate('/about')}
+          onClick={() => handleNavigate('/')}
         >
           <Shared.LogmeHeadline
             type="medium"

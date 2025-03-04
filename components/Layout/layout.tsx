@@ -18,12 +18,12 @@ const Layout = ({ children }: Props) => {
       className={cn(
         {
           'px-4 tablet:px-20 tablet:container tablet:mx-auto pt-24':
-            pathname !== '/' &&
+            pathname !== '/login' &&
             !pathname.startsWith('/article/new') &&
             !pathname.startsWith('/article/modify/'),
         },
         { 'desktop:px-[17.5rem]': isArticleContent },
-        { 'pt-16': isNavVisible }
+        { 'pt-16': pathname !== '/login' && isNavVisible }
       )}
     >
       {children}

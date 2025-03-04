@@ -1,27 +1,27 @@
 import * as Shared from 'components/Shared';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const NavMenuItem = ({
   name,
   path,
-  isActive,
   requiresAuth = false,
   isAuthenticated,
-  onClick,
 }: {
   name: string;
   path: string;
-  isActive: boolean;
   requiresAuth?: boolean;
   isAuthenticated: boolean;
-  onClick: () => void;
 }) => {
+  const router = useRouter();
+
+  const isActive = router.pathname === path;
+
   const handleClick = () => {
     if (requiresAuth && !isAuthenticated) {
       alert('로그인이 필요합니다.');
       return;
     }
-    onClick();
   };
 
   return (
@@ -35,11 +35,11 @@ const NavMenuItem = ({
           type="medium"
           fontStyle="semibold"
           className={`px-4 py-2 transition-all duration-200 hover:cursor-pointer 
-      ${
-        isActive
-          ? 'text-ftBlue bg-white rounded-3xl shadow-md group-hover:text-blue-700'
-          : 'text-ftGray hover:text-blue-700'
-      }`}
+            ${
+              isActive
+                ? 'text-ftBlue bg-white rounded-3xl shadow-md group-hover:text-blue-700'
+                : 'text-ftGray hover:text-blue-700'
+            }`}
         >
           {name}
         </Shared.LogmeHeadline>

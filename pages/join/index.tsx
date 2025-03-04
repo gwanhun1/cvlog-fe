@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import Loader from 'components/Shared/common/Loader';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { useSetRecoilState } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
+import { useRouter } from 'next/router';
 axios.defaults.withCredentials = true;
 
 const Join = ({ info, cookie }: JoinProps) => {
-  const router = useRouter();
   const setUserInfo = useSetRecoilState(userIdAtom);
+  const router = useRouter();
 
   //쿠키 분해
   const cookies = Object.fromEntries(
@@ -35,6 +35,7 @@ const Join = ({ info, cookie }: JoinProps) => {
           }
         );
         setUserInfo(response.data.data);
+        router.push('/');
       } catch (error) {
         console.error('Error fetching user info:', error);
       }
@@ -42,10 +43,6 @@ const Join = ({ info, cookie }: JoinProps) => {
 
     fetchUserInfo();
   }, [cookies.refreshToken, info.data.accessToken, setUserInfo]);
-
-  useEffect(() => {
-    router.push('/about');
-  }, [router]);
 
   return (
     <div className="flex flex-col items-center justify-center mt-20">

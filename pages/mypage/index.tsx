@@ -5,7 +5,7 @@ import { FiCalendar, FiBookOpen, FiHeart } from 'react-icons/fi';
 import { dehydrate, QueryClient } from 'react-query';
 import ProfileHeader from '../../components/pages/mypage/ProfileHeader';
 import StatsCard from '../../components/pages/mypage/StatsCard';
-import AboutSection from '../../components/pages/mypage/AboutSection';
+import HomeSection from '../../components/pages/mypage/HomeSection';
 import ContactInfo from '../../components/pages/mypage/ContactInfo';
 import AccountManagement from '../../components/pages/mypage/AccountManagement';
 import { getUserInfo } from 'service/api/login';
@@ -67,7 +67,7 @@ const Mypage = () => {
 
         <div className="grid grid-cols-1 tablet:grid-cols-3 gap-4">
           <div className="tablet:col-span-2 space-y-4">
-            <AboutSection description={userInfo.description} />
+            <HomeSection description={userInfo.description} />
             <RecentActivity />
           </div>
 

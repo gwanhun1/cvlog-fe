@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
         <SafeHydrate>
-          {router.pathname === '/' ||
+          {router.pathname === '/login' ||
           router.pathname === '/article/new' ||
           router.pathname.startsWith('/article/modify/') ? null : (
             <ClientNav />
