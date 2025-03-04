@@ -38,7 +38,7 @@ const DesktopNavActions = ({
 
   return (
     <div className="items-center hidden tablet:flex">
-      <Link href="/" prefetch={true}>
+      <Link href="/login" prefetch={true}>
         <Shared.LogmeButton
           variant="classic"
           size="small"
@@ -49,7 +49,7 @@ const DesktopNavActions = ({
             fontStyle="semibold"
             style={{ color: '#fff' }}
           >
-            Join
+            Login
           </Shared.LogmeHeadline>
         </Shared.LogmeButton>
       </Link>

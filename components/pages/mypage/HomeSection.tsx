@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { FiEdit3 } from 'react-icons/fi';
 
-interface AboutSectionProps {
+interface HomeSectionProps {
   description: string | null | undefined;
 }
 
-const AboutSection = ({ description }: AboutSectionProps) => {
+const HomeSection = ({ description }: HomeSectionProps) => {
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 state
   const [currentDescription, setCurrentDescription] = useState(
     description || ''
@@ -60,4 +60,4 @@ const AboutSection = ({ description }: AboutSectionProps) => {
   );
 };
 
-export default AboutSection;
+export default HomeSection;
