@@ -1,7 +1,7 @@
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { UserInfo } from 'service/atoms/type';
-import { apiInstance } from '../axiosInstance';
+import { axiosInstance as axios } from 'service/axios';
 import { GetNewTokenApi, SignOut } from './type';
 
 export const handleGetErrors = async (error: ErrorResponse) => {
@@ -39,50 +39,20 @@ export const handleMutateErrors = async (
 };
 
 export const postRefreshToken = async (params: GetNewTokenApi) => {
-  const { data } = await apiInstance.post('/auth/refresh', {}, params);
+  const { data } = await axios.post('/auth/refresh', {}, params);
   return data;
 };
 
 export const getUserInfo = async () => {
-  const { data } = await apiInstance.get<UserInfo>('/users/info');
+  const { data } = await axios.get<UserInfo>('/users/info');
 
   return data.data;
 };
 
 export const signOut = async () => {
-  const { data } = await apiInstance.get<SignOut>('/auth/logout');
+  const { data } = await axios.get<SignOut>('/auth/logout');
 
   return data.data;
-};
-
-export const login = async (params: LoginType): Promise<LoginResponse> => {
-  try {
-    const { data } = await apiInstance.post('/auth/login', params);
-    return data;
-  } catch (error) {
-    console.error('Error during login:', error);
-    throw error;
-  }
-};
-
-export const logout = async () => {
-  try {
-    const { data } = await apiInstance.post('/auth/logout');
-    return data;
-  } catch (error) {
-    console.error('Error during logout:', error);
-    throw error;
-  }
-};
-
-export const checkLogin = async () => {
-  try {
-    const { data } = await apiInstance.get('/auth/check');
-    return data;
-  } catch (error) {
-    console.error('Error checking login status:', error);
-    throw error;
-  }
 };
 
 export interface ErrorResponse {

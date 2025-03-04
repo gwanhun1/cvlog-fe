@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { GetStaticProps } from 'next';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
 import CommentBox from 'components/Shared/LogmeComment';

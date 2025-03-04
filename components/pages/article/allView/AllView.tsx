@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import LogmeAllCard, { TagItem } from 'components/Shared/LogmeAllCard';
+import LogmeAllCard from 'components/Shared/LogmeAllCard';
 import { useGetPublicList } from 'service/hooks/List';
 import CardSkeleton from './Skeleton';
 
