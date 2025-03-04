@@ -1,4 +1,4 @@
-import { axiosInstance } from 'service/axios';
+import axiosInstance from 'service/axios';
 import {
   GetTagsFolderRes,
   CreateTagsFolderReq,
@@ -18,13 +18,14 @@ export const getList = async (page: number, userId?: number) => {
 };
 
 export const getPublicList = async (page: number) => {
-  const { data } = await axiosInstance.get<GetListType>(`/posts/public/page/${page}`);
+  const { data } = await axiosInstance.get<GetListType>(
+    `/posts/public/page/${page}`
+  );
   return data.data;
 };
 
 export const fetchGetTagsFolders = async () => {
   const { data } = await axiosInstance.get<GetTagsFolderRes>('/tag_folders');
-
   return data.data;
 };
 
@@ -52,12 +53,22 @@ export const putTagsFolders = async (params: UpdateForm) => {
 
 export const tagsAPI = {
   getAll: async () => {
-    const response = await axiosInstance.get('/tags');
-    return response.data;
+    try {
+      const { data } = await axiosInstance.get('/tags');
+      return data;
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      throw error;
+    }
   },
 
   getWithoutFolder: async () => {
-    const response = await axiosInstance.get('/tags/without-folder');
-    return response.data;
+    try {
+      const { data } = await axiosInstance.get('/tags/without-folder');
+      return data;
+    } catch (error) {
+      console.error('Error fetching tags without folder:', error);
+      throw error;
+    }
   },
 };

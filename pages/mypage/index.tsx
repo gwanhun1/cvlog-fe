@@ -11,6 +11,7 @@ import AccountManagement from '../../components/pages/mypage/AccountManagement';
 import { getUserInfo } from 'service/api/login';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
+import { useGetList } from 'service/hooks/List';
 
 // 동적 임포트로 변경
 const RecentActivity = dynamic(
@@ -25,6 +26,7 @@ const RecentActivity = dynamic(
 
 const Mypage = () => {
   const userInfo = useRecoilValue(userIdAtom);
+  const List = useGetList(1);
 
   // 날짜 포맷팅 메모이제이션
   const formattedDate = useMemo(() => {
@@ -55,7 +57,11 @@ const Mypage = () => {
 
         <div className="grid grid-cols-1 mobile:grid-cols-2 tablet:grid-cols-3 gap-4 mb-4">
           <StatsCard icon={FiCalendar} title="가입일" value={formattedDate} />
-          <StatsCard icon={FiBookOpen} title="작성한 글" value="0" />
+          <StatsCard
+            icon={FiBookOpen}
+            title="작성한 글"
+            value={List?.data?.maxPage || '-'}
+          />
           <StatsCard icon={FiHeart} title="받은 좋아요" value="0" />
         </div>
 

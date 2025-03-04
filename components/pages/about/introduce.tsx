@@ -15,47 +15,37 @@ export interface IntroduceData {
 const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
   return (
     <>
-      {Element && (
-        <section
-          className={`mt-10 bg-white rounded-xl flex flex-col p-10 tablet:flex-row ${
-            Element.id % 2 === 0 ? 'tablet:flex-row-reverse' : ''
-          } items-center justify-center w-full gap-8 tablet:gap-12 py-8 tablet:py-16 shadow-lg`}
-        >
-          <article className="relative flex justify-center w-full h-[300px] tablet:w-3/5 tablet:h-[400px] px-4 tablet:px-8">
-            <video
-              src={Element.src}
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="none"
-              className="absolute inset-0 w-full h-full rounded-xl shadow-xl object-cover"
-            />
-          </article>
-
-          <article className="flex items-start w-full px-8 tablet:px-5 tablet:w-2/5">
-            <div className="flex flex-col w-full gap-4 tablet:gap-6">
-              <div className="flex items-center gap-4">
-                <div className="hidden tablet:flex items-center justify-center w-20 h-11  text-2xl font-medium text-white rounded-full bg-ftBlue">
-                  {Element.id + 1}
-                </div>
-                <h1 className="text-xl tablet:text-2xl font-medium break-keep text-ftBlue">
-                  {Element.title}
-                </h1>
+      <section className="bg-white dark:bg-gray-900 rounded-lg">
+        <div className="gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6 ">
+          <video
+            src={Element.src}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="none"
+            className="inset-0 w-full h-full rounded-xl shadow-xl object-cover"
+          />
+          <div className="mt-4 md:mt-0">
+            <h2 className="flex mb-4 text-3xl tracking-tight font-extrabold text-gray-900 dark:text-white">
+              <div className="hidden tablet:flex items-center justify-center w-10 h-10  text-2xl font-medium text-white rounded-full bg-ftBlue mr-2">
+                {Element.id + 1}
               </div>
-
-              <div className="flex flex-col gap-4">
-                <p className="text-sm tablet:text-base text-gray-700">
+              {Element.title}
+            </h2>
+            <p className="mb-6 font-light text-gray-500 md:text-lg dark:text-gray-400">
+              <div className="flex flex-col">
+                <div className="text-lg tablet:text-base text-gray-700">
                   {Element.message}
-                </p>
-                <p className="hidden tablet:block text-xs text-gray-600">
+                </div>
+                <p className="hidden tablet:block text-lg text-gray-600">
                   {Element.messageBr}
                 </p>
               </div>
-            </div>
-          </article>
-        </section>
-      )}
+            </p>
+          </div>
+        </div>
+      </section>
     </>
   );
 });

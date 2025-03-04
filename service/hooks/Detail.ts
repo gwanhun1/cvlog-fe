@@ -4,6 +4,7 @@ import {
   deleteDetail,
   fetchCreateModifyPost,
   getDetail,
+  getLikePost,
   getMyDetail,
   patchDetail,
 } from 'service/api/detail';
@@ -39,8 +40,6 @@ export const useGetMyDetail = (params: number) => {
 export const DeleteDetail = (params: number) => {
   return useMutation(
     () => {
-      console.log(33);
-
       return deleteDetail(params);
     },
     {
@@ -48,7 +47,7 @@ export const DeleteDetail = (params: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    },
+    }
   );
 };
 
@@ -61,7 +60,7 @@ export const usePatchDetail = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    },
+    }
   );
 };
 
@@ -80,6 +79,31 @@ export const useModifyPost = (pid: number) => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
+    }
+  );
+};
+
+export const useGetLikePost = (params: number) => {
+  return useQuery({
+    queryKey: ['getLikePost', params],
+    queryFn: () => {
+      return getLikePost(params);
     },
+    retry: 0,
+    onError: handleGetErrors,
+    enabled: !!params,
+  });
+};
+
+export const usePostLike = ({ options }: any) => {
+  return useMutation(
+    ({ id, public_status }: { id: number; public_status: boolean }) =>
+      patchDetail(id, public_status),
+    {
+      ...options,
+      onError: (error: ErrorResponse) => {
+        handleMutateErrors(error);
+      },
+    }
   );
 };

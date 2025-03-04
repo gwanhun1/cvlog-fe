@@ -30,17 +30,20 @@ const NavMenuItem = ({
       onClick={handleClick}
       prefetch={true}
     >
-      <Shared.LogmeHeadline
-        type="medium"
-        fontStyle="semibold"
-        className={`px-4 py-2 transition-all duration-200 hover:cursor-pointer ${
-          isActive
-            ? 'text-ftBlue bg-white rounded-3xl shadow-md'
-            : 'text-ftGray hover:text-ftGray'
-        }`}
-      >
-        {name}
-      </Shared.LogmeHeadline>
+      <div className="group">
+        <Shared.LogmeHeadline
+          type="medium"
+          fontStyle="semibold"
+          className={`px-4 py-2 transition-all duration-200 hover:cursor-pointer 
+      ${
+        isActive
+          ? 'text-ftBlue bg-white rounded-3xl shadow-md group-hover:text-blue-700'
+          : 'text-ftGray hover:text-blue-700'
+      }`}
+        >
+          {name}
+        </Shared.LogmeHeadline>
+      </div>
     </Link>
   );
 };

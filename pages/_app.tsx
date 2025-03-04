@@ -9,6 +9,7 @@ import type { AppProps } from 'next/app';
 import 'styles/globals.css';
 import 'styles/markdown.module.scss';
 import dynamic from 'next/dynamic';
+import ErrorBoundary from 'components/Shared/common/ErrorPage';
 
 // Nav 컴포넌트를 클라이언트 사이드에서만 렌더링
 const ClientNav = dynamic(() => Promise.resolve(Nav), { ssr: false });
@@ -55,7 +56,9 @@ export default function App({ Component, pageProps }: AppProps) {
             <ClientNav />
           )}
           <Layout>
-            <Component {...pageProps} />
+            <ErrorBoundary>
+              <Component {...pageProps} />
+            </ErrorBoundary>
           </Layout>
         </SafeHydrate>
       </QueryClientProvider>

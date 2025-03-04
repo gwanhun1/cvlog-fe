@@ -6,7 +6,7 @@ import { cn } from 'styles/utils';
 import css from './new.module.scss';
 import { useCallback, useEffect, useRef } from 'react';
 import { DocType } from 'pages/article/new';
-import { MDE_OPTION, MDE_OPTIONMOBILE } from 'src/constants/markdownOpts';
+import { MDE_OPTION, MDE_OPTIONMOBILE } from 'service/constants/markdownOpts';
 import { useImageUpload } from 'hooks/useImageUpload';
 import dynamic from 'next/dynamic';
 import styles from '../../../../styles/markdown.module.scss';

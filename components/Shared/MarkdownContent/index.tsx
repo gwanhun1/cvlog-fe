@@ -101,6 +101,7 @@ const MarkdownContent = ({
       });
     }
   };
+  console.log(headings);
 
   return (
     <div
@@ -111,7 +112,7 @@ const MarkdownContent = ({
     >
       {id && writer && writer !== userInfo?.github_id && (
         <nav className="hidden tablet:fixed tablet:top-40 tablet:right-1/2 tablet:translate-x-[-360px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4">
-          <LogmeLikeBtn isOwnPost={false} postId={id} />
+          {/* <LogmeLikeBtn isOwnPost={false} postId={id} /> */}
         </nav>
       )}
       <div className="flex-1 w-full" ref={contentRef}>
