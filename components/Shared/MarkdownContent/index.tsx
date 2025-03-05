@@ -101,7 +101,6 @@ const MarkdownContent = ({
       });
     }
   };
-  console.log(headings);
 
   return (
     <div
