@@ -94,10 +94,7 @@ const Detail = ({ pid }: { pid: string }) => {
         )}
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
-        <div
-          className="flex flex-wrap justify-start w-full text-ftBlack h-9"
-          onClick={() => alert('v1.1에서 만나요 🥰')}
-        >
+        <div className="flex flex-wrap justify-start w-full text-ftBlack h-9">
           {getDetailData.isLoading ? (
             <>
               <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />

@@ -29,22 +29,40 @@ const ErrorBoundary: React.FC<Props> = ({ children }) => {
   if (hasError) {
     return (
       <div className="w-full h-80 flex flex-col justify-center items-center">
-        <p className="text-xl">
-          문제가 발생했습니다. 새로고침 또는 초기페이지로 이동해주세요.
+        <p className="text-xl text-center font-semibold">
+          문제가 발생했습니다. <br />
+          새로고침 또는 초기페이지로 이동해주세요.
         </p>
-        <Shared.LogmeButton
-          variant="classic"
-          size="small"
-          onClick={() => handleNavigate('/')}
-        >
-          <Shared.LogmeHeadline
-            type="medium"
-            fontStyle="semibold"
-            style={{ color: '#fff' }}
+        <div className="flex justify-center items-center mt-10">
+          <Shared.LogmeButton
+            variant="classic"
+            size="big"
+            onClick={() => handleNavigate('/')}
+            style={{ margin: '0 10px' }}
           >
-            홈으로 이동
-          </Shared.LogmeHeadline>
-        </Shared.LogmeButton>
+            <Shared.LogmeHeadline
+              type="medium"
+              fontStyle="semibold"
+              style={{ color: '#fff' }}
+            >
+              홈으로 이동
+            </Shared.LogmeHeadline>
+          </Shared.LogmeButton>
+
+          <Shared.LogmeButton
+            variant="classic"
+            size="big"
+            onClick={() => window.location.reload()}
+          >
+            <Shared.LogmeHeadline
+              type="medium"
+              fontStyle="semibold"
+              style={{ color: '#fff' }}
+            >
+              새로고침
+            </Shared.LogmeHeadline>
+          </Shared.LogmeButton>
+        </div>
       </div>
     );
   }

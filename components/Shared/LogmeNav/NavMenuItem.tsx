@@ -15,7 +15,8 @@ const NavMenuItem = ({
 }) => {
   const router = useRouter();
 
-  const isActive = router.pathname === path;
+  const isActive =
+    path === '/' ? router.pathname === '/' : router.pathname.includes(path);
 
   const handleClick = () => {
     if (requiresAuth && !isAuthenticated) {

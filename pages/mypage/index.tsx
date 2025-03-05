@@ -12,6 +12,7 @@ import { getUserInfo } from 'service/api/login';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { useGetList } from 'service/hooks/List';
+import { useRouter } from 'next/router';
 
 // 동적 임포트로 변경
 const RecentActivity = dynamic(
@@ -27,7 +28,9 @@ const RecentActivity = dynamic(
 const Mypage = () => {
   const userInfo = useRecoilValue(userIdAtom);
   const List = useGetList(1);
-
+  const router = useRouter();
+  
+  
   // 날짜 포맷팅 메모이제이션
   const formattedDate = useMemo(() => {
     try {
@@ -39,12 +42,10 @@ const Mypage = () => {
     }
   }, [userInfo?.created_at]);
 
+
   if (!userInfo) {
-    return (
-      <div className="flex justify-center items-center min-h-[calc(100vh-80px)]">
-        <div>로그인이 필요합니다.</div>
-      </div>
-    );
+    alert('로그인을 다시 시도해주세요')
+    router.push('/login')
   }
 
   return (

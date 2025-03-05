@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
@@ -10,27 +9,11 @@ import 'styles/globals.css';
 import 'styles/markdown.module.scss';
 import dynamic from 'next/dynamic';
 import ErrorBoundary from 'components/Shared/common/ErrorPage';
+import { SafeHydrate } from './SafeHydrate';
 
 // Nav 컴포넌트를 클라이언트 사이드에서만 렌더링
 const ClientNav = dynamic(() => Promise.resolve(Nav), { ssr: false });
 
-function SafeHydrate({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
-
-  return (
-    <div suppressHydrationWarning className="bg-[#fafaff] min-h-screen">
-      {children}
-    </div>
-  );
-}
 
 export default function App({ Component, pageProps }: AppProps) {
   const queryClient = new QueryClient({
