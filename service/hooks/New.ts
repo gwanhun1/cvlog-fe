@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router';
 import { useMutation } from 'react-query';
-import { ErrorResponse, handleMutateErrors } from 'service/api/login';
-import { fetchCreateNewPost } from 'service/api/new';
-import { CreateNewPostReq } from 'service/api/new/type';
+import { fetchCreateNewPost } from 'service/api/detail';
+import { CreateNewPostReq } from 'service/api/detail/type';
+import { handleMutateErrors } from 'service/api/login';
+import { ErrorResponse } from 'service/api/login/type';
 
 export const useCreatePost = () => {
   const router = useRouter();
@@ -18,6 +19,6 @@ export const useCreatePost = () => {
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
       },
-    },
+    }
   );
 };

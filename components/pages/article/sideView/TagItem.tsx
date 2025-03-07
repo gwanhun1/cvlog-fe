@@ -2,6 +2,8 @@ import { memo } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Tag } from 'service/api/tag/type';
+import { useRecoilState } from 'recoil';
+import { tagAtom } from 'service/atoms/atoms';
 
 export interface TagItemProps {
   tag: Tag;
@@ -27,8 +29,14 @@ const TagItem = ({ tag, index, folderId }: TagItemProps) => {
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const [_, setKeyword] = useRecoilState(tagAtom);
+
+  const handleTagClick = (tag: string) => {
+    setKeyword(tag);
+  };
   return (
     <div
+      onClick={() => handleTagClick(tag.name)}
       ref={setNodeRef}
       style={style}
       {...attributes}

@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
-import { UserInfoType } from './type';
+import { UserInfoType } from 'service/api/login/type';
 
 const { persistAtom } = recoilPersist({
   key: 'recoil-persist',
@@ -41,4 +41,9 @@ export const userIdAtom = atom<UserInfoType>({
     deleted_at: null,
   },
   effects_UNSTABLE: [persistAtom],
+});
+
+export const tagAtom = atom<string>({
+  key: 'tag',
+  default: '',
 });

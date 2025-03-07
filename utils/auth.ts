@@ -2,7 +2,7 @@ import LocalStorage from 'public/utils/Localstorage';
 import Sessionstorage from 'public/utils/Sessionstorage';
 import { signOut as apiSignOut } from '../service/api/login';
 import { SetterOrUpdater } from 'recoil';
-import { UserInfoType } from '../service/atoms/type';
+import { UserInfoType } from 'service/api/login/type';
 
 export const handleSignOut = async (
   setAuthority?: (authority: string | null) => void,

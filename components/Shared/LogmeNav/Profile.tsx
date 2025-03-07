@@ -6,7 +6,6 @@ import Loader from '../common/Loader';
 import { userIdAtom } from 'service/atoms/atoms';
 import { useRecoilValue } from 'recoil';
 
-// 클라이언트 사이드에서만 렌더링되는 드롭다운 컴포넌트
 const ClientDropdown = dynamic(
   () =>
     Promise.resolve(({ info, onClickLogout }: any) => (

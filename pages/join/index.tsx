@@ -13,17 +13,14 @@ const Join = ({ info, cookie }: JoinProps) => {
   const setUserInfo = useSetRecoilState(userIdAtom);
   const router = useRouter();
 
-  //쿠키 분해
   const cookies = Object.fromEntries(
     cookie.split(';').map((cookie: string) => cookie.trim().split('='))
   );
 
-  //localstorge,쿠키 저장
   useEffect(() => {
     LocalStorage.setItem('CVtoken', info.data.accessToken);
     Cookie.setItem('refreshToken', cookies.refreshToken, 1);
 
-    // 사용자 정보 가져오기
     const fetchUserInfo = async () => {
       try {
         const response = await axios.get(

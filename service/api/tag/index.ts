@@ -1,4 +1,4 @@
-import axiosInstance from 'service/axios';
+import axiosInstance from 'utils/axios';
 import {
   GetTagsFolderRes,
   CreateTagsFolderReq,

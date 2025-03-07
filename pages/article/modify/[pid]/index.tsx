@@ -76,8 +76,6 @@ const ModifyPost = ({ pid }: ModifyPostProps) => {
               setDoc={setDoc}
               pid={pid}
               imageArr={imageArr}
-              isVisiblePreview={isVisiblePreview}
-              setIsVisiblePreview={setIsVisiblePreview}
             />
           </header>
 
