@@ -242,5 +242,6 @@ export default Detail;
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const pid = context.params?.pid;
+
   return { props: { pid } };
 };

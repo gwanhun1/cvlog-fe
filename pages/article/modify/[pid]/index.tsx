@@ -4,7 +4,7 @@ import 'easymde/dist/easymde.min.css';
 
 import ModifyBtn from 'components/pages/article/modify/ModifyBtn';
 import ModifyContents from 'components/pages/article/modify/ModifyContents';
-import { useGetDetail } from 'service/hooks/Detail';
+import { useGetMyDetail } from 'service/hooks/Detail';
 
 export type DocType = {
   title: string;
@@ -27,7 +27,7 @@ const ModifyPost = ({ pid }: ModifyPostProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const containerTopRef = useRef<HTMLDivElement>(null);
 
-  const { data: detailData, isSuccess: isDetailSuccess } = useGetDetail(
+  const { data: detailData, isSuccess: isDetailSuccess } = useGetMyDetail(
     parseInt(pid)
   );
 

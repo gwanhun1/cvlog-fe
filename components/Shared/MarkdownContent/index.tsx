@@ -208,7 +208,7 @@ const MarkdownContent = ({
       </div>
 
       {headings && headings.length > 0 && (
-        <nav className="hidden tablet:fixed tablet:top-40 tablet:left-1/2 tablet:translate-x-[440px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4 tablet:border-l tablet:border-gray-200">
+        <nav className=" tablet:fixed tablet:top-40 tablet:left-1/2 tablet:translate-x-[440px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4 tablet:border-l tablet:border-gray-200">
           <ul className="space-y-2">
             {headings.map(heading => (
               <li
