@@ -11,17 +11,6 @@ export interface User_id {
   id: number;
 }
 
-export interface CommentType {
-  map(
-    arg0: (
-      comment: React.JSX.IntrinsicAttributes & CommentProps
-    ) => import('react').JSX.Element
-  ): ReactNode;
-  length: ReactNode;
-  success: boolean;
-  data: CommentProps[];
-}
-
 export interface CommentProps {
   id: number;
   content: string;
@@ -30,5 +19,5 @@ export interface CommentProps {
 }
 
 export interface CommentTypeData {
-  data: CommentType[];
+  data: CommentProps[];
 }

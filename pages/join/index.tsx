@@ -42,6 +42,7 @@ const Join = ({ info, cookie }: JoinProps) => {
     };
 
     fetchUserInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.refreshToken, info.data.accessToken, setUserInfo]);
 
   return (
@@ -95,12 +96,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
   }
 };
 
-export interface Info {
-  data: AccessToken;
-}
-
-interface AccessToken {
-  accessToken: string;
+interface Info {
+  data: { accessToken: string };
 }
 
 type JoinProps = {

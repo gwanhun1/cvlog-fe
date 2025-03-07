@@ -83,3 +83,31 @@ export interface PatchDetail {
     affected: number;
   };
 }
+
+type TagType = {
+  id: number;
+  name: string;
+};
+
+type BlogType = {
+  id: number;
+  title: string;
+  content: string;
+  user_id: number;
+  public_status: boolean;
+  created_at: string;
+  updated_at: string;
+  image: string;
+  index: number;
+  tags: TagType[];
+};
+
+export type ListDataType = {
+  posts: BlogType[];
+  maxPage: number;
+};
+
+export type GetListType = {
+  success: boolean;
+  data: ListDataType;
+};

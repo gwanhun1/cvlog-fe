@@ -5,8 +5,8 @@ import {
   CreateTagsFolderRes,
   PutTagsFolderRes,
   UpdateForm,
+  GetListType,
 } from './type';
-import { GetListType } from 'components/pages/article/listView/ListView';
 
 export const getList = async (page: number, userId?: number) => {
   const url = userId

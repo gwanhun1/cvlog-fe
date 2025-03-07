@@ -10,40 +10,13 @@ import FilterBox from './FilterBox';
 import ListEmpty from './ListEmpty';
 import { useRouter } from 'next/router';
 
-type TagType = {
-  id: number;
-  name: string;
-};
-
-type BlogType = {
-  id: number;
-  title: string;
-  content: string;
-  user_id: number;
-  public_status: boolean;
-  created_at: string;
-  updated_at: string;
-  image: string;
-  index: number;
-  tags: TagType[];
-};
-
-export type ListDataType = {
-  posts: BlogType[];
-  maxPage: number;
-};
-
-export type GetListType = {
-  success: boolean;
-  data: ListDataType;
-};
-
 const ListView = () => {
   const [page, setPage] = useState<number>(1);
   const [keyword, setKeyword] = useState('');
   const List = useGetList(page);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  console.log(List.data);
 
   const { tagKeyword } = router.query;
 
