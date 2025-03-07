@@ -1,7 +1,10 @@
-import { Content } from 'pages/article/content/[pid]';
 import { axiosInstance as axios } from 'service/axios';
-import { DeleteDetail, PatchDetailType } from './type';
-import { CreateNewPostReq } from '../new/type';
+import {
+  Content,
+  CreateNewPostReq,
+  DeleteDetail,
+  PatchDetailType,
+} from './type';
 
 export const getDetail = async (params: number) => {
   const { data } = await axios.get<Content>(`/posts/${params}`);
@@ -44,5 +47,11 @@ export const getLikePost = async (params: number) => {
 
 export const postLikePost = async (params: number, type: string) => {
   const { data } = await axios.post(`/likes/${params}`, { type });
+  return data;
+};
+
+export const fetchCreateNewPost = async (params: CreateNewPostReq) => {
+  const { data } = await axios.post<CreateNewPostReq>('/posts', params);
+
   return data;
 };

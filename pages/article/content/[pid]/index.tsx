@@ -14,6 +14,7 @@ import Profile from '../../../../components/pages/article/content/my/Profile';
 import { Badge } from 'flowbite-react';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
+import { TagType } from 'service/api/detail/type';
 
 const Detail = ({ pid }: { pid: string }) => {
   const router = useRouter();
@@ -243,38 +244,3 @@ export const getServerSideProps: GetServerSideProps = async context => {
   const pid = context.params?.pid;
   return { props: { pid } };
 };
-export interface Content {
-  success: boolean;
-  data: {
-    post: ContentData;
-    prevPostInfo: {
-      id: number;
-      title: string;
-    } | null;
-    nextPostInfo: {
-      id: number;
-      title: string;
-    } | null;
-  };
-}
-
-export interface ContentData {
-  id: number;
-  title: string;
-  content: string;
-  user_id: any;
-  public_status: boolean;
-  created_at: string;
-  updated_at: string;
-  deleted_at: null;
-  tags: TagType[];
-}
-
-export interface TagType {
-  id: number;
-  name: string;
-}
-
-export interface ContentParams {
-  content_id: number;
-}

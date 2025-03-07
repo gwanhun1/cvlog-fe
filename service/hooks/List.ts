@@ -1,9 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import {
-  ErrorResponse,
-  handleGetErrors,
-  handleMutateErrors,
-} from 'service/api/login';
+import { handleGetErrors, handleMutateErrors } from 'service/api/login';
+import { ErrorResponse } from 'service/api/login/type';
 import {
   fetchCreateTagsFolders,
   fetchGetTagsFolders,
