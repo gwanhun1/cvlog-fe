@@ -3,7 +3,7 @@ import { Pagination } from 'flowbite-react';
 import Link from 'next/link';
 import { useRecoilState } from 'recoil';
 import Card from 'components/Shared/LogmeCard';
-import { listIndexAtom } from 'service/atoms/atoms';
+import { listIndexAtom, tagAtom } from 'service/atoms/atoms';
 import { useGetList } from 'service/hooks/List';
 import CardSkeleton from './Skeleton';
 import FilterBox from './FilterBox';
@@ -12,11 +12,10 @@ import { useRouter } from 'next/router';
 
 const ListView = () => {
   const [page, setPage] = useState<number>(1);
-  const [keyword, setKeyword] = useState('');
+  const [keyword, setKeyword] = useRecoilState(tagAtom);
   const List = useGetList(page);
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
-  console.log(List.data);
 
   const { tagKeyword } = router.query;
 
@@ -29,7 +28,7 @@ const ListView = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [tagKeyword]);
+  }, [setKeyword, tagKeyword]);
 
   const onPageChange = (page: number) => {
     setPage(page);

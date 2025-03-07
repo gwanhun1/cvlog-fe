@@ -2,7 +2,8 @@ import axios from 'axios';
 import imageCompression from 'browser-image-compression';
 import { EDITOR_CONSTANTS, EDITOR_PATHS, ERROR_MESSAGES } from 'lib/constants';
 import LocalStorage from 'public/utils/Localstorage';
-import { ErrorResponse, handleMutateErrors } from 'service/api/login';
+import { handleMutateErrors } from 'service/api/login';
+import { ErrorResponse } from 'service/api/login/type';
 
 const IMAGE_OPTIONS = EDITOR_CONSTANTS.IMAGE_COMPRESSION;
 

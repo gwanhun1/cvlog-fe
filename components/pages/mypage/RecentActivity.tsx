@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGetList } from 'service/hooks/List';
 import MypageTaskSkeleton from './Skeleton';
-import { formatRelativeTime } from 'service/utils/timer';
+import { formatRelativeTime } from 'utils/timer';
 import ActivityRow from './ActivityRow';
 
 const ITEMS_PER_PAGE = 5;

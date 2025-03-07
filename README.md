@@ -1,9 +1,3 @@
-# WIP
-
-## klog-client
-
-> klog is a blog for me (not a platform for developersㅋㅋ). It provides compfy markdown editor with syntax highlighter enabled. Currently, this service (maybe) only supports Korean language.
-
 Backend project of service is at another Repo - [klog-backend](https://github.com/yunkukpark/klog-server)
 
 ### Project Stack
@@ -123,8 +117,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 위 방법들을 활용하면 Next.js 환경에서 로그인 유무에 따른 페이지 접근 제한을 효과적으로 구현할 수 있다.
 
- 추가로 
- URL을 직접 입력해서 보호된 페이지(/article, /resume, /github 등)에 접근하는 경우에도 차단하려면 middleware.ts 방식이 가장 효과적이다.
+추가로
+URL을 직접 입력해서 보호된 페이지(/article, /resume, /github 등)에 접근하는 경우에도 차단하려면 middleware.ts 방식이 가장 효과적이다.
 
 ✅ middleware.ts 방식으로 직접 접근 차단
 이점: 서버에서 로그인 여부를 검사하고, 미인증 사용자는 /login으로 강제 리디렉션

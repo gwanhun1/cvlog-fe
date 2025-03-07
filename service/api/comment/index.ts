@@ -1,5 +1,5 @@
-import { axiosInstance } from 'service/axios';
-import { CommentType, NewPostComment } from './type';
+import { axiosInstance } from 'utils/axios';
+import { NewPostComment } from './type';
 
 export const postNewComment = async (params: NewPostComment) => {
   const { data } = await axiosInstance.post('/comments', {

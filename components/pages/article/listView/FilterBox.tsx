@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
 import { IoMdSearch } from 'react-icons/io';
 
 type FilterBoxProps = {

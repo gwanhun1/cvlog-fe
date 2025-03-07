@@ -8,12 +8,9 @@ import {
   getMyDetail,
   patchDetail,
 } from 'service/api/detail';
-import {
-  ErrorResponse,
-  handleGetErrors,
-  handleMutateErrors,
-} from 'service/api/login';
-import { CreateNewPostReq } from 'service/api/new/type';
+import { CreateNewPostReq } from 'service/api/detail/type';
+import { handleGetErrors, handleMutateErrors } from 'service/api/login';
+import { ErrorResponse } from 'service/api/login/type';
 
 export const useGetDetail = (params: number) => {
   return useQuery({

@@ -14,17 +14,9 @@ interface NewBtnProps {
   doc: DocType;
   setDoc: React.Dispatch<React.SetStateAction<DocType>>;
   imageArr: string[];
-  isVisiblePreview: boolean;
-  setIsVisiblePreview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NewBtn = ({
-  doc,
-  setDoc,
-  imageArr,
-  isVisiblePreview,
-  setIsVisiblePreview,
-}: NewBtnProps) => {
+const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
   const [tag, setTag] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();

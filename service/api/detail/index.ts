@@ -1,4 +1,4 @@
-import { axiosInstance as axios } from 'service/axios';
+import { axiosInstance as axios } from 'utils/axios';
 import {
   Content,
   CreateNewPostReq,

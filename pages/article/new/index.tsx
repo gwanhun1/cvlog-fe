@@ -55,13 +55,7 @@ const NewPost: NextPage = () => {
     <main className="h-screen min-h-screen">
       <div className="flex flex-col h-full">
         <header className="flex-none">
-          <NewBtn
-            doc={doc}
-            setDoc={setDoc}
-            imageArr={imageArr}
-            isVisiblePreview={isVisiblePreview}
-            setIsVisiblePreview={setIsVisiblePreview}
-          />
+          <NewBtn doc={doc} setDoc={setDoc} imageArr={imageArr} />
         </header>
         <main className="flex flex-col flex-1 w-full tablet:flex-row">
           <NewContents

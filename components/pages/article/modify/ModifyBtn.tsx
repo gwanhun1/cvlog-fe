@@ -15,18 +15,9 @@ interface ModifyBtnProps {
   setDoc: React.Dispatch<React.SetStateAction<DocType>>;
   pid: string;
   imageArr: string[];
-  isVisiblePreview: boolean;
-  setIsVisiblePreview: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ModifyBtn = ({
-  doc,
-  setDoc,
-  pid,
-  imageArr,
-  isVisiblePreview,
-  setIsVisiblePreview,
-}: ModifyBtnProps) => {
+const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
   const router = useRouter();
   const accessToken = LocalStorage.getItem('CVtoken') as string;
   const [tag, setTag] = useState('');

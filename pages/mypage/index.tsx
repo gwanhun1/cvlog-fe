@@ -14,7 +14,6 @@ import { userIdAtom } from 'service/atoms/atoms';
 import { useGetList } from 'service/hooks/List';
 import { useRouter } from 'next/router';
 
-// 동적 임포트로 변경
 const RecentActivity = dynamic(
   () => import('../../components/pages/mypage/RecentActivity'),
   {
@@ -29,9 +28,7 @@ const Mypage = () => {
   const userInfo = useRecoilValue(userIdAtom);
   const List = useGetList(1);
   const router = useRouter();
-  
-  
-  // 날짜 포맷팅 메모이제이션
+
   const formattedDate = useMemo(() => {
     try {
       return userInfo?.created_at
@@ -42,10 +39,9 @@ const Mypage = () => {
     }
   }, [userInfo?.created_at]);
 
-
   if (!userInfo) {
-    alert('로그인을 다시 시도해주세요')
-    router.push('/login')
+    alert('로그인을 다시 시도해주세요');
+    router.push('/login');
   }
 
   return (

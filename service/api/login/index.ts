@@ -1,6 +1,6 @@
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
-import { axiosInstance as axios } from 'service/axios';
+import { axiosInstance as axios } from 'utils/axios';
 import { ErrorResponse, GetNewTokenApi, SignOut, UserInfo } from './type';
 
 export const handleGetErrors = async (error: ErrorResponse) => {

@@ -32,7 +32,7 @@ export const getStaticProps: GetStaticProps = async () => {
       props: {
         aboutData: response.data,
       },
-      revalidate: 60 * 60, // 1시간마다 재생성
+      revalidate: 60 * 60,
     };
   } catch (error) {
     console.error('Failed to fetch about data:', error);
