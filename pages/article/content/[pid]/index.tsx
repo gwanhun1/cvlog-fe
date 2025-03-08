@@ -108,7 +108,7 @@ const Detail = ({ pid }: { pid: string }) => {
           ) : (
             getMyDetail.data?.post.tags.map((tag: TagType) => (
               <Badge
-                className="duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                className="duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all"
                 color="default"
                 size="sm"
                 key={tag.id}

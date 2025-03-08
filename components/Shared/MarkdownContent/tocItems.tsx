@@ -16,7 +16,7 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
   const isScrollingRef = useRef(false);
-  const activeIdRef = useRef<string>(''); // 현재 activeId 저장용
+  const activeIdRef = useRef<string>('');
 
   useEffect(() => {
     if (!contentRef.current || !content) return;
@@ -49,7 +49,7 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
 
       if (items.length > 0) {
         setActiveId(items[0].id);
-        activeIdRef.current = items[0].id; // 초기값 설정
+        activeIdRef.current = items[0].id;
       }
     }, 300);
   }, [content, contentRef]);
@@ -75,9 +75,9 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
 
     if (currentId && currentId !== activeIdRef.current) {
       activeIdRef.current = currentId;
-      setActiveId(currentId); // 상태 변경
+      setActiveId(currentId);
     }
-  }, [tocItems]); // activeId 의존성 제거
+  }, [tocItems]);
 
   useEffect(() => {
     if (tocItems.length === 0) return;
