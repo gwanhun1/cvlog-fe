@@ -1,10 +1,10 @@
 import { CopyBlock, dracula } from 'react-code-blocks';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
-import { useEffect, useRef, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cn } from 'styles/utils';
-import LogmeLikeBtn from '../LogmeLikeBtn';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import styles from '../../../styles/markdown.module.scss';
@@ -15,7 +15,7 @@ interface CodeProps {
   children?: React.ReactNode;
 }
 
-interface HeadingItem {
+interface TOCItem {
   id: string;
   text: string;
   level: number;
@@ -34,72 +34,97 @@ const MarkdownContent = ({
   writer,
   id,
 }: MarkdownContentProps) => {
-  const [headings, setHeadings] = useState<HeadingItem[]>([]);
+  const [tocItems, setTocItems] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
   const contentRef = useRef<HTMLDivElement>(null);
-
+  const isScrollingRef = useRef(false);
   const userInfo = useRecoilValue(userIdAtom);
 
   useEffect(() => {
-    if (!content) return;
+    if (!contentRef.current || !content) return;
 
-    // Extract headings from markdown content
-    const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-    const matches = Array.from(content.matchAll(headingRegex));
-    // In your useEffect where you extract headings:
-    const items = matches.map((match, index) => {
-      // Create an ID that's based on the heading text (more reliable)
-      const headingText = match[2];
-      const idText = headingText.toLowerCase().replace(/\s+/g, '-');
-      return {
-        id: `heading-${idText}`,
-        text: match[2],
-        level: match[1].length,
-      };
-    });
+    const extractTocItems = () => {
+      const headingElements = contentRef.current?.querySelectorAll(
+        'h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]'
+      );
 
-    setHeadings(items);
+      if (!headingElements) return [];
+
+      const items: TOCItem[] = [];
+
+      headingElements.forEach(el => {
+        const id = el.getAttribute('id');
+        if (!id) return;
+
+        const level = parseInt(el.tagName.substring(1));
+        const text = el.textContent || '';
+
+        items.push({ id, text, level });
+      });
+
+      return items;
+    };
+
+    setTimeout(() => {
+      const items = extractTocItems();
+      setTocItems(items);
+
+      if (items.length > 0) {
+        setActiveId(items[0].id);
+      }
+    }, 300);
   }, [content]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!contentRef.current) return;
+    if (tocItems.length === 0) return;
 
-      const headingElements = contentRef.current.querySelectorAll(
-        'h1, h2, h3, h4, h5, h6'
-      );
-      const headingPositions = Array.from(headingElements).map(element => ({
-        id: element.id,
-        top: element.getBoundingClientRect().top,
+    const handleScroll = () => {
+      if (isScrollingRef.current) return;
+
+      const headingElements = tocItems.map(item => ({
+        id: item.id,
+        element: document.getElementById(item.id),
       }));
 
-      const currentHeading = headingPositions.find(
-        heading => heading.top > 0
-      ) || { id: '', top: 0 };
+      const scrollPosition = window.scrollY + 150;
 
-      if (currentHeading) {
-        setActiveId(currentHeading.id);
+      let currentId = headingElements[0].id;
+
+      for (const { id, element } of headingElements) {
+        if (element && element.offsetTop <= scrollPosition) {
+          currentId = id;
+        } else {
+          break;
+        }
+      }
+
+      if (currentId !== activeId) {
+        setActiveId(currentId);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [tocItems, activeId]);
 
-  const scrollToHeading = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      // 헤더 높이(예: 80px)만큼 오프셋 추가
-      const headerOffset = 120;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition =
-        elementPosition + window.pageYOffset - headerOffset;
+  const scrollToHeading = (headingId: string) => {
+    const element = document.getElementById(headingId);
+    if (!element) return;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
+    isScrollingRef.current = true;
+    setActiveId(headingId);
+
+    const headerOffset = -220;
+    const elementPosition = element.offsetTop;
+
+    window.scrollTo({
+      top: elementPosition - headerOffset,
+      behavior: 'smooth',
+    });
+
+    setTimeout(() => {
+      isScrollingRef.current = false;
+    }, 700);
   };
 
   return (
@@ -114,82 +139,22 @@ const MarkdownContent = ({
           {/* <LogmeLikeBtn isOwnPost={false} postId={id} /> */}
         </nav>
       )}
+
       <div className="flex-1 w-full" ref={contentRef}>
         <ReactMarkdown
           className={styles.contentMarkdown}
-          rehypePlugins={[rehypeRaw]}
+          rehypePlugins={[rehypeRaw, rehypeSlug]}
           remarkPlugins={[remarkGfm]}
           components={{
-            h1: ({ children, ...props }) => {
-              const headingText = String(children)
-                .toLowerCase()
-                .replace(/\s+/g, '-');
-              return (
-                <h1 id={`heading-${headingText}`} {...props}>
-                  {children}
-                </h1>
-              );
-            },
-
-            h2: ({ children, ...props }) => {
-              const headingText = String(children)
-                .toLowerCase()
-                .replace(/\s+/g, '-');
-              return (
-                <h2 id={`heading-${headingText}`} {...props}>
-                  {children}
-                </h2>
-              );
-            },
-            h3: ({ children, ...props }) => {
-              const headingText = String(children)
-                .toLowerCase()
-                .replace(/\s+/g, '-');
-              return (
-                <h3 id={`heading-${headingText}`} {...props}>
-                  {children}
-                </h3>
-              );
-            },
-            h4: ({ children, ...props }) => {
-              const headingText = String(children)
-                .toLowerCase()
-                .replace(/\s+/g, '-');
-              return (
-                <h4 id={`heading-${headingText}`} {...props}>
-                  {children}
-                </h4>
-              );
-            },
-            h5: ({ children, ...props }) => {
-              const headingText = String(children)
-                .toLowerCase()
-                .replace(/\s+/g, '-');
-              return (
-                <h5 id={`heading-${headingText}`} {...props}>
-                  {children}
-                </h5>
-              );
-            },
-            h6: ({ children, ...props }) => {
-              const headingText = String(children)
-                .toLowerCase()
-                .replace(/\s+/g, '-');
-              return (
-                <h6 id={`heading-${headingText}`} {...props}>
-                  {children}
-                </h6>
-              );
-            },
             code: ({ inline, className, children, ...props }: CodeProps) => {
               const match = /language-(\w+)/.exec(className || '');
               const isMultiLine = !inline && match;
 
               return isMultiLine ? (
-                <div className="w-full tablet:max-w-[880px] overflow-x-auto">
+                <div className="w-full tablet:max-w-[880px] overflow-x-auto mb-4">
                   <CopyBlock
                     text={String(children).replace(/\n$/, '')}
-                    language={match[1]}
+                    language={match ? match[1] : 'text'}
                     showLineNumbers={true}
                     theme={dracula}
                     codeBlock
@@ -207,22 +172,22 @@ const MarkdownContent = ({
         </ReactMarkdown>
       </div>
 
-      {headings && headings.length > 0 && (
-        <nav className=" tablet:fixed tablet:top-40 tablet:left-1/2 tablet:translate-x-[440px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4 tablet:border-l tablet:border-gray-200">
+      {tocItems.length > 0 && (
+        <nav className="tablet:fixed tablet:top-40 tablet:left-1/2 tablet:translate-x-[440px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4 tablet:border-l tablet:border-gray-200">
           <ul className="space-y-2">
-            {headings.map(heading => (
+            {tocItems.map(item => (
               <li
-                key={heading.id}
-                style={{ paddingLeft: `${(heading.level - 1) * 1}rem` }}
+                key={item.id}
+                style={{ paddingLeft: `${(item.level - 1) * 1}rem` }}
                 className={cn(
-                  'cursor-pointer  hover:text-blue-500 transition-colors',
-                  activeId === heading.id
-                    ? 'text-blue-700 font-bold text-sm '
-                    : 'text-gray-600 text-sm'
+                  'cursor-pointer hover:text-blue-500 transition-colors duration-200 py-1 text-sm',
+                  activeId === item.id
+                    ? 'text-blue-700 font-bold border-l-2 border-blue-500 -ml-[1px] pl-[calc(1rem*(item.level-1)+3px)]'
+                    : 'text-gray-600'
                 )}
-                onClick={() => scrollToHeading(heading.id)}
+                onClick={() => scrollToHeading(item.id)}
               >
-                {heading.text}
+                {item.text}
               </li>
             ))}
           </ul>
