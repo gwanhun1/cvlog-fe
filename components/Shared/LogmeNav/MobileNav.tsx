@@ -16,7 +16,7 @@ const MobileNav = () => {
   const [cvRefreshToken, setCvRefreshToken] = useState(
     Cookie.getItem('refreshToken')
   );
-  const [_, setAuthority] = useRecoilState(authorityState);
+  const [authority, setAuthority] = useRecoilState(authorityState);
   const userInfo = useRecoilValue(userIdAtom);
 
   useEffect(() => {

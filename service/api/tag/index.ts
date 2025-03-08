@@ -18,10 +18,14 @@ export const getList = async (page: number, userId?: number) => {
 };
 
 export const getPublicList = async (page: number) => {
-  const { data } = await axiosInstance.get<GetListType>(
-    `/posts/public/page/${page}`
-  );
-  return data.data;
+  try {
+    const { data } = await axiosInstance.get<GetListType>(
+      `/posts/public/page/${page}`
+    );
+    return data.data;
+  } catch (error) {
+    console.error('Network Error in getPublicList:', error);
+  }
 };
 
 export const fetchGetTagsFolders = async () => {
@@ -64,7 +68,9 @@ export const tagsAPI = {
 
   getWithoutFolder: async () => {
     try {
-      const { data } = await axiosInstance.get('/tags/without-folder');
+      const { data } = await axiosInstance.get<GetTagsFolderRes>(
+        '/tags/without-folder'
+      );
       return data;
     } catch (error) {
       console.error('Error fetching tags without folder:', error);
