@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
+import Link from 'next/link';
 import CommentBox from 'components/Shared/LogmeComment';
 import { useGetCommentList } from 'service/hooks/Comment';
 import {
@@ -110,7 +111,9 @@ const Detail = ({ pid }: { pid: string }) => {
                 size="sm"
                 key={tag.id}
               >
-                {tag.name}
+                <Link href={{ pathname: '/article', query: { tagKeyword: tag.name } }}>
+                  <span className="cursor-pointer">{tag.name}</span>
+                </Link>
               </Badge>
             ))
           )}
@@ -174,56 +177,37 @@ const Detail = ({ pid }: { pid: string }) => {
           <Profile getDetailData={getDetailData?.data?.post.user_id} />
         </article>
         <div className="flex items-center justify-around tablet:w-128 w-60">
-          <div
-            className={`${
-              !getDetailData.data?.prevPostInfo && 'hover:cursor-not-allowed'
-            } tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200   rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly`}
-            onClick={() =>
-              getDetailData?.data?.prevPostInfo &&
-              router.push(
-                `/article/content/all/${getDetailData.data.prevPostInfo.id}`
-              )
-            }
-          >
-            {getDetailData.data?.prevPostInfo && (
-              <>
+          {getDetailData.data?.prevPostInfo ? (
+            <Link href={`/article/content/all/${getDetailData.data.prevPostInfo.id}`} prefetch>
+              <div className="tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly">
                 <div className="pr-2 tablet:ml-3">←</div>
                 <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                  <div className="text-xs text-center tablet:text-sm ">
-                    이전 포스트
-                  </div>
+                  <div className="text-xs text-center tablet:text-sm">이전 포스트</div>
                   <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap mt-[2px] truncate">
                     {getDetailData.data.prevPostInfo.title}
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-          <div
-            className={`${
-              !getDetailData.data?.nextPostInfo && 'hover:cursor-not-allowed'
-            } tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack mobile:h-12 justify-evenly hover:opacity-70 `}
-            onClick={() =>
-              getDetailData?.data?.nextPostInfo &&
-              router.push(
-                `/article/content/all/${getDetailData.data.nextPostInfo.id}`
-              )
-            }
-          >
-            {getDetailData.data?.nextPostInfo && (
-              <>
-                <div className="flex-col  hidden w-[90px] tablet:w-full mobile:flex truncate ">
-                  <div className="text-xs text-center tablet:text-sm">
-                    다음 포스트
-                  </div>
+              </div>
+            </Link>
+          ) : (
+            <div className="tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-not-allowed mobile:ml-6 text-ftBlack opacity-50 mobile:h-12 tablet:ml-10 justify-evenly" />
+          )}
+          
+          {getDetailData.data?.nextPostInfo ? (
+            <Link href={`/article/content/all/${getDetailData.data.nextPostInfo.id}`} prefetch>
+              <div className="tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 justify-evenly">
+                <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
+                  <div className="text-xs text-center tablet:text-sm">다음 포스트</div>
                   <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap mt-[2px] truncate">
                     {getDetailData.data.nextPostInfo.title}
                   </div>
                 </div>
-                <div className="w-100%  mr-1 tablet:mr-3 ">→</div>
-              </>
-            )}
-          </div>
+                <div className="w-100% mr-1 tablet:mr-3">→</div>
+              </div>
+            </Link>
+          ) : (
+            <div className="tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 justify-evenly" />
+          )}
         </div>
       </section>
       <CommentBox pid={pid} />
@@ -249,10 +233,19 @@ export const getStaticProps = async ({ params }: any) => {
     };
   }
 
-  return {
-    props: {
-      pid,
-    },
-    revalidate: 60, // 60초마다 재생성
-  };
+  try {
+    // 여기서 초기 데이터를 미리 가져올 수 있습니다
+    // const initialData = await fetchInitialData(pid);
+
+    return {
+      props: {
+        pid,
+      },
+      revalidate: 60, // 60초마다 재검증
+    };
+  } catch (error) {
+    return {
+      notFound: true,
+    };
+  }
 };
