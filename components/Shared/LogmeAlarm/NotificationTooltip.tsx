@@ -1,8 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
+import Link from 'next/link';
 
 interface Notification {
   id: number;
@@ -12,6 +13,11 @@ interface Notification {
   created_at: string;
   post: {
     id: string;
+    title: string;
+  };
+  user: {
+    github_id: string;
+    avatar_url: string;
   };
 }
 
@@ -28,34 +34,6 @@ const TooltipContainer = styled.div`
   overflow-y: auto;
 `;
 
-const NotificationItem = styled.div<{ read: boolean }>`
-  padding: 12px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  background-color: ${props => (props.read ? 'white' : '#f0f7ff')};
-
-  &:hover {
-    background-color: ${props => (props.read ? '#f5f5f5' : '#e6f0ff')};
-  }
-
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const Message = styled.p`
-  margin: 0;
-  font-size: 14px;
-  color: #333;
-`;
-
-const Time = styled.span`
-  font-size: 12px;
-  color: #666;
-  display: block;
-  margin-top: 4px;
-`;
-
 const EmptyState = styled.div`
   padding: 20px;
   text-align: center;
@@ -63,7 +41,6 @@ const EmptyState = styled.div`
 `;
 
 const NotificationTooltip = () => {
-  const router = useRouter();
   const { data: notifications, refetch } = useQuery<Notification[]>({
     queryKey: ['notifications'],
     queryFn: async () => {
@@ -71,14 +48,6 @@ const NotificationTooltip = () => {
       return response.data;
     },
   });
-
-  const handleNotificationClick = async (notification: Notification) => {
-    if (!notification.read) {
-      await axios.post(`/api/notifications/${notification.id}/read`);
-      refetch();
-    }
-    router.push(`/article/content/all/${notification.post.id}`);
-  };
 
   const formatTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -98,15 +67,36 @@ const NotificationTooltip = () => {
   return (
     <TooltipContainer>
       {notifications && notifications?.length ? (
-        notifications.map((notification: Notification) => (
-          <NotificationItem
+        notifications.map(notification => (
+          <Link
+            href={`/article/content/all/${notification.post.id}`}
             key={notification.id}
-            read={notification.read}
-            onClick={() => handleNotificationClick(notification)}
+            prefetch
           >
-            <Message>{notification.message}</Message>
-            <Time>{formatTime(notification.created_at)}</Time>
-          </NotificationItem>
+            <div className="flex items-center px-4 py-3 hover:bg-gray-100 cursor-pointer">
+              <div className="flex-shrink-0">
+                <img
+                  className="w-11 h-11 rounded-full"
+                  src={notification.user.avatar_url}
+                  alt={`${notification.user.github_id}'s avatar`}
+                />
+              </div>
+              <div className="w-full pl-3">
+                <div className="text-gray-500 text-sm mb-1.5">
+                  <span className="font-semibold text-gray-900">
+                    {notification.user.github_id}
+                  </span>{' '}
+                  님이 회원님의 게시글에 댓글을 남겼습니다:
+                </div>
+                <div className="text-xs text-blue-600">
+                  {notification.post.title}
+                </div>
+                <span className="text-xs text-gray-500">
+                  {formatTime(notification.created_at)}
+                </span>
+              </div>
+            </div>
+          </Link>
         ))
       ) : (
         <EmptyState>새로운 알림이 없습니다</EmptyState>
