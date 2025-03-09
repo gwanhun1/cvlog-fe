@@ -21,7 +21,8 @@ const LoginButtonGroup = () => {
     }
 
     if (error === 'auth_failed') {
-      alert('서버가 자고 있어요..😢 잠시 후 다시 로그인 해주세요.');
+      alert('로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      console.error('GitHub OAuth 인증 실패:', error);
     }
   }, []);
 
@@ -33,16 +34,31 @@ const LoginButtonGroup = () => {
   if (!mounted) return null;
 
   const handleLogin = (loginMethod: string, event: React.MouseEvent) => {
-    if (loginMethod === 'Github') {
-      window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_ID}&redirect_uri=${process.env.NEXT_PUBLIC_URL}`;
-    } else {
-      event.preventDefault();
-      alert('준비 중입니다.');
-    }
-
     if (accessToken) {
       event.preventDefault();
       return;
+    }
+    
+    if (loginMethod === 'Github') {
+      const githubId = process.env.NEXT_PUBLIC_GITHUB_ID;
+      const redirectUri = process.env.NEXT_PUBLIC_URL;
+      
+      if (!githubId || !redirectUri) {
+        console.error('GitHub OAuth 설정이 누락되었습니다:', { githubId, redirectUri });
+        alert('GitHub 로그인 설정이 잘못되었습니다. 관리자에게 문의하세요.');
+        return;
+      }
+      
+      console.log('GitHub 로그인 시도:', { githubId, redirectUri });
+      
+      // 상태 변수 추가 - CSRF 보호용
+      const state = Math.random().toString(36).substring(2, 15);
+      sessionStorage.setItem('github_oauth_state', state);
+      
+      window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubId}&redirect_uri=${redirectUri}&state=${state}&scope=user:email`;
+    } else {
+      event.preventDefault();
+      alert('준비 중입니다.');
     }
   };
 

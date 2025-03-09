@@ -13,10 +13,18 @@ export const handleGetErrors = async (error: ErrorResponse) => {
     },
   };
   if (error.response && error.response.status === 401) {
-    const newToken = await postRefreshToken(refreshParams);
-    await LocalStorage.setItem('CVtoken', newToken.data.accessToken);
-    await window.location.reload();
+    try {
+      const newToken = await postRefreshToken(refreshParams);
+      await LocalStorage.setItem('CVtoken', newToken.data.accessToken);
+      // 페이지 새로고침 제거
+      return newToken;
+    } catch (refreshError) {
+      console.error('Token refresh failed:', refreshError);
+      // 토큰 갱신 실패 시 에러 처리만 하고 페이지 리로드는 하지 않음
+      return Promise.reject(refreshError);
+    }
   }
+  return Promise.reject(error);
 };
 
 export const handleMutateErrors = async (
@@ -31,15 +39,26 @@ export const handleMutateErrors = async (
     },
   };
   if (error.response?.status === 401) {
-    await alert('다시 시도해주세요.');
-    const newToken = await postRefreshToken(refreshParams);
-    await LocalStorage.setItem('CVtoken', newToken.data.accessToken);
+    try {
+      const newToken = await postRefreshToken(refreshParams);
+      await LocalStorage.setItem('CVtoken', newToken.data.accessToken);
+      // 알림만 표시하고 자동으로 재시도하도록 수정
+      console.log('토큰이 갱신되었습니다.');
+    } catch (refreshError) {
+      console.error('Token refresh failed:', refreshError);
+      await alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+    }
   }
 };
 
 export const postRefreshToken = async (params: GetNewTokenApi) => {
-  const { data } = await axios.post('/auth/refresh', {}, params);
-  return data;
+  try {
+    const { data } = await axios.post('/auth/refresh', {}, params);
+    return data;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    throw error;
+  }
 };
 
 export const getUserInfo = async () => {
