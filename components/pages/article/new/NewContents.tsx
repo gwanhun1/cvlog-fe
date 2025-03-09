@@ -1,15 +1,11 @@
-import { CopyBlock, dracula } from 'react-code-blocks';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
 import { cn } from 'styles/utils';
 import css from './new.module.scss';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DocType } from 'pages/article/new';
 import { MDE_OPTION, MDE_OPTIONMOBILE } from 'service/constants/markdownOpts';
 import { useImageUpload } from 'hooks/useImageUpload';
 import dynamic from 'next/dynamic';
-import styles from '../../../../styles/markdown.module.scss';
+import NewPreview from './NewPreview';
 
 interface NewContentsProps {
   doc: DocType;
@@ -18,12 +14,6 @@ interface NewContentsProps {
   isVisiblePreview: boolean;
   containerTopRef: React.RefObject<HTMLDivElement>;
   isMobile: boolean;
-}
-
-interface CodeBlockProps {
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
 }
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
@@ -40,19 +30,40 @@ const NewContents = ({
 }: NewContentsProps) => {
   const { uploadImage } = useImageUpload();
   const editorRef = useRef<HTMLDivElement>(null);
+  const editorInstanceRef = useRef<any>(null);
+
+  const editorOptions = useMemo(() => {
+    return {
+      ...(isMobile ? MDE_OPTIONMOBILE : MDE_OPTION),
+      minHeight: '100%',
+    };
+  }, [isMobile]);
+
+  useEffect(() => {
+    setDoc(prev => {
+      // 이미 내용이 있으면 유지
+      if (prev.content !== undefined && prev.content !== '') {
+        return prev;
+      }
+      return { ...prev, content: '' };
+    });
+  }, [setDoc]);
 
   const handleContentChange = useCallback(
     (value: string) => {
-      if (value.startsWith('![') && value.endsWith(')')) {
-        const pastValue = doc.content;
-        const newValue = pastValue + '\n\n' + value;
-        setDoc(prev => ({ ...prev, content: newValue }));
-      } else {
-        setDoc(prev => ({ ...prev, content: value }));
-      }
+      setDoc(prev => {
+        if (prev.content !== value) {
+          return { ...prev, content: value };
+        }
+        return prev;
+      });
     },
-    [doc.content, setDoc]
+    [setDoc]
   );
+
+  const getEditorInstance = useCallback((editor: any) => {
+    editorInstanceRef.current = editor;
+  }, []);
 
   const handleImageUpload = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
@@ -60,15 +71,18 @@ const NewContents = ({
         const file = e.dataTransfer.files[0];
         const { url: imageUrl, name: imageName } = await uploadImage(file);
 
-        const editor = e.target as any;
-        const cm = editor.simpleMde?.codemirror;
+        const editor = editorInstanceRef.current;
+        const cm = editor?.simpleMde?.codemirror;
 
         if (cm) {
           const pos = cm.getCursor();
           const imageMarkdown = `![${imageName}](${imageUrl})`;
           cm.replaceRange(imageMarkdown, pos);
         } else {
-          handleContentChange(`![${imageName}](${imageUrl})`);
+          // 이미지 업로드 시 현재 내용에 추가
+          const newValue =
+            (doc.content || '') + '\n\n' + `![${imageName}](${imageUrl})`;
+          setDoc(prev => ({ ...prev, content: newValue }));
         }
 
         setImageArr(prev => [...prev, imageUrl]);
@@ -76,27 +90,7 @@ const NewContents = ({
         console.error('이미지 업로드 실패:', error);
       }
     },
-    [handleContentChange, setImageArr, uploadImage]
-  );
-
-  const renderCodeBlock = useCallback(
-    ({ inline, className, children, ...props }: CodeBlockProps) => {
-      const match = /language-(\w+)/.exec(className || '');
-      return !inline && match ? (
-        <CopyBlock
-          text={String(children).replace(/\n$/, '')}
-          language={match[1]}
-          showLineNumbers={true}
-          theme={dracula}
-          codeBlock
-        />
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      );
-    },
-    []
+    [doc.content, setDoc, setImageArr, uploadImage]
   );
 
   useEffect(() => {
@@ -131,10 +125,8 @@ const NewContents = ({
 
       if (sourceScrollableHeight <= 0 || targetScrollableHeight <= 0) return;
 
-      // 현재 스크롤 위치의 백분율 계산
       const scrollPercentage = source.scrollTop / sourceScrollableHeight;
 
-      // 타겟의 스크롤 위치를 백분율에 맞게 설정
       setSourceScrolling(true);
       target.scrollTop = scrollPercentage * targetScrollableHeight;
 
@@ -155,7 +147,6 @@ const NewContents = ({
     };
 
     const handlePreviewScroll = () => {
-      // 프리뷰 스크롤은 에디터에 영향을 주지 않도록 함
       return;
     };
 
@@ -193,12 +184,10 @@ const NewContents = ({
       >
         <SimpleMDE
           style={{ color: '#2657A6', height: '100%' }}
-          options={{
-            ...(isMobile ? MDE_OPTIONMOBILE : MDE_OPTION),
-            minHeight: '100%',
-          }}
-          value={doc.content}
+          options={editorOptions}
+          value={doc.content || ''}
           onChange={handleContentChange}
+          getCodemirrorInstance={getEditorInstance}
           onDrop={e => {
             e.preventDefault();
             handleImageUpload(e);
@@ -206,33 +195,11 @@ const NewContents = ({
         />
       </div>
 
-      {isVisiblePreview && (
-        <div className="flex-1 tablet:min-w-[50vw] tablet:w-[50vw] overflow-hidden h-[80vh]">
-          <div
-            ref={containerTopRef}
-            className="w-full px-4 overflow-y-auto tablet:px-8"
-            style={{ height: 'calc(100vh - 190px)' }}
-          >
-            <ReactMarkdown
-              rehypePlugins={[rehypeRaw]}
-              remarkPlugins={[remarkGfm]}
-              className={styles.contentMarkdown}
-              components={{
-                code: renderCodeBlock,
-                ul: ({ node, ...props }) => (
-                  <ul className="list-disc ml-4 my-2" {...props} />
-                ),
-                ol: ({ node, ...props }) => (
-                  <ol className="list-decimal ml-4 my-2" {...props} />
-                ),
-                li: ({ node, ...props }) => <li className="my-1" {...props} />,
-              }}
-            >
-              {doc.content}
-            </ReactMarkdown>
-          </div>
-        </div>
-      )}
+      <NewPreview
+        isVisiblePreview={isVisiblePreview}
+        containerTopRef={containerTopRef}
+        doc={doc}
+      />
     </div>
   );
 };

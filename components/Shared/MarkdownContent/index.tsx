@@ -46,35 +46,36 @@ const MarkdownContent = ({
       )}
 
       <div className="flex-1 w-full" ref={contentRef}>
-        <ReactMarkdown
-          className={styles.contentMarkdown}
-          rehypePlugins={[rehypeRaw, rehypeSlug]}
-          remarkPlugins={[remarkGfm]}
-          components={{
-            code: ({ inline, className, children, ...props }: CodeProps) => {
-              const match = /language-(\w+)/.exec(className || '');
-              const isMultiLine = !inline && match;
+        <div className={styles.contentMarkdown}>
+          <ReactMarkdown
+            rehypePlugins={[rehypeRaw, rehypeSlug]}
+            remarkPlugins={[remarkGfm]}
+            components={{
+              code: ({ inline, className, children, ...props }: CodeProps) => {
+                const match = /language-(\w+)/.exec(className || '');
+                const isMultiLine = !inline && match;
 
-              return isMultiLine ? (
-                <div className="w-full tablet:max-w-[880px] overflow-x-auto mb-4">
-                  <CopyBlock
-                    text={String(children).replace(/\n$/, '')}
-                    language={match ? match[1] : 'text'}
-                    showLineNumbers={true}
-                    theme={dracula}
-                    codeBlock
-                  />
-                </div>
-              ) : (
-                <code className={className} {...props}>
-                  {children}
-                </code>
-              );
-            },
-          }}
-        >
-          {content}
-        </ReactMarkdown>
+                return isMultiLine ? (
+                  <div className="w-full tablet:max-w-[880px] overflow-x-auto mb-4">
+                    <CopyBlock
+                      text={String(children).replace(/\n$/, '')}
+                      language={match ? match[1] : 'text'}
+                      showLineNumbers={true}
+                      theme={dracula}
+                      codeBlock
+                    />
+                  </div>
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              },
+            }}
+          >
+            {content}
+          </ReactMarkdown>
+        </div>
       </div>
 
       <TocItemsContainer contentRef={contentRef} content={content} />
