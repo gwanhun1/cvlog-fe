@@ -28,7 +28,9 @@ const SideMenu = () => {
   const [selectModal, setSelectModal] = useState<string>('');
 
   const { activeTag, draggedTagName, sensors, handleDragStart, handleDragEnd } =
-    useTagDragState(queryGetTagsFolders.data, queryGetUnassignedTags.data);
+    useTagDragState(queryGetTagsFolders.data, {
+      data: queryGetUnassignedTags.data?.data?.[0]?.tags || [],
+    });
 
   const namedFolder =
     queryGetTagsFolders.data?.filter(item => item.name !== '') ?? [];
@@ -105,7 +107,7 @@ const SideMenu = () => {
                 />
 
                 <UnassignedTagList
-                  tags={queryGetUnassignedTags.data?.data ?? []}
+                  tags={queryGetUnassignedTags.data?.data?.[0]?.tags ?? []}
                   draggedTagName={draggedTagName}
                 />
               </div>

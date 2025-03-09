@@ -157,7 +157,6 @@ axiosInstance.interceptors.response.use(
           LocalStorage.removeItem('CVtoken');
           Cookie.removeItem('refreshToken');
           alert('로그인이 필요합니다.');
-          window.location.href = '/'; // 로그인 페이지로 리다이렉트
         }
 
         return Promise.reject(refreshError);
