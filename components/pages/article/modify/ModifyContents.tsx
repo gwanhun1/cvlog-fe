@@ -1,25 +1,15 @@
-import { CopyBlock, dracula } from 'react-code-blocks';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import remarkGfm from 'remark-gfm';
 import { cn } from 'styles/utils';
 import { MDE_OPTION, MDE_OPTIONMOBILE } from 'service/constants/markdownOpts';
 import css from './new.module.scss';
 import dynamic from 'next/dynamic';
 import { DocType } from 'pages/article/modify/[pid]';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useImageUpload } from 'hooks/useImageUpload';
-import styles from '../../../../styles/markdown.module.scss';
+import ModifyPreview from './ModifyPreview';
 
 const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
   ssr: false,
 });
-
-interface CodeBlockProps {
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-}
 
 interface ModifyContentsProps {
   doc: DocType;
@@ -40,20 +30,47 @@ const ModifyContents = ({
 }: ModifyContentsProps) => {
   const { uploadImage } = useImageUpload();
   const editorRef = useRef<HTMLDivElement>(null);
+  const editorInstanceRef = useRef<any>(null);
+
+  // Use useMemo for editor options to prevent re-creation on each render
+  const editorOptions = useMemo(() => {
+    return {
+      ...(isMobile ? MDE_OPTIONMOBILE : MDE_OPTION),
+      minHeight: '100%',
+    };
+  }, [isMobile]);
+
+  // 컴포넌트 마운트 시 한 번만 실행되는 useEffect
+  useEffect(() => {
+    // 초기 문서 내용 설정
+    setDoc(prev => {
+      // 이미 내용이 있으면 유지
+      if (prev.content !== undefined && prev.content !== '') {
+        return prev;
+      }
+      // 없으면 빈 문자열로 초기화
+      return { ...prev, content: '' };
+    });
+  }, [setDoc]);
 
   const handleContentChange = useCallback(
     (value: string) => {
-      if (value.startsWith('![') && value.endsWith(')')) {
-        setDoc(prev => ({
-          ...prev,
-          content: prev.content + '\n\n' + value,
-        }));
-      } else {
-        setDoc(prev => ({ ...prev, content: value }));
-      }
+      // 디바운싱 없이 setDoc 직접 호출
+      setDoc(prev => {
+        // 내용이 변경된 경우에만 업데이트
+        if (prev.content !== value) {
+          return { ...prev, content: value };
+        }
+        return prev;
+      });
     },
     [setDoc]
   );
+
+  // 에디터 인스턴스 참조 저장
+  const getEditorInstance = useCallback((editor: any) => {
+    editorInstanceRef.current = editor;
+  }, []);
 
   const handleImageUpload = useCallback(
     async (e: React.DragEvent<HTMLDivElement>) => {
@@ -61,15 +78,18 @@ const ModifyContents = ({
         const file = e.dataTransfer.files[0];
         const { url: imageUrl, name: imageName } = await uploadImage(file);
 
-        const editor = e.target as any;
-        const cm = editor.simpleMde?.codemirror;
+        const editor = editorInstanceRef.current;
+        const cm = editor?.simpleMde?.codemirror;
 
         if (cm) {
           const pos = cm.getCursor();
           const imageMarkdown = `![${imageName}](${imageUrl})`;
           cm.replaceRange(imageMarkdown, pos);
         } else {
-          handleContentChange(`![${imageName}](${imageUrl})`);
+          // 이미지 업로드 시 현재 내용에 추가
+          const newValue =
+            (doc.content || '') + '\n\n' + `![${imageName}](${imageUrl})`;
+          setDoc(prev => ({ ...prev, content: newValue }));
         }
 
         setImageArr(prev => [...prev, imageUrl]);
@@ -77,27 +97,7 @@ const ModifyContents = ({
         console.error('이미지 업로드 실패:', error);
       }
     },
-    [handleContentChange, setImageArr, uploadImage]
-  );
-
-  const renderCodeBlock = useCallback(
-    ({ inline, className, children, ...props }: CodeBlockProps) => {
-      const match = /language-(\w+)/.exec(className || '');
-      return !inline && match ? (
-        <CopyBlock
-          text={String(children).replace(/\n$/, '')}
-          language={match[1]}
-          showLineNumbers={true}
-          theme={dracula}
-          codeBlock
-        />
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      );
-    },
-    []
+    [doc.content, setDoc, setImageArr, uploadImage]
   );
 
   useEffect(() => {
@@ -194,38 +194,22 @@ const ModifyContents = ({
       >
         <SimpleMDE
           style={{ color: '#2657A6', height: '100%' }}
-          options={{
-            ...(isMobile ? MDE_OPTIONMOBILE : MDE_OPTION),
-            minHeight: '100%',
-          }}
-          value={doc.content}
+          options={editorOptions}
+          value={doc.content || ''}
           onChange={handleContentChange}
+          getCodemirrorInstance={getEditorInstance}
           onDrop={e => {
             e.preventDefault();
             handleImageUpload(e);
           }}
         />
       </div>
-      {isVisiblePreview && (
-        <div className="flex-1 tablet:min-w-[50vw] tablet:w-[50vw] overflow-hidden h-[80vh]">
-          <div
-            ref={containerTopRef}
-            className="w-full px-4 overflow-y-auto tablet:px-8"
-            style={{ height: 'calc(100vh - 190px)' }}
-          >
-            <ReactMarkdown
-              className={styles.contentMarkdown}
-              rehypePlugins={[rehypeRaw]}
-              remarkPlugins={[remarkGfm]}
-              components={{
-                code: renderCodeBlock,
-              }}
-            >
-              {doc.content}
-            </ReactMarkdown>
-          </div>
-        </div>
-      )}
+
+      <ModifyPreview
+        isVisiblePreview={isVisiblePreview}
+        containerTopRef={containerTopRef}
+        doc={doc}
+      />
     </div>
   );
 };
