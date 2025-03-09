@@ -6,11 +6,8 @@ import {
   postNewComment,
 } from 'service/api/comment';
 import { NewPostComment } from 'service/api/comment/type';
-import {
-  ErrorResponse,
-  handleGetErrors,
-  handleMutateErrors,
-} from 'service/api/login';
+import { handleGetErrors, handleMutateErrors } from 'service/api/login';
+import { ErrorResponse } from 'service/api/login/type';
 
 export const usePostNewComment = () => {
   const queryClient = useQueryClient();

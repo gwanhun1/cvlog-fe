@@ -1,5 +1,5 @@
 import React from 'react';
-import { TagType } from 'pages/article/content/[pid]';
+import { TagType } from 'service/api/detail/type';
 
 const Tag = ({ name }: TagType) => {
   return (
