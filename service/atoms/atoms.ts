@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
 import { recoilPersist } from 'recoil-persist';
+import { TagType } from 'service/api/detail/type';
 import { UserInfoType } from 'service/api/login/type';
 
 const { persistAtom } = recoilPersist({
@@ -46,4 +47,14 @@ export const userIdAtom = atom<UserInfoType>({
 export const tagAtom = atom<string>({
   key: 'tag',
   default: '',
+});
+
+export const tagListAtom = atom<TagType[]>({
+  key: 'tagList',
+  default: [],
+});
+
+export const selectedTagListAtom = atom<TagType[]>({
+  key: 'selectedTagList',
+  default: [],
 });
