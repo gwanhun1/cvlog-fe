@@ -12,7 +12,7 @@ import { CreateNewPostReq } from 'service/api/detail/type';
 import { handleGetErrors, handleMutateErrors } from 'service/api/login';
 import { ErrorResponse } from 'service/api/login/type';
 
-export const useGetDetail = (params: number) => {
+export const useGetDetail = (params: number, onSuccess?: (data: any) => void) => {
   return useQuery({
     queryKey: ['detail', params],
     queryFn: () => {
@@ -20,6 +20,7 @@ export const useGetDetail = (params: number) => {
     },
     retry: 0,
     onError: handleGetErrors,
+    onSuccess: onSuccess ? (data) => onSuccess(data) : undefined,
   });
 };
 

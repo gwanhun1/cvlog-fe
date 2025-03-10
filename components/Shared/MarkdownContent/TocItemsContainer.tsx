@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { cn } from 'styles/utils';
+import TagHighlight from './TagHighlight';
 
 type TocItemsProps = {
   contentRef: React.RefObject<HTMLDivElement>;
@@ -109,28 +110,34 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
 
   return (
     <>
-      {tocItems.length > 0 && (
-        <nav className="tablet:fixed tablet:top-40 tablet:left-1/2 tablet:translate-x-[480px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4 tablet:border-l tablet:border-gray-200">
-          <ul className="space-y-2">
-            {tocItems.map(item => (
-              <li
-                key={item.id}
-                style={{ paddingLeft: `${(item.level - 1) * 1}rem` }}
-                className={cn(
-                  'cursor-pointer hover:text-blue-500 transition-colors duration-200 py-1 text-sm truncate whitespace-nowrap',
-                  activeId === item.id
-                    ? 'text-blue-700 font-bold border-l-2 border-blue-500'
-                    : 'text-gray-600'
-                )}
-                onClick={() => scrollToHeading(item.id)}
-              >
-                {item.text}
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+      <div className="tablet:fixed tablet:left-1/2 tablet:translate-x-[480px] tablet:w-52 tablet:top-40">
+        {tocItems.length > 0 && (
+          <nav className="tablet:h-fit tablet:border-l tablet:border-gray-200 max-h-[80vh] overflow-y-auto">
+            <ul className="space-y-2 pl-4">
+              {tocItems.map(item => (
+                <li
+                  key={item.id}
+                  style={{ paddingLeft: `${(item.level - 1) * 1}rem` }}
+                  className={cn(
+                    'cursor-pointer hover:text-blue-500 transition-colors duration-200 py-1 text-sm truncate whitespace-nowrap',
+                    activeId === item.id
+                      ? 'text-blue-700 font-bold border-l-2 border-blue-500'
+                      : 'text-gray-600'
+                  )}
+                  onClick={() => scrollToHeading(item.id)}
+                >
+                  {item.text}
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
+        <div className={cn('pl-4', tocItems.length > 0 ? 'mt-4' : '')}>
+          <TagHighlight />
+        </div>
+      </div>
     </>
   );
 };
+
 export default TocItemsContainer;
