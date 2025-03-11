@@ -8,7 +8,7 @@ import { FaGithub } from 'react-icons/fa';
 const LoginButtonGroup = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-  const token = LocalStorage.getItem('CVtoken');
+  const token = LocalStorage.getItem('LogmeToken');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -38,23 +38,26 @@ const LoginButtonGroup = () => {
       event.preventDefault();
       return;
     }
-    
+
     if (loginMethod === 'Github') {
       const githubId = process.env.NEXT_PUBLIC_GITHUB_ID;
       const redirectUri = process.env.NEXT_PUBLIC_URL;
-      
+
       if (!githubId || !redirectUri) {
-        console.error('GitHub OAuth 설정이 누락되었습니다:', { githubId, redirectUri });
+        console.error('GitHub OAuth 설정이 누락되었습니다:', {
+          githubId,
+          redirectUri,
+        });
         alert('GitHub 로그인 설정이 잘못되었습니다. 관리자에게 문의하세요.');
         return;
       }
-      
+
       console.log('GitHub 로그인 시도:', { githubId, redirectUri });
-      
+
       // 상태 변수 추가 - CSRF 보호용
       const state = Math.random().toString(36).substring(2, 15);
       sessionStorage.setItem('github_oauth_state', state);
-      
+
       window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubId}&redirect_uri=${redirectUri}&state=${state}&scope=user:email`;
     } else {
       event.preventDefault();

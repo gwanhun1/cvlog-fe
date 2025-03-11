@@ -64,7 +64,7 @@ axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     // SSR 환경 체크
     if (typeof window !== 'undefined') {
-      const token = LocalStorage.getItem('CVtoken');
+      const token = LocalStorage.getItem('LogmeToken');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -118,7 +118,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         const refreshToken = Cookie.getItem('refreshToken');
-        const accessToken = LocalStorage.getItem('CVtoken');
+        const accessToken = LocalStorage.getItem('LogmeToken');
 
         if (!refreshToken || !accessToken) {
           throw new Error('No refresh token available');
@@ -138,7 +138,7 @@ axiosInstance.interceptors.response.use(
         const newAccessToken = response.data.data.accessToken;
 
         if (typeof window !== 'undefined') {
-          LocalStorage.setItem('CVtoken', newAccessToken);
+          LocalStorage.setItem('LogmeToken', newAccessToken);
         }
 
         axiosInstance.defaults.headers.common[
@@ -154,7 +154,7 @@ axiosInstance.interceptors.response.use(
         isRefreshing = false;
 
         if (typeof window !== 'undefined') {
-          LocalStorage.removeItem('CVtoken');
+          LocalStorage.removeItem('LogmeToken');
           Cookie.removeItem('refreshToken');
           alert('로그인이 필요합니다.');
         }

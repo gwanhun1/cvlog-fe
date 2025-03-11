@@ -16,6 +16,7 @@ interface TOCItem {
 const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
+  const [showTagHighlight, setShowTagHighlight] = useState<boolean>(false);
   const isScrollingRef = useRef(false);
   const activeIdRef = useRef<string>('');
 
@@ -30,7 +31,6 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
       if (!headingElements) return [];
 
       const items: TOCItem[] = [];
-
       headingElements.forEach(el => {
         const id = el.getAttribute('id');
         if (!id) return;
@@ -58,16 +58,25 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   const handleScroll = useCallback(() => {
     if (isScrollingRef.current) return;
 
+    const scrollPosition = window.scrollY;
+    const viewportHeight = window.innerHeight;
+
+    if (scrollPosition > viewportHeight) {
+      setShowTagHighlight(true);
+    } else {
+      setShowTagHighlight(false);
+    }
+
     const headingElements = tocItems.map(item => ({
       id: item.id,
       element: document.getElementById(item.id),
     }));
 
-    const scrollPosition = window.scrollY + 150;
+    const adjustedScrollPosition = scrollPosition + 150;
     let currentId = headingElements[0]?.id || '';
 
     for (const { id, element } of headingElements) {
-      if (element && element.offsetTop <= scrollPosition) {
+      if (element && element.offsetTop <= adjustedScrollPosition) {
         currentId = id;
       } else {
         break;
@@ -81,9 +90,9 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   }, [tocItems]);
 
   useEffect(() => {
-    if (tocItems.length === 0) return;
-
     window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [tocItems, handleScroll]);
 
@@ -132,7 +141,13 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
             </ul>
           </nav>
         )}
-        <div className={cn('pl-4', tocItems.length > 0 ? 'mt-4' : '')}>
+        <div
+          className={cn(
+            'pl-4 transition-opacity duration-300',
+            tocItems.length > 0 ? 'mt-4' : '',
+            showTagHighlight ? 'opacity-100' : 'opacity-0 hidden'
+          )}
+        >
           <TagHighlight />
         </div>
       </div>

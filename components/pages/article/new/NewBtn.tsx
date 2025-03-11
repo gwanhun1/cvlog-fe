@@ -23,7 +23,7 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
   const userInfo = useRecoilValue(userIdAtom);
 
   const mutationCreateNewPost = useCreatePost();
-  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const accessToken = LocalStorage.getItem('LogmeToken') as string;
 
   const onChangeTextarea = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -20,7 +20,10 @@ const Nav = () => {
   const setAccessToken = useSetRecoilState(accessTokenAtom);
   const setRefreshToken = useSetRecoilState(refreshTokenAtom);
 
-  const localAccessToken = useMemo(() => LocalStorage.getItem('CVtoken'), []);
+  const localAccessToken = useMemo(
+    () => LocalStorage.getItem('LogmeToken'),
+    []
+  );
   const localRefreshToken = useMemo(() => Cookie.getItem('refreshToken'), []);
 
   useEffect(() => {

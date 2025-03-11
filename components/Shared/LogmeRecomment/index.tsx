@@ -20,7 +20,7 @@ export interface ReCommentType {
 }
 
 const ReComment = ({ reComment }: ReCommentProps) => {
-  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const accessToken = LocalStorage.getItem('LogmeToken') as string;
   const queryClient = useQueryClient();
 
   //삭제 기능

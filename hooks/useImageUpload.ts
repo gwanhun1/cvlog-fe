@@ -17,7 +17,7 @@ export const useImageUpload = () => {
       const config = {
         headers: {
           'content-type': 'multipart/form-data',
-          Authorization: `Bearer ${LocalStorage.getItem('CVtoken')}`,
+          Authorization: `Bearer ${LocalStorage.getItem('LogmeToken')}`,
         },
       };
 
