@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { GetStaticProps } from 'next';
 import dynamic from 'next/dynamic';
-import { FiCalendar, FiBookOpen, FiHeart } from 'react-icons/fi';
+import { FiCalendar } from 'react-icons/fi';
 import { dehydrate, QueryClient } from 'react-query';
 import ProfileHeader from '../../components/pages/mypage/ProfileHeader';
 import StatsCard from '../../components/pages/mypage/StatsCard';
@@ -11,8 +11,8 @@ import AccountManagement from '../../components/pages/mypage/AccountManagement';
 import { getUserInfo } from 'service/api/login';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
-import { useGetList } from 'service/hooks/List';
 import { useRouter } from 'next/router';
+import { useGetUserInfo } from 'service/hooks/Login';
 
 const RecentActivity = dynamic(
   () => import('../../components/pages/mypage/RecentActivity'),
@@ -25,8 +25,7 @@ const RecentActivity = dynamic(
 );
 
 const Mypage = () => {
-  const userInfo = useRecoilValue(userIdAtom);
-  const List = useGetList(1);
+  const { data: userInfo } = useGetUserInfo();
   const router = useRouter();
 
   const formattedDate = useMemo(() => {
@@ -39,37 +38,23 @@ const Mypage = () => {
     }
   }, [userInfo?.created_at]);
 
-  if (!userInfo) {
-    alert('로그인을 다시 시도해주세요');
-    router.push('/login');
-  }
-
   return (
     <div className="flex justify-center w-full min-h-[calc(100vh-80px)] bg-gradient-to-b from-blue-50 to-white">
       <div className="w-full max-w-6xl px-4 py-8">
         <ProfileHeader
-          profileImage={userInfo.profile_image}
-          githubId={userInfo.github_id}
+          profileImage={userInfo?.profile_image}
+          githubId={userInfo?.github_id}
         />
-
-        <div className="grid grid-cols-1 mobile:grid-cols-2 tablet:grid-cols-3 gap-4 mb-4">
-          <StatsCard icon={FiCalendar} title="가입일" value={formattedDate} />
-          <StatsCard
-            icon={FiBookOpen}
-            title="작성한 글"
-            value={List?.data?.maxPage || '-'}
-          />
-          <StatsCard icon={FiHeart} title="받은 좋아요" value="0" />
-        </div>
 
         <div className="grid grid-cols-1 tablet:grid-cols-3 gap-4">
           <div className="tablet:col-span-2 space-y-4">
-            <HomeSection description={userInfo.description} />
+            <StatsCard icon={FiCalendar} title="가입일" value={formattedDate} />
+            <HomeSection description={userInfo?.description} />
             <RecentActivity />
           </div>
 
           <div className="space-y-4">
-            <ContactInfo githubId={userInfo.github_id} />
+            <ContactInfo githubId={userInfo?.github_id} />
             <AccountManagement />
           </div>
         </div>

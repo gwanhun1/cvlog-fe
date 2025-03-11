@@ -6,12 +6,12 @@ import { useQueryClient } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 
-const CommentItem = ({ 
-  id, 
-  content, 
-  user_id, 
-  created_at, 
-  refetch 
+const CommentItem = ({
+  id,
+  content,
+  user_id,
+  created_at,
+  refetch,
 }: CommentProps & { refetch?: () => void }) => {
   const modifyMutate = useModifyComment(id);
   const removeMutate = useDeleteComment(id);
@@ -35,7 +35,7 @@ const CommentItem = ({
             queryClient.invalidateQueries(['commentList']);
             if (refetch) refetch();
             setIsEditing(false);
-          }
+          },
         });
       } else {
         setIsEditing(false);
@@ -49,7 +49,7 @@ const CommentItem = ({
         onSuccess: () => {
           queryClient.invalidateQueries(['commentList']);
           if (refetch) refetch();
-        }
+        },
       });
     }
   };

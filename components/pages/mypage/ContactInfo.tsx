@@ -2,12 +2,12 @@ import React from 'react';
 import { FiMail, FiGithub } from 'react-icons/fi';
 
 interface ContactInfoProps {
-  githubId: string;
+  githubId: string | null | undefined;
 }
 
 const ContactInfo = ({ githubId }: ContactInfoProps) => (
   <section className="bg-white rounded-xl p-8 shadow-sm border border-blue-100">
-    <h2 className="text-xl font-semibold text-gray-900 mb-6">연락처 정보</h2>
+    <h2 className="text-xl font-semibold text-gray-900 mb-10">연락처 정보</h2>
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="p-3 bg-gray-100 rounded-lg">

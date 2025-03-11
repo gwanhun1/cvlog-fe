@@ -176,10 +176,10 @@ const Detail = ({ pid }: { pid: string }) => {
         </section>
       </main>
       <section className="flex justify-between w-full max-w-[60rem] gap-2 px-2 tablet:px-4 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
-        <article className="mb-4 mobile:mb-0">
+        <article className="mb-4 mobile:mb-0 w-1/2">
           <Profile getDetailData={getMyDetail?.data?.post.user_id} />
         </article>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-1/2">
           <div className="w-[48%] tablet:w-[49%]">
             {getMyDetail.data?.prevPostInfo ? (
               <Link

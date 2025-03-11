@@ -4,7 +4,7 @@ import { FiGithub } from 'react-icons/fi';
 
 interface ProfileHeaderProps {
   profileImage: string | null | undefined;
-  githubId: string;
+  githubId: string | null | undefined;
 }
 
 const ProfileHeader = ({ profileImage, githubId }: ProfileHeaderProps) => (
