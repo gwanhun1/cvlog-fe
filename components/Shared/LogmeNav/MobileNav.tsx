@@ -12,16 +12,14 @@ const menu = ['Home', 'Article', 'Resume', 'Github'];
 
 const MobileNav = () => {
   const [page, setPage] = useState(menu[0]);
-  const [token, setToken] = useState(LocalStorage.getItem('CVtoken'));
-  const [cvRefreshToken, setCvRefreshToken] = useState(
-    Cookie.getItem('refreshToken')
-  );
+  const [token, setToken] = useState(LocalStorage.getItem('LogmeToken'));
+  const [profile_image, setLogmeRefreshToken] = useState(Cookie.getItem('refreshToken'));
   const [authority, setAuthority] = useRecoilState(authorityState);
   const userInfo = useRecoilValue(userIdAtom);
 
   useEffect(() => {
-    setToken(LocalStorage.getItem('CVtoken'));
-    setCvRefreshToken(Cookie.getItem('refreshToken'));
+    setToken(LocalStorage.getItem('LogmeToken'));
+    setLogmeRefreshToken(Cookie.getItem('refreshToken'));
   }, []);
 
   const onClickLogout = async () => {

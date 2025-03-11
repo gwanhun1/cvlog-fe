@@ -7,14 +7,14 @@ import SideView from '../../components/pages/article/sideView/SideView';
 import LocalStorage from 'public/utils/Localstorage';
 
 const Article: NextPage = () => {
-  const accessToken = LocalStorage.getItem('CVtoken');
+  const accessToken = LocalStorage.getItem('LogmeToken');
 
   return (
     <>
       {accessToken && (
         <div className="flex items-start justify-center ">
           <Head>
-            <title>CVLOG</title>
+            <title>LOGME</title>
             <link rel="icon" href="/favicon.ico" />
           </Head>
 

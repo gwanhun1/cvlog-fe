@@ -9,27 +9,27 @@ const { persistAtom } = recoilPersist({
 });
 
 export const authorityState = atom<boolean>({
-  key: 'cvlog_auth_state_v1',
+  key: 'logme_auth_state_v1',
   default: false,
 });
 
 export const refreshTokenAtom = atom<string>({
-  key: 'cvlog_refresh_token_v1',
+  key: 'logme_refresh_token_v1',
   default: '',
 });
 
 export const accessTokenAtom = atom<string>({
-  key: 'cvlog_access_token_v1',
+  key: 'logme_access_token_v1',
   default: '',
 });
 
 export const listIndexAtom = atom<number>({
-  key: 'cvlog_list_index_v1',
+  key: 'logme_list_index_v1',
   default: 999999,
 });
 
 export const userIdAtom = atom<UserInfoType>({
-  key: 'cvlog_user_info_v1',
+  key: 'logme_user_info_v1',
   default: {
     id: 0,
     github_id: '',

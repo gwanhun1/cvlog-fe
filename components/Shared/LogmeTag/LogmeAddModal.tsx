@@ -3,13 +3,12 @@ import { Button, Label, Modal } from 'flowbite-react';
 import { useQueryClient } from 'react-query';
 import { useCreateFolders } from 'service/hooks/List';
 
-const CVModal = ({
-  showModal,
-  setShowModal,
-}: {
+interface TagAddModalProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+}
+
+const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
@@ -133,4 +132,4 @@ const CVModal = ({
   );
 };
 
-export default CVModal;
+export default TagAddModal;

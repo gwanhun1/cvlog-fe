@@ -4,12 +4,12 @@ import { Folder } from 'service/api/tag/type';
 import { useGetFolders, useRemoveFolders } from 'service/hooks/List';
 import { useQueryClient } from 'react-query';
 
-interface CVRemoveModalProps {
+interface TagRemoveModalProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
+const TagRemoveModal: React.FC<TagRemoveModalProps> = ({
   showModal,
   setShowModal,
 }) => {
@@ -136,4 +136,4 @@ const CVRemoveModal: React.FC<CVRemoveModalProps> = ({
   );
 };
 
-export default CVRemoveModal;
+export default TagRemoveModal;

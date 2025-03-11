@@ -19,7 +19,7 @@ interface ModifyBtnProps {
 
 const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
   const router = useRouter();
-  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const accessToken = LocalStorage.getItem('LogmeToken') as string;
   const [tag, setTag] = useState('');
   const userInfo = useRecoilValue(userIdAtom);
 

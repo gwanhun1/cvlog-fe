@@ -13,7 +13,11 @@ import Content from '../../../../../components/pages/article/content/all/Content
 import Profile from '../../../../../components/pages/article/content/all/Profile';
 import { Badge } from 'flowbite-react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { tagListAtom, userIdAtom } from 'service/atoms/atoms';
+import {
+  selectedTagListAtom,
+  tagListAtom,
+  userIdAtom,
+} from 'service/atoms/atoms';
 import { TagType } from 'service/api/detail/type';
 
 const Detail = ({ pid }: { pid: string }) => {
@@ -91,6 +95,17 @@ const Detail = ({ pid }: { pid: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pid]);
 
+  const [selectTagList, setSelectTagList] = useRecoilState(selectedTagListAtom);
+
+  // 태그 선택 처리 함수
+  const handleTagSelect = (tag: TagType) => {
+    if (selectTagList.includes(tag)) {
+      setSelectTagList(selectTagList.filter(item => item !== tag));
+    } else {
+      setSelectTagList([...selectTagList, tag]);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
@@ -113,19 +128,17 @@ const Detail = ({ pid }: { pid: string }) => {
           ) : (
             detailData?.post.tags.map((tag: TagType) => (
               <Badge
-                className="mb-1 relative flex items-center px-3  mr-1 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                className={`duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 py-1 rounded-full border-2 ${
+                  selectTagList.includes(tag)
+                    ? 'bg-blue-500 text-white border-blue-600'
+                    : 'bg-blue-100 text-blue-800 border-blue-300'
+                } hover:bg-blue-200 hover:border-blue-400 transition-all`}
                 color="default"
                 size="sm"
                 key={tag.id}
+                onClick={() => handleTagSelect(tag)}
               >
-                <Link
-                  href={{
-                    pathname: '/article',
-                    query: { tagKeyword: tag.name },
-                  }}
-                >
-                  <span className="cursor-pointer">{tag.name}</span>
-                </Link>
+                <span className="cursor-pointer">{tag.name}</span>
               </Badge>
             ))
           )}

@@ -4,7 +4,7 @@ import { axiosInstance as axios } from 'utils/axios';
 import { ErrorResponse, GetNewTokenApi, SignOut, UserInfo } from './type';
 
 export const handleGetErrors = async (error: ErrorResponse) => {
-  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const accessToken = LocalStorage.getItem('LogmeToken') as string;
   const refreshToken = Cookie.getItem('refreshToken') as string;
   const refreshParams = {
     headers: {
@@ -15,7 +15,7 @@ export const handleGetErrors = async (error: ErrorResponse) => {
   if (error.response && error.response.status === 401) {
     try {
       const newToken = await postRefreshToken(refreshParams);
-      await LocalStorage.setItem('CVtoken', newToken.data.accessToken);
+      await LocalStorage.setItem('LogmeToken', newToken.data.accessToken);
       // 페이지 새로고침 제거
       return newToken;
     } catch (refreshError) {
@@ -30,7 +30,7 @@ export const handleGetErrors = async (error: ErrorResponse) => {
 export const handleMutateErrors = async (
   error: ErrorResponse
 ): Promise<void> => {
-  const accessToken = LocalStorage.getItem('CVtoken') as string;
+  const accessToken = LocalStorage.getItem('LogmeToken') as string;
   const refreshToken = Cookie.getItem('refreshToken') as string;
   const refreshParams = {
     headers: {
@@ -41,7 +41,7 @@ export const handleMutateErrors = async (
   if (error.response?.status === 401) {
     try {
       const newToken = await postRefreshToken(refreshParams);
-      await LocalStorage.setItem('CVtoken', newToken.data.accessToken);
+      await LocalStorage.setItem('LogmeToken', newToken.data.accessToken);
       // 알림만 표시하고 자동으로 재시도하도록 수정
       console.log('토큰이 갱신되었습니다.');
     } catch (refreshError) {
