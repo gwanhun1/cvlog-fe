@@ -29,17 +29,13 @@ export const usePostNewComment = () => {
 export const useModifyComment = (params: number) => {
   const queryClient = useQueryClient();
   return useMutation(
-    () => {
-      return modifyComment(params);
+    (content: string) => {
+      return modifyComment(params, content);
     },
     {
       onSuccess: () => {
-        if (window.confirm('정말 수정합니까?')) {
-          alert('수정되었습니다.');
-        } else {
-          alert('취소합니다.');
-        }
-        return queryClient.invalidateQueries();
+        alert('수정되었습니다.');
+        return queryClient.invalidateQueries(['commentList']);
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
@@ -56,12 +52,8 @@ export const useDeleteComment = (params: number) => {
     },
     {
       onSuccess: () => {
-        if (window.confirm('정말 수정합니까?')) {
-          alert('수정되었습니다.');
-        } else {
-          alert('취소합니다.');
-        }
-        return queryClient.invalidateQueries();
+        alert('삭제되었습니다.');
+        return queryClient.invalidateQueries(['commentList']);
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);

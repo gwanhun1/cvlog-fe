@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { useGetCommentList, usePostNewComment } from 'service/hooks/Comment';
 
-const CommentWrite = ({ pid }: { pid: string }) => {
+const CommentWrite = ({ pid, refetch: parentRefetch }: { pid: string; refetch: () => void }) => {
   const [comment, setComment] = useState('');
   const { refetch } = useGetCommentList(parseInt(pid));
   const postNewComment = usePostNewComment();
@@ -17,10 +17,17 @@ const CommentWrite = ({ pid }: { pid: string }) => {
     if (!comment.trim()) return alert('댓글을 작성해주세요.');
     if (!window.confirm('정말 작성합니까?')) return;
 
-    postNewComment.mutate({ post_id: parseInt(pid), content: comment });
-    setComment('');
-    refetch();
-    alert('작성되었습니다.');
+    postNewComment.mutate(
+      { post_id: parseInt(pid), content: comment },
+      {
+        onSuccess: () => {
+          setComment('');
+          refetch();
+          parentRefetch();
+          alert('작성되었습니다.');
+        }
+      }
+    );
   };
 
   return (

@@ -14,6 +14,7 @@ export interface CommentProps {
   content: string;
   created_at: string;
   user_id: User_id;
+  refetch?: () => void;
 }
 
 export interface CommentTypeData {

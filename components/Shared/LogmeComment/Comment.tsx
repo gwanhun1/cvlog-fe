@@ -6,7 +6,13 @@ import { useQueryClient } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 
-const CommentItem = ({ id, content, user_id, created_at }: CommentProps) => {
+const CommentItem = ({ 
+  id, 
+  content, 
+  user_id, 
+  created_at, 
+  refetch 
+}: CommentProps & { refetch?: () => void }) => {
   const modifyMutate = useModifyComment(id);
   const removeMutate = useDeleteComment(id);
   const queryClient = useQueryClient();
@@ -23,15 +29,29 @@ const CommentItem = ({ id, content, user_id, created_at }: CommentProps) => {
     if (!isEditing) {
       setIsEditing(true);
     } else {
-      modifyMutate.mutate();
-      queryClient.invalidateQueries('commentList');
-      setIsEditing(false);
+      if (window.confirm('정말 수정합니까?')) {
+        modifyMutate.mutate(modifiedComment, {
+          onSuccess: () => {
+            queryClient.invalidateQueries(['commentList']);
+            if (refetch) refetch();
+            setIsEditing(false);
+          }
+        });
+      } else {
+        setIsEditing(false);
+      }
     }
   };
 
   const handleDeleteComment = () => {
-    removeMutate.mutate();
-    queryClient.invalidateQueries('commentList');
+    if (window.confirm('정말 삭제합니까?')) {
+      removeMutate.mutate(undefined, {
+        onSuccess: () => {
+          queryClient.invalidateQueries(['commentList']);
+          if (refetch) refetch();
+        }
+      });
+    }
   };
 
   return (

@@ -9,8 +9,8 @@ export const postNewComment = async (params: NewPostComment) => {
   return data;
 };
 
-export const modifyComment = async (params: number) => {
-  const { data } = await axiosInstance.put(`/comments/${params}`);
+export const modifyComment = async (params: number, content: string) => {
+  const { data } = await axiosInstance.put(`/comments/${params}`, { content });
   return data;
 };
 
