@@ -61,7 +61,7 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
     const scrollPosition = window.scrollY;
     const viewportHeight = window.innerHeight;
 
-    if (scrollPosition > viewportHeight) {
+    if (scrollPosition > viewportHeight * 0.2) {
       setShowTagHighlight(true);
     } else {
       setShowTagHighlight(false);
@@ -118,10 +118,10 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   };
 
   return (
-    <>
+    <div className="">
       <div className="tablet:fixed tablet:left-1/2 tablet:translate-x-[480px] tablet:w-52 tablet:top-40">
         {tocItems.length > 0 && (
-          <nav className="tablet:h-fit tablet:border-l tablet:border-gray-200 max-h-[80vh] overflow-y-auto">
+          <nav className="hidden desktop:block tablet:h-fit tablet:border-l tablet:border-gray-200 max-h-[80vh] overflow-y-auto">
             <ul className="space-y-2 pl-4">
               {tocItems.map(item => (
                 <li
@@ -151,7 +151,7 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
           <TagHighlight />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

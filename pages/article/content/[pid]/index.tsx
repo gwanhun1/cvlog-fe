@@ -98,7 +98,7 @@ const Detail = ({ pid }: { pid: string }) => {
         )}
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
-        <div className="flex flex-wrap justify-start w-full text-ftBlack h-9 mb-1">
+        <div className="flex flex-wrap justify-start w-full text-ftBlack mb-1 ">
           {getMyDetail.isLoading ? (
             <>
               <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
@@ -108,12 +108,17 @@ const Detail = ({ pid }: { pid: string }) => {
           ) : (
             getMyDetail.data?.post.tags.map((tag: TagType) => (
               <Badge
-                className="duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3  mx-2 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all"
+                className=" mr-1 duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all"
                 color="default"
                 size="sm"
                 key={tag.id}
               >
-                <Link href={{ pathname: '/article', query: { tagKeyword: tag.name } }}>
+                <Link
+                  href={{
+                    pathname: '/article',
+                    query: { tagKeyword: tag.name },
+                  }}
+                >
                   <span className="cursor-pointer">{tag.name}</span>
                 </Link>
               </Badge>
@@ -170,46 +175,56 @@ const Detail = ({ pid }: { pid: string }) => {
           </div>
         </section>
       </main>
-      <section className="flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
+      <section className="flex justify-between w-full max-w-[60rem] gap-2 px-2 tablet:px-4 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={getMyDetail?.data?.post.user_id} />
         </article>
-        <div className="flex items-center justify-around w-full">
-          {getMyDetail.data?.prevPostInfo ? (
-            <Link href={`/article/content/${getMyDetail.data.prevPostInfo.id}`} prefetch>
-              <div className="tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly">
-                <div className="flex items-center cursor-pointer hover:opacity-70">
-                  <div className="ml-1 tablet:ml-3 mobile:hidden">←</div>
-                  <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                    <div className="text-xs text-center tablet:text-sm text-gray-500">이전 포스트</div>
-                    <div className="h-5 mx-1 overflow-hidden text-xs font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px] truncate">
+        <div className="flex items-center justify-between w-full">
+          <div className="w-[48%] tablet:w-[49%]">
+            {getMyDetail.data?.prevPostInfo ? (
+              <Link
+                href={`/article/content/${getMyDetail.data.prevPostInfo.id}`}
+                prefetch
+              >
+                <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                  <div className="pr-2 text-lg tablet:text-xl">←</div>
+                  <div className="flex-col flex w-full truncate">
+                    <div className="text-xs tablet:text-sm text-gray-500">
+                      이전 포스트
+                    </div>
+                    <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
                       {getMyDetail.data.prevPostInfo.title}
                     </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ) : (
-            <div className="tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-not-allowed mobile:ml-6 text-ftBlack opacity-50 mobile:h-12 tablet:ml-10 justify-evenly" />
-          )}
+              </Link>
+            ) : (
+              <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+            )}
+          </div>
 
-          {getMyDetail.data?.nextPostInfo ? (
-            <Link href={`/article/content/${getMyDetail.data.nextPostInfo.id}`} prefetch>
-              <div className="tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack mobile:h-12 justify-evenly hover:opacity-70">
-                <div className="flex items-center cursor-pointer hover:opacity-70">
-                  <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                    <div className="text-xs text-center tablet:text-sm text-gray-500">다음 포스트</div>
-                    <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap tablet:w-32 mt-[2px] truncate">
+          <div className="w-[48%] tablet:w-[49%]">
+            {getMyDetail.data?.nextPostInfo ? (
+              <Link
+                href={`/article/content/${getMyDetail.data.nextPostInfo.id}`}
+                prefetch
+              >
+                <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                  <div className="flex-col flex w-full truncate text-right">
+                    <div className="text-xs tablet:text-sm text-gray-500">
+                      다음 포스트
+                    </div>
+                    <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
                       {getMyDetail.data.nextPostInfo.title}
                     </div>
                   </div>
-                  <div className="w-100% mr-1 tablet:mr-3 mobile:hidden">→</div>
+                  <div className="pl-2 text-lg tablet:text-xl">→</div>
                 </div>
-              </div>
-            </Link>
-          ) : (
-            <div className="tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 justify-evenly" />
-          )}
+              </Link>
+            ) : (
+              <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+            )}
+          </div>
         </div>
       </section>
       <CommentBox pid={pid} />

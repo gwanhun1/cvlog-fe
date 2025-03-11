@@ -118,7 +118,7 @@ const Detail = ({ pid }: { pid: string }) => {
         )}
       </header>
       <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
-        <div className="flex flex-wrap justify-start w-full text-ftBlack h-9">
+        <div className="flex flex-wrap justify-start w-full text-ftBlack mb-1">
           {isLoading ? (
             <>
               <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
@@ -128,7 +128,7 @@ const Detail = ({ pid }: { pid: string }) => {
           ) : (
             detailData?.post.tags.map((tag: TagType) => (
               <Badge
-                className={`duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 py-1 rounded-full border-2 ${
+                className={`mr-1 duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 py-1 rounded-full border-2 ${
                   selectTagList.includes(tag)
                     ? 'bg-blue-500 text-white border-blue-600'
                     : 'bg-blue-100 text-blue-800 border-blue-300'
@@ -201,48 +201,52 @@ const Detail = ({ pid }: { pid: string }) => {
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={detailData?.post.user_id} />
         </article>
-        <div className="flex items-center justify-around tablet:w-128 w-60">
-          {detailData?.prevPostInfo ? (
-            <Link
-              href={`/article/content/all/${detailData.prevPostInfo.id}`}
-              prefetch
-            >
-              <div className="tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-pointer mobile:ml-6 text-ftBlack hover:opacity-70 mobile:h-12 tablet:ml-10 justify-evenly">
-                <div className="pr-2 tablet:ml-3">←</div>
-                <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                  <div className="text-xs text-center tablet:text-sm">
-                    이전 포스트
-                  </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap mt-[2px] truncate">
-                    {detailData.prevPostInfo.title}
+        <div className="flex items-center justify-between w-full max-w-[60rem] gap-2 px-2 tablet:px-4">
+          <div className="w-[48%] tablet:w-[49%]">
+            {detailData?.prevPostInfo ? (
+              <Link
+                href={`/article/content/all/${detailData.prevPostInfo.id}`}
+                prefetch
+              >
+                <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                  <div className="pr-2 text-lg tablet:text-xl">←</div>
+                  <div className="flex-col flex w-full truncate">
+                    <div className="text-xs tablet:text-sm">
+                      이전 포스트
+                    </div>
+                    <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
+                      {detailData.prevPostInfo.title}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ) : (
-            <div className="tablet:py-8 flex items-center w-1/2 h-8 bg-gray-200 rounded-md cursor-not-allowed mobile:ml-6 text-ftBlack opacity-50 mobile:h-12 tablet:ml-10 justify-evenly" />
-          )}
+              </Link>
+            ) : (
+              <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+            )}
+          </div>
 
-          {detailData?.nextPostInfo ? (
-            <Link
-              href={`/article/content/all/${detailData.nextPostInfo.id}`}
-              prefetch
-            >
-              <div className="tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 justify-evenly">
-                <div className="flex-col hidden w-[90px] tablet:w-full mobile:flex truncate">
-                  <div className="text-xs text-center tablet:text-sm">
-                    다음 포스트
+          <div className="w-[48%] tablet:w-[49%]">
+            {detailData?.nextPostInfo ? (
+              <Link
+                href={`/article/content/all/${detailData.nextPostInfo.id}`}
+                prefetch
+              >
+                <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                  <div className="flex-col flex w-full truncate text-right">
+                    <div className="text-xs tablet:text-sm">
+                      다음 포스트
+                    </div>
+                    <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
+                      {detailData.nextPostInfo.title}
+                    </div>
                   </div>
-                  <div className="h-5 mx-1 overflow-hidden text-sm font-bold text-center tablet:text-base flex-nowrap mt-[2px] truncate">
-                    {detailData.nextPostInfo.title}
-                  </div>
+                  <div className="pl-2 text-lg tablet:text-xl">→</div>
                 </div>
-                <div className="w-100% mr-1 tablet:mr-3">→</div>
-              </div>
-            </Link>
-          ) : (
-            <div className="tablet:py-8 flex items-center w-1/2 h-8 ml-1 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 justify-evenly" />
-          )}
+              </Link>
+            ) : (
+              <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+            )}
+          </div>
         </div>
       </section>
       <CommentBox pid={pid} />
