@@ -8,12 +8,7 @@ import {
   KeyboardSensor,
 } from '@dnd-kit/core';
 import { useQueryClient } from 'react-query';
-import {
-  Folder,
-  Tag,
-  PutTagsFolderRes,
-  UpdateForm,
-} from 'service/api/tag/type';
+import { Folder, Tag } from 'service/api/tag/type';
 import { usePutTagsFolder } from 'service/hooks/List';
 
 interface ActiveTag {
@@ -21,10 +16,7 @@ interface ActiveTag {
   folderId: number;
 }
 
-export const useTagDragState = (
-  foldersData: Folder[] | undefined,
-  unassignedTagsData: { data: Tag[] } | undefined
-) => {
+export const useTagDragState = (foldersData: Folder[] | undefined) => {
   const [activeTag, setActiveTag] = useState<ActiveTag | null>(null);
   const [draggedTagName, setDraggedTagName] = useState('');
 
@@ -43,107 +35,86 @@ export const useTagDragState = (
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       const { active } = event;
-      const [folderId, tagId] = String(active.id).split('-');
+      const idString = String(active.id);
 
-      let tag: Tag | undefined;
+      const parts = idString.split('-');
+      const folderId = parseInt(parts[0], 10);
+      const tagId = parseInt(parts[parts.length - 1], 10);
 
-      if (folderId === 'unassigned') {
-        tag = unassignedTagsData?.data?.find(
-          (t: { id: number }) => t.id === Number(tagId)
-        );
-      } else {
-        const folder = foldersData?.find(f => f.id === Number(folderId));
-        tag = folder?.tags.find(t => t.id === Number(tagId));
+      if (isNaN(folderId) || isNaN(tagId)) {
+        console.error('Invalid IDs in drag start:', { folderId, tagId });
+        return;
       }
 
-      if (tag) {
-        setActiveTag({
-          tag,
-          folderId: folderId === 'unassigned' ? 0 : Number(folderId),
-        });
-        setDraggedTagName(tag.name);
+      const folder = foldersData?.find(f => f.id === folderId);
+      if (!folder) {
+        console.error('Folder not found:', folderId);
+        return;
       }
+
+      const tag = folder.tags.find(t => t.id === tagId);
+      if (!tag) {
+        console.error('Tag not found:', tagId, 'in folder', folderId);
+        return;
+      }
+
+      setActiveTag({
+        tag,
+        folderId,
+      });
+      setDraggedTagName(tag.name);
     },
-    [foldersData, unassignedTagsData]
+    [foldersData]
   );
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       setActiveTag(null);
       setDraggedTagName('');
+
       const { active, over } = event;
-      if (!over) return;
+      if (!over) {
+        console.log('No drop target');
+        return;
+      }
 
       const activeId = String(active.id);
-      const overId = String(over.id);
 
-      // 소스 폴더와 태그 ID 추출
-      const [sourceFolderId, sourceTagId] = activeId.split('-');
-      const tagId = Number(sourceTagId);
+      const overId = parseInt(String(over.id), 10);
 
-      // 이전 폴더 ID 계산
-      const oldFolderId =
-        sourceFolderId === 'unassigned' ? 0 : Number(sourceFolderId);
+      if (isNaN(overId)) {
+        console.error('Invalid destination folder ID:', over.id);
+        return;
+      }
 
-      // 새 폴더 ID 계산
-      const newFolderId = overId === '0' ? 0 : Number(overId);
+      const parts = activeId.split('-');
+      const sourceFolderId = parseInt(parts[0], 10);
+      const tagId = parseInt(parts[parts.length - 1], 10);
 
-      // 동일한 폴더로 이동하는 경우 무시
-      if (oldFolderId === newFolderId) return;
+      if (isNaN(sourceFolderId) || isNaN(tagId)) {
+        console.error('Invalid source IDs:', { sourceFolderId, tagId });
+        return;
+      }
 
-      // 낙관적 업데이트
+      if (sourceFolderId === overId) {
+        return;
+      }
+
       mutationUpdateTagsFolders.mutate(
-        { tag_id: tagId, folder_id: newFolderId },
         {
-          onSuccess: (
-            data: PutTagsFolderRes,
-            variables: UpdateForm,
-            context: { previousData?: Folder[] } | undefined
-          ) => {
-            // 낙관적으로 데이터 업데이트
-            queryClient.setQueryData(
-              ['folders'],
-              (old: Folder[] | undefined) => {
-                if (!old) return [];
-
-                return old.map(folder => {
-                  // 이전 폴더에서 태그 제거
-                  if (folder.id === oldFolderId) {
-                    return {
-                      ...folder,
-                      tags: folder.tags.filter(t => t.id !== variables.tag_id),
-                    };
-                  }
-                  // 새 폴더에 태그 추가
-                  if (folder.id === variables.folder_id) {
-                    const movingTag = context?.previousData
-                      ?.find(f => f.id === oldFolderId)
-                      ?.tags.find(t => t.id === variables.tag_id);
-
-                    if (movingTag) {
-                      return {
-                        ...folder,
-                        tags: [...folder.tags, movingTag],
-                      };
-                    }
-                  }
-                  return folder;
-                });
-              }
-            );
-
-            // 쿼리 무효화
-            queryClient.invalidateQueries('unassignedTags');
-            queryClient.invalidateQueries('folders');
+          tag_id: tagId,
+          folder_id: overId,
+        },
+        {
+          onSuccess: data => {
+            console.log('Tag moved successfully');
+            // Invalidate queries to refresh data
+            queryClient.invalidateQueries('tagsFolder');
           },
-          onError: (context: unknown) => {
-            const ctx = context as { previousData?: Folder[] } | undefined;
-            // 에러 발생 시 이전 데이터로 롤백
-            if (ctx?.previousData) {
-              queryClient.setQueryData(['folders'], ctx.previousData);
-            }
-            queryClient.invalidateQueries('unassignedTags');
-            queryClient.invalidateQueries('folders');
+          onError: error => {
+            console.error('Error updating tag folder:', error);
+            // Invalidate to refresh from server
+            queryClient.invalidateQueries('tagsFolder');
           },
         }
       );
