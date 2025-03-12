@@ -1,41 +1,39 @@
 import { useCallback, useState } from 'react';
 import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { useQuery } from 'react-query';
 import { useGetFolders } from 'service/hooks/List';
-import { tagsAPI } from 'service/api/tag';
 import LogmeAddModal from 'components/Shared/LogmeTag/LogmeAddModal';
 import LogmeRemoveModal from 'components/Shared/LogmeTag/LogmeRemoveModal';
 import SideViewHeader from './SideViewHeader';
 import EmptyState from './EmptyState';
 import NamedFolderList from './NamedFolderList';
-import DefaultFolderList from './DefaultFolderList';
-import UnassignedTagList from './UnassignedTagList';
 import DragOverlayItem from './DragOverlayItem';
 import SideViewSkeleton from './Skeleton';
 import SideViewEmpty from './Empty';
 import { useTagDragState } from 'hooks/useTagDragState';
+import { Folder } from 'service/api/tag/type';
+import UnassignedTagListContent from './UnassignedTagListContent';
 
 const SideMenu = () => {
   const queryGetTagsFolders = useGetFolders();
-  const queryGetUnassignedTags = useQuery(
-    'unassignedTags',
-    tagsAPI.getWithoutFolder
-  );
 
   const [closedIdx, setClosedIdx] = useState<number[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectModal, setSelectModal] = useState<string>('');
 
+  const unassignedFolder = queryGetTagsFolders.data?.find(
+    folder => folder.id === 999
+  );
+
   const { activeTag, draggedTagName, sensors, handleDragStart, handleDragEnd } =
-    useTagDragState(queryGetTagsFolders.data, {
-      data: queryGetUnassignedTags.data?.data?.[0]?.tags || [],
-    });
+    useTagDragState(queryGetTagsFolders.data);
 
   const namedFolder =
-    queryGetTagsFolders.data?.filter(item => item.name !== '') ?? [];
+    queryGetTagsFolders.data?.filter(
+      item => item.name !== '' && item.id !== 999
+    ) ?? [];
   const defaultFolder =
-    queryGetTagsFolders.data?.filter(item => item.name === '') ?? [];
+    queryGetTagsFolders.data?.filter(item => item.id === 999) ?? [];
 
   const onClickAccordion = useCallback(
     (id: number) => (e: React.MouseEvent<HTMLDivElement>) => {
@@ -53,18 +51,20 @@ const SideMenu = () => {
     setShowModal(true);
   }, []);
 
-  if (queryGetTagsFolders.isLoading || queryGetUnassignedTags.isLoading) {
+  if (queryGetTagsFolders.isLoading) {
     return <SideViewSkeleton />;
   }
 
-  if (queryGetTagsFolders.isError || queryGetUnassignedTags.isError) {
+  if (queryGetTagsFolders.isError) {
     return <SideViewEmpty queryGetTagsFolders={queryGetTagsFolders} />;
   }
 
   const hasContent =
     (namedFolder && namedFolder.length > 0) ||
     (defaultFolder && defaultFolder.length > 0) ||
-    (queryGetUnassignedTags.data?.data?.length ?? 0) > 0;
+    (unassignedFolder &&
+      unassignedFolder.tags &&
+      unassignedFolder.tags.length > 0);
 
   return (
     <>
@@ -101,15 +101,17 @@ const SideMenu = () => {
                   onClickAccordion={onClickAccordion}
                 />
 
-                <DefaultFolderList
-                  folders={defaultFolder}
-                  draggedTagName={draggedTagName}
-                />
-
-                <UnassignedTagList
-                  tags={queryGetUnassignedTags.data?.data?.[0]?.tags ?? []}
-                  draggedTagName={draggedTagName}
-                />
+                {unassignedFolder && (
+                  <div className="mt-4">
+                    <div className="text-xs text-gray-500 mb-2 px-2">
+                      {unassignedFolder.name}
+                    </div>
+                    <UnassignedTagListContent
+                      folder={unassignedFolder}
+                      draggedTagName={draggedTagName}
+                    />
+                  </div>
+                )}
               </div>
 
               <DragOverlay>

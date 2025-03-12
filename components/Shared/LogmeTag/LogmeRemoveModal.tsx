@@ -38,7 +38,10 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({
   const emptyFolders =
     folders?.filter(
       (folder): folder is Folder =>
-        folder && Array.isArray(folder.tags) && folder.tags.length === 0
+        folder &&
+        Array.isArray(folder.tags) &&
+        folder.tags.length === 0 &&
+        folder.id !== 999
     ) || [];
 
   return (

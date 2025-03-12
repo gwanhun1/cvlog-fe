@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface SideViewHeaderProps {
-  hasContent: boolean;
+  hasContent?: boolean;
   onAddClick: () => void;
   onDeleteClick: () => void;
 }

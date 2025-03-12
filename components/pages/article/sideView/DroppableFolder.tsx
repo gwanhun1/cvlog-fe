@@ -12,20 +12,22 @@ const DroppableFolder = ({
   children,
   draggedTagName,
 }: DroppableFolderProps) => {
+  const folderId = String(folder.id);
+
   const { setNodeRef, isOver } = useDroppable({
-    id: String(folder.id),
+    id: folderId,
   });
 
   return (
     <div
       ref={setNodeRef}
-      className={`mb-2  transition-all duration-200 ${
+      className={`mb-2 transition-all duration-200 ${
         isOver ? 'ring-2 ring-ftBlue ring-opacity-50 rounded-lg' : ''
       }`}
     >
       {children}
       {isOver && draggedTagName && (
-        <div className="text-sm text-ftBlue text-center py-2 ">
+        <div className="text-sm text-ftBlue text-center py-2">
           <span className="font-medium">{draggedTagName}</span> 태그를 여기로
           이동
         </div>

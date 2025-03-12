@@ -17,6 +17,10 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
   const handleAddFolder = async () => {
     const folderName = inputRef.current?.value.trim();
     if (!folderName) return;
+    if (folderName === '미할당') {
+      alert('생성할 수 없는 이름입니다.');
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -25,7 +29,7 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
         {
           onSuccess: () => {
             queryClient.invalidateQueries(['tagsFolder']);
-            inputRef.current!.value = ''; // Clear input after success
+            inputRef.current!.value = '';
             setShowModal(false);
           },
           onError: () => {

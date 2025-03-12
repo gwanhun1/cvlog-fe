@@ -49,10 +49,24 @@ export const fetchRemoveTagsFolders = async (params: number) => {
 };
 
 export const putTagsFolders = async (params: UpdateForm) => {
-  const { data } = await axiosInstance.put<PutTagsFolderRes>(
-    `/tags/${params.tag_id}/${params.folder_id}`
-  );
-  return data;
+  // Validate the parameters to make sure they are numbers
+  const tagId = Number(params.tag_id);
+  const folderId = Number(params.folder_id);
+
+  if (isNaN(tagId) || isNaN(folderId)) {
+    console.error('Invalid parameters for tag update:', params);
+    throw new Error('Invalid tag_id or folder_id');
+  }
+
+  try {
+    const { data } = await axiosInstance.put<PutTagsFolderRes>(
+      `/tags/${tagId}/${folderId}`
+    );
+    return data;
+  } catch (error) {
+    console.error('Error updating tag folder:', error);
+    throw error;
+  }
 };
 
 export const tagsAPI = {
@@ -62,18 +76,6 @@ export const tagsAPI = {
       return data;
     } catch (error) {
       console.error('Error fetching tags:', error);
-      throw error;
-    }
-  },
-
-  getWithoutFolder: async () => {
-    try {
-      const { data } = await axiosInstance.get<GetTagsFolderRes>(
-        '/tags/without-folder'
-      );
-      return data;
-    } catch (error) {
-      console.error('Error fetching tags without folder:', error);
       throw error;
     }
   },
