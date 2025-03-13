@@ -3,6 +3,8 @@ import markdownToText from 'markdown-to-text';
 import Image from 'next/image';
 import TagList from './TagList';
 import { formatTimeAgo } from 'styles/utils/timeCheck';
+import { useRecoilValue } from 'recoil';
+import { tagAtom } from 'service/atoms/atoms';
 
 export interface TagItem {
   id: number;
@@ -30,9 +32,14 @@ const removeImageFromContent = (content: string): string => {
 const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
+  const keyword = useRecoilValue(tagAtom);
 
   return (
-    <article className="group block w-full hover:bg-blue-50 overflow-hidden transition-all duration-300 bg-white border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative">
+    <article
+      className={`group block w-full hover:bg-blue-50 overflow-hidden transition-all duration-300 ${
+        tags.some(tag => tag.name === keyword) ? 'bg-blue-400' : 'bg-white'
+      } border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative`}
+    >
       <div className="flex flex-col h-full">
         {imageUrl ? (
           <div className="relative w-full h-0 pb-[70%]">

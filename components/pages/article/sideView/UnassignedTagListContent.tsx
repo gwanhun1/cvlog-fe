@@ -26,7 +26,6 @@ const UnassignedTagListContent = ({
             <TagItem
               key={`unassigned-${tag.id}`}
               tag={tag}
-              index={index}
               folderId={folder.id}
             />
           ))}
