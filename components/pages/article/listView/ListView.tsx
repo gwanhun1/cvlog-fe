@@ -8,7 +8,7 @@ import CardSkeleton from './Skeleton';
 import FilterBox from './FilterBox';
 import ListEmpty from './ListEmpty';
 import { useRouter } from 'next/router';
-import { BlogType, TagType } from 'service/api/tag/type';
+import { BlogType } from 'service/api/tag/type';
 
 const ListView = () => {
   const [page, setPage] = useState<number>(1);
@@ -113,21 +113,23 @@ const ListView = () => {
       </div>
     );
   }
-  const filteredPosts = posts
-    ? posts.filter(item => {
-        const titleMatch = item.title
-          ? item.title.toLowerCase().includes((keyword || '').toLowerCase())
-          : false;
 
-        const tagMatch = item.tags.some((tag: TagType) =>
-          tag.name
-            ? tag.name.toLowerCase().includes((keyword || '').toLowerCase())
-            : false
-        );
+  //FIXME: 필터링인데 수정사항임.
+  // const filteredPosts = posts
+  //   ? posts.filter(item => {
+  //       const titleMatch = item.title
+  //         ? item.title.toLowerCase().includes((keyword || '').toLowerCase())
+  //         : false;
 
-        return titleMatch || tagMatch;
-      })
-    : [];
+  //       const tagMatch = item.tags.some((tag: TagType) =>
+  //         tag.name
+  //           ? tag.name.toLowerCase().includes((keyword || '').toLowerCase())
+  //           : false
+  //       );
+
+  //       return titleMatch || tagMatch;
+  //     })
+  //   : [];
 
   return (
     <div className="flex flex-col gap-4 ">
@@ -138,32 +140,30 @@ const ListView = () => {
       />
       <div
         className={`${
-          filteredPosts.length === 0
+          posts.length === 0
             ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
             : 'masonry-grid'
         }`}
       >
-        {filteredPosts.length > 0 ? (
+        {posts.length > 0 ? (
           <>
-            {filteredPosts.map(
-              ({ id, title, content, tags, updated_at }, index) => (
-                <div key={id} className="masonry-item break-inside-avoid">
-                  <Link
-                    href={`/article/content/${id}`}
-                    onClick={() => saveListIndex(index)}
-                    prefetch={true}
-                    className="block h-full"
-                  >
-                    <Card
-                      title={title}
-                      content={content}
-                      tags={tags}
-                      updated_at={updated_at}
-                    />
-                  </Link>
-                </div>
-              )
-            )}
+            {posts.map(({ id, title, content, tags, updated_at }, index) => (
+              <div key={id} className="masonry-item break-inside-avoid">
+                <Link
+                  href={`/article/content/${id}`}
+                  onClick={() => saveListIndex(index)}
+                  prefetch={true}
+                  className="block h-full"
+                >
+                  <Card
+                    title={title}
+                    content={content}
+                    tags={tags}
+                    updated_at={updated_at}
+                  />
+                </Link>
+              </div>
+            ))}
 
             <div
               ref={loadingRef}
