@@ -11,7 +11,7 @@ const AllView = () => {
 
   useEffect(() => {
     if (List?.posts) {
-      setItems(prev => [...prev, ...List.posts]);
+      setItems(List?.posts);
     }
   }, [List]);
 
@@ -37,13 +37,6 @@ const AllView = () => {
 
   return (
     <div className="container mx-auto px-2 py-8">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="border-b border-gray-300 w-full self-center mb-3" />
-        <h2 className="text-3xl font-bold text-gray-500 shrink-0">
-          전체 게시물
-        </h2>
-        <div className="border-b border-gray-300 w-full self-center mb-3" />
-      </div>
       <div className="flex justify-center">
         <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-4 gap-6 w-full max-w-[1270px]">
           {items.length > 0 ? (

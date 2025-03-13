@@ -47,11 +47,10 @@ const NamedFolderList = ({
                 items={folder.tags.map(tag => `${folder.id}-${tag.id}`)}
                 strategy={verticalListSortingStrategy}
               >
-                {folder.tags.map((tag, index) => (
+                {folder.tags.map(tag => (
                   <TagItem
                     key={`${folder.id}-${tag.id}`}
                     tag={tag}
-                    index={index}
                     folderId={folder.id}
                   />
                 ))}
