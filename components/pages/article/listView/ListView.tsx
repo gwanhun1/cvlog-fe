@@ -5,8 +5,8 @@ import Card from 'components/Shared/LogmeCard';
 import { listIndexAtom, tagAtom } from 'service/atoms/atoms';
 import { useGetList } from 'service/hooks/List';
 import CardSkeleton from './Skeleton';
-import FilterBox from './FilterBox';
-import ListEmpty from './ListEmpty';
+import FilterBox from '../../../Shared/LogmeFilterBox.tsx/FilterBox';
+import ListEmpty from '../allView/ListEmpty';
 import { useRouter } from 'next/router';
 import { BlogType } from 'service/api/tag/type';
 
@@ -96,8 +96,10 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
     return (
       <div className="masonry-grid">
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="masonry-item">
-            <CardSkeleton />
+          <div key={index} className="masonry-item break-inside-avoid">
+            <div className="block h-full">
+              <CardSkeleton />
+            </div>
           </div>
         ))}
       </div>
@@ -157,8 +159,13 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
               {hasMore && isLoadingMore && (
                 <div className="masonry-grid w-full">
                   {[...Array(3)].map((_, index) => (
-                    <div key={`skeleton-${index}`} className="masonry-item">
-                      <CardSkeleton />
+                    <div
+                      key={`skeleton-${index}`}
+                      className="masonry-item break-inside-avoid"
+                    >
+                      <div className="block h-full">
+                        <CardSkeleton />
+                      </div>
                     </div>
                   ))}
                 </div>

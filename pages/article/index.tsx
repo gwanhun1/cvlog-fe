@@ -6,7 +6,7 @@ import ListView from '../../components/pages/article/listView/ListView';
 import SideView from '../../components/pages/article/sideView/SideView';
 import LocalStorage from 'public/utils/Localstorage';
 import MenuTab from 'components/pages/article/sideView/MenuTab';
-import FilterBox from 'components/pages/article/listView/FilterBox';
+import FilterBox from 'components/Shared/LogmeFilterBox.tsx/FilterBox';
 import { useRecoilState } from 'recoil';
 import { tagAtom } from 'service/atoms/atoms';
 
@@ -25,6 +25,10 @@ const Article: NextPage = () => {
             <link rel="icon" href="/favicon.ico" />
           </Head>
 
+          <div className="hidden tablet:block w-40 desktop:w-48 shrink-0 mt-7">
+            <SideView />
+          </div>
+
           <div className="w-full max-w-screen-md  tablet:px-8 tablet:py-8 pt-3 relative">
             <FilterBox
               keyword={keyword}
@@ -40,15 +44,9 @@ const Article: NextPage = () => {
               </div>
             ) : (
               <div className="w-full">
-                <AllView />
+                <AllView inputRef={inputRef} setKeyword={setKeyword} />
               </div>
             )}
-
-            <div className="hidden tablet:block absolute top-8 -left-44 desktop:-left-38 w-40 desktop:w-48">
-              <div className="sticky">
-                <SideView />
-              </div>
-            </div>
           </div>
         </div>
       )}
