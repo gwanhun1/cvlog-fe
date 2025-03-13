@@ -46,8 +46,8 @@ const ListView = () => {
 
   if (List.isFetching || List.isLoading) {
     return (
-      <div className="grid gap-6">
-        {[...Array(4)].map((_, index) => (
+      <div className="grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-4 tablet:gap-6">
+        {[...Array(6)].map((_, index) => (
           <CardSkeleton key={index} />
         ))}
       </div>
@@ -77,28 +77,30 @@ const ListView = () => {
         inputRef={inputRef}
       />
       <div
-        className={`grid gap-2 tablet:gap-6 ${
+        className={`${
           filteredPosts.length === 0
             ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
-            : ''
+            : 'grid grid-cols-1 tablet:grid-cols-2 desktop:grid-cols-3 gap-2 auto-rows-auto masonry-grid'
         }`}
       >
         {filteredPosts.length > 0 ? (
           filteredPosts.map(
             ({ id, title, content, tags, updated_at }, index) => (
-              <Link
-                href={`/article/content/${id}`}
-                key={id}
-                onClick={() => saveListIndex(index)}
-                prefetch={true}
-              >
-                <Card
-                  title={title}
-                  content={content}
-                  tags={tags}
-                  updated_at={updated_at}
-                />
-              </Link>
+              <div key={id} className="masonry-item break-inside-avoid">
+                <Link
+                  href={`/article/content/${id}`}
+                  onClick={() => saveListIndex(index)}
+                  prefetch={true}
+                  className="block h-full"
+                >
+                  <Card
+                    title={title}
+                    content={content}
+                    tags={tags}
+                    updated_at={updated_at}
+                  />
+                </Link>
+              </div>
             )
           )
         ) : (
