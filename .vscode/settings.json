@@ -8,7 +8,6 @@
   },
   "css.validate": false,
   "scss.validate": false,
-  "stylelint.validate": ["css", "scss", ".module.scss"],
-  "stylelint.enable": true,
-  "cSpell.words": ["Sandpack"]
+  "cSpell.words": ["Sandpack"],
+  "cSpell.userWords": ["logme"]
 }

@@ -84,12 +84,12 @@ export interface PatchDetail {
   };
 }
 
-type TagType = {
+export type TagType = {
   id: number;
   name: string;
 };
 
-type BlogType = {
+export type BlogType = {
   id: number;
   title: string;
   content: string;
