@@ -42,7 +42,7 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
           : 'bg-white'
       } border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative`}
     >
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full w-full">
         {imageUrl ? (
           <div className="relative w-full h-0 pb-[70%]">
             <Image
@@ -60,7 +60,7 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
             />
           </div>
         ) : (
-          <div className="h-4"></div>
+          <div className="h-8"></div>
         )}
 
         <div className="flex flex-col justify-between p-5 w-full flex-grow">
