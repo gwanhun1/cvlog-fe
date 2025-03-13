@@ -23,7 +23,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
               ref={inputRef}
               type="text"
               value={keyword}
-              onChange={e => setKeyword(e.target.value)}
+              onChange={e => setKeyword(e.target.value.toLocaleLowerCase())}
               style={{ border: '1px solid #dbeafe' }}
               className="w-full h-10 mobile:h-12 pl-14 pr-6 text-gray-800 text-md mobile:text-lg tablet:text-xl bg-white/90 backdrop-blur-sm rounded-xl border-2 border-blue-300 shadow-lg placeholder:text-[16px] placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500 hover:shadow-xl hover:border-blue-500"
               placeholder="태그를 입력해보세요!!"

@@ -11,14 +11,14 @@ const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
   };
 
   return (
-    <div className="w-full py-4 px-6 bg-white rounded-lg shadow-sm">
-      <div className="flex items-center justify-center space-x-1 max-w-md mx-auto">
+    <div className="w-full  rounded-lg shadow-sm my-3">
+      <div className="flex items-center justify-center space-x-1 ">
         <button
           onClick={() => handleSetMenu('list')}
           className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-l-lg transition-colors duration-200 focus:outline-none
             ${
               activeMenu === 'list'
-                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           aria-current={activeMenu === 'list' ? 'page' : undefined}
@@ -38,7 +38,7 @@ const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
                 d="M4 6h16M4 10h16M4 14h16M4 18h16"
               />
             </svg>
-            List View
+            나의 게시물
           </div>
         </button>
         <button
@@ -46,7 +46,7 @@ const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
           className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-r-lg transition-colors duration-200 focus:outline-none
             ${
               activeMenu === 'all'
-                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           aria-current={activeMenu === 'all' ? 'page' : undefined}
@@ -66,7 +66,7 @@ const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
                 d="M4 6h16M4 12h16m-7 6h7"
               />
             </svg>
-            All View
+            전체 게시물
           </div>
         </button>
       </div>

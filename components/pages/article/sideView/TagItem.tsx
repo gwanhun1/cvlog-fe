@@ -35,9 +35,9 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
       {...listeners}
       className={`flex items-center space-x-2 mx-1 p-2 mb-1 rounded-lg border border-gray-100 cursor-move 
         hover:border-gray-200 hover:bg-blue-100 active:bg-blue-500 active:text-white transition-colors duration-200
-        ${keyword === tag.name ? 'bg-blue-400' : 'bg-white'} ${
-        isDragging ? 'opacity-50' : 'opacity-100'
-      } 
+        ${
+          keyword === tag.name.toLocaleLowerCase() ? 'bg-blue-400' : 'bg-white'
+        } ${isDragging ? 'opacity-50' : 'opacity-100'} 
         ${transition ? 'transition' : ''} ${
         transform ? 'translate-x-0 translate-y-0' : ''
       }`}

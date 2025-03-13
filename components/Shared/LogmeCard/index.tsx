@@ -37,7 +37,9 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
   return (
     <article
       className={`group block w-full hover:bg-blue-50 overflow-hidden transition-all duration-300 ${
-        tags.some(tag => tag.name === keyword) ? 'bg-blue-400' : 'bg-white'
+        tags.some(tag => tag.name.toLocaleLowerCase() === keyword)
+          ? 'bg-blue-400'
+          : 'bg-white'
       } border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative`}
     >
       <div className="flex flex-col h-full">

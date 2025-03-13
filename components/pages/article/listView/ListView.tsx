@@ -10,16 +10,19 @@ import ListEmpty from './ListEmpty';
 import { useRouter } from 'next/router';
 import { BlogType } from 'service/api/tag/type';
 
-const ListView = () => {
+interface ListViewProps {
+  inputRef: React.RefObject<HTMLInputElement>;
+  setKeyword: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
   const [page, setPage] = useState<number>(1);
-  const [keyword, setKeyword] = useRecoilState(tagAtom);
   const [posts, setPosts] = useState<BlogType[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const List = useGetList(page);
   const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
 
@@ -30,18 +33,10 @@ const ListView = () => {
       ? String(tagKeyword).trim().toLowerCase()
       : '';
     setKeyword(normalizedKeyword);
-
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, [setKeyword, tagKeyword]);
-
-  useEffect(() => {
-    setPosts([]);
-    setPage(1);
-    setHasMore(true);
-    setIsInitialLoading(true);
-  }, [keyword]);
+  }, [inputRef, setKeyword, tagKeyword]);
 
   const loadMorePosts = useCallback(() => {
     if (hasMore && !isLoadingMore) {
@@ -71,12 +66,7 @@ const ListView = () => {
     const observer = new IntersectionObserver(
       entries => {
         const [entry] = entries;
-        if (
-          entry.isIntersecting &&
-          hasMore &&
-          !isLoadingMore &&
-          !isInitialLoading
-        ) {
+        if (entry.isIntersecting && hasMore && !isLoadingMore) {
           loadMorePosts();
         }
       },
@@ -133,11 +123,6 @@ const ListView = () => {
 
   return (
     <div className="flex flex-col gap-4 ">
-      <FilterBox
-        keyword={keyword}
-        setKeyword={setKeyword}
-        inputRef={inputRef}
-      />
       <div
         className={`${
           posts.length === 0
