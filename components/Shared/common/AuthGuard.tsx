@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { useRefreshToken } from 'service/hooks/Login';
 import { postRefreshToken } from 'service/api/login';
 import LocalStorage from 'public/utils/Localstorage';
 import Cookie from 'public/utils/Cookie';
@@ -11,6 +10,10 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // 로그인 없이 접근 가능한 경로 목록
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const publicRoutes = ['/', '/login', '/article', /^\/article\/all\/\d+$/];
+
   const checkAuthStatus = useCallback(async () => {
     setIsLoading(true);
 
@@ -18,32 +21,38 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       const accessToken = LocalStorage.getItem('LogmeToken');
       const refreshToken = Cookie.getItem('refreshToken');
 
+      // 현재 경로가 publicRoutes에 포함되는지 확인
+      const isPublicRoute = publicRoutes.some(route =>
+        typeof route === 'string'
+          ? route === router.pathname
+          : route.test(router.pathname)
+      );
+
+      if (isPublicRoute) {
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        return;
+      }
+
       // 엑세스 토큰이 없는 경우
       if (!accessToken) {
-        // 리프레시 토큰이 있는 경우 새 엑세스 토큰 발급 시도
         if (refreshToken) {
           try {
             const refreshParams = {
               headers: {
-                refreshToken: refreshToken,
+                refreshToken,
                 Authorization: `Bearer ${accessToken || ''}`,
               },
             };
 
             const response = await postRefreshToken(refreshParams);
 
-            if (response && response.data && response.data.accessToken) {
-              if (response.data.accessToken !== '') {
-                await LocalStorage.setItem(
-                  'LogmeToken',
-                  response.data.accessToken
-                );
-                setIsAuthenticated(true);
-              } else {
-                Cookie.removeItem('refreshToken');
-                LocalStorage.removeItem('LogmeToken');
-                router.push('/login');
-              }
+            if (response?.data?.accessToken) {
+              await LocalStorage.setItem(
+                'LogmeToken',
+                response.data.accessToken
+              );
+              setIsAuthenticated(true);
             } else {
               Cookie.removeItem('refreshToken');
               LocalStorage.removeItem('LogmeToken');
@@ -65,7 +74,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, [publicRoutes, router]);
 
   useEffect(() => {
     if (router.pathname === '/login' || router.pathname === '/join') {
@@ -100,8 +109,11 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   if (
     !isAuthenticated &&
-    router.pathname !== '/login' &&
-    router.pathname !== '/join'
+    !publicRoutes.some(route =>
+      typeof route === 'string'
+        ? route === router.pathname
+        : route.test(router.pathname)
+    )
   ) {
     return null;
   }

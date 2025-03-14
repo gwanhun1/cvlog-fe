@@ -67,21 +67,19 @@ const LoginButtonGroup = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 tablet:grid-cols-4 gap-4 w-full ">
-      {loginMethodArr.map(item => (
-        <div
-          key={item.id}
-          onClick={event => handleLogin(item.method, event)}
-          className="group transform transition-all duration-300 hover:-translate-y-2 hover:scale-105 cursor-pointer "
-        >
-          <div className="flex flex-col items-center p-4 bg-white/90 backdrop-blur-md rounded-3xl border border-gray-200 shadow-lg hover:shadow-2xl hover:border-blue-200 space-y-3 transition-all">
-            <div className="p-3 rounded-full h-14">{item.image}</div>
-            <span className="text-sm text-gray-700 font-semibold opacity-80 group-hover:opacity-100 group-hover:text-blue-600">
-              {item.method}
-            </span>
-          </div>
+    <div className="flex flex-col gap-4 w-full">
+      <div
+        key={loginMethodArr[0].id}
+        onClick={event => handleLogin(loginMethodArr[0].method, event)}
+        className=" group transform transition-all duration-300 hover:-translate-y-2  cursor-pointer w-full"
+      >
+        <div className="bg-[#27272a] flex items-center justify-center gap-3 p-4 rounded-3xl border border-gray-200 shadow-lg hover:shadow-2xl  transition-all">
+          <div className="p-2 z-20">{loginMethodArr[0].image}</div>
+          <span className="text-white font-semibold  ">
+            {loginMethodArr[0].method}으로 로그인
+          </span>
         </div>
-      ))}
+      </div>
     </div>
   );
 };
@@ -93,19 +91,19 @@ const loginMethodArr = [
     id: 1,
     name: 'Github',
     method: 'Github',
-    image: <FaGithub className="h-8 w-8" />,
+    image: <FaGithub className="h-6 w-6  text-white" />,
   },
   {
     id: 2,
     name: 'Google',
     method: 'Google',
-    image: <FcGoogle className="h-8 w-8" />,
+    image: <FcGoogle className="h-6 w-6" />,
   },
   {
     id: 3,
     name: 'Naver',
     method: '네이버',
-    image: <SiNaver className="h-8 w-6" color="#03c75a" />,
+    image: <SiNaver className="h-6 w-6" color="#03c75a" />,
   },
   {
     id: 4,
@@ -113,7 +111,7 @@ const loginMethodArr = [
     method: '카카오',
     image: (
       <div className="bg-yellow-400 rounded-2xl p-1">
-        <RiKakaoTalkFill className="h-6 w-6" />
+        <RiKakaoTalkFill className="h-4 w-4" />
       </div>
     ),
   },
