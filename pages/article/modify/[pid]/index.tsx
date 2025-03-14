@@ -67,29 +67,22 @@ const ModifyPost = ({ pid }: ModifyPostProps) => {
   }, []);
 
   return (
-    <main className="h-screen min-h-screen">
+    <main className="h-screen min-h-screen  px-10">
       <div className="flex flex-col h-full">
-        <div className="bg-[#f8f9fa]">
-          <header className="flex-none">
-            <ModifyBtn
-              doc={doc}
-              setDoc={setDoc}
-              pid={pid}
-              imageArr={imageArr}
-            />
-          </header>
+        <header className="flex-none">
+          <ModifyBtn doc={doc} setDoc={setDoc} pid={pid} imageArr={imageArr} />
+        </header>
 
-          <main className="relative flex flex-col justify-center flex-1 w-full tablet:flex-row">
-            <ModifyContents
-              doc={doc}
-              setDoc={setDoc}
-              setImageArr={setImageArr}
-              isVisiblePreview={isVisiblePreview}
-              containerTopRef={containerTopRef}
-              isMobile={isMobile}
-            />
-          </main>
-        </div>
+        <main className="relative flex flex-col justify-center flex-1 w-full tablet:flex-row">
+          <ModifyContents
+            doc={doc}
+            setDoc={setDoc}
+            setImageArr={setImageArr}
+            isVisiblePreview={isVisiblePreview}
+            containerTopRef={containerTopRef}
+            isMobile={isMobile}
+          />
+        </main>
       </div>
     </main>
   );

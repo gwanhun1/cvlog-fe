@@ -251,14 +251,11 @@ export const getStaticProps = async ({ params }: any) => {
   }
 
   try {
-    // 여기서 초기 데이터를 미리 가져올 수 있습니다
-    // const initialData = await fetchInitialData(pid);
-
     return {
       props: {
         pid,
       },
-      revalidate: 60, // 60초마다 재검증
+      revalidate: 60,
     };
   } catch (error) {
     return {

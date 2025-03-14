@@ -31,8 +31,6 @@ const ModifyContents = ({
   const { uploadImage } = useImageUpload();
   const editorRef = useRef<HTMLDivElement>(null);
   const editorInstanceRef = useRef<any>(null);
-
-  // Use useMemo for editor options to prevent re-creation on each render
   const editorOptions = useMemo(() => {
     return {
       ...(isMobile ? MDE_OPTIONMOBILE : MDE_OPTION),
@@ -40,24 +38,18 @@ const ModifyContents = ({
     };
   }, [isMobile]);
 
-  // 컴포넌트 마운트 시 한 번만 실행되는 useEffect
   useEffect(() => {
-    // 초기 문서 내용 설정
     setDoc(prev => {
-      // 이미 내용이 있으면 유지
       if (prev.content !== undefined && prev.content !== '') {
         return prev;
       }
-      // 없으면 빈 문자열로 초기화
       return { ...prev, content: '' };
     });
   }, [setDoc]);
 
   const handleContentChange = useCallback(
     (value: string) => {
-      // 디바운싱 없이 setDoc 직접 호출
       setDoc(prev => {
-        // 내용이 변경된 경우에만 업데이트
         if (prev.content !== value) {
           return { ...prev, content: value };
         }
@@ -67,7 +59,6 @@ const ModifyContents = ({
     [setDoc]
   );
 
-  // 에디터 인스턴스 참조 저장
   const getEditorInstance = useCallback((editor: any) => {
     editorInstanceRef.current = editor;
   }, []);
@@ -86,7 +77,6 @@ const ModifyContents = ({
           const imageMarkdown = `![${imageName}](${imageUrl})`;
           cm.replaceRange(imageMarkdown, pos);
         } else {
-          // 이미지 업로드 시 현재 내용에 추가
           const newValue =
             (doc.content || '') + '\n\n' + `![${imageName}](${imageUrl})`;
           setDoc(prev => ({ ...prev, content: newValue }));
@@ -132,10 +122,7 @@ const ModifyContents = ({
 
       if (sourceScrollableHeight <= 0 || targetScrollableHeight <= 0) return;
 
-      // 현재 스크롤 위치의 백분율 계산
       const scrollPercentage = source.scrollTop / sourceScrollableHeight;
-
-      // 타겟의 스크롤 위치를 백분율에 맞게 설정
       setSourceScrolling(true);
       target.scrollTop = scrollPercentage * targetScrollableHeight;
 
@@ -156,7 +143,6 @@ const ModifyContents = ({
     };
 
     const handlePreviewScroll = () => {
-      // 프리뷰 스크롤은 에디터에 영향을 주지 않도록 함
       return;
     };
 

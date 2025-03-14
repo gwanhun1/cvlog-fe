@@ -52,7 +52,7 @@ const NewPost: NextPage = () => {
   }, []);
 
   return (
-    <main className="h-screen min-h-screen">
+    <main className="h-screen min-h-screen px-10">
       <div className="flex flex-col h-full">
         <header className="flex-none">
           <NewBtn doc={doc} setDoc={setDoc} imageArr={imageArr} />

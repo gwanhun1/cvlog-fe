@@ -9,7 +9,6 @@ export const useUpdateUserDescription = () => {
     (description: string) => updateUserDescription(description),
     {
       onSuccess: () => {
-        // Invalidate user info query to refetch with updated description
         queryClient.invalidateQueries(['userInfo']);
       },
     }

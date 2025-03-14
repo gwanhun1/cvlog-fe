@@ -21,6 +21,6 @@ export const useGetUserInfo = () => {
     onError: handleGetErrors,
     retry: 0,
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5, // 5분
+    staleTime: 1000 * 60 * 5,
   });
 };

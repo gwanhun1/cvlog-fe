@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
 
-// 파란 계열 색상 15개
 const blueColors = [
   '#60a5fa',
   '#7bb9f9',
@@ -20,19 +19,17 @@ const blueColors = [
 ];
 
 interface UseHighlightWordsProps {
-  words: string[]; // 강조할 단어 배열
+  words: string[];
 }
 
 const useHighlightWords = ({ words }: UseHighlightWordsProps) => {
   const [highlightedText, setHighlightedText] = useState<string>(''); // 강조된 텍스트 상태
 
-  // 텍스트에서 단어 강조하기
   const highlightText = useCallback(
     (text: string) => {
       if (!words.length) return text;
 
       let modifiedText = text;
-      // 각 단어마다 순서대로 색을 적용
       words.forEach((word, index) => {
         if (!word) return;
         const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // 특수문자 이스케이프
@@ -44,20 +41,21 @@ const useHighlightWords = ({ words }: UseHighlightWordsProps) => {
         );
       });
 
-      setHighlightedText(modifiedText); // 상태에 변경된 텍스트 저장
+      setHighlightedText(modifiedText);
     },
     [words]
   );
 
-  // 단어 배열이 변경될 때마다 텍스트 강조 적용
   useEffect(() => {
     if (words.length > 0) {
-      highlightText(document.querySelector('.contentMarkdown')?.innerHTML || '');
+      highlightText(
+        document.querySelector('.contentMarkdown')?.innerHTML || ''
+      );
     }
   }, [words, highlightText]);
 
   return {
-    highlightedText, // 강조된 텍스트
+    highlightedText,
   };
 };
 

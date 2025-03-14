@@ -12,10 +12,7 @@ const API_URL: string =
     ? 'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app'
     : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
-// 토큰 갱신 중인지 확인하는 플래그
 let isRefreshing = false;
-
-// 토큰 갱신 대기 중인 요청들을 저장하는 배열
 let refreshSubscribers: Array<(token: string) => void> = [];
 
 interface AuthResponse {
@@ -44,17 +41,11 @@ const addRefreshSubscriber = (callback: (token: string) => void): void => {
 export const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  timeout: 10000, // 10초로 타임아웃 설정
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
-    'Cache-Control': 'max-age=300', // 5분 캐시
+    'Cache-Control': 'max-age=300',
   },
-  // 요청 중복 방지
-  // transitional: {
-  //   silentJSONParsing: false,
-  //   forcedJSONParsing: true,
-  //   clarifyTimeoutError: true,
-  // },
   // 응답 압축
   decompress: true,
 });
@@ -104,7 +95,6 @@ axiosInstance.interceptors.response.use(
     // 401 Unauthorized 처리
     if (error.response?.status === 401 && !originalRequest._retry401) {
       if (isRefreshing) {
-        // 토큰 갱신 중이면 대기열에 추가
         return new Promise(resolve => {
           addRefreshSubscriber(token => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -188,7 +178,6 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-// For development fallback
 export const axiosMock = async (mockType: string): Promise<any> => {
   const axiosMockBase: AxiosInstance = axios.create({
     baseURL: `/mockData/${mockType}MockData.json`,
