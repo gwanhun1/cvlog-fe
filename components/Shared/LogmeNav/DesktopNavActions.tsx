@@ -13,7 +13,6 @@ const DesktopNavActions = ({
   setAuthority: Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
-  console.log(isAuthenticated);
 
   if (isAuthenticated) {
     return (

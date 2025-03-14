@@ -1,7 +1,7 @@
 import React from 'react';
 
 const CardSkeleton = () => (
-  <article className="group block w-[363px] hover:bg-blue-50 overflow-hidden transition-all duration-300 bg-white border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative animate-pulse">
+  <article className="group block tablet:min-w-[363px] hover:bg-blue-50 overflow-hidden transition-all duration-300 bg-white border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative animate-pulse">
     <div className="flex flex-col h-full">
       <div className="relative w-full h-0 pb-[70%] bg-gray-200 rounded-t-lg"></div>
 

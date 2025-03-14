@@ -1,10 +1,8 @@
-import React, { useEffect, useMemo } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import * as Shared from 'components/Shared';
-import Cookie from 'public/utils/Cookie';
-import LocalStorage from 'public/utils/Localstorage';
-import { accessTokenAtom, refreshTokenAtom } from 'service/atoms/atoms';
+import { accessTokenAtom } from 'service/atoms/atoms';
 import NavMenuItem from './NavMenuItem';
 import DesktopNavActions from './DesktopNavActions';
 import MobileNav from './MobileNav';
@@ -17,21 +15,9 @@ const MENU_ITEMS = [
 ] as const;
 
 const Nav = () => {
-  const setAccessToken = useSetRecoilState(accessTokenAtom);
-  const setRefreshToken = useSetRecoilState(refreshTokenAtom);
+  const [accessToken] = useRecoilState(accessTokenAtom);
 
-  const localAccessToken = useMemo(
-    () => LocalStorage.getItem('LogmeToken'),
-    []
-  );
-  const localRefreshToken = useMemo(() => Cookie.getItem('refreshToken'), []);
-
-  useEffect(() => {
-    setAccessToken(localAccessToken || '');
-    setRefreshToken(localRefreshToken || '');
-  }, [localAccessToken, localRefreshToken, setAccessToken, setRefreshToken]);
-
-  const isAuthenticated = !localAccessToken;
+  const isAuthenticated = !!accessToken;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-bgWhite shadow-gray-200">
