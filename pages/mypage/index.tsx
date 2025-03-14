@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { GetStaticProps } from 'next';
+import { GetStaticProps, NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import { FiCalendar } from 'react-icons/fi';
 import { dehydrate, QueryClient } from 'react-query';
@@ -9,9 +9,6 @@ import HomeSection from '../../components/pages/mypage/HomeSection';
 import ContactInfo from '../../components/pages/mypage/ContactInfo';
 import AccountManagement from '../../components/pages/mypage/AccountManagement';
 import { getUserInfo } from 'service/api/login';
-import { useRecoilValue } from 'recoil';
-import { userIdAtom } from 'service/atoms/atoms';
-import { useRouter } from 'next/router';
 import { useGetUserInfo } from 'service/hooks/Login';
 
 const RecentActivity = dynamic(
@@ -24,9 +21,8 @@ const RecentActivity = dynamic(
   }
 );
 
-const Mypage = () => {
+const Mypage: NextPage = () => {
   const { data: userInfo } = useGetUserInfo();
-  const router = useRouter();
 
   const formattedDate = useMemo(() => {
     try {
