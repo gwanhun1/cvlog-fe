@@ -34,6 +34,6 @@ export const handleSignOut = async (
       setAuthority(null);
     }
 
-    window.location.href = '/';
+    window.location.href = '/login';
   }
 };

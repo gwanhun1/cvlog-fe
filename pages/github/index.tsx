@@ -15,6 +15,7 @@ const Github = () => {
   if (!userInfo) {
     return <SkeletonLayout />;
   }
+  console.log(userInfo);
 
   if (!userInfo?.github_id) {
     return (

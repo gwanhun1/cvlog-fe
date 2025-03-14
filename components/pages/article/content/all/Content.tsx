@@ -9,7 +9,7 @@ const Content = ({
 }: {
   data?: string;
   isLoading: boolean;
-  writer: string;
+  writer?: string;
   id?: number;
 }) => {
   return (

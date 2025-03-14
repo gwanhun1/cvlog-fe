@@ -33,12 +33,20 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
             const response = await postRefreshToken(refreshParams);
 
             if (response && response.data && response.data.accessToken) {
-              await LocalStorage.setItem(
-                'LogmeToken',
-                response.data.accessToken
-              );
-              setIsAuthenticated(true);
+              if (response.data.accessToken !== '') {
+                await LocalStorage.setItem(
+                  'LogmeToken',
+                  response.data.accessToken
+                );
+                setIsAuthenticated(true);
+              } else {
+                Cookie.removeItem('refreshToken');
+                LocalStorage.removeItem('LogmeToken');
+                router.push('/login');
+              }
             } else {
+              Cookie.removeItem('refreshToken');
+              LocalStorage.removeItem('LogmeToken');
               router.push('/login');
             }
           } catch (error) {

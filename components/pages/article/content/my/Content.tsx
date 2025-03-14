@@ -3,7 +3,7 @@ import MarkdownContent from 'components/Shared/MarkdownContent';
 
 interface ContentProps {
   id?: number;
-  data?: string;
+  data?: string | null;
   isLoading: boolean;
 }
 

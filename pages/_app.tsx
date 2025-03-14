@@ -12,6 +12,7 @@ import dynamic from 'next/dynamic';
 import ErrorBoundary from 'components/Shared/common/ErrorPage';
 import { SafeHydrate } from './SafeHydrate';
 import AuthGuard from 'components/Shared/common/AuthGuard';
+import Head from 'next/head';
 
 const ClientNav = dynamic(() => Promise.resolve(Nav), { ssr: false });
 
@@ -33,6 +34,12 @@ export default function App({ Component, pageProps }: AppProps) {
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
         <SafeHydrate>
+          <Head>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+            />
+          </Head>
           {router.pathname === '/login' ||
           router.pathname === '/article/new' ||
           router.pathname.startsWith('/article/modify/') ? null : (

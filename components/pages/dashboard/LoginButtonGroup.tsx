@@ -36,6 +36,9 @@ const LoginButtonGroup = () => {
   const handleLogin = (loginMethod: string, event: React.MouseEvent) => {
     if (accessToken) {
       event.preventDefault();
+      alert('로그인 기록이 있습니다.');
+      window.location.href = '/';
+
       return;
     }
 
@@ -51,8 +54,6 @@ const LoginButtonGroup = () => {
         alert('GitHub 로그인 설정이 잘못되었습니다. 관리자에게 문의하세요.');
         return;
       }
-
-      console.log('GitHub 로그인 시도:', { githubId, redirectUri });
 
       // 상태 변수 추가 - CSRF 보호용
       const state = Math.random().toString(36).substring(2, 15);
