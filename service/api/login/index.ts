@@ -1,6 +1,7 @@
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
-import { axiosInstance as axios } from 'utils/axios';
+import axios, { AxiosError, isAxiosError } from 'axios';
+import { axiosInstance } from 'utils/axios';
 import { ErrorResponse, GetNewTokenApi, SignOut, UserInfo } from './type';
 
 export const handleGetErrors = async (error: ErrorResponse) => {
@@ -49,22 +50,75 @@ export const handleMutateErrors = async (
 
 export const postRefreshToken = async (params: GetNewTokenApi) => {
   try {
-    const { data } = await axios.post('/auth/refresh', {}, params);
+    const refreshToken = params.headers.refreshToken;
+    const accessToken = params.headers.Authorization?.replace('Bearer ', '');
+
+    if (
+      !refreshToken ||
+      refreshToken === 'undefined' ||
+      refreshToken === 'null' ||
+      !accessToken ||
+      accessToken === 'undefined' ||
+      accessToken === ''
+    ) {
+      console.warn('Missing or invalid tokens for refresh request');
+      if (typeof window !== 'undefined') {
+        Cookie.removeItem('refreshToken');
+        LocalStorage.removeItem('LogmeToken');
+      }
+      return { success: false, data: { accessToken: '' } };
+    }
+
+    const { data } = await axiosInstance.post('/auth/refresh', {}, params);
     return data;
   } catch (error) {
     console.error('Error refreshing token:', error);
+
+    if (isAxiosError(error) && error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        Cookie.removeItem('refreshToken');
+        LocalStorage.removeItem('LogmeToken');
+      }
+      return { success: false, data: { accessToken: '' } };
+    }
+
     throw error;
   }
 };
 
 export const getUserInfo = async () => {
-  const { data } = await axios.get<UserInfo>('/users/info');
+  try {
+    const token =
+      typeof window !== 'undefined' ? LocalStorage.getItem('LogmeToken') : null;
 
-  return data.data;
+    if (!token) {
+      console.warn('No token available for getUserInfo request');
+      return null;
+    }
+
+    const { data } = await axiosInstance.get<UserInfo>('/users/info', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return data.data;
+  } catch (error: unknown) {
+    console.error('Error fetching user info:', error);
+
+    if (isAxiosError(error) && error.response?.status === 401) {
+      if (typeof window !== 'undefined') {
+        LocalStorage.removeItem('LogmeToken');
+        Cookie.removeItem('refreshToken');
+      }
+    }
+
+    return null;
+  }
 };
 
 export const signOut = async () => {
-  const { data } = await axios.get<SignOut>('/auth/logout');
+  const { data } = await axiosInstance.get<SignOut>('/auth/logout');
 
   return data.data;
 };

@@ -8,28 +8,40 @@ const { persistAtom } = recoilPersist({
   storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 });
 
+const getUniqueId = () => {
+  const isClient = typeof window !== 'undefined';
+  return isClient ? undefined : (Math.random() * 100000).toString();
+};
+
+const getAtomKey = (key: string) => {
+  if (process.env.NODE_ENV === 'development') {
+    return `${key}_${getUniqueId()}`;
+  }
+  return key;
+};
+
 export const authorityState = atom<boolean>({
-  key: 'logme_auth_state_v1',
+  key: getAtomKey('logme_auth_state_v1'),
   default: false,
 });
 
 export const refreshTokenAtom = atom<string>({
-  key: 'logme_refresh_token_v1',
+  key: getAtomKey('logme_refresh_token_v1'),
   default: '',
 });
 
 export const accessTokenAtom = atom<string>({
-  key: 'logme_access_token_v1',
+  key: getAtomKey('logme_access_token_v1'),
   default: '',
 });
 
 export const listIndexAtom = atom<number>({
-  key: 'logme_list_index_v1',
+  key: getAtomKey('logme_list_index_v1'),
   default: 999999,
 });
 
 export const userIdAtom = atom<UserInfoType>({
-  key: 'logme_user_info_v1',
+  key: getAtomKey('logme_user_info_v1'),
   default: {
     id: 0,
     github_id: '',
@@ -45,16 +57,16 @@ export const userIdAtom = atom<UserInfoType>({
 });
 
 export const tagAtom = atom<string>({
-  key: 'tag',
+  key: getAtomKey('tag'),
   default: '',
 });
 
 export const tagListAtom = atom<TagType[]>({
-  key: 'tagList',
+  key: getAtomKey('tagList'),
   default: [],
 });
 
 export const selectedTagListAtom = atom<TagType[]>({
-  key: 'selectedTagList',
+  key: getAtomKey('selectedTagList'),
   default: [],
 });

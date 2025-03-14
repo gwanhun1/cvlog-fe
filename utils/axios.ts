@@ -111,7 +111,19 @@ axiosInstance.interceptors.response.use(
         const accessToken = LocalStorage.getItem('LogmeToken');
 
         if (!refreshToken || !accessToken) {
-          throw new Error('No refresh token available');
+          // Instead of throwing an error, handle silently and redirect
+          isRefreshing = false;
+          if (typeof window !== 'undefined') {
+            // Clear any existing tokens as they're invalid
+            Cookie.removeItem('refreshToken');
+            LocalStorage.removeItem('LogmeToken');
+            
+            // Redirect to login page if we're not already there
+            if (!window.location.pathname.includes('/login')) {
+              window.location.href = '/login';
+            }
+          }
+          return Promise.reject(error);
         }
 
         const response = await axios.post<AuthResponse>(

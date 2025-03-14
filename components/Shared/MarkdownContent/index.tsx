@@ -17,7 +17,7 @@ interface CodeProps {
 }
 
 interface MarkdownContentProps {
-  content?: string;
+  content?: string | null;
   className?: string;
   writer?: string;
   id?: number;
@@ -122,9 +122,7 @@ const MarkdownContentComponent = ({
       )}
     >
       {id && writer && writer !== userInfo?.github_id && (
-        <nav className="hidden tablet:fixed tablet:top-40 tablet:right-1/2 tablet:translate-x-[-360px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4">
-          {/* <LogmeLikeBtn isOwnPost={false} postId={id} /> */}
-        </nav>
+        <nav className="hidden tablet:fixed tablet:top-40 tablet:right-1/2 tablet:translate-x-[-360px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4"></nav>
       )}
 
       <div className="flex-1 w-full" ref={contentRef}>
@@ -134,12 +132,11 @@ const MarkdownContentComponent = ({
             remarkPlugins={[remarkGfm]}
             components={components}
           >
-            {content}
+            {content || ''}
           </ReactMarkdown>
         </div>
       </div>
-
-      <TocItemsContainer contentRef={contentRef} content={content} />
+      <TocItemsContainer contentRef={contentRef} content={content || ''} />
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import Image from 'next/image';
+import { UserIdType } from 'service/api/detail/type';
 
 interface ProfileProps {
-  getDetailData: any;
+  getDetailData?: UserIdType;
 }
 
 const Profile = ({ getDetailData }: ProfileProps) => {

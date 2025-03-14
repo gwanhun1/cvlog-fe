@@ -31,7 +31,7 @@ const Nav = () => {
     setRefreshToken(localRefreshToken || '');
   }, [localAccessToken, localRefreshToken, setAccessToken, setRefreshToken]);
 
-  const isAuthenticated = !!localAccessToken;
+  const isAuthenticated = !localAccessToken;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-bgWhite shadow-gray-200">

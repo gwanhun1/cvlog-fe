@@ -31,11 +31,23 @@ export interface Content {
   };
 }
 
+export interface UserIdType {
+  id: number;
+  github_id: string;
+  name: string;
+  profile_image: string;
+  description: string | null;
+  refresh_token: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+}
+
 export interface ContentData {
   id: number;
   title: string;
   content: string;
-  user_id: any;
+  user_id: UserIdType;
   public_status: boolean;
   created_at: string;
   updated_at: string;
