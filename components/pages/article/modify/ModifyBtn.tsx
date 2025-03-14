@@ -110,7 +110,7 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
       <div className="tablet:pt-4">
         <div className="flex relative px-2 border-b tablet:pt-2 border-gray-400">
           <input
-            className="w-full h-10 text-gray-600 placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
+            className="w-full h-10 font-bold placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
             name="title"
             value={doc.title}
             placeholder="오늘의 특별한 주제는 무엇인가요? 🌟"
@@ -153,7 +153,7 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
               position="bottom"
             >
               <input
-                className="z-10 w-full text-sm text-gray-600 placeholder:text-gray-500 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
+                className="z-10 w-full text-sm placeholder:text-gray-500 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
                 name="tag"
                 value={tag}
                 placeholder="태그를 만들어주세요."

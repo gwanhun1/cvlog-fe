@@ -6,7 +6,7 @@ import { listIndexAtom, tagAtom } from 'service/atoms/atoms';
 import { useGetList } from 'service/hooks/List';
 import CardSkeleton from './Skeleton';
 import FilterBox from '../../../Shared/LogmeFilterBox.tsx/FilterBox';
-import ListEmpty from '../allView/ListEmpty';
+import ListEmpty from '../../../Shared/common/ListEmpty';
 import { useRouter } from 'next/router';
 import { BlogType } from 'service/api/tag/type';
 
@@ -107,65 +107,67 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 ">
-      <div
-        className={`${
-          posts.length === 0
-            ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
-            : 'masonry-grid'
-        }`}
-      >
-        {posts.length > 0 ? (
-          <>
-            {posts.map(({ id, title, content, tags, updated_at }, index) => (
-              <div key={id} className="masonry-item break-inside-avoid">
-                <Link
-                  href={`/article/content/${id}`}
-                  onClick={() => saveListIndex(index)}
-                  prefetch={true}
-                  className="block h-full"
-                >
-                  <Card
-                    title={title}
-                    content={content}
-                    tags={tags}
-                    updated_at={updated_at}
-                  />
-                </Link>
+    <>
+      <div className="flex flex-col gap-4 ">
+        <div
+          className={`${
+            posts.length === 0
+              ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
+              : 'masonry-grid'
+          }`}
+        >
+          {posts.length > 0 ? (
+            <>
+              {posts.map(({ id, title, content, tags, updated_at }, index) => (
+                <div key={id} className="masonry-item break-inside-avoid">
+                  <Link
+                    href={`/article/content/${id}`}
+                    onClick={() => saveListIndex(index)}
+                    prefetch={true}
+                    className="block h-full"
+                  >
+                    <Card
+                      title={title}
+                      content={content}
+                      tags={tags}
+                      updated_at={updated_at}
+                    />
+                  </Link>
+                </div>
+              ))}
+
+              <div
+                ref={loadingRef}
+                className="w-full flex flex-col items-center my-4"
+              >
+                {!hasMore && !isInitialLoading && (
+                  <div className="text-gray-300 text-sm py-4">
+                    모든 게시물을 불러왔습니다
+                  </div>
+                )}
               </div>
-            ))}
-
-            <div
-              ref={loadingRef}
-              className="w-full flex flex-col items-center my-4"
-            >
-              {hasMore && isLoadingMore && (
-                <div className="masonry-grid w-full">
-                  {[...Array(3)].map((_, index) => (
-                    <div
-                      key={`skeleton-${index}`}
-                      className="masonry-item break-inside-avoid"
-                    >
-                      <div className="block h-full">
-                        <CardSkeleton />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {!hasMore && (
-                <div className="text-gray-300 text-sm py-4">
-                  모든 게시물을 불러왔습니다
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <ListEmpty />
-        )}
+            </>
+          ) : (
+            <ListEmpty />
+          )}
+        </div>
       </div>
-    </div>
+
+      {hasMore && isLoadingMore && (
+        <div className="masonry-grid w-full">
+          {[...Array(3)].map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="masonry-item break-inside-avoid"
+            >
+              <div className="block h-full">
+                <CardSkeleton />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 
