@@ -7,7 +7,7 @@ import { useRecoilState } from 'recoil';
 import { listIndexAtom } from 'service/atoms/atoms';
 import Link from 'next/link';
 import Card from 'components/Shared/LogmeCard';
-import ListEmpty from './ListEmpty';
+import ListEmpty from '../../../Shared/common/ListEmpty';
 
 interface AllViewProps {
   inputRef: React.RefObject<HTMLInputElement>;
@@ -106,60 +106,67 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-4 ">
-      <div
-        className={`${
-          posts.length === 0
-            ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
-            : 'masonry-grid'
-        }`}
-      >
-        {posts.length > 0 ? (
-          <>
-            {posts.map(({ id, title, content, tags, updated_at }, index) => (
-              <div key={id} className="masonry-item break-inside-avoid">
-                <Link
-                  href={`/article/content/all/${id}`}
-                  onClick={() => saveListIndex(index)}
-                  prefetch={true}
-                  className="block h-full"
-                >
-                  <Card
-                    title={title}
-                    content={content}
-                    tags={tags}
-                    updated_at={updated_at}
-                  />
-                </Link>
+    <>
+      <div className="flex flex-col gap-4 ">
+        <div
+          className={`${
+            posts.length === 0
+              ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
+              : 'masonry-grid'
+          }`}
+        >
+          {posts.length > 0 ? (
+            <>
+              {posts.map(({ id, title, content, tags, updated_at }, index) => (
+                <div key={id} className="masonry-item break-inside-avoid">
+                  <Link
+                    href={`/article/content/all/${id}`}
+                    onClick={() => saveListIndex(index)}
+                    prefetch={true}
+                    className="block h-full"
+                  >
+                    <Card
+                      title={title}
+                      content={content}
+                      tags={tags}
+                      updated_at={updated_at}
+                    />
+                  </Link>
+                </div>
+              ))}
+
+              <div
+                ref={loadingRef}
+                className="w-full flex flex-col items-center my-4"
+              >
+                {!hasMore && !isInitialLoading && (
+                  <div className="text-gray-300 text-sm py-4">
+                    모든 게시물을 불러왔습니다
+                  </div>
+                )}
               </div>
-            ))}
-
-            <div
-              ref={loadingRef}
-              className="w-full flex flex-col items-center my-4"
-            >
-              {hasMore && isLoadingMore && (
-                <div className="masonry-grid w-full">
-                  {[...Array(3)].map((_, index) => (
-                    <div key={`skeleton-${index}`} className="masonry-item">
-                      <CardSkeleton />
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {!hasMore && (
-                <div className="text-gray-300 text-sm py-4">
-                  모든 게시물을 불러왔습니다
-                </div>
-              )}
-            </div>
-          </>
-        ) : (
-          <ListEmpty />
-        )}
+            </>
+          ) : (
+            <ListEmpty />
+          )}
+        </div>
       </div>
-    </div>
+
+      {hasMore && isLoadingMore && (
+        <div className="masonry-grid w-full">
+          {[...Array(3)].map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="masonry-item break-inside-avoid"
+            >
+              <div className="block h-full">
+                <CardSkeleton />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 

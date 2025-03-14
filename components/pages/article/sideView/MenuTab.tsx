@@ -12,7 +12,7 @@ const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
 
   return (
     <div className="w-full  rounded-lg shadow-sm my-3">
-      <div className="flex items-center justify-center space-x-1 ">
+      <div className="flex items-center justify-center">
         <button
           onClick={() => handleSetMenu('list')}
           className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-l-lg transition-colors duration-200 focus:outline-none

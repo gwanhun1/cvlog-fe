@@ -29,13 +29,13 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
               placeholder="태그를 입력해보세요!!"
             />
 
-            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-blue-500 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-blue-600 rounded-full transition-all duration-300 hover:scale-105 cursor-pointer hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
               <IoMdSearch className="text-white w-5 h-5" />
             </div>
           </div>
         </div>
         <button
-          className="font-bold bg-blue-500 border border-blue-50 text-white rounded-2xl p-4 text-lg transition-all duration-300 transform hover:scale-105 hover:bg-blue-100 hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+          className="font-bold bg-blue-600 border border-blue-50 text-white rounded-2xl p-4 text-lg transition-all duration-300 transform hover:scale-105 hover:bg-blue-100 hover:text-blue-600 hover:outline hover:outline-2 hover:outline-blue-400 active:scale-95 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
           onClick={handleNewPost}
         >
           글 작성하기
