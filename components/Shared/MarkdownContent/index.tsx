@@ -23,7 +23,6 @@ interface MarkdownContentProps {
   id?: number;
 }
 
-// 파란 계열 색상
 const blueColors = ['#60a5fa', '#7bb9f9', '#93c8f8', '#a9d7f7', '#bedff6'];
 
 const MarkdownContentComponent = ({

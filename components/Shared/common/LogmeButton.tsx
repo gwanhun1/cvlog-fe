@@ -83,7 +83,7 @@ const GhostButton = styled(BaseButton)`
 export interface LogmeButtonProps {
   size: 'big' | 'medium' | 'small';
   variant?: 'classic' | 'ghost' | 'error' | 'success' | 'disabled';
-  disabled?: boolean; // 추가
+  disabled?: boolean;
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
@@ -93,7 +93,7 @@ export interface LogmeButtonProps {
 const LogmeButton = ({
   size,
   variant = 'classic',
-  disabled = false, // 기본값 false
+  disabled = false,
   children,
   className,
   style,
@@ -105,7 +105,7 @@ const LogmeButton = ({
     className,
     style,
     onClick,
-    disabled: disabled || variant === 'disabled', // 사용자가 직접 설정 가능
+    disabled: disabled || variant === 'disabled',
   };
 
   return variant === 'ghost' ? (

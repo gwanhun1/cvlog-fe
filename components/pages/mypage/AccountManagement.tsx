@@ -8,7 +8,6 @@ const AccountManagement = () => {
   const router = useRouter();
 
   const handleDeleteAccount = async () => {
-    // 사용자에게 확인 요청
     const isConfirmed = window.confirm(
       '정말로 회원 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없으며, 작성한 모든 게시물이 삭제됩니다. (다른 게시물에 작성한 댓글은 유지됩니다)'
     );
@@ -22,11 +21,8 @@ const AccountManagement = () => {
       setError(null);
 
       await deleteAccount();
-
-      // 로컬 스토리지의 토큰 삭제
       localStorage.removeItem('token');
 
-      // 홈페이지로 리다이렉트
       router.push('/');
     } catch (err) {
       setError('회원 탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');

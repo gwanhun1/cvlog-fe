@@ -58,10 +58,6 @@ export const getServerSideProps: GetServerSideProps = async context => {
     const { query } = context;
     const { code, state } = query;
 
-    // state 검증 로직 추가 (CSRF 방지)
-    // 클라이언트 측 검증은 브라우저 쿠키를 통해 수행해야 하지만,
-    // SSR 환경에서는 세션에 직접 접근할 수 없으므로 백엔드에서 처리 필요
-
     if (!code) {
       console.error('GitHub OAuth 코드가 없습니다:', query);
       return {
@@ -72,7 +68,6 @@ export const getServerSideProps: GetServerSideProps = async context => {
       };
     }
 
-    // 소셜 로그인 요청 시 재시도 로직 추가
     const maxRetries = 3;
     let retryCount = 0;
     let response;
@@ -85,13 +80,12 @@ export const getServerSideProps: GetServerSideProps = async context => {
           code
         );
 
-        // 요청 URL과 파라미터 정확히 확인
         const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login?code=${code}`;
         console.log('요청 URL:', url);
 
         response = await axios.get(url, {
           withCredentials: true,
-          timeout: 15000, // 타임아웃 15초로 증가
+          timeout: 15000,
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
@@ -99,7 +93,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
         });
 
         console.log('GitHub OAuth 응답 상태:', response.status);
-        break; // 성공하면 반복문 종료
+        break;
       } catch (error: any) {
         lastError = error;
         console.error(
@@ -110,9 +104,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
         retryCount++;
         if (retryCount >= maxRetries) {
-          throw error; // 최대 재시도 횟수를 초과하면 에러 발생
+          throw error;
         }
-        // 재시도 전 대기 시간 (지수 백오프)
         await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
       }
     }

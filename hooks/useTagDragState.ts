@@ -107,14 +107,11 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
         },
         {
           onSuccess: data => {
-            console.log('Tag moved successfully');
-            // Invalidate queries to refresh data
-            queryClient.invalidateQueries('tagsFolder');
+            queryClient.invalidateQueries(['tagsFolder']);
           },
           onError: error => {
             console.error('Error updating tag folder:', error);
-            // Invalidate to refresh from server
-            queryClient.invalidateQueries('tagsFolder');
+            queryClient.invalidateQueries(['tagsFolder']);
           },
         }
       );

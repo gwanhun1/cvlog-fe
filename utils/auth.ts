@@ -16,7 +16,6 @@ export const handleSignOut = async (
     LocalStorage.removeItem('user_info');
     Sessionstorage.removeItem('recoil-persist');
 
-    // userIdAtom 초기화
     if (setUserId) {
       setUserId({
         id: 0,

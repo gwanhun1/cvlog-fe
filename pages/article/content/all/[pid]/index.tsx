@@ -211,9 +211,7 @@ const Detail = ({ pid }: { pid: string }) => {
                 <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
                   <div className="pr-2 text-lg tablet:text-xl">←</div>
                   <div className="flex-col flex w-full truncate">
-                    <div className="text-xs tablet:text-sm">
-                      이전 포스트
-                    </div>
+                    <div className="text-xs tablet:text-sm">이전 포스트</div>
                     <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
                       {detailData.prevPostInfo.title}
                     </div>
@@ -233,9 +231,7 @@ const Detail = ({ pid }: { pid: string }) => {
               >
                 <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
                   <div className="flex-col flex w-full truncate text-right">
-                    <div className="text-xs tablet:text-sm">
-                      다음 포스트
-                    </div>
+                    <div className="text-xs tablet:text-sm">다음 포스트</div>
                     <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
                       {detailData.nextPostInfo.title}
                     </div>
@@ -273,14 +269,11 @@ export const getStaticProps = async ({ params }: any) => {
   }
 
   try {
-    // 여기서 초기 데이터를 미리 가져올 수 있습니다
-    // const initialData = await fetchInitialData(pid);
-
     return {
       props: {
         pid,
       },
-      revalidate: 60, // 60초마다 재검증
+      revalidate: 60,
     };
   } catch (error) {
     return {

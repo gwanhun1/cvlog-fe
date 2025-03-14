@@ -9,5 +9,5 @@
   "css.validate": false,
   "scss.validate": false,
   "cSpell.words": ["Sandpack"],
-  "cSpell.userWords": ["logme"]
+  "cSpell.userWords": ["logme", "Logme"]
 }

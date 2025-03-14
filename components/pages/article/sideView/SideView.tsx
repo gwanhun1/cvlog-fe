@@ -11,7 +11,6 @@ import DragOverlayItem from './DragOverlayItem';
 import SideViewSkeleton from './Skeleton';
 import SideViewEmpty from './Empty';
 import { useTagDragState } from 'hooks/useTagDragState';
-import { Folder } from 'service/api/tag/type';
 import UnassignedTagListContent from './UnassignedTagListContent';
 
 const SideMenu = () => {

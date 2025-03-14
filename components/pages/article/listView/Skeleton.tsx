@@ -30,7 +30,6 @@ const CardSkeleton = () => (
   </article>
 );
 
-// 스켈레톤 로딩 상태 표시 부분
 const SkeletonLoader = () => {
   return (
     <div className="masonry-grid">

@@ -49,7 +49,6 @@ export const fetchRemoveTagsFolders = async (params: number) => {
 };
 
 export const putTagsFolders = async (params: UpdateForm) => {
-  // Validate the parameters to make sure they are numbers
   const tagId = Number(params.tag_id);
   const folderId = Number(params.folder_id);
 

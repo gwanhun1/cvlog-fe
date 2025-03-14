@@ -106,23 +106,6 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
     );
   }
 
-  //FIXME: 필터링인데 수정사항임.
-  // const filteredPosts = posts
-  //   ? posts.filter(item => {
-  //       const titleMatch = item.title
-  //         ? item.title.toLowerCase().includes((keyword || '').toLowerCase())
-  //         : false;
-
-  //       const tagMatch = item.tags.some((tag: TagType) =>
-  //         tag.name
-  //           ? tag.name.toLowerCase().includes((keyword || '').toLowerCase())
-  //           : false
-  //       );
-
-  //       return titleMatch || tagMatch;
-  //     })
-  //   : [];
-
   return (
     <div className="flex flex-col gap-4 ">
       <div

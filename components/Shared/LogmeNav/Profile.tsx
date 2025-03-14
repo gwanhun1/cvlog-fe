@@ -73,14 +73,6 @@ const NavPriofile = ({ setAuthority }: Props) => {
     return null;
   }
 
-  // if (userInfo) {
-  //   return (
-  //     <nav>
-  //       <Loader />
-  //     </nav>
-  //   );
-  // }
-
   return (
     <nav>
       {userInfo ? (

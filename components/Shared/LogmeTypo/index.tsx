@@ -17,7 +17,6 @@ export interface LogmeTextProps extends LogmeTypoBaseProps {
   link?: boolean;
 }
 
-// 헤드라인 스타일 컴포넌트
 export const LogmeHeadline = ({
   type,
   fontStyle,
