@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import axios from 'axios';
 import Loader from 'components/Shared/common/Loader';
 import Cookie from 'public/utils/Cookie';
@@ -11,9 +11,19 @@ import {
   userIdAtom,
 } from 'service/atoms/atoms';
 import { useRouter } from 'next/router';
+
 axios.defaults.withCredentials = true;
 
-const Join = ({ info, cookie }: JoinProps) => {
+interface Info {
+  data: { accessToken: string };
+}
+
+type JoinProps = {
+  info: Info;
+  cookie: string;
+};
+
+const Join: NextPage<JoinProps> = ({ info, cookie }) => {
   const setUserInfo = useSetRecoilState(userIdAtom);
   const setAccessToken = useSetRecoilState(accessTokenAtom);
   const setRefreshToken = useSetRecoilState(refreshTokenAtom);
@@ -60,7 +70,6 @@ const Join = ({ info, cookie }: JoinProps) => {
   );
 };
 export default Join;
-
 //ssr 소셜 로그인 처리
 export const getServerSideProps: GetServerSideProps = async context => {
   try {
@@ -162,13 +171,4 @@ export const getServerSideProps: GetServerSideProps = async context => {
       },
     };
   }
-};
-
-interface Info {
-  data: { accessToken: string };
-}
-
-type JoinProps = {
-  info: Info;
-  cookie: string;
 };

@@ -12,7 +12,13 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 
   // 로그인 없이 접근 가능한 경로 목록
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const publicRoutes = ['/', '/login', '/article', /^\/article\/all\/\d+$/];
+  const publicRoutes = [
+    '/',
+    '/join',
+    '/login',
+    '/article',
+    /^\/article\/all\/\d+$/,
+  ];
 
   const checkAuthStatus = useCallback(async () => {
     setIsLoading(true);

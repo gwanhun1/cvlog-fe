@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import 'easymde/dist/easymde.min.css';
 
 import ModifyBtn from 'components/pages/article/modify/ModifyBtn';
@@ -16,7 +16,7 @@ interface ModifyPostProps {
   pid: string;
 }
 
-const ModifyPost = ({ pid }: ModifyPostProps) => {
+const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   const [doc, setDoc] = useState<DocType>({
     title: '',
     content: '',

@@ -8,14 +8,14 @@ import {
 } from '../../components/pages/github/ActivityStats';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
+import { NextPage } from 'next';
 
-const Github = () => {
+const Github: NextPage = () => {
   const userInfo = useRecoilValue(userIdAtom);
 
   if (!userInfo) {
     return <SkeletonLayout />;
   }
-  console.log(userInfo);
 
   if (!userInfo?.github_id) {
     return (

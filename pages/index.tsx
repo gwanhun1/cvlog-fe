@@ -1,4 +1,4 @@
-import type { GetStaticProps, NextPage } from 'next';
+import type { GetStaticProps } from 'next';
 import Introduce from '../components/pages/home/introduce';
 import Header from '../components/pages/home/Header';
 import Footer from '../components/pages/home/Footer';

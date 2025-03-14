@@ -15,8 +15,13 @@ import { Badge } from 'flowbite-react';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { TagType } from 'service/api/detail/type';
+import { NextPage } from 'next';
 
-const Detail = ({ pid }: { pid: string }) => {
+type DetailProps = {
+  pid: string;
+};
+
+const Detail: NextPage<DetailProps> = ({ pid }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
