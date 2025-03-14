@@ -11,6 +11,7 @@ import 'styles/markdown.module.scss';
 import dynamic from 'next/dynamic';
 import ErrorBoundary from 'components/Shared/common/ErrorPage';
 import { SafeHydrate } from './SafeHydrate';
+import AuthGuard from 'components/Shared/common/AuthGuard';
 
 const ClientNav = dynamic(() => Promise.resolve(Nav), { ssr: false });
 
@@ -39,7 +40,9 @@ export default function App({ Component, pageProps }: AppProps) {
           )}
           <Layout>
             <ErrorBoundary>
-              <Component {...pageProps} />
+              <AuthGuard>
+                <Component {...pageProps} />
+              </AuthGuard>
             </ErrorBoundary>
           </Layout>
         </SafeHydrate>
