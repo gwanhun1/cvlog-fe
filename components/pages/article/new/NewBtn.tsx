@@ -113,47 +113,46 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
           <LoaderAnimation />
         </div>
       )}
-      <div className="tablet:pt-4">
+      <div className="tablet:pt-4 tablet:relative">
+        <div className="z-50 flex items-center justify-end gap-2 absolute bottom-0 tablet:top-0 tablet:bottom-auto right-0 tablet:mt-2 mb-2 tablet:mb-0">
+          <Shared.LogmeButton
+            variant="ghost"
+            size="small"
+            onClick={() =>
+              accessToken ? router.push('/article') : router.push('/')
+            }
+          >
+            <Shared.LogmeHeadline type="medium" fontStyle="semibold">
+              취소
+            </Shared.LogmeHeadline>
+          </Shared.LogmeButton>
+
+          <Shared.LogmeButton
+            variant="classic"
+            size="small"
+            onClick={() =>
+              accessToken ? saveNewPost() : alert(ERROR_MESSAGES.LOGIN_REQUIRED)
+            }
+          >
+            <Shared.LogmeHeadline
+              type="medium"
+              fontStyle="semibold"
+              style={{ color: '#fff' }}
+            >
+              저장
+            </Shared.LogmeHeadline>
+          </Shared.LogmeButton>
+        </div>
+
         <div className="flex relative px-2 border-b tablet:pt-2 border-gray-400">
           <input
-            className="w-full h-10  font-bold  placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
+            className="tablet:mt-0 w-full h-10  font-bold  placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
             name="title"
             value={doc.title}
             placeholder="오늘의 특별한 주제는 무엇인가요? 🌟"
             onKeyDown={changeFocusContent}
             onChange={onChangeTextarea}
           />
-          <div className="flex items-center justify-end gap-2 absolute right-0 top-0">
-            <Shared.LogmeButton
-              variant="ghost"
-              size="small"
-              onClick={() =>
-                accessToken ? router.push('/article') : router.push('/')
-              }
-            >
-              <Shared.LogmeHeadline type="medium" fontStyle="semibold">
-                취소
-              </Shared.LogmeHeadline>
-            </Shared.LogmeButton>
-
-            <Shared.LogmeButton
-              variant="classic"
-              size="small"
-              onClick={() =>
-                accessToken
-                  ? saveNewPost()
-                  : alert(ERROR_MESSAGES.LOGIN_REQUIRED)
-              }
-            >
-              <Shared.LogmeHeadline
-                type="medium"
-                fontStyle="semibold"
-                style={{ color: '#fff' }}
-              >
-                저장
-              </Shared.LogmeHeadline>
-            </Shared.LogmeButton>
-          </div>
         </div>
         <div className="min-h-[83px]">
           <div className="relative flex px-2 pt-4 border-b border-gray-400">
