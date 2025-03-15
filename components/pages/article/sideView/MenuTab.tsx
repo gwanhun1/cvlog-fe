@@ -1,10 +1,10 @@
 import LocalStorage from 'public/utils/Localstorage';
 import React from 'react';
 
-type MenuTabProps = {
+interface MenuTabProps {
   setMenu: React.Dispatch<React.SetStateAction<'list' | 'all'>>;
   activeMenu?: 'list' | 'all';
-};
+}
 
 const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
   const accessToken = LocalStorage.getItem('LogmeToken');

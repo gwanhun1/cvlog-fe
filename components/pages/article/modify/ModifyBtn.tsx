@@ -9,8 +9,8 @@ import LocalStorage from 'public/utils/Localstorage';
 import { useCallback, useState } from 'react';
 import { userIdAtom } from 'service/atoms/atoms';
 import { useRecoilValue } from 'recoil';
-import Loader from 'components/Shared/common/Loader';
 import Tooltip from 'components/Shared/common/Tooltip';
+import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 
 interface ModifyBtnProps {
   doc: DocType;
@@ -104,7 +104,7 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
     <>
       {isLoading && (
         <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center">
-          <Loader />
+          <LoaderAnimation />
         </div>
       )}
       <div className="tablet:pt-4">
@@ -159,7 +159,6 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
                 placeholder="태그를 만들어주세요."
                 onKeyDown={handleCreateTag}
                 onChange={handleTagChange}
-                title="태그를 입력하면 검색, 필터, 하이라이트 기능을 사용할 수 있어요.\nEnter 키로 추가해 주세요."
               />
             </Tooltip>
           </div>

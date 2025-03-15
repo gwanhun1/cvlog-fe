@@ -6,11 +6,11 @@ import ModifyBtn from 'components/pages/article/modify/ModifyBtn';
 import ModifyContents from 'components/pages/article/modify/ModifyContents';
 import { useGetMyDetail } from 'service/hooks/Detail';
 
-export type DocType = {
+export interface DocType {
   title: string;
   content: string;
   tags: string[];
-};
+}
 
 interface ModifyPostProps {
   pid: string;

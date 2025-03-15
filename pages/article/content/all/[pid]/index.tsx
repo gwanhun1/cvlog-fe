@@ -21,9 +21,9 @@ import {
 import { TagType } from 'service/api/detail/type';
 import { NextPage } from 'next';
 
-type DetailProps = {
+interface DetailProps {
   pid: string;
-};
+}
 
 const Detail: NextPage<DetailProps> = ({ pid }) => {
   const router = useRouter();

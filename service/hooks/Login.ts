@@ -1,8 +1,9 @@
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   getUserInfo,
   handleGetErrors,
   postRefreshToken,
+  updateUserDescription,
 } from 'service/api/login';
 import { GetNewTokenApi } from 'service/api/login/type';
 
@@ -12,15 +13,27 @@ export const useRefreshToken = (params: GetNewTokenApi) => {
   });
 };
 
-export const useGetUserInfo = () => {
+export const useUpdateUserDescription = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (description: string) => updateUserDescription(description),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['userInfo']);
+      },
+    }
+  );
+};
+
+export const useGetUserInfo = (onSuccess?: (data: any) => void) => {
   return useQuery({
     queryKey: ['userInfo'],
     queryFn: () => {
       return getUserInfo();
     },
-    onError: handleGetErrors,
     retry: 0,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5,
+    onError: handleGetErrors,
+    onSuccess: onSuccess ? data => onSuccess(data) : undefined,
   });
 };

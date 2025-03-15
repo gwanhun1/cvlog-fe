@@ -6,6 +6,7 @@ import { accessTokenAtom } from 'service/atoms/atoms';
 import NavMenuItem from './NavMenuItem';
 import DesktopNavActions from './DesktopNavActions';
 import MobileNav from './MobileNav';
+import useIsLogin from 'hooks/useIsLogin';
 
 const MENU_ITEMS = [
   { name: 'HOME', path: '/', requiresAuth: false },
@@ -16,8 +17,9 @@ const MENU_ITEMS = [
 
 const Nav = () => {
   const [accessToken] = useRecoilState(accessTokenAtom);
+  const { isAuthenticated, isLoading } = useIsLogin();
 
-  const isAuthenticated = !!accessToken;
+  const isAuth = !!accessToken || isAuthenticated;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-bgWhite shadow-gray-200">
@@ -31,22 +33,19 @@ const Nav = () => {
         <nav className="items-center justify-center hidden col-span-6 tablet:flex">
           <div className="flex items-center justify-center gap-2">
             {MENU_ITEMS.map(item => (
-              <NavMenuItem
-                key={item.name}
-                {...item}
-                isAuthenticated={isAuthenticated}
-              />
+              <NavMenuItem key={item.name} {...item} isAuthenticated={isAuth} />
             ))}
           </div>
         </nav>
 
         <div className="flex items-center justify-end col-span-8 gap-6 tablet:col-span-3">
           <div className="tablet:hidden">
-            <MobileNav />
+            <MobileNav isLoading={isLoading} />
           </div>
           <DesktopNavActions
-            isAuthenticated={isAuthenticated}
+            isAuthenticated={isAuth}
             setAuthority={() => {}}
+            isLoading={isLoading}
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { deleteAccount } from 'service/api/user';
+import { deleteAccount } from 'service/api/login';
 
 const AccountManagement = () => {
   const [isDeleting, setIsDeleting] = useState(false);

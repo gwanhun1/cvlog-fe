@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { FiBookOpen } from 'react-icons/fi';
 
-type ActivityRowProps = {
+interface ActivityRowProps {
   title: string;
   time: string;
   id: number;
-};
+}
 
 const ActivityRow = ({ title, time, id }: ActivityRowProps) => {
   return (

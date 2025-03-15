@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FiEdit3 } from 'react-icons/fi';
-import { useUpdateUserDescription } from 'service/hooks/User';
+import { useUpdateUserDescription } from 'service/hooks/Login';
 
 interface HomeSectionProps {
   description: string | null | undefined;

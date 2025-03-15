@@ -4,15 +4,24 @@ import * as Shared from 'components/Shared';
 import Link from 'next/link';
 import NavPriofile from './Profile';
 import { useRouter } from 'next/router';
+import Loader from '../common/Loader';
+
+interface DesktopNavActionsProps {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  setAuthority: Dispatch<SetStateAction<boolean>>;
+}
 
 const DesktopNavActions = ({
   isAuthenticated,
+  isLoading,
   setAuthority,
-}: {
-  isAuthenticated: boolean;
-  setAuthority: Dispatch<SetStateAction<boolean>>;
-}) => {
+}: DesktopNavActionsProps) => {
   const router = useRouter();
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   if (isAuthenticated) {
     return (
