@@ -111,14 +111,11 @@ axiosInstance.interceptors.response.use(
         const accessToken = LocalStorage.getItem('LogmeToken');
 
         if (!refreshToken || !accessToken) {
-          // Instead of throwing an error, handle silently and redirect
           isRefreshing = false;
           if (typeof window !== 'undefined') {
-            // Clear any existing tokens as they're invalid
             Cookie.removeItem('refreshToken');
             LocalStorage.removeItem('LogmeToken');
-            
-            // Redirect to login page if we're not already there
+
             if (!window.location.pathname.includes('/login')) {
               window.location.href = '/login';
             }
@@ -189,14 +186,5 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export const axiosMock = async (mockType: string): Promise<any> => {
-  const axiosMockBase: AxiosInstance = axios.create({
-    baseURL: `/mockData/${mockType}MockData.json`,
-  });
-
-  const response = await axiosMockBase.get('');
-  return response.data;
-};
 
 export default axiosInstance;

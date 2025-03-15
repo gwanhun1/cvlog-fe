@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import axios from 'axios';
-import Loader from 'components/Shared/common/Loader';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { useSetRecoilState } from 'recoil';
@@ -11,6 +10,7 @@ import {
   userIdAtom,
 } from 'service/atoms/atoms';
 import { useRouter } from 'next/router';
+import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 
 axios.defaults.withCredentials = true;
 
@@ -18,10 +18,10 @@ interface Info {
   data: { accessToken: string };
 }
 
-type JoinProps = {
+interface JoinProps {
   info: Info;
   cookie: string;
-};
+}
 
 const Join: NextPage<JoinProps> = ({ info, cookie }) => {
   const setUserInfo = useSetRecoilState(userIdAtom);
@@ -65,7 +65,7 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
 
   return (
     <div className="flex flex-col items-center justify-center mt-20">
-      <Loader />
+      <LoaderAnimation />
     </div>
   );
 };

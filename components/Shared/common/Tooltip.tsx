@@ -129,7 +129,7 @@ const Tooltip: React.FC<TooltipProps> = ({
       {isVisible && (
         <div
           ref={tooltipRef}
-          className="w-72 absolute top-10 z-50 px-3 py-2  text-sm text-gray-700 bg-white rounded shadow-md whitespace-pre-line"
+          className="w-80 absolute top-10 z-50 px-3 py-2  text-sm text-gray-700 bg-white rounded shadow-md whitespace-pre-line"
           style={getPositionStyles()}
         >
           {content}

@@ -2,11 +2,11 @@ import { useRouter } from 'next/router';
 import LocalStorage from 'public/utils/Localstorage';
 import { IoMdSearch } from 'react-icons/io';
 
-type FilterBoxProps = {
+interface FilterBoxProps {
   keyword: string;
   setKeyword: (keyword: string) => void;
   inputRef: React.RefObject<HTMLInputElement>;
-};
+}
 
 const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
   const accessToken = LocalStorage.getItem('LogmeToken');

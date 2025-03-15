@@ -84,12 +84,12 @@ export interface PatchDetail {
   };
 }
 
-export type TagType = {
+export interface TagType {
   id: number;
   name: string;
-};
+}
 
-export type BlogType = {
+export interface BlogType {
   id: number;
   title: string;
   content: string;
@@ -100,14 +100,14 @@ export type BlogType = {
   image: string;
   index: number;
   tags: TagType[];
-};
+}
 
-export type ListDataType = {
+export interface ListDataType {
   posts: BlogType[];
   maxPage: number;
-};
+}
 
-export type GetListType = {
+export interface GetListType {
   success: boolean;
   data: ListDataType;
-};
+}

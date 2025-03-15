@@ -6,11 +6,11 @@ import NewBtn from '../../../components/pages/article/new/NewBtn';
 import NewContents from '../../../components/pages/article/new/NewContents';
 import { EDITOR_CONSTANTS } from 'lib/constants';
 
-export type DocType = {
+export interface DocType {
   title: string;
   content: string;
   tags: string[];
-};
+}
 
 const INIT_USER_INPUT = {
   title: '',

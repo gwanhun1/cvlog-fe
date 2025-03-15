@@ -9,8 +9,8 @@ import { DocType } from 'pages/article/new';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { IoIosCloseCircle } from 'react-icons/io';
-import Loader from 'components/Shared/common/Loader';
 import Tooltip from 'components/Shared/common/Tooltip';
+import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 
 interface NewBtnProps {
   doc: DocType;
@@ -110,7 +110,7 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
     <>
       {isLoading && (
         <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center">
-          <Loader />
+          <LoaderAnimation />
         </div>
       )}
       <div className="tablet:pt-4">

@@ -2,10 +2,10 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { cn } from 'styles/utils';
 import TagHighlight from './TagHighlight';
 
-type TocItemsProps = {
+interface TocItemsProps {
   contentRef: React.RefObject<HTMLDivElement>;
   content: string;
-};
+}
 
 interface TOCItem {
   id: string;
