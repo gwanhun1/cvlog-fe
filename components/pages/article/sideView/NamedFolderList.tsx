@@ -30,14 +30,14 @@ const NamedFolderList = ({
           folder={folder}
           draggedTagName={draggedTagName}
         >
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 cursor-move">
             <FolderItem
               folder={folder}
               isOpened={closedIdx.includes(folder.id)}
               onClickAccordion={onClickAccordion}
             />
             <div
-              className={`mt-1  transition-all duration-300 ${
+              className={`mt-1 transition-all duration-300 ${
                 closedIdx.includes(folder.id)
                   ? 'max-h-0 overflow-hidden'
                   : 'max-h-[500px]'

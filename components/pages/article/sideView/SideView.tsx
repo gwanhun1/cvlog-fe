@@ -1,6 +1,23 @@
-import { useCallback, useState } from 'react';
-import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { useCallback, useState, useEffect, useMemo } from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  useSensor,
+  useSensors,
+  MouseSensor,
+  TouchSensor,
+  KeyboardSensor,
+  DragStartEvent,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+} from '@dnd-kit/modifiers';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { useGetFolders } from 'service/hooks/List';
 import LogmeAddModal from 'components/Shared/LogmeTag/LogmeAddModal';
 import LogmeRemoveModal from 'components/Shared/LogmeTag/LogmeRemoveModal';
@@ -19,26 +36,96 @@ const SideMenu = () => {
   const [closedIdx, setClosedIdx] = useState<number[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectModal, setSelectModal] = useState<string>('');
+  const [dragActive, setDragActive] = useState(false);
 
-  const unassignedFolder = queryGetTagsFolders.data?.find(
-    folder => folder.id === 999
+  // Enhanced sensors with better performance configurations
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      // Reduced delay for more responsive drag start
+      activationConstraint: {
+        delay: 100,
+        tolerance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150,
+        tolerance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {})
+  );
+
+  const unassignedFolder = useMemo(
+    () => queryGetTagsFolders.data?.find(folder => folder.id === 999),
+    [queryGetTagsFolders.data]
   );
 
   const {
     activeTag,
     draggedTagName,
-    sensors,
     handleDragStart,
+    handleDragMove,
     handleDragEnd,
     isUpdating,
   } = useTagDragState(queryGetTagsFolders.data);
 
-  const namedFolder =
-    queryGetTagsFolders.data?.filter(
-      item => item.name !== '' && item.id !== 999
-    ) ?? [];
-  const defaultFolder =
-    queryGetTagsFolders.data?.filter(item => item.id === 999) ?? [];
+  // Memoize folders data to prevent unnecessary re-renders
+  const { namedFolder, defaultFolder } = useMemo(
+    () => ({
+      namedFolder:
+        queryGetTagsFolders.data?.filter(
+          item => item.name !== '' && item.id !== 999
+        ) ?? [],
+      defaultFolder:
+        queryGetTagsFolders.data?.filter(item => item.id === 999) ?? [],
+    }),
+    [queryGetTagsFolders.data]
+  );
+
+  // Memoize sortable items for better performance
+  const sortableItems = useMemo(() => {
+    const items: string[] = [];
+
+    if (namedFolder) {
+      namedFolder.forEach(folder => {
+        if (folder.tags) {
+          folder.tags.forEach(tag => {
+            items.push(`${folder.id}-${tag.id}`);
+          });
+        }
+      });
+    }
+
+    if (unassignedFolder && unassignedFolder.tags) {
+      unassignedFolder.tags.forEach(tag => {
+        items.push(`unassigned-${tag.id}`);
+      });
+    }
+
+    return items;
+  }, [namedFolder, unassignedFolder]);
+
+  // Handle drag start with animation effects
+  const onDragStart = useCallback(
+    (event: DragStartEvent) => {
+      // Performance optimization: set cursor style earlier for immediate feedback
+      document.body.style.cursor = 'grabbing';
+      setDragActive(true);
+      handleDragStart(event);
+    },
+    [handleDragStart]
+  );
+
+  // Handle drag end with cleanup
+  const onDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      document.body.style.cursor = 'default';
+      setDragActive(false);
+      handleDragEnd(event);
+    },
+    [handleDragEnd]
+  );
 
   const onClickAccordion = useCallback(
     (id: number) => (e: React.MouseEvent<HTMLDivElement>) => {
@@ -60,6 +147,13 @@ const SideMenu = () => {
     },
     [isUpdating]
   );
+
+  // Clean up any lingering state on component unmount
+  useEffect(() => {
+    return () => {
+      document.body.style.cursor = 'default';
+    };
+  }, []);
 
   if (queryGetTagsFolders.isLoading) {
     return <SideViewSkeleton />;
@@ -86,9 +180,9 @@ const SideMenu = () => {
       )}
 
       <div
-        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden ${
+        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden transition-opacity duration-200 ${
           isUpdating ? 'pointer-events-none opacity-80' : ''
-        }`}
+        } ${dragActive ? 'ring-2 ring-blue-200' : ''}`}
       >
         <SideViewHeader
           hasContent={hasContent}
@@ -102,35 +196,45 @@ const SideMenu = () => {
           ) : (
             <DndContext
               sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis]}
+              onDragStart={onDragStart}
+              onDragMove={handleDragMove}
+              onDragEnd={onDragEnd}
+              modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
             >
-              <div className="space-y-4">
-                <NamedFolderList
-                  folders={namedFolder}
-                  draggedTagName={draggedTagName}
-                  closedIdx={closedIdx}
-                  onClickAccordion={onClickAccordion}
-                />
+              <SortableContext
+                items={sortableItems}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-4">
+                  <NamedFolderList
+                    folders={namedFolder}
+                    draggedTagName={draggedTagName}
+                    closedIdx={closedIdx}
+                    onClickAccordion={onClickAccordion}
+                  />
 
-                {unassignedFolder && (
-                  <div className="mt-4">
-                    <div className="text-xs text-gray-500 mb-2 px-2">
-                      {unassignedFolder.name}
+                  {unassignedFolder && (
+                    <div className="mt-4">
+                      <div className="text-xs text-gray-500 mb-2 px-2">
+                        {unassignedFolder.name}
+                      </div>
+                      <UnassignedTagListContent
+                        folder={unassignedFolder}
+                        draggedTagName={draggedTagName}
+                      />
                     </div>
-                    <UnassignedTagListContent
-                      folder={unassignedFolder}
-                      draggedTagName={draggedTagName}
-                    />
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
 
-              <DragOverlay>
-                {activeTag && <DragOverlayItem tag={activeTag.tag} />}
-              </DragOverlay>
+                <DragOverlay
+                  dropAnimation={{
+                    duration: 150, // Faster animation for better responsiveness
+                    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                  }}
+                >
+                  {activeTag && <DragOverlayItem tag={activeTag.tag} />}
+                </DragOverlay>
+              </SortableContext>
             </DndContext>
           )}
         </div>
