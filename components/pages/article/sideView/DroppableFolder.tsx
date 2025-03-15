@@ -108,7 +108,6 @@ const DroppableFolder = ({
   );
 };
 
-// Use memo with a custom comparison function to prevent unnecessary re-renders
 export default memo(DroppableFolder, (prevProps, nextProps) => {
   return (
     prevProps.folder.id === nextProps.folder.id &&

@@ -38,10 +38,8 @@ const SideMenu = () => {
   const [selectModal, setSelectModal] = useState<string>('');
   const [dragActive, setDragActive] = useState(false);
 
-  // Enhanced sensors with better performance configurations
   const sensors = useSensors(
     useSensor(MouseSensor, {
-      // Reduced delay for more responsive drag start
       activationConstraint: {
         delay: 100,
         tolerance: 5,
@@ -70,7 +68,6 @@ const SideMenu = () => {
     isUpdating,
   } = useTagDragState(queryGetTagsFolders.data);
 
-  // Memoize folders data to prevent unnecessary re-renders
   const { namedFolder, defaultFolder } = useMemo(
     () => ({
       namedFolder:
@@ -83,7 +80,6 @@ const SideMenu = () => {
     [queryGetTagsFolders.data]
   );
 
-  // Memoize sortable items for better performance
   const sortableItems = useMemo(() => {
     const items: string[] = [];
 
@@ -106,10 +102,8 @@ const SideMenu = () => {
     return items;
   }, [namedFolder, unassignedFolder]);
 
-  // Handle drag start with animation effects
   const onDragStart = useCallback(
     (event: DragStartEvent) => {
-      // Performance optimization: set cursor style earlier for immediate feedback
       document.body.style.cursor = 'grabbing';
       setDragActive(true);
       handleDragStart(event);
@@ -117,7 +111,6 @@ const SideMenu = () => {
     [handleDragStart]
   );
 
-  // Handle drag end with cleanup
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {
       document.body.style.cursor = 'default';
@@ -148,7 +141,6 @@ const SideMenu = () => {
     [isUpdating]
   );
 
-  // Clean up any lingering state on component unmount
   useEffect(() => {
     return () => {
       document.body.style.cursor = 'default';
@@ -182,7 +174,7 @@ const SideMenu = () => {
       <div
         className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden transition-opacity duration-200 ${
           isUpdating ? 'pointer-events-none opacity-80' : ''
-        } ${dragActive ? 'ring-2 ring-blue-200' : ''}`}
+        }`}
       >
         <SideViewHeader
           hasContent={hasContent}
@@ -228,7 +220,7 @@ const SideMenu = () => {
 
                 <DragOverlay
                   dropAnimation={{
-                    duration: 150, // Faster animation for better responsiveness
+                    duration: 150,
                     easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
                   }}
                 >

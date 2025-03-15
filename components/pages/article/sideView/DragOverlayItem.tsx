@@ -6,7 +6,6 @@ interface DragOverlayItemProps {
 }
 
 const DragOverlayItem = ({ tag }: DragOverlayItemProps) => {
-  // Enhanced styles for the drag overlay
   const style: CSSProperties = {
     transform: 'scale(1.05)',
     boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
@@ -18,7 +17,7 @@ const DragOverlayItem = ({ tag }: DragOverlayItemProps) => {
   };
 
   return (
-    <div 
+    <div
       style={style}
       className="bg-white rounded-lg border border-blue-300 p-2 animate-pulse"
     >
