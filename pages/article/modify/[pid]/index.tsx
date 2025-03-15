@@ -67,7 +67,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   }, []);
 
   return (
-    <main className="h-screen min-h-screen  px-10">
+    <main className="h-screen min-h-screen mx-2 tablet:px-10">
       <div className="flex flex-col h-full">
         <header className="flex-none">
           <ModifyBtn doc={doc} setDoc={setDoc} pid={pid} imageArr={imageArr} />
