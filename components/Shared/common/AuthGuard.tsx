@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { postRefreshToken } from 'service/api/login';
 import LocalStorage from 'public/utils/Localstorage';
 import Cookie from 'public/utils/Cookie';
-import Loader from './Loader';
+import LoaderAnimation from './LoaderAnimation';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -92,25 +92,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   }, [router.pathname, checkAuthStatus]);
 
   if (isLoading) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-80 z-50">
-        <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full text-center">
-          <div className="relative mx-auto mb-6">
-            <Loader />
-          </div>
-
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
-            데이터 동기화 중
-          </h3>
-          <p className="text-gray-600 mb-4">잠시만 기다려 주세요...</p>
-
-          <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-            <div className="bg-blue-500 h-2 rounded-full animate-pulse"></div>
-          </div>
-          <p className="text-xs text-gray-500">서버와 통신하는 중입니다</p>
-        </div>
-      </div>
-    );
+    return <LoaderAnimation />;
   }
 
   if (

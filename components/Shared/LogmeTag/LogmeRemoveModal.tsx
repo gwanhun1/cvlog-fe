@@ -14,24 +14,35 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({
   setShowModal,
 }) => {
   const [selectFolder, setSelectFolder] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { data: folders } = useGetFolders();
   const queryClient = useQueryClient();
 
   const removeTagsFolders = useRemoveFolders(selectFolder);
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => !isLoading && setShowModal(false);
 
   const removeFolder = async () => {
     if (selectFolder === 0) return;
 
+    setIsLoading(true);
+    document.body.style.cursor = 'wait';
+
     try {
-      await removeTagsFolders.mutate();
-      setSelectFolder(0);
-      setShowModal(false);
-      queryClient.invalidateQueries('tagsFolder');
-    } catch (error) {
-      console.error('Error removing folder:', error);
+      await removeTagsFolders.mutateAsync(undefined, {
+        onSuccess: () => {
+          queryClient.invalidateQueries(['tagsFolder']);
+          setSelectFolder(0);
+          setShowModal(false);
+        },
+        onError: (error) => {
+          console.error('Error removing folder:', error);
+        },
+      });
+    } finally {
+      setIsLoading(false);
+      document.body.style.cursor = 'default';
     }
   };
 
@@ -78,8 +89,8 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({
                           folderId === selectFolder
                             ? 'bg-blue-600 text-white'
                             : 'bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300'
-                        }`}
-                        onClick={() => setSelectFolder(folderId)}
+                        } ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
+                        onClick={() => !isLoading && setSelectFolder(folderId)}
                       >
                         <div className="flex items-center space-x-3">
                           <svg
@@ -107,20 +118,48 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({
                   <div className="flex space-x-4 w-full mt-6">
                     <button
                       type="button"
-                      className="w-full px-4 py-3 text-base font-medium rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200"
+                      className={`w-full px-4 py-3 text-base font-medium rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors duration-200 ${
+                        isLoading ? 'cursor-not-allowed opacity-50' : ''
+                      }`}
                       onClick={closeModal}
+                      disabled={isLoading}
                     >
                       취소
                     </button>
                     <button
                       type="button"
                       className={`w-full px-4 py-3 text-base font-medium rounded-xl bg-red-600 hover:bg-red-700 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-                        selectFolder === 0 ? 'cursor-not-allowed' : ''
+                        selectFolder === 0 || isLoading ? 'cursor-not-allowed' : ''
                       }`}
                       onClick={removeFolder}
-                      disabled={selectFolder === 0}
+                      disabled={selectFolder === 0 || isLoading}
                     >
-                      삭제
+                      {isLoading ? (
+                        <div className="flex items-center justify-center">
+                          <svg
+                            className="w-5 h-5 mr-3 animate-spin"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            />
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                          </svg>
+                          삭제 중...
+                        </div>
+                      ) : (
+                        '삭제'
+                      )}
                     </button>
                   </div>
                 </>

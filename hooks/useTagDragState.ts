@@ -19,6 +19,7 @@ interface ActiveTag {
 export const useTagDragState = (foldersData: Folder[] | undefined) => {
   const [activeTag, setActiveTag] = useState<ActiveTag | null>(null);
   const [draggedTagName, setDraggedTagName] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const queryClient = useQueryClient();
   const mutationUpdateTagsFolders = usePutTagsFolder();
@@ -34,6 +35,10 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
+      if (isUpdating) {
+        return;
+      }
+
       const { active } = event;
       const idString = String(active.id);
 
@@ -64,7 +69,7 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
       });
       setDraggedTagName(tag.name);
     },
-    [foldersData]
+    [foldersData, isUpdating]
   );
 
   const handleDragEnd = useCallback(
@@ -100,18 +105,25 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
         return;
       }
 
-      mutationUpdateTagsFolders.mutate(
+      setIsUpdating(true);
+      document.body.style.cursor = 'wait';
+
+      mutationUpdateTagsFolders.mutateAsync(
         {
           tag_id: tagId,
           folder_id: overId,
         },
         {
-          onSuccess: data => {
+          onSuccess: () => {
             queryClient.invalidateQueries(['tagsFolder']);
           },
           onError: error => {
             console.error('Error updating tag folder:', error);
             queryClient.invalidateQueries(['tagsFolder']);
+          },
+          onSettled: () => {
+            setIsUpdating(false);
+            document.body.style.cursor = 'default';
           },
         }
       );
@@ -125,5 +137,6 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     sensors,
     handleDragStart,
     handleDragEnd,
+    isUpdating,
   };
 };

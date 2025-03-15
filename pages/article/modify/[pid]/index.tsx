@@ -5,6 +5,7 @@ import 'easymde/dist/easymde.min.css';
 import ModifyBtn from 'components/pages/article/modify/ModifyBtn';
 import ModifyContents from 'components/pages/article/modify/ModifyContents';
 import { useGetMyDetail } from 'service/hooks/Detail';
+import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 
 export interface DocType {
   title: string;
@@ -27,9 +28,11 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   const [isMobile, setIsMobile] = useState(false);
   const containerTopRef = useRef<HTMLDivElement>(null);
 
-  const { data: detailData, isSuccess: isDetailSuccess } = useGetMyDetail(
-    parseInt(pid)
-  );
+  const {
+    data: detailData,
+    isLoading,
+    isSuccess: isDetailSuccess,
+  } = useGetMyDetail(parseInt(pid));
 
   useEffect(() => {
     if (isDetailSuccess && detailData?.post) {
@@ -67,24 +70,33 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   }, []);
 
   return (
-    <main className="h-screen min-h-screen mx-2 tablet:px-10">
-      <div className="flex flex-col h-full">
-        <header className="flex-none">
-          <ModifyBtn doc={doc} setDoc={setDoc} pid={pid} imageArr={imageArr} />
-        </header>
+    <>
+      {isLoading && <LoaderAnimation />}
 
-        <main className="relative flex flex-col justify-center flex-1 w-full tablet:flex-row">
-          <ModifyContents
-            doc={doc}
-            setDoc={setDoc}
-            setImageArr={setImageArr}
-            isVisiblePreview={isVisiblePreview}
-            containerTopRef={containerTopRef}
-            isMobile={isMobile}
-          />
-        </main>
-      </div>
-    </main>
+      <main className="h-screen min-h-screen mx-2 tablet:px-10">
+        <div className="flex flex-col h-full">
+          <header className="flex-none">
+            <ModifyBtn
+              doc={doc}
+              setDoc={setDoc}
+              pid={pid}
+              imageArr={imageArr}
+            />
+          </header>
+
+          <main className="relative flex flex-col justify-center flex-1 w-full tablet:flex-row">
+            <ModifyContents
+              doc={doc}
+              setDoc={setDoc}
+              setImageArr={setImageArr}
+              isVisiblePreview={isVisiblePreview}
+              containerTopRef={containerTopRef}
+              isMobile={isMobile}
+            />
+          </main>
+        </div>
+      </main>
+    </>
   );
 };
 

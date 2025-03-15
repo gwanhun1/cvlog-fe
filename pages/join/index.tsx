@@ -63,11 +63,7 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cookies.refreshToken, info.data.accessToken, setUserInfo]);
 
-  return (
-    <div className="flex flex-col items-center justify-center mt-20">
-      <LoaderAnimation />
-    </div>
-  );
+  return <LoaderAnimation />;
 };
 export default Join;
 //ssr 소셜 로그인 처리
