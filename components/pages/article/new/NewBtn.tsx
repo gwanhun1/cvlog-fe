@@ -108,13 +108,9 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
 
   return (
     <>
-      {isLoading && (
-        <div className="fixed inset-0 backdrop-blur-md z-50 flex items-center justify-center">
-          <LoaderAnimation />
-        </div>
-      )}
+      {isLoading && <LoaderAnimation />}
       <div className="tablet:pt-4 tablet:relative">
-        <div className="z-50 flex items-center justify-end gap-2 absolute bottom-0 tablet:top-0 tablet:bottom-auto right-0 tablet:mt-2 mb-2 tablet:mb-0">
+        <div className="z-30 flex items-center justify-end gap-2 absolute bottom-0 tablet:top-0 tablet:bottom-auto right-0 tablet:mt-2 mb-2 tablet:mb-0">
           <Shared.LogmeButton
             variant="ghost"
             size="small"

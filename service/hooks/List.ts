@@ -56,7 +56,7 @@ export const useCreateFolders = () => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries('tagsFolder');
+        queryClient.invalidateQueries(['tagsFolder']);
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
@@ -67,15 +67,13 @@ export const useCreateFolders = () => {
 
 export const useRemoveFolders = (params: number) => {
   const queryClient = useQueryClient();
-  const queryGetTagsFolders = useGetFolders();
   return useMutation(
     () => {
       return fetchRemoveTagsFolders(params);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries();
-        queryGetTagsFolders.refetch();
+        queryClient.invalidateQueries(['tagsFolder']);
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
@@ -91,12 +89,8 @@ export const usePutTagsFolder = () => {
       return putTagsFolders(params);
     },
     {
-      onSuccess: (
-        data: PutTagsFolderRes,
-        variables: UpdateForm,
-        context: { previousData?: Folder[] } | undefined
-      ) => {
-        return queryClient.invalidateQueries('tagsFolder');
+      onSuccess: () => {
+        queryClient.invalidateQueries(['tagsFolder']);
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);

@@ -41,7 +41,6 @@ const NewContents = ({
 
   useEffect(() => {
     setDoc(prev => {
-      // 이미 내용이 있으면 유지
       if (prev.content !== undefined && prev.content !== '') {
         return prev;
       }

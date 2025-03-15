@@ -31,6 +31,7 @@ const ModifyContents = ({
   const { uploadImage } = useImageUpload();
   const editorRef = useRef<HTMLDivElement>(null);
   const editorInstanceRef = useRef<any>(null);
+
   const editorOptions = useMemo(() => {
     return {
       ...(isMobile ? MDE_OPTIONMOBILE : MDE_OPTION),
@@ -77,6 +78,7 @@ const ModifyContents = ({
           const imageMarkdown = `![${imageName}](${imageUrl})`;
           cm.replaceRange(imageMarkdown, pos);
         } else {
+          // 이미지 업로드 시 현재 내용에 추가
           const newValue =
             (doc.content || '') + '\n\n' + `![${imageName}](${imageUrl})`;
           setDoc(prev => ({ ...prev, content: newValue }));
@@ -123,6 +125,7 @@ const ModifyContents = ({
       if (sourceScrollableHeight <= 0 || targetScrollableHeight <= 0) return;
 
       const scrollPercentage = source.scrollTop / sourceScrollableHeight;
+
       setSourceScrolling(true);
       target.scrollTop = scrollPercentage * targetScrollableHeight;
 

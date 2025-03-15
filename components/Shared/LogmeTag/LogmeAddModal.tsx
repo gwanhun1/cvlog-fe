@@ -23,6 +23,8 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
     }
 
     setIsLoading(true);
+    document.body.style.cursor = 'wait';
+    
     try {
       await mutationCreateTagsFolders.mutateAsync(
         { name: folderName },
@@ -39,6 +41,7 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
       );
     } finally {
       setIsLoading(false);
+      document.body.style.cursor = 'default';
     }
   };
 
@@ -54,7 +57,7 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
       show={showModal}
       size="md"
       popup={true}
-      onClose={() => setShowModal(false)}
+      onClose={() => !isLoading && setShowModal(false)}
       className="dark:bg-gray-900"
     >
       <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl">
@@ -82,14 +85,18 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
                 placeholder="폴더 이름을 입력하세요"
                 onKeyPress={handleKeyPress}
                 autoFocus
+                disabled={isLoading}
               />
             </div>
 
             <div className="flex space-x-4 pt-2">
               <Button
                 type="button"
-                className="w-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                onClick={() => setShowModal(false)}
+                className={`w-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${
+                  isLoading ? 'cursor-not-allowed opacity-50' : ''
+                }`}
+                onClick={() => !isLoading && setShowModal(false)}
+                disabled={isLoading}
               >
                 취소
               </Button>

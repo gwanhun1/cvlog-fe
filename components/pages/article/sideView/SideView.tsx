@@ -24,8 +24,14 @@ const SideMenu = () => {
     folder => folder.id === 999
   );
 
-  const { activeTag, draggedTagName, sensors, handleDragStart, handleDragEnd } =
-    useTagDragState(queryGetTagsFolders.data);
+  const {
+    activeTag,
+    draggedTagName,
+    sensors,
+    handleDragStart,
+    handleDragEnd,
+    isUpdating,
+  } = useTagDragState(queryGetTagsFolders.data);
 
   const namedFolder =
     queryGetTagsFolders.data?.filter(
@@ -36,19 +42,24 @@ const SideMenu = () => {
 
   const onClickAccordion = useCallback(
     (id: number) => (e: React.MouseEvent<HTMLDivElement>) => {
+      if (isUpdating) return;
       e.preventDefault();
       setClosedIdx(prev => {
         const hasId = prev.includes(id);
         return hasId ? prev.filter(storedId => storedId !== id) : [...prev, id];
       });
     },
-    []
+    [isUpdating]
   );
 
-  const tryOpenModal = useCallback((name: string) => {
-    setSelectModal(name);
-    setShowModal(true);
-  }, []);
+  const tryOpenModal = useCallback(
+    (name: string) => {
+      if (isUpdating) return;
+      setSelectModal(name);
+      setShowModal(true);
+    },
+    [isUpdating]
+  );
 
   if (queryGetTagsFolders.isLoading) {
     return <SideViewSkeleton />;
@@ -74,7 +85,11 @@ const SideMenu = () => {
         <LogmeRemoveModal showModal={showModal} setShowModal={setShowModal} />
       )}
 
-      <div className="sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden">
+      <div
+        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden ${
+          isUpdating ? 'pointer-events-none opacity-80' : ''
+        }`}
+      >
         <SideViewHeader
           hasContent={hasContent}
           onAddClick={() => tryOpenModal('add')}
