@@ -6,9 +6,9 @@ import {
   useSensors,
   MouseSensor,
   TouchSensor,
-  KeyboardSensor,
   DragStartEvent,
   DragEndEvent,
+  DragCancelEvent,
 } from '@dnd-kit/core';
 import {
   restrictToVerticalAxis,
@@ -38,6 +38,24 @@ const SideMenu = () => {
   const [selectModal, setSelectModal] = useState<string>('');
   const [dragActive, setDragActive] = useState(false);
 
+  useEffect(() => {
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+      .dnd-active * {
+        user-select: none !important;
+      }
+      .dnd-container {
+        touch-action: none;
+      }
+    `;
+    document.head.appendChild(styleElement);
+
+    return () => {
+      document.body.style.cursor = 'default';
+      document.head.removeChild(styleElement);
+    };
+  }, []);
+
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -50,8 +68,7 @@ const SideMenu = () => {
         delay: 150,
         tolerance: 8,
       },
-    }),
-    useSensor(KeyboardSensor, {})
+    })
   );
 
   const unassignedFolder = useMemo(
@@ -65,6 +82,7 @@ const SideMenu = () => {
     handleDragStart,
     handleDragMove,
     handleDragEnd,
+    handleDragCancel,
     isUpdating,
   } = useTagDragState(queryGetTagsFolders.data);
 
@@ -106,6 +124,12 @@ const SideMenu = () => {
     (event: DragStartEvent) => {
       document.body.style.cursor = 'grabbing';
       setDragActive(true);
+
+      const container = document.querySelector('.dnd-container');
+      if (container) {
+        container.classList.add('dnd-active');
+      }
+
       handleDragStart(event);
     },
     [handleDragStart]
@@ -115,9 +139,30 @@ const SideMenu = () => {
     (event: DragEndEvent) => {
       document.body.style.cursor = 'default';
       setDragActive(false);
+
+      const container = document.querySelector('.dnd-container');
+      if (container) {
+        container.classList.remove('dnd-active');
+      }
+
       handleDragEnd(event);
     },
     [handleDragEnd]
+  );
+
+  const onDragCancel = useCallback(
+    (event: DragCancelEvent) => {
+      document.body.style.cursor = 'default';
+      setDragActive(false);
+
+      const container = document.querySelector('.dnd-container');
+      if (container) {
+        container.classList.remove('dnd-active');
+      }
+
+      handleDragCancel(event);
+    },
+    [handleDragCancel]
   );
 
   const onClickAccordion = useCallback(
@@ -186,48 +231,51 @@ const SideMenu = () => {
           {!hasContent ? (
             <EmptyState onAddClick={() => tryOpenModal('add')} />
           ) : (
-            <DndContext
-              sensors={sensors}
-              onDragStart={onDragStart}
-              onDragMove={handleDragMove}
-              onDragEnd={onDragEnd}
-              modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
-            >
-              <SortableContext
-                items={sortableItems}
-                strategy={verticalListSortingStrategy}
+            <div className="dnd-container">
+              <DndContext
+                sensors={sensors}
+                onDragStart={onDragStart}
+                onDragMove={handleDragMove}
+                onDragEnd={onDragEnd}
+                onDragCancel={onDragCancel}
+                modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
               >
-                <div className="space-y-4">
-                  <NamedFolderList
-                    folders={namedFolder}
-                    draggedTagName={draggedTagName}
-                    closedIdx={closedIdx}
-                    onClickAccordion={onClickAccordion}
-                  />
-
-                  {unassignedFolder && (
-                    <div className="mt-4">
-                      <div className="text-xs text-gray-500 mb-2 px-2">
-                        {unassignedFolder.name}
-                      </div>
-                      <UnassignedTagListContent
-                        folder={unassignedFolder}
-                        draggedTagName={draggedTagName}
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <DragOverlay
-                  dropAnimation={{
-                    duration: 150,
-                    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-                  }}
+                <SortableContext
+                  items={sortableItems}
+                  strategy={verticalListSortingStrategy}
                 >
-                  {activeTag && <DragOverlayItem tag={activeTag.tag} />}
-                </DragOverlay>
-              </SortableContext>
-            </DndContext>
+                  <div className="space-y-4">
+                    <NamedFolderList
+                      folders={namedFolder}
+                      draggedTagName={draggedTagName}
+                      closedIdx={closedIdx}
+                      onClickAccordion={onClickAccordion}
+                    />
+
+                    {unassignedFolder && (
+                      <div className="mt-4">
+                        <div className="text-xs text-gray-500 mb-2 px-2">
+                          {unassignedFolder.name}
+                        </div>
+                        <UnassignedTagListContent
+                          folder={unassignedFolder}
+                          draggedTagName={draggedTagName}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <DragOverlay
+                    dropAnimation={{
+                      duration: 150,
+                      easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                    }}
+                  >
+                    {activeTag && <DragOverlayItem tag={activeTag.tag} />}
+                  </DragOverlay>
+                </SortableContext>
+              </DndContext>
+            </div>
           )}
         </div>
       </div>

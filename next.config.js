@@ -22,7 +22,7 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  swcMinify: true,
+  // swcMinify: true, // Removed as it's not recognized in Next.js 15.2.1
 };
 
 module.exports = nextConfig;

@@ -3,6 +3,7 @@ import {
   DragEndEvent,
   DragStartEvent,
   DragMoveEvent,
+  DragCancelEvent,
 } from '@dnd-kit/core';
 import { useQueryClient } from 'react-query';
 import { Folder, Tag } from 'service/api/tag/type';
@@ -92,6 +93,24 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     // Performance optimization: only update what's necessary during drag
     // We don't need complex logic here as SortableContext handles positioning
   }, []);
+
+  // Add handleDragCancel function to handle drag cancellation
+  const handleDragCancel = useCallback((event?: DragCancelEvent) => {
+    // Clean up state when drag is cancelled
+    requestAnimationFrame(() => {
+      setActiveTag(null);
+      setDraggedTagName('');
+      document.body.style.cursor = 'default';
+    });
+    
+    // Reset any references or state
+    lastDropTargetRef.current = null;
+    
+    // Make sure we're not in updating state
+    if (isUpdating) {
+      setIsUpdating(false);
+    }
+  }, [isUpdating]);
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -191,6 +210,7 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     handleDragStart,
     handleDragMove,
     handleDragEnd,
+    handleDragCancel, // Add the new function to the return object
     isUpdating,
   };
 };
