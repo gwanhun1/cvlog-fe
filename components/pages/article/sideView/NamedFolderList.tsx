@@ -25,39 +25,41 @@ const NamedFolderList = ({
   return (
     <>
       {folders.map((folder: Folder) => (
-        <DroppableFolder
+        <div
           key={folder.id}
-          folder={folder}
-          draggedTagName={draggedTagName}
+          className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md hover:border-blue-200 hover:bg-blue-50 transition-all duration-300"
         >
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 cursor-move">
-            <FolderItem
-              folder={folder}
-              isOpened={closedIdx.includes(folder.id)}
-              onClickAccordion={onClickAccordion}
-            />
-            <div
-              className={`mt-1 transition-all duration-300 ${
-                closedIdx.includes(folder.id)
-                  ? 'max-h-0 overflow-hidden'
-                  : 'max-h-[500px]'
-              }`}
-            >
-              <SortableContext
-                items={folder.tags.map(tag => `${folder.id}-${tag.id}`)}
-                strategy={verticalListSortingStrategy}
-              >
-                {folder.tags.map(tag => (
-                  <TagItem
-                    key={`${folder.id}-${tag.id}`}
-                    tag={tag}
-                    folderId={folder.id}
-                  />
-                ))}
-              </SortableContext>
-            </div>
+          <FolderItem
+            folder={folder}
+            isOpened={closedIdx.includes(folder.id)}
+            onClickAccordion={onClickAccordion}
+          />
+
+          <div
+            className={`mt-1 transition-all duration-300 ${
+              closedIdx.includes(folder.id)
+                ? 'max-h-0 overflow-hidden'
+                : 'max-h-[500px]'
+            }`}
+          >
+            <DroppableFolder folder={folder} draggedTagName={draggedTagName}>
+              <div className="pt-1 cursor-move">
+                <SortableContext
+                  items={folder.tags.map(tag => `${folder.id}-${tag.id}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {folder.tags.map(tag => (
+                    <TagItem
+                      key={`${folder.id}-${tag.id}`}
+                      tag={tag}
+                      folderId={folder.id}
+                    />
+                  ))}
+                </SortableContext>
+              </div>
+            </DroppableFolder>
           </div>
-        </DroppableFolder>
+        </div>
       ))}
     </>
   );

@@ -1,9 +1,9 @@
-import { memo, useMemo, useCallback } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Tag } from 'service/api/tag/type';
+import { memo, useMemo, useCallback, CSSProperties } from 'react';
 import { useRecoilState } from 'recoil';
 import { tagAtom } from 'service/atoms/atoms';
+import { Tag } from 'service/api/tag/type';
 
 export interface TagItemProps {
   tag: Tag;
@@ -27,6 +27,7 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
     data: {
       tag,
       folderId,
+      type: 'tag',
     },
   });
 
@@ -36,21 +37,22 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
     setKeyword(tag.name);
   }, [tag.name, setKeyword]);
 
+  // Use CSSProperties type to avoid TypeScript errors
   const style = useMemo(
-    () => ({
+    (): CSSProperties => ({
       transform: CSS.Transform.toString(transform),
       transition: transition || undefined,
       opacity: isDragging ? 0.4 : 1,
       zIndex: isDragging ? 999 : 'auto',
-      position: isDragging ? 'relative' : ('static' as any),
+      position: isDragging ? 'relative' : 'static',
       touchAction: 'none',
+      userSelect: 'none' as 'none',
     }),
     [transform, transition, isDragging]
   );
 
   return (
     <div
-      onClick={handleTagClick}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -62,9 +64,10 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
             ? 'bg-blue-400 text-white'
             : 'bg-white'
         }`}
+      onClick={handleTagClick}
     >
       <div className="w-2 h-2 rounded-full bg-gray-300" />
-      <span className="text-sm font-medium">{tag.name}</span>
+      <span className="text-sm font-medium select-none">{tag.name}</span>
     </div>
   );
 };

@@ -16,22 +16,24 @@ const UnassignedTagListContent = ({
   draggedTagName,
 }: UnassignedTagListContentProps) => {
   return (
-    <DroppableFolder folder={folder} draggedTagName={draggedTagName}>
-      <div className="bg-white rounded-lg border border-gray-100 p-2">
-        <SortableContext
-          items={folder.tags.map(tag => `unassigned-${tag.id}`)}
-          strategy={verticalListSortingStrategy}
-        >
-          {folder.tags.map((tag, index) => (
-            <TagItem
-              key={`unassigned-${tag.id}`}
-              tag={tag}
-              folderId={folder.id}
-            />
-          ))}
-        </SortableContext>
-      </div>
-    </DroppableFolder>
+    <div className="bg-white rounded-lg border border-gray-100">
+      <DroppableFolder folder={folder} draggedTagName={draggedTagName}>
+        <div className="p-2 cursor-move">
+          <SortableContext
+            items={folder.tags.map(tag => `unassigned-${tag.id}`)}
+            strategy={verticalListSortingStrategy}
+          >
+            {folder.tags.map(tag => (
+              <TagItem
+                key={`unassigned-${tag.id}`}
+                tag={tag}
+                folderId={folder.id}
+              />
+            ))}
+          </SortableContext>
+        </div>
+      </DroppableFolder>
+    </div>
   );
 };
 
