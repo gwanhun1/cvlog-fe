@@ -122,7 +122,6 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
                   <Link
                     href={`/article/content/all/${id}`}
                     onClick={() => saveListIndex(index)}
-                    prefetch={true}
                     className="block h-full"
                   >
                     <Card
