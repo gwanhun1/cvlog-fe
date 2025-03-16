@@ -5,16 +5,7 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
     './node_modules/flowbite-react/**/*.js',
   ],
-  purge: {
-    enabled: process.env.NODE_ENV === 'production',
-    content: [
-      './pages/**/*.{js,ts,jsx,tsx}',
-      './components/**/*.{js,ts,jsx,tsx}',
-    ],
-    options: {
-      safelist: ['bg-blue-50', 'text-blue-500', 'bg-gray-200', 'animate-pulse'],
-    },
-  },
+  safelist: ['bg-blue-50', 'text-blue-500', 'bg-gray-200', 'animate-pulse'],
   darkMode: 'class',
   theme: {
     screens: {
