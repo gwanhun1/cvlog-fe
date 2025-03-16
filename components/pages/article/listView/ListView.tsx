@@ -122,7 +122,6 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
                   <Link
                     href={`/article/content/${id}`}
                     onClick={() => saveListIndex(index)}
-                    prefetch={true}
                     className="block h-full"
                   >
                     <Card
