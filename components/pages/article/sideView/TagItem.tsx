@@ -51,23 +51,31 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
     [transform, transition, isDragging]
   );
 
+  const isSelected = keyword === tag.name.toLocaleLowerCase();
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className={`flex items-center space-x-2 mx-1 p-2 mb-1 rounded-lg border border-gray-100 cursor-move 
-        hover:border-gray-200 hover:bg-blue-100 active:bg-blue-500 active:text-white transition-colors duration-200
-        ${
-          keyword === tag.name.toLocaleLowerCase()
-            ? 'bg-blue-400 text-white'
-            : 'bg-white'
-        }`}
+      className={`
+        flex items-center justify-between w-full py-2.5 px-3 mb-2 rounded-lg 
+        border border-gray-100 cursor-move select-none
+        hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm 
+        active:bg-blue-500 active:text-white 
+        transition-all duration-200 ease-in-out
+        ${isSelected ? 'bg-blue-400 text-white shadow-md' : 'bg-white'}
+      `}
       onClick={handleTagClick}
+      role="option"
+      tabIndex={0}
+      aria-selected={isSelected}
     >
-      <div className="w-2 h-2 rounded-full bg-gray-300" />
-      <span className="text-sm font-medium select-none">{tag.name}</span>
+      <div className="flex items-center space-x-3 w-full">
+        <div className={`w-2.5 h-2.5 rounded-full ${isSelected ? 'bg-white' : 'bg-blue-300'} flex-shrink-0`} />
+        <span className="text-sm font-medium truncate max-w-full">{tag.name}</span>
+      </div>
     </div>
   );
 };
