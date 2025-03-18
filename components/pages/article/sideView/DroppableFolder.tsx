@@ -6,12 +6,14 @@ interface DroppableFolderProps {
   folder: Folder;
   children: React.ReactNode;
   draggedTagName: string;
+  includeHeader?: boolean; // 헤더 영역을 포함할지 여부
 }
 
 const DroppableFolder = ({
   folder,
   children,
   draggedTagName,
+  includeHeader = false,
 }: DroppableFolderProps) => {
   const folderId = useMemo(() => String(folder.id), [folder.id]);
   const [delayedIsOver, setDelayedIsOver] = useState(false);
@@ -28,6 +30,7 @@ const DroppableFolder = ({
   });
 
   useEffect(() => {
+    // 드래그 중인지 여부 확인
     setIsDraggableActive(!!active);
   }, [active]);
 
@@ -46,7 +49,7 @@ const DroppableFolder = ({
             dropIndicatorRef.current.style.transform = 'translateY(0)';
           }
         });
-      }, 200);
+      }, 150); // 반응 시간 개선
     } else {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -63,13 +66,17 @@ const DroppableFolder = ({
   }, [isOver, draggedTagName]);
 
   const containerClassName = useMemo(() => {
-    return `mb-2 transition-all duration-300 ${isOver ? 'bg-blue-50' : ''} ${
-      delayedIsOver ? 'ring-2 ring-ftBlue ring-opacity-50 rounded-lg' : ''
-    } ${isDraggableActive ? 'cursor-grabbing' : 'cursor-grab'}`;
-  }, [isOver, delayedIsOver, isDraggableActive]);
+    return `
+      w-full h-full transition-all duration-300 
+      ${includeHeader ? 'rounded-xl overflow-hidden' : 'mb-2'} 
+      ${isOver ? 'bg-blue-50' : ''} 
+      ${delayedIsOver ? 'ring-2 ring-ftBlue ring-opacity-50 rounded-lg' : ''} 
+      ${isDraggableActive ? 'cursor-grabbing' : ''}
+    `;
+  }, [isOver, delayedIsOver, isDraggableActive, includeHeader]);
 
   const indicatorClassName = useMemo(() => {
-    return `text-sm text-ftBlue text-center py-2 transition-all duration-300 ${
+    return `text-sm text-ftBlue text-center py-2 px-2 transition-all duration-300 ${
       delayedIsOver ? 'opacity-100' : 'opacity-0'
     }`;
   }, [delayedIsOver]);
@@ -86,11 +93,14 @@ const DroppableFolder = ({
       ref={setNodeRef}
       className={containerClassName}
       onMouseEnter={() => {
-        document.body.style.cursor = isDraggableActive ? 'grabbing' : 'grab';
+        if (active) {
+          document.body.style.cursor = 'grabbing';
+        }
       }}
       onMouseLeave={() => {
         document.body.style.cursor = 'default';
       }}
+      style={{ touchAction: 'none' }}
     >
       {children}
 
@@ -111,6 +121,7 @@ const DroppableFolder = ({
 export default memo(DroppableFolder, (prevProps, nextProps) => {
   return (
     prevProps.folder.id === nextProps.folder.id &&
-    prevProps.draggedTagName === nextProps.draggedTagName
+    prevProps.draggedTagName === nextProps.draggedTagName &&
+    prevProps.includeHeader === nextProps.includeHeader
   );
 });

@@ -167,14 +167,20 @@ const SideMenu = () => {
 
   const onClickAccordion = useCallback(
     (id: number) => (e: React.MouseEvent<HTMLDivElement>) => {
-      if (isUpdating) return;
+      // 업데이트 중이거나 드래그 중이면 아코디언 동작을 중지
+      if (isUpdating || dragActive) return;
+      
+      // 이벤트 전파 중지
       e.preventDefault();
+      e.stopPropagation();
+      
+      // 아코디언 상태 변경
       setClosedIdx(prev => {
         const hasId = prev.includes(id);
         return hasId ? prev.filter(storedId => storedId !== id) : [...prev, id];
       });
     },
-    [isUpdating]
+    [isUpdating, dragActive]
   );
 
   const tryOpenModal = useCallback(
@@ -244,7 +250,7 @@ const SideMenu = () => {
                   items={sortableItems}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="space-y-4">
+                  <div className="space-y-4 ">
                     <NamedFolderList
                       folders={namedFolder}
                       draggedTagName={draggedTagName}
@@ -254,9 +260,6 @@ const SideMenu = () => {
 
                     {unassignedFolder && (
                       <div className="mt-4">
-                        <div className="text-xs text-gray-500 mb-2 px-2">
-                          {unassignedFolder.name}
-                        </div>
                         <UnassignedTagListContent
                           folder={unassignedFolder}
                           draggedTagName={draggedTagName}
