@@ -71,11 +71,6 @@ const SideMenu = () => {
     })
   );
 
-  const unassignedFolder = useMemo(
-    () => queryGetTagsFolders.data?.find(folder => folder.id === 999),
-    [queryGetTagsFolders.data]
-  );
-
   const {
     activeTag,
     draggedTagName,
@@ -84,18 +79,25 @@ const SideMenu = () => {
     handleDragEnd,
     handleDragCancel,
     isUpdating,
+    optimisticFoldersData,
+    hasPendingOperations,
   } = useTagDragState(queryGetTagsFolders.data);
+
+  const unassignedFolder = useMemo(
+    () => optimisticFoldersData?.find(folder => folder.id === 999),
+    [optimisticFoldersData]
+  );
 
   const { namedFolder, defaultFolder } = useMemo(
     () => ({
       namedFolder:
-        queryGetTagsFolders.data?.filter(
+        optimisticFoldersData?.filter(
           item => item.name !== '' && item.id !== 999
         ) ?? [],
       defaultFolder:
-        queryGetTagsFolders.data?.filter(item => item.id === 999) ?? [],
+        optimisticFoldersData?.filter(item => item.id === 999) ?? [],
     }),
-    [queryGetTagsFolders.data]
+    [optimisticFoldersData]
   );
 
   const sortableItems = useMemo(() => {
@@ -224,8 +226,8 @@ const SideMenu = () => {
 
       <div
         className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden transition-opacity duration-200 ${
-          isUpdating ? 'pointer-events-none opacity-80' : ''
-        }`}
+          isUpdating && !hasPendingOperations ? 'pointer-events-none opacity-80' : ''
+        } ${hasPendingOperations ? 'border-blue-300' : ''}`}
       >
         <SideViewHeader
           hasContent={hasContent}
