@@ -14,14 +14,57 @@ interface ActiveTag {
   folderId: number;
 }
 
+interface DragOperation {
+  tagId: number;
+  sourceFolderId: number;
+  targetFolderId: number;
+  isPending: boolean;
+  id: string;
+}
+
 export const useTagDragState = (foldersData: Folder[] | undefined) => {
   const [activeTag, setActiveTag] = useState<ActiveTag | null>(null);
   const [draggedTagName, setDraggedTagName] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
   const lastDropTargetRef = useRef<number | null>(null);
 
+  const [pendingOperations, setPendingOperations] = useState<DragOperation[]>(
+    []
+  );
+
+  const originalFoldersDataRef = useRef<Folder[] | undefined>(undefined);
+
+  const optimisticFoldersData = useCallback(() => {
+    if (!pendingOperations.length || !foldersData) return foldersData;
+
+    if (!originalFoldersDataRef.current) {
+      originalFoldersDataRef.current = JSON.parse(JSON.stringify(foldersData));
+    }
+
+    const clonedFolders: Folder[] = JSON.parse(JSON.stringify(foldersData));
+
+    pendingOperations.forEach(op => {
+      const sourceFolder = clonedFolders.find(f => f.id === op.sourceFolderId);
+      const targetFolder = clonedFolders.find(f => f.id === op.targetFolderId);
+
+      if (!sourceFolder || !targetFolder) return;
+
+      const tagIndex = sourceFolder.tags.findIndex(t => t.id === op.tagId);
+      if (tagIndex === -1) return;
+
+      const [movedTag] = sourceFolder.tags.splice(tagIndex, 1);
+      targetFolder.tags.push(movedTag);
+    });
+
+    return clonedFolders;
+  }, [foldersData, pendingOperations]);
+
   const queryClient = useQueryClient();
   const mutationUpdateTagsFolders = usePutTagsFolder();
+
+  const generateOperationId = useCallback(() => {
+    return `op-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  }, []);
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
@@ -32,21 +75,18 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
       try {
         const { active } = event;
         const idString = String(active.id);
-        
-        // Reset the last drop target
+
         lastDropTargetRef.current = null;
 
-        // Parse the ID to get folder and tag IDs
         const parts = idString.split('-');
         let folderId: number;
-        
-        // Handle 'unassigned' folder ID
+
         if (parts[0] === 'unassigned') {
-          folderId = 999; // Special ID for unassigned folder
+          folderId = 999;
         } else {
           folderId = parseInt(parts[0], 10);
         }
-        
+
         const tagId = parseInt(parts[parts.length - 1], 10);
 
         if (isNaN(folderId) || isNaN(tagId)) {
@@ -54,27 +94,24 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           return;
         }
 
-        // Find the folder
         const folder = foldersData?.find(f => {
           if (parts[0] === 'unassigned') {
             return f.id === 999;
           }
           return f.id === folderId;
         });
-        
+
         if (!folder) {
           console.error('Folder not found:', folderId);
           return;
         }
 
-        // Find the tag
         const tag = folder.tags.find(t => t.id === tagId);
         if (!tag) {
           console.error('Tag not found:', tagId, 'in folder', folderId);
           return;
         }
 
-        // Set active tag and name - using performance optimized approach
         requestAnimationFrame(() => {
           setActiveTag({
             tag,
@@ -89,41 +126,35 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     [foldersData, isUpdating]
   );
 
-  const handleDragMove = useCallback((event: DragMoveEvent) => {
-    // Performance optimization: only update what's necessary during drag
-    // We don't need complex logic here as SortableContext handles positioning
-  }, []);
+  const handleDragMove = useCallback((event: DragMoveEvent) => {}, []);
 
-  // Add handleDragCancel function to handle drag cancellation
-  const handleDragCancel = useCallback((event?: DragCancelEvent) => {
-    // Clean up state when drag is cancelled
-    requestAnimationFrame(() => {
-      setActiveTag(null);
-      setDraggedTagName('');
-      document.body.style.cursor = 'default';
-    });
-    
-    // Reset any references or state
-    lastDropTargetRef.current = null;
-    
-    // Make sure we're not in updating state
-    if (isUpdating) {
-      setIsUpdating(false);
-    }
-  }, [isUpdating]);
+  const handleDragCancel = useCallback(
+    (event?: DragCancelEvent) => {
+      requestAnimationFrame(() => {
+        setActiveTag(null);
+        setDraggedTagName('');
+        document.body.style.cursor = 'default';
+      });
+
+      lastDropTargetRef.current = null;
+
+      if (isUpdating) {
+        setIsUpdating(false);
+      }
+    },
+    [isUpdating]
+  );
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       try {
         const { active, over } = event;
-        
-        // Always clean up state regardless of outcome
-        // Use requestAnimationFrame for smoother UI transitions
+
         requestAnimationFrame(() => {
           setActiveTag(null);
           setDraggedTagName('');
         });
-        
+
         if (!over) {
           console.log('No drop target');
           return;
@@ -137,17 +168,15 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           return;
         }
 
-        // Parse the active ID to get source folder and tag IDs
         const parts = activeId.split('-');
         let sourceFolderId: number;
-        
-        // Handle 'unassigned' folder ID
+
         if (parts[0] === 'unassigned') {
-          sourceFolderId = 999; // Special ID for unassigned folder
+          sourceFolderId = 999;
         } else {
           sourceFolderId = parseInt(parts[0], 10);
         }
-        
+
         const tagId = parseInt(parts[parts.length - 1], 10);
 
         if (isNaN(sourceFolderId) || isNaN(tagId)) {
@@ -155,24 +184,31 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           return;
         }
 
-        // Don't do anything if dropped in the same folder
         if (sourceFolderId === overId) {
           return;
         }
-        
-        // Don't make duplicate API calls for the same target
+
         if (lastDropTargetRef.current === overId) {
           return;
         }
-        
-        // Set the last drop target
+
         lastDropTargetRef.current = overId;
 
-        // Show loading state
+        const operationId = generateOperationId();
+
+        const newOperation: DragOperation = {
+          tagId,
+          sourceFolderId,
+          targetFolderId: overId,
+          isPending: true,
+          id: operationId,
+        };
+
+        setPendingOperations(prev => [...prev, newOperation]);
+
         setIsUpdating(true);
         document.body.style.cursor = 'wait';
 
-        // Make the API call
         mutationUpdateTagsFolders.mutateAsync(
           {
             tag_id: tagId,
@@ -180,18 +216,29 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           },
           {
             onSuccess: () => {
-              // Invalidate queries to refresh data
+              setPendingOperations(prev =>
+                prev.filter(op => op.id !== operationId)
+              );
+
               queryClient.invalidateQueries(['tagsFolder']);
             },
             onError: error => {
               console.error('Error updating tag folder:', error);
+
+              setPendingOperations(prev =>
+                prev.filter(op => op.id !== operationId)
+              );
+
               queryClient.invalidateQueries(['tagsFolder']);
             },
             onSettled: () => {
-              // Reset state after operation completes
               setIsUpdating(false);
               document.body.style.cursor = 'default';
               lastDropTargetRef.current = null;
+
+              if (pendingOperations.length <= 1) {
+                originalFoldersDataRef.current = undefined;
+              }
             },
           }
         );
@@ -199,9 +246,15 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
         console.error('Error in handleDragEnd:', error);
         setIsUpdating(false);
         document.body.style.cursor = 'default';
+        lastDropTargetRef.current = null;
       }
     },
-    [mutationUpdateTagsFolders, queryClient]
+    [
+      mutationUpdateTagsFolders,
+      queryClient,
+      generateOperationId,
+      pendingOperations,
+    ]
   );
 
   return {
@@ -210,7 +263,9 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     handleDragStart,
     handleDragMove,
     handleDragEnd,
-    handleDragCancel, // Add the new function to the return object
+    handleDragCancel,
     isUpdating,
+    optimisticFoldersData: optimisticFoldersData(),
+    hasPendingOperations: pendingOperations.length > 0,
   };
 };
