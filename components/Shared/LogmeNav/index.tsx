@@ -26,7 +26,7 @@ const Nav = () => {
       <div className="grid h-full grid-cols-12 gap-4 px-4 mx-auto max-w-7xl">
         <div className="flex items-center col-span-4 tablet:col-span-3">
           <Link href="/" className="flex items-center" prefetch={true}>
-            <Shared.LogmeIcon.NavLogo alt="로고" width={70} height={70} />
+            <Shared.LogmeIcon.LogmeMarkIcon alt="로고" width={70} height={70} />
           </Link>
         </div>
 

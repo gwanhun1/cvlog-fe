@@ -1,147 +1,141 @@
 <div align="center">
-  <img src="https://via.placeholder.com/200x200.png?text=LOGME" alt="LOGME Logo" width="200" height="200">
-  <h1>LOGME - 개발자를 위한 마크다운 블로그 & 포트폴리오 플랫폼</h1>
+  <img src="https://github.com/user-attachments/assets/419ebbc0-5287-41d3-9fd0-e988efe92d2e" alt="LOGME Logo" width="200" height="200">
+  <h1>LOGME</h1>
+  <p><strong>개발자를 위한 마크다운 블로그 & 포트폴리오 플랫폼</strong></p>
 </div>
 
 <div align="center">
   
-  ![Next.js](https://img.shields.io/badge/Next.js-15.2.1-000000?style=for-the-badge&logo=next.js)
-  ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react)
-  ![TypeScript](https://img.shields.io/badge/TypeScript-5.8.2-3178C6?style=for-the-badge&logo=typescript)
-  ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.3.3-06B6D4?style=for-the-badge&logo=tailwindcss)
-  ![Recoil](https://img.shields.io/badge/Recoil-0.7.7-3578E5?style=for-the-badge&logo=recoil)
-  ![React Query](https://img.shields.io/badge/React_Query-3.39.3-FF4154?style=for-the-badge&logo=reactquery)
+  ![Next.js](https://img.shields.io/badge/Next.js-15.2.1-000000?style=flat-square&logo=next.js)
+  ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=flat-square&logo=react)
+  ![TypeScript](https://img.shields.io/badge/TypeScript-5.8.2-3178C6?style=flat-square&logo=typescript)
+  ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.3.3-06B6D4?style=flat-square&logo=tailwindcss)
+  ![Recoil](https://img.shields.io/badge/Recoil-0.7.7-3578E5?style=flat-square&logo=recoil)
+  ![React Query](https://img.shields.io/badge/React_Query-3.39.3-FF4154?style=flat-square&logo=reactquery)
 
 </div>
 
-<p align="center">
-  <a href="#-프로젝트-소개">프로젝트 소개</a> •
-  <a href="#-핵심-기능">핵심 기능</a> •
-  <a href="#-기술-스택">기술 스택</a> •
-  <a href="#-아키텍처">아키텍처</a> •
-  <a href="#-구현-사항">구현 사항</a> •
-  <a href="#-실행-방법">실행 방법</a> •
-  <a href="#-기술적-도전과-해결">기술적 도전과 해결</a>
-</p>
+<div align="center">
+  <p>
+    <a href="#-프로젝트-소개">🚀 소개</a> •
+    <a href="#-핵심-기능">✨ 기능</a> •
+    <a href="#-기술-스택">🛠️ 기술</a> •
+    <a href="#-아키텍처">🏛️ 구조</a> •
+    <a href="#-구현-사항">🔍 구현</a> •
+    <a href="#-실행-방법">▶️ 실행</a> •
+    <a href="#-기술적-도전과-해결">🔧 해결책</a>
+  </p>
+</div>
+
+<br/>
+<br/>
+<br/>
 
 ## 🚀 프로젝트 소개
 
-**LOGME**는 개발자를 위한 올인원 포트폴리오 플랫폼으로, 마크다운 기반 블로그, GitHub 통합, 그리고 이력서 빌더 기능을 제공합니다. 사용자는 기술 아티클을 작성하고, 프로젝트를 전시하며, 전문적인 개발자 포트폴리오를 구축할 수 있습니다.
+**LOGME**는 개발자를 위한 올인원 포트폴리오 플랫폼입니다.
 
-> **LOGME의 핵심 가치:**  
-> 개발자가 자신의 지식, 프로젝트, 경력을 효과적으로 전시할 수 있는 통합 플랫폼을 제공하여 개발자의 커리어 성장을 지원합니다.
+> 📝 **마크다운 블로그** + 🔄 **GitHub 통합** + 📄 **이력서 빌더**
+
+개발자가 자신의 지식, 프로젝트, 경력을 효과적으로 전시할 수 있는 통합 플랫폼을 제공하여 커리어 성장을 지원합니다.
+
+<br/>
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x400.png?text=LOGME+Screenshot" alt="LOGME 스크린샷" width="800">
+  <img src="https://github.com/user-attachments/assets/7980123f-517e-4ac0-b75b-77adf2800f67" alt="LOGME 스크린샷" width="800">
 </div>
+
+<br/>
 
 ## ✨ 핵심 기능
 
-### 1. 마크다운 아티클 관리
+### 📝 마크다운 아티클 관리
 
-- **풍부한 마크다운 에디터**: React SimpleMDE를 활용한 직관적인 WYSIWYG 에디터
-- **구문 강조**: 코드 블록의 다양한 프로그래밍 언어 하이라이팅
-- **폴더 구조화**: 드래그 앤 드롭으로 콘텐츠를 체계적으로 구성
-- **실시간 미리보기**: 편집 중 마크다운 렌더링 확인
+- **풍부한 에디터** — React SimpleMDE 기반 WYSIWYG 에디터
+- **구문 강조** — 다양한 프로그래밍 언어 코드 하이라이팅
+- **폴더 구조화** — 드래그 앤 드롭으로 콘텐츠 정리
+- **실시간 미리보기** — 편집 중 렌더링 확인
 
-### 2. GitHub 통합
+### 🔄 GitHub 통합
 
-- **저장소 연동**: 주요 GitHub 프로젝트와 기여도를 포트폴리오에 통합
-- **커밋 시각화**: 활동 그래프로 GitHub 기여도 표시
-- **README 자동 가져오기**: 프로젝트 설명을 포트폴리오에 자동으로 통합
+- **저장소 연동** — GitHub 프로젝트와 포트폴리오 통합
+- **커밋 시각화** — 활동 그래프로 기여도 표시
+- **README 가져오기** — 프로젝트 설명 자동 통합
 
-### 3. 이력서 
+### 📱 반응형 사용자 경험
 
-<!-- - **다양한 템플릿**: 전문적인 이력서 템플릿 제공
-- **섹션 관리**: 경력, 교육, 기술, 프로젝트 섹션 맞춤화
-- **다중 이력서**: 직무나 산업별 맞춤형 이력서 관리
-- **PDF 내보내기**: 전문적인 이력서를 PDF로 변환 -->
+- **반응형 디자인** — 모든 기기에서 최적화된 경험
 
-### 4. 반응형 사용자 경험
+<br/>
 
-- **반응형 디자인**: 모든 기기에서 최적화된 사용자 경험
+<br/>
 
 ## 🛠️ 기술 스택
 
+<div align="center">
+
 ### 프론트엔드 핵심
 
-- **Next.js 15.2.1**: SSR과 정적 생성을 지원하는 React 프레임워크
-- **React 18.2.0**: 선언적, 효율적인 UI 구축
-- **TypeScript 5.8.2**: 정적 타입 검사로 코드 품질 향상
+`Next.js 15.2.1` • `React 18.2.0` • `TypeScript 5.8.2`
 
 ### 상태 관리
 
-- **Recoil 0.7.7**: 전역 애플리케이션 상태 관리
-- **React Query 3.39.3**: 비동기 서버 상태 효율적 관리
-- **Recoil-persist**: 페이지 새로고침 후에도 상태 유지
+`Recoil 0.7.7` • `React Query 3.39.3` • `Recoil-persist`
 
 ### 스타일링
 
-- **TailwindCSS 3.3.3**: 유틸리티 우선 CSS 프레임워크
-- **SCSS**: 고급 스타일링 기능
-- **Styled Components**: 컴포넌트 기반 스타일링
-- **Flowbite React**: UI 컴포넌트 라이브러리
+`TailwindCSS 3.3.3` • `SCSS` • `Styled Components` • `Flowbite React`
 
 ### 마크다운 처리
 
-- **React Markdown**: 마크다운 콘텐츠 렌더링
-- **Remark & Rehype**: 마크다운 변환 및 커스터마이징
-- **React SimpleMDE**: 풍부한 마크다운 에디터 경험
-- **React Syntax Highlighter**: 코드 블록 구문 강조
+`React Markdown` • `Remark & Rehype` • `React SimpleMDE` • `React Syntax Highlighter`
 
 ### UI/UX 개선
 
-- **DND Kit**: 직관적인 드래그 앤 드롭 인터페이스
-- **React Window & Virtualized**: 대규모 목록 효율적인 렌더링
-- **React Icons**: 다양한 아이콘 세트
-- **Lottie React**: 고품질 애니메이션
+`DND Kit` • `React Window & Virtualized` • `React Icons` • `Lottie React`
 
-## 🏛️ 아키텍처
-
-<div align="center">
-  <img src="https://via.placeholder.com/800x500.png?text=LOGME+Architecture" alt="LOGME 아키텍처" width="800">
 </div>
 
-LOGME는 Next.js 기반의 클라이언트-서버 아키텍처를 사용하며, 다음 패턴과 구조를 따릅니다:
+<br/>
+<br/>
 
-### 폴더 구조
+### 📂 폴더 구조
 
 ```
 cvlog-fe/
-├── components/       # 기능 및 UI 컴포넌트
-│   ├── pages/        # 페이지별 특화 컴포넌트
-│   └── Shared/       # 공유 컴포넌트
-├── hooks/            # 커스텀 React 훅
-├── lib/              # 유틸리티 라이브러리
-├── pages/            # Next.js 라우트 (API 라우트 포함)
-├── public/           # 정적 자산
-├── service/          # API 클라이언트 & 서비스 로직
-├── styles/           # 전역 스타일 및 테마
-└── utils/            # 유틸리티 함수
+├── components/     # 기능 및 UI 컴포넌트
+│   ├── pages/      # 페이지별 특화 컴포넌트
+│   └── Shared/     # 공유 컴포넌트
+├── hooks/          # 커스텀 React 훅
+├── lib/            # 유틸리티 라이브러리
+├── pages/          # Next.js 라우트
+├── public/         # 정적 자산
+├── service/        # API 클라이언트 & 서비스
+├── styles/         # 전역 스타일 및 테마
+└── utils/          # 유틸리티 함수
 ```
 
-### 아키텍처 패턴
-
-- **원자적 디자인 시스템**: 재사용 가능한 UI 컴포넌트 구성
-- **서비스 레이어 패턴**: API 통신 추상화
-- **Custom Hooks**: 상태 로직 재사용
-- **인증 가드**: 보호된 라우트 관리
+<br/>
+<br/>
+<br/>
 
 ## 🔍 구현 사항
 
-### 아티클 관리 시스템 
+### 📝 아티클 관리 시스템
 
-고급 마크다운 에디팅 시스템을 구현하여 개발자가 기술 콘텐츠를 효과적으로 작성하고 관리할 수 있도록 했습니다. 주요 기능:
+고급 마크다운 에디팅 시스템으로 개발자가 기술 콘텐츠를 효과적으로 작성하고 관리할 수 있습니다.
 
-- **폴더 관리**: DND Kit을 활용한 드래그 앤 드롭 폴더 구조 구현
-- **문서 분류**: 계층적 카테고리 시스템으로 아티클 정리
-- **실시간 마크다운 렌더링**: 코드 하이라이팅, 표, 이미지 등 지원
+#### 주요 특징:
+
+- **폴더 관리** — DND Kit 활용 드래그 앤 드롭 구현
+- **문서 분류** — 계층적 카테고리 시스템으로 정리
+- **마크다운 렌더링** — 코드 하이라이팅, 표, 이미지 지원
 
 ```tsx
-// 예시: 드래그 앤 드롭 폴더 구현의 핵심 코드
+// 예시: 드래그 앤 드롭 폴더 구현
 const DroppableFolder = ({ folder, onDrop }: DroppableFolderProps) => {
   const { setNodeRef } = useDroppable({ id: folder.id });
-  
+
   return (
     <div ref={setNodeRef} className="folder-container">
       <FolderHeader title={folder.name} />
@@ -153,43 +147,52 @@ const DroppableFolder = ({ folder, onDrop }: DroppableFolderProps) => {
 };
 ```
 
-### 인증 시스템
+### 🔐 인증 시스템
 
-JWT 기반 인증 시스템을 구현하여 사용자 데이터와 콘텐츠를 안전하게 보호합니다:
+JWT 기반 인증 시스템으로 사용자 데이터와 콘텐츠를 안전하게 보호합니다.
 
-- **토큰 기반 인증**: JWT 액세스 및 리프레시 토큰 관리
-- **보호된 라우트**: AuthGuard 컴포넌트로 인증 필요 페이지 보호
-- **자동 토큰 갱신**: 백그라운드 토큰 리프레시 메커니즘
+#### 주요 특징:
+
+- **토큰 기반 인증** — JWT 액세스 및 리프레시 토큰 관리
+- **보호된 라우트** — AuthGuard 컴포넌트로 페이지 보호
+- **자동 토큰 갱신** — 백그라운드 토큰 리프레시
 
 ```tsx
 // 예시: AuthGuard 구현
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const { isLoggedIn, isLoading } = useAuth();
   const router = useRouter();
-  
+
   useEffect(() => {
-    if (!isLoading && !isLoggedIn) {
-      router.push('/login');
-    }
+    if (!isLoading && !isLoggedIn) router.push('/login');
   }, [isLoggedIn, isLoading, router]);
-  
+
   if (isLoading) return <LoadingSpinner />;
   return isLoggedIn ? <>{children}</> : null;
 };
 ```
 
-### 성능 최적화
+### ⚡ 성능 최적화
 
-대규모 데이터 처리와 최적의 사용자 경험을 위한 다양한 성능 최적화 기법을 적용했습니다:
+대규모 데이터 처리와 최적의 사용자 경험을 위한 다양한 성능 최적화 기법을 적용했습니다.
 
-- **가상화**: React Window로 대량의 문서/폴더 목록 효율적 렌더링
-- **코드 분할**: Next.js의 동적 가져오기로 번들 크기 최적화
-- **이미지 최적화**: 브라우저 이미지 압축으로 업로드 용량 감소
-- **메모이제이션**: React.memo와 useMemo로 불필요한 렌더링 방지
+| 최적화 전략       | 설명                                     |
+| :---------------- | :--------------------------------------- |
+| **가상화**        | React Window로 대량 목록 효율적 렌더링   |
+| **코드 분할**     | Next.js의 동적 임포트로 번들 크기 최적화 |
+| **이미지 최적화** | 브라우저 압축으로 업로드 용량 감소       |
+| **메모이제이션**  | React.memo와 useMemo로 렌더링 최적화     |
 
-## 🚀 실행 방법
+---
 
-### 환경 설정
+<br/>
+<br/>
+<br/>
+<br/>
+
+## ▶️ 실행 방법
+
+### 📋 환경 설정
 
 ```bash
 # Node.js v14+ 및 npm/yarn 필요
@@ -198,81 +201,113 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 git clone https://github.com/your-username/cvlog-fe.git
 cd cvlog-fe
 
-# 환경 변수 설정 (예시)
-cp .env.example .env.local
-# .env.local 파일 편집 - API 엔드포인트 설정
+# 환경 변수 설정 (.env.local 파일)
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
 
+### 🚀 설치 및 실행
+
+```bash
 # 의존성 설치
+npm install
+# 또는
 yarn install
 
-# 개발 서버 실행 (http://localhost:3000)
+# 개발 서버 실행
+npm run dev
+# 또는
 yarn dev
 ```
 
-### 빌드 및 배포
+### 📦 빌드 및 배포
 
 ```bash
 # 프로덕션 빌드
+npm run build
+# 또는
 yarn build
 
-# 빌드 테스트
+# 프로덕션 서버 실행
+npm run start
+# 또는
 yarn start
-
-# Vercel 배포 (권장)
-vercel
 ```
 
-## 🛠️ 기술적 도전과 해결
+<br/>
+<br/>
+<br/>
+<br/>
 
-### 1. 복잡한 폴더 구조 관리
+## 🔧 기술적 도전과 해결
 
-**도전:** 중첩된 폴더 구조와 문서 관리를 위한 직관적인 드래그 앤 드롭 인터페이스 구현
+### 1️⃣ 복잡한 폴더 구조 관리
 
-**해결책:** DND Kit 라이브러리와 재귀적 컴포넌트 구조를 활용하여 직관적인 폴더 관리 시스템 구현. 폴더/파일 계층 구조를 효율적으로 표현하는 데이터 모델 설계.
+<table>
+<tr>
+<td width="30%"><b>도전</b></td>
+<td>
+• 중첩된 폴더 구조에서 드래그 앤 드롭 상태 관리 복잡성<br>
+• 재귀적 구조 최적화 어려움
+</td>
+</tr>
+<tr>
+<td><b>해결</b></td>
+<td>
+• <a href="https://dndkit.com/">DND Kit</a> 라이브러리 활용한 직관적인 UI 구현<br>
+• 가상화 기술로 렌더링 성능 향상
+</td>
+</tr>
+</table>
 
-### 2. 마크다운 렌더링 성능
+### 2️⃣ 마크다운 렌더링 최적화
 
-**도전:** 복잡한 마크다운 콘텐츠(코드 블록, 수식, 다이어그램 등)의 효율적인 렌더링
+<table>
+<tr>
+<td width="30%"><b>도전</b></td>
+<td>
+• 마크다운의 HTML 변환 과정에서 XSS 및 보안 이슈<br>
+• 복잡한 코드 블록, 표, 수식 등의 렌더링 최적화
+</td>
+</tr>
+<tr>
+<td><b>해결</b></td>
+<td>
+• Remark/Rehype 플러그인 체인으로 변환 프로세스 커스터마이징<br>
+• React.memo와 동적 임포트로 렌더링 성능 최적화
+</td>
+</tr>
+</table>
 
-**해결책:** React Markdown, Rehype 플러그인, 메모이제이션을 활용하여 렌더링 최적화. 코드 하이라이팅을 위한
-React Syntax Highlighter 통합.
+### 3️⃣ 인증 및 토큰 관리
 
-### 3. 상태 관리 복잡성
+<table>
+<tr>
+<td width="30%"><b>도전</b></td>
+<td>
+• JWT 토큰 만료 및 자동 갱신 관리<br>
+• 보안 이슈 방지
+</td>
+</tr>
+<tr>
+<td><b>해결</b></td>
+<td>
+• 인터셉터 기반 토큰 리프레시 메커니즘 구현<br>
+• 쿠키 기반 토큰 저장으로 XSS 위험 감소
+</td>
+</tr>
+</table>
 
-**도전:** 다양한 페이지와 기능 간의 복잡한 상태 관리
-
-**해결책:** Recoil과 React Query를 조합한 계층적 상태 관리 전략 구현. 서버 상태는 React Query로, UI 상태는 Recoil로 관리하여 관심사 분리.
-
-### 4. 대규모 목록 렌더링
-
-**도전:** 수천 개의 문서와 폴더를 효율적으로 렌더링
-
-**해결책:** React Window와 React Virtualized를 활용한 가상화 구현으로 DOM 노드 수를 최소화하고 스크롤 성능 최적화.
-
-## 📊 주요 성과
-
-- **사용자 경험 개선**: 드래그 앤 드롭 인터페이스로 문서 관리 효율성 30% 향상
-- **렌더링 성능**: 가상화 기술 적용으로 대규모 목록 렌더링 시간 75% 감소
-- **코드 재사용성**: 컴포넌트 추상화로 코드 중복 50% 감소
-- **빌드 최적화**: 코드 분할과 동적 가져오기로 초기 로드 시간 40% 단축
+<br/>
+<br/>
+<br/>
+<br/>
 
 ## 🔜 향후 개발 계획
 
-- **협업 기능**: 여러 개발자가 함께 문서 작업할 수 있는 실시간 협업 기능
-- **SEO 최적화**: 블로그 콘텐츠의 검색 엔진 노출 향상을 위한 도구
-- **커스텀 테마**: 사용자 지정 브랜딩과 디자인 지원
-- **지표 대시보드**: 블로그 방문 및 참여 분석을 위한 통계 기능
-
-## 📞 연락처 및 링크
-
-- **프로젝트 데모**: [https://logme-demo.vercel.app](https://logme-demo.vercel.app)
-- **GitHub 저장소**: [https://github.com/your-username/cvlog-fe](https://github.com/your-username/cvlog-fe)
-- **백엔드 API**: [https://github.com/yunkukpark/klog-server](https://github.com/yunkukpark/klog-server)
-- **개발자 이메일**: [your-email@example.com](mailto:your-email@example.com)
-
----
+- **협업 기능** — 여러 개발자가 함께 문서 작업할 수 있는 실시간 협업
+- **SEO 최적화** — 블로그 콘텐츠의 검색 엔진 노출 향상
+- **커스텀 테마** — 사용자 지정 브랜딩과 디자인 지원
 
 <div align="center">
-  <p>Made with ❤️ by <a href="https://github.com/your-username">Your Name</a></p>
-  <p>© 2025 LOGME. All rights reserved.</p>
+  <p> 2025 LOGME Team. All Rights Reserved.</p>
 </div>
