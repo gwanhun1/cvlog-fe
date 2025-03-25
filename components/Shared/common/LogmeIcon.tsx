@@ -1,6 +1,7 @@
 import React from 'react';
 import LogmeLogoSvg from '/public/assets/logmelogo.svg';
 import LogoPng from '/public/assets/logo.png';
+import MarkPng from '/public/assets/mark.png';
 import SymbolLogoSvg from '/public/assets/symbol-logo.svg';
 import Image from 'next/image';
 import LogmeNewNavLogo from 'public/assets/NavLogo.svg';
@@ -16,6 +17,16 @@ interface IconProps {
 export const LogmeLogoIcon = (props: IconProps) => (
   <Image
     src={LogmeLogoSvg}
+    alt={props.alt}
+    width={props.width}
+    height={props.height}
+    className={props.cn}
+  />
+);
+
+export const LogmeMarkIcon = (props: IconProps) => (
+  <Image
+    src={MarkPng}
     alt={props.alt}
     width={props.width}
     height={props.height}
