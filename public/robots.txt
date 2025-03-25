@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# 사이트맵 URL 지정
-Sitemap: https://logme.shop/sitemap.xml
+# 사이트맵 URL 지정 - 동적 사이트맵 API 사용
+Sitemap: https://logme.shop/api/sitemap
