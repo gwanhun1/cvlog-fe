@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useQueryClient } from 'react-query';
 import Link from 'next/link';
+import Head from 'next/head';
 import CommentBox from 'components/Shared/LogmeComment';
 import { useGetCommentList } from 'service/hooks/Comment';
 import {
@@ -19,9 +20,10 @@ import { NextPage } from 'next';
 
 interface DetailProps {
   pid: string;
+  initialData?: any; // getStaticProps에서 가져온 초기 데이터
 }
 
-const Detail: NextPage<DetailProps> = ({ pid }) => {
+const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
@@ -31,6 +33,13 @@ const Detail: NextPage<DetailProps> = ({ pid }) => {
   // 데이터 받기
   const getMyDetail = useGetMyDetail(parseInt(pid));
   const commentList = useGetCommentList(parseInt(pid));
+  
+  // 초기 데이터가 있으면 QueryClient의 캐시에 저장
+  useEffect(() => {
+    if (initialData && queryClient) {
+      queryClient.setQueryData(['detail', pid], initialData);
+    }
+  }, [initialData, pid, queryClient]);
   const patchDetailMutation = usePatchDetail();
 
   useEffect(() => {
@@ -93,6 +102,64 @@ const Detail: NextPage<DetailProps> = ({ pid }) => {
 
   return (
     <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
+      {getMyDetail.data?.post && (
+        <Head>
+          <title>{getMyDetail.data.post.title} | LogMe</title>
+          <meta name="description" content={getMyDetail.data.post.content.substring(0, 160)} />
+          <meta name="keywords" content={getMyDetail.data.post.tags.map((tag: TagType) => tag.name).join(', ')} />
+          
+          {/* Canonical URL - 중요 */}
+          <link rel="canonical" href={`https://logme.shop/article/content/${pid}`} />
+          
+          {/* Open Graph / Facebook */}
+          <meta property="og:type" content="article" />
+          <meta property="og:title" content={getMyDetail.data.post.title} />
+          <meta property="og:description" content={getMyDetail.data.post.content.substring(0, 160)} />
+          <meta property="og:url" content={`https://logme.shop/article/content/${pid}`} />
+          <meta property="og:site_name" content="LogMe" />
+          
+          {/* Twitter */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={getMyDetail.data.post.title} />
+          <meta name="twitter:description" content={getMyDetail.data.post.content.substring(0, 160)} />
+          
+          {/* 구글 검색 추가 옵션 */}
+          <meta name="robots" content="index, follow" />
+          <meta name="googlebot" content="index, follow" />
+          
+          {/* Schema.org JSON-LD structured data */}
+          <script 
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BlogPosting",
+                "headline": getMyDetail.data.post.title,
+                "description": getMyDetail.data.post.content.substring(0, 160),
+                "keywords": getMyDetail.data.post.tags.map((tag: TagType) => tag.name).join(', '),
+                "author": {
+                  "@type": "Person",
+                  "name": "LogMe 사용자"
+                },
+                "datePublished": getMyDetail.data.post.created_at,
+                "dateModified": getMyDetail.data.post.updated_at,
+                "mainEntityOfPage": {
+                  "@type": "WebPage",
+                  "@id": `https://logme.shop/article/content/${pid}`
+                },
+                "publisher": {
+                  "@type": "Organization",
+                  "name": "LogMe",
+                  "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://logme.shop/favicon.svg"
+                  }
+                }
+              })
+            }}
+          />
+        </Head>
+      )}
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
         {getMyDetail.isLoading ? (
           <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
@@ -241,10 +308,28 @@ const Detail: NextPage<DetailProps> = ({ pid }) => {
 export default Detail;
 
 export const getStaticPaths = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  };
+  try {
+    // API에서 모든 공개 게시물 가져오기 시도
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
+    const response = await fetch(`${API_URL}/post/posts/public`);
+    const posts = await response.json();
+
+    // 공개 게시물의 경로 생성
+    const paths = posts.map((post: any) => ({
+      params: { pid: post.id.toString() },
+    }));
+
+    return {
+      paths,
+      fallback: 'blocking', // 경로가 없으면 서버에서 생성 시도
+    };
+  } catch (error) {
+    console.error('Error fetching paths:', error);
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
 };
 
 export const getStaticProps = async ({ params }: any) => {
@@ -257,15 +342,28 @@ export const getStaticProps = async ({ params }: any) => {
   }
 
   try {
+    // 게시물 데이터 미리 가져오기 시도
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
+    const response = await fetch(`${API_URL}/post/post/${pid}`);
+    const postData = await response.json();
+
+    // 미리 가져온 데이터를 함께 전달 (페이지 초기 로딩 시 사용)
     return {
       props: {
         pid,
+        initialData: postData,
       },
-      revalidate: 60,
+      // 1시간마다 재생성 (백엔드가 오프라인일 때도 캐시된 버전 제공)
+      revalidate: 3600,
     };
   } catch (error) {
+    console.error(`Error fetching post ${pid}:`, error);
     return {
-      notFound: true,
+      props: {
+        pid,
+        initialData: null,
+      },
+      revalidate: 3600,
     };
   }
 };

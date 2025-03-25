@@ -33,6 +33,11 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
   const keyword = useRecoilValue(tagAtom);
+  
+  const plainTextContent = markdownToText(cleanContent);
+  const summary = plainTextContent.length > 160 ? 
+    plainTextContent.substring(0, 157) + '...' : 
+    plainTextContent;
 
   return (
     <article
@@ -41,6 +46,8 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
           ? 'bg-blue-400'
           : 'bg-white'
       } border border-blue-100 rounded-lg shadow-sm hover:shadow-lg relative`}
+      itemScope
+      itemType="http://schema.org/BlogPosting"
     >
       <div className="flex flex-col h-full w-full">
         {imageUrl ? (
@@ -57,7 +64,9 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
                 const imgElement = e.target as HTMLImageElement;
                 imgElement.style.display = 'none';
               }}
+              itemProp="image"
             />
+            <meta itemProp="thumbnailUrl" content={imageUrl} />
           </div>
         ) : (
           <div className="h-8"></div>
@@ -65,12 +74,19 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
 
         <div className="flex flex-col justify-between p-5 w-full flex-grow">
           <div className="h-full flex flex-col">
-            <h3 className="mb-2 text-2xl font-bold leading-tight text-gray-900 group-hover:text-blue-600 line-clamp-2">
+            <h3 
+              className="mb-2 text-2xl font-bold leading-tight text-gray-900 group-hover:text-blue-600 line-clamp-2"
+              itemProp="headline"
+            >
               {title}
             </h3>
-            <p className="text-gray-600 line-clamp-3 overflow-hidden group-hover:text-blue-600">
-              {markdownToText(cleanContent)}
+            <p 
+              className="text-gray-600 line-clamp-3 overflow-hidden group-hover:text-blue-600"
+              itemProp="description"
+            >
+              {summary}
             </p>
+            <meta itemProp="keywords" content={tags.map(tag => tag.name).join(', ')} />
             <div className="flex items-center mt-auto">
               <div className="flex-1">
                 <TagList tags={tags} />
@@ -81,9 +97,14 @@ const Card: React.FC<CardProps> = ({ title, updated_at, content, tags }) => {
       </div>
       {updated_at && (
         <div className="absolute bottom-3 right-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-full px-3 py-1 border border-blue-100/50 shadow-sm">
-          <time className="text-xs font-medium text-blue-600/70">
+          <time 
+            className="text-xs font-medium text-blue-600/70"
+            itemProp="dateModified" 
+            dateTime={updated_at}
+          >
             {formatTimeAgo(updated_at)}
           </time>
+          <meta itemProp="datePublished" content={updated_at} />
         </div>
       )}
     </article>
