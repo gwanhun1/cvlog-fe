@@ -1,15 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+       xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+       xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- 메인 페이지 -->
   <url>
     <loc>https://logme.shop</loc>
-    <lastmod>2025-03-26T15:12:11+09:00</lastmod>
+    <lastmod>2025-03-26T02:43:03+09:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  
+  <!-- 전체보기 페이지 - 중요 -->
   <url>
     <loc>https://logme.shop/article</loc>
-    <lastmod>2025-03-26T15:12:11+09:00</lastmod>
+    <lastmod>2025-03-26T02:43:03+09:00</lastmod>
     <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://logme.shop/article" />
+  </url>
+
+  <!-- React 훅 게시물 - 전체보기 섹션에서 노출되어야 하는 주요 게시물 -->
+  <url>
+    <loc>https://logme.shop/article/content/all/123</loc>
+    <lastmod>2025-03-26T02:46:36+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://logme.shop/article/content/all/123" />
+    <image:image>
+      <image:loc>https://logme.shop/assets/NavLogo.svg</image:loc>
+      <image:title>React 훅 안에서 setInterval() setTimeout()</image:title>
+      <image:caption>React 훅 안에서 setInterval과 setTimeout 사용하기</image:caption>
+    </image:image>
+  </url>
+
+  <!-- 전체보기 섹션의 기타 게시물들 -->
+  <url>
+    <loc>https://logme.shop/article/content/all/124</loc>
+    <lastmod>2025-03-26T02:46:36+09:00</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://logme.shop/article/content/all/124" />
+  </url>
+  <url>
+    <loc>https://logme.shop/article/content/all/125</loc>
+    <lastmod>2025-03-26T02:46:36+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://logme.shop/article/content/all/125" />
+  </url>
+  <url>
+    <loc>https://logme.shop/article/content/all/126</loc>
+    <lastmod>2025-03-26T02:46:36+09:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://logme.shop/article/content/all/126" />
   </url>
 </urlset>

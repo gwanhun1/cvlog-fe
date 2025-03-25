@@ -124,13 +124,20 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
                     onClick={() => saveListIndex(index)}
                     className="block h-full"
                     title={title}
+                    aria-label={`게시물 보기: ${title}`}
+                    data-seo-important="true"
                   >
-                    <Card
-                      title={title}
-                      content={content}
-                      tags={tags}
-                      updated_at={updated_at}
-                    />
+                    <div itemScope itemType="https://schema.org/BlogPosting" className="w-full">
+                      <meta itemProp="mainEntityOfPage" content={`https://logme.shop/article/content/all/${id}`} />
+                      <meta itemProp="headline" content={title} />
+                      <meta itemProp="dateModified" content={updated_at} />
+                      <Card
+                        title={title}
+                        content={content}
+                        tags={tags}
+                        updated_at={updated_at}
+                      />
+                    </div>
                   </Link>
                 </div>
               ))}
