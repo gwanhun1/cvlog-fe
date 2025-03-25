@@ -27,8 +27,11 @@ const Home = () => {
         <meta property="og:description" content="프로그래밍, 개발, 리액트, 자바스크립트 등 다양한 기술 글을 작성하고 공유하는 플랫폼입니다." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://logme.shop" />
-        <meta property="og:image" content="/assets/NavLogo.svg" />
+        <meta property="og:image" content="https://logme.shop/assets/NavLogo.svg" />
         <meta property="og:site_name" content="LogMe" />
+        <meta property="og:image:width" content="163" />
+        <meta property="og:image:height" content="48" />
+        <meta property="og:image:alt" content="LogMe 로고" />
         
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://logme.shop" />
