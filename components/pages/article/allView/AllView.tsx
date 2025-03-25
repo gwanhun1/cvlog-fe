@@ -123,6 +123,7 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
                     href={`/article/content/all/${id}`}
                     onClick={() => saveListIndex(index)}
                     className="block h-full"
+                    title={title}
                   >
                     <Card
                       title={title}
