@@ -24,25 +24,29 @@ import { NextPage } from 'next';
 
 interface DetailProps {
   pid: string;
+  initialData?: any; // getStaticProps에서 가져온 초기 데이터 (선택사항)
 }
 
-const Detail: NextPage<DetailProps> = ({ pid }) => {
+const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
   const userInfo = useRecoilValue(userIdAtom);
   const [_, setTagList] = useRecoilState(tagListAtom);
-  // 데이터 받기
+  // 데이터 받기 - initialData를 사용하여 초기 상태 설정
   const {
     data: detailData,
     isLoading,
     refetch: detailRefetch,
-  } = useGetDetail(parseInt(pid), data => {
-    if (data?.post) {
-      setPatchMessage(data.post.public_status);
-      setTagList(data.post.tags);
+  } = useGetDetail(
+    parseInt(pid), 
+    data => {
+      if (data?.post) {
+        setPatchMessage(data.post.public_status);
+        setTagList(data.post.tags);
+      }
     }
-  });
+  );
 
   const { data: commentData, refetch: commentRefetch } = useGetCommentList(
     parseInt(pid)
@@ -313,11 +317,56 @@ const Detail: NextPage<DetailProps> = ({ pid }) => {
 
 export default Detail;
 
+// 게시물 타입 정의
+interface PostType {
+  id: number;
+  public_status: boolean;
+  title?: string;
+  created_at?: string;
+  updated_at?: string;
+  content?: string;
+  summary?: string;
+  image_url?: string;
+  thumbnail_image_url?: string;
+  is_featured?: boolean;
+  tags?: any[];
+}
+
 export const getStaticPaths = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  };
+  try {
+    // 백엔드 API URL 설정
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
+    
+    // 공개 상태(public_status가 true)인 게시물 데이터 가져오기
+    const response = await fetch(`${API_URL}/post/posts/public`);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`);
+    }
+    
+    const posts = await response.json() as PostType[];
+    
+    // 유효한 ID를 가진 공개 게시물에 대한 경로 생성
+    const paths = posts
+      .filter((post: PostType) => post.public_status && post.id) // 공개 상태이고 유효한 ID가 있는 게시물만 필터링
+      .map((post: PostType) => ({
+        params: { pid: post.id.toString() }
+      }));
+      
+    console.log(`Pre-generating ${paths.length} public article pages`);
+    
+    return {
+      paths,
+      fallback: 'blocking', // 빌드 시 생성되지 않은 페이지는 요청 시 생성
+    };
+  } catch (error) {
+    console.error('Error fetching public posts for static paths:', error);
+    // 오류 발생 시 빈 paths 배열 반환하고 fallback으로 처리
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
 };
 
 export const getStaticProps = async ({ params }: any) => {
@@ -330,13 +379,36 @@ export const getStaticProps = async ({ params }: any) => {
   }
 
   try {
+    // 백엔드 API URL 설정
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
+    
+    // 게시물 데이터 미리 가져오기 (선택사항)
+    const response = await fetch(`${API_URL}/post/posts/${pid}`);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch post data: ${response.status}`);
+    }
+    
+    const postData = await response.json();
+    
+    // 게시물이 공개 상태가 아니면 404 페이지 반환
+    if (postData && postData.post && !postData.post.public_status) {
+      return {
+        notFound: true,
+      };
+    }
+    
     return {
       props: {
         pid,
+        // 초기 데이터 제공 (선택사항)
+        initialData: postData || null,
       },
+      // ISR(Incremental Static Regeneration) - 60초마다 페이지 재생성 가능
       revalidate: 60,
     };
   } catch (error) {
+    console.error(`Error getting static props for post ${pid}:`, error);
     return {
       notFound: true,
     };
