@@ -357,14 +357,14 @@ export const getStaticPaths = async () => {
     
     return {
       paths,
-      fallback: 'blocking', // 빌드 시 생성되지 않은 페이지는 요청 시 생성
+      fallback: true, // Changed from 'blocking' to true for better error handling
     };
   } catch (error) {
     console.error('Error fetching public posts for static paths:', error);
     // 오류 발생 시 빈 paths 배열 반환하고 fallback으로 처리
     return {
       paths: [],
-      fallback: 'blocking',
+      fallback: true, // Changed from 'blocking' to true
     };
   }
 };
@@ -382,11 +382,18 @@ export const getStaticProps = async ({ params }: any) => {
     // 백엔드 API URL 설정
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
     
-    // 게시물 데이터 미리 가져오기 (선택사항)
+    // 게시물 데이터 미리 가져오기
     const response = await fetch(`${API_URL}/post/posts/${pid}`);
     
     if (!response.ok) {
-      throw new Error(`Failed to fetch post data: ${response.status}`);
+      console.error(`Failed to fetch post data: ${response.status}`);
+      return {
+        props: {
+          pid,
+          initialData: null,
+        },
+        revalidate: 10, // Reduced revalidation time for error cases
+      };
     }
     
     const postData = await response.json();
@@ -401,16 +408,20 @@ export const getStaticProps = async ({ params }: any) => {
     return {
       props: {
         pid,
-        // 초기 데이터 제공 (선택사항)
         initialData: postData || null,
       },
-      // ISR(Incremental Static Regeneration) - 60초마다 페이지 재생성 가능
-      revalidate: 60,
+      // ISR(Incremental Static Regeneration) - 30초마다 페이지 재생성 가능
+      revalidate: 30,
     };
   } catch (error) {
     console.error(`Error getting static props for post ${pid}:`, error);
+    // Instead of returning notFound, return valid props with null initialData
     return {
-      notFound: true,
+      props: {
+        pid,
+        initialData: null,
+      },
+      revalidate: 10,
     };
   }
 };
