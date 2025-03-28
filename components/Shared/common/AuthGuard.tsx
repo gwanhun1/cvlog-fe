@@ -18,6 +18,8 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     '/login',
     '/article',
     /^\/article\/all\/\d+$/,
+    /^\/article\/content\/all\/\d+$/,
+    '/article/content/all/[pid]', // 동적 라우트 패턴 추가
   ];
 
   const checkAuthStatus = useCallback(async () => {
@@ -28,11 +30,19 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       const refreshToken = Cookie.getItem('refreshToken');
 
       // 현재 경로가 publicRoutes에 포함되는지 확인
-      const isPublicRoute = publicRoutes.some(route =>
-        typeof route === 'string'
-          ? route === router.pathname
-          : route.test(router.pathname)
-      );
+
+      // 정적 경로는 pathname으로, 정규식 패턴은 asPath로 확인
+      const isPublicRoute = publicRoutes.some(route => {
+        let result;
+        if (typeof route === 'string') {
+          // 정적 경로는 pathname으로 확인
+          result = route === router.pathname;
+        } else {
+          // 정규식 패턴은 asPath로 확인 (실제 URL에 대해 테스트)
+          result = route.test(router.asPath);
+        }
+        return result;
+      });
 
       if (isPublicRoute) {
         setIsAuthenticated(true);
