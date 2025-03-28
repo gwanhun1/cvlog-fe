@@ -8,6 +8,6 @@
   },
   "css.validate": false,
   "scss.validate": false,
-  "cSpell.words": ["Sandpack"],
+  "cSpell.words": ["Sandpack", "logme", "Logme", "LogmeToken"],
   "cSpell.userWords": ["logme", "Logme"]
 }
