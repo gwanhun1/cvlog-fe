@@ -11,7 +11,14 @@ const nextConfig = {
         pathname: '/**/**',
       },
     ],
-    domains: ['github.com', 'avatars.githubusercontent.com', 'cvlog-bucket.s3.amazonaws.com', 'user-images.githubusercontent.com', 'logme-bucket.s3.amazonaws.com', 'res.cloudinary.com'],
+    domains: [
+      'github.com',
+      'avatars.githubusercontent.com',
+      'cvlog-bucket.s3.amazonaws.com',
+      'user-images.githubusercontent.com',
+      'logme-bucket.s3.amazonaws.com',
+      'res.cloudinary.com',
+    ],
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     formats: ['image/webp'],
@@ -22,7 +29,6 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // swcMinify: true, // Removed as it's not recognized in Next.js 15.2.1
 };
 
 module.exports = nextConfig;

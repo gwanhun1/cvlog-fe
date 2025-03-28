@@ -7,7 +7,7 @@ interface HomeSectionProps {
 }
 
 const HomeSection = ({ description }: HomeSectionProps) => {
-  const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 state
+  const [isEditing, setIsEditing] = useState(false);
   const [currentDescription, setCurrentDescription] = useState(
     description || ''
   );
