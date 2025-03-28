@@ -127,8 +127,15 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
                     aria-label={`게시물 보기: ${title}`}
                     data-seo-important="true"
                   >
-                    <div itemScope itemType="https://schema.org/BlogPosting" className="w-full">
-                      <meta itemProp="mainEntityOfPage" content={`https://logme.shop/article/content/all/${id}`} />
+                    <div
+                      itemScope
+                      itemType="https://schema.org/BlogPosting"
+                      className="w-full"
+                    >
+                      <meta
+                        itemProp="mainEntityOfPage"
+                        content={`https://logme.shop/article/content/all/${id}`}
+                      />
                       <meta itemProp="headline" content={title} />
                       <meta itemProp="dateModified" content={updated_at} />
                       <Card

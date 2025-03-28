@@ -37,7 +37,6 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
     setKeyword(tag.name);
   }, [tag.name, setKeyword]);
 
-  // Use CSSProperties type to avoid TypeScript errors
   const style = useMemo(
     (): CSSProperties => ({
       transform: CSS.Transform.toString(transform),
@@ -73,8 +72,14 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
       aria-selected={isSelected}
     >
       <div className="flex items-center space-x-3 w-full">
-        <div className={`w-2.5 h-2.5 rounded-full ${isSelected ? 'bg-white' : 'bg-blue-300'} flex-shrink-0`} />
-        <span className="text-sm font-medium truncate max-w-full">{tag.name}</span>
+        <div
+          className={`w-2.5 h-2.5 rounded-full ${
+            isSelected ? 'bg-white' : 'bg-blue-300'
+          } flex-shrink-0`}
+        />
+        <span className="text-sm font-medium truncate max-w-full">
+          {tag.name}
+        </span>
       </div>
     </div>
   );

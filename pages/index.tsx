@@ -20,8 +20,7 @@ const Home = () => {
         <meta name="description" content="LogMe는 개발자를 위한 기술 블로그 플랫폼입니다. 프로그래밍, 개발, 리액트, 자바스크립트 등 다양한 기술 글을 작성하고 공유하세요." />
         <meta name="keywords" content="기술블로그, 개발자, 프로그래밍, 리액트, 자바스크립트, 웹개발" />
         
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+
         
         <meta property="og:title" content="LogMe - 개발자를 위한 기술 블로그 플랫폼" />
         <meta property="og:description" content="프로그래밍, 개발, 리액트, 자바스크립트 등 다양한 기술 글을 작성하고 공유하는 플랫폼입니다." />

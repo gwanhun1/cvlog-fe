@@ -24,7 +24,7 @@ const Article: NextPage = () => {
         <title>LOGME - 모든 게시물 목록</title>
         <meta name="description" content="LOGME의 모든 게시물 목록입니다. 프로그래밍, 개발, 기술 관련 다양한 게시물을 확인하세요." />
         <meta name="keywords" content="게시물, 블로그, 프로그래밍, 개발, 기술, 글목록" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
         <meta property="og:title" content="LOGME - 모든 게시물 목록" />
         <meta property="og:description" content="LOGME의 다양한 개발 관련 게시물을 확인하세요." />
         <meta property="og:type" content="website" />

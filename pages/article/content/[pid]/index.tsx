@@ -33,7 +33,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   // 데이터 받기
   const getMyDetail = useGetMyDetail(parseInt(pid));
   const commentList = useGetCommentList(parseInt(pid));
-  
+
   // 초기 데이터가 있으면 QueryClient의 캐시에 저장
   useEffect(() => {
     if (initialData && queryClient) {
@@ -105,57 +105,70 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       {getMyDetail.data?.post && (
         <Head>
           <title>{getMyDetail.data.post.title} | LogMe</title>
-          <meta name="description" content={getMyDetail.data.post.content.substring(0, 160)} />
-          <meta name="keywords" content={getMyDetail.data.post.tags.map((tag: TagType) => tag.name).join(', ')} />
-          
+          <meta
+            name="description"
+            content={getMyDetail.data.post.content.substring(0, 160)}
+          />
+          <meta
+            name="keywords"
+            content={getMyDetail.data.post.tags
+              .map((tag: TagType) => tag.name)
+              .join(', ')}
+          />
+
           {/* Canonical URL - 중요 */}
-          <link rel="canonical" href={`https://logme.shop/article/content/${pid}`} />
-          
+          <link
+            rel="canonical"
+            href={`https://logme.shop/article/content/${pid}`}
+          />
+
           {/* Open Graph / Facebook */}
           <meta property="og:type" content="article" />
           <meta property="og:title" content={getMyDetail.data.post.title} />
-          <meta property="og:description" content={getMyDetail.data.post.content.substring(0, 160)} />
-          <meta property="og:url" content={`https://logme.shop/article/content/${pid}`} />
+          <meta
+            property="og:description"
+            content={getMyDetail.data.post.content.substring(0, 160)}
+          />
+          <meta
+            property="og:url"
+            content={`https://logme.shop/article/content/${pid}`}
+          />
           <meta property="og:site_name" content="LogMe" />
-          
-          {/* Twitter */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={getMyDetail.data.post.title} />
-          <meta name="twitter:description" content={getMyDetail.data.post.content.substring(0, 160)} />
-          
+
           {/* 구글 검색 추가 옵션 */}
           <meta name="robots" content="index, follow" />
           <meta name="googlebot" content="index, follow" />
-          
-          {/* Schema.org JSON-LD structured data */}
-          <script 
+
+          <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "BlogPosting",
-                "headline": getMyDetail.data.post.title,
-                "description": getMyDetail.data.post.content.substring(0, 160),
-                "keywords": getMyDetail.data.post.tags.map((tag: TagType) => tag.name).join(', '),
-                "author": {
-                  "@type": "Person",
-                  "name": "LogMe 사용자"
+                '@context': 'https://schema.org',
+                '@type': 'BlogPosting',
+                headline: getMyDetail.data.post.title,
+                description: getMyDetail.data.post.content.substring(0, 160),
+                keywords: getMyDetail.data.post.tags
+                  .map((tag: TagType) => tag.name)
+                  .join(', '),
+                author: {
+                  '@type': 'Person',
+                  name: 'LogMe 사용자',
                 },
-                "datePublished": getMyDetail.data.post.created_at,
-                "dateModified": getMyDetail.data.post.updated_at,
-                "mainEntityOfPage": {
-                  "@type": "WebPage",
-                  "@id": `https://logme.shop/article/content/${pid}`
+                datePublished: getMyDetail.data.post.created_at,
+                dateModified: getMyDetail.data.post.updated_at,
+                mainEntityOfPage: {
+                  '@type': 'WebPage',
+                  '@id': `https://logme.shop/article/content/${pid}`,
                 },
-                "publisher": {
-                  "@type": "Organization",
-                  "name": "LogMe",
-                  "logo": {
-                    "@type": "ImageObject",
-                    "url": "https://logme.shop/favicon.svg"
-                  }
-                }
-              })
+                publisher: {
+                  '@type': 'Organization',
+                  name: 'LogMe',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://logme.shop/favicon.svg',
+                  },
+                },
+              }),
             }}
           />
         </Head>
