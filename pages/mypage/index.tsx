@@ -16,7 +16,7 @@ const RecentActivity = dynamic(
   () => import('../../components/pages/mypage/RecentActivity'),
   {
     loading: () => (
-      <div className="animate-pulse bg-white/5 rounded-lg p-8 h-48" />
+      <div className="p-8 h-48 rounded-lg animate-pulse bg-white/5" />
     ),
     ssr: false,
   }
@@ -37,14 +37,14 @@ const Mypage: NextPage = () => {
 
   return (
     <div className="flex justify-center w-full min-h-[calc(100vh-80px)] bg-gradient-to-b from-blue-50 to-white">
-      <div className="w-full max-w-6xl px-4 py-8">
+      <div className="px-4 py-8 w-full max-w-6xl">
         <ProfileHeader
           profileImage={userInfo?.profile_image}
           githubId={userInfo?.github_id}
         />
 
-        <div className="grid grid-cols-1 tablet:grid-cols-3 gap-4">
-          <div className="tablet:col-span-2 space-y-4">
+        <div className="grid grid-cols-1 gap-4 tablet:grid-cols-3">
+          <div className="space-y-4 tablet:col-span-2">
             <StatsCard icon={FiCalendar} title="가입일" value={formattedDate} />
             <HomeSection description={userInfo?.description} />
             <RecentActivity />

@@ -1,32 +1,37 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { FiGithub } from 'react-icons/fi';
 import DisconnectedState from './DisconnectedState';
 import ConnectedState from './ConnectedState';
 import ErrorState from './ErrorState';
+import {
+  useGithubSyncSettings,
+  useCreateGithubRepo,
+  useDisconnectGithubSync,
+} from 'service/hooks/useGithubSync';
 
-type ConnectionStatus = 'disconnected' | 'connected' | 'error';
+type ConnectionStatus = 'disconnected' | 'connected' | 'error' | 'loading';
 
-interface GithubSyncSettingsProps {
-  initialEnabled?: boolean;
-  initialRepoName?: string;
-  initialRepoId?: number | null;
-  syncedPostCount?: number;
-}
+const GithubSyncSettings = () => {
+  const { data: syncSettings, isLoading } = useGithubSyncSettings();
+  const createRepoMutation = useCreateGithubRepo();
+  const disconnectMutation = useDisconnectGithubSync();
 
-const GithubSyncSettings = ({
-  initialEnabled = false,
-  initialRepoName = '',
-  initialRepoId = null,
-  syncedPostCount = 0,
-}: GithubSyncSettingsProps) => {
-  const [isEnabled, setIsEnabled] = useState(initialEnabled);
-  const [repoName, setRepoName] = useState(initialRepoName);
-  const [repoId, setRepoId] = useState<number | null>(initialRepoId);
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>(
-    initialRepoId ? 'connected' : 'disconnected'
-  );
-  const [isCreating, setIsCreating] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [repoName, setRepoName] = useState('');
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>('loading');
   const [error, setError] = useState<string | null>(null);
+
+  // 서버 데이터로 상태 초기화
+  useEffect(() => {
+    if (syncSettings) {
+      setIsEnabled(syncSettings.enabled);
+      setRepoName(syncSettings.repoName || '');
+      setConnectionStatus(syncSettings.repoId ? 'connected' : 'disconnected');
+    } else if (!isLoading) {
+      setConnectionStatus('disconnected');
+    }
+  }, [syncSettings, isLoading]);
 
   // 토글 핸들러
   const handleToggle = useCallback(() => {
@@ -35,14 +40,18 @@ const GithubSyncSettings = ({
         'GitHub 동기화를 비활성화하시겠습니까?\n기존에 동기화된 파일은 GitHub에 그대로 유지됩니다.'
       );
       if (confirmed) {
-        setIsEnabled(false);
-        setConnectionStatus('disconnected');
-        // TODO: 백엔드 API 호출
+        disconnectMutation.mutate(undefined, {
+          onSuccess: () => {
+            setIsEnabled(false);
+            setConnectionStatus('disconnected');
+            setRepoName('');
+          },
+        });
       }
     } else {
       setIsEnabled(true);
     }
-  }, [isEnabled]);
+  }, [isEnabled, disconnectMutation]);
 
   // 저장소 생성
   const handleCreateRepo = useCallback(async () => {
@@ -59,21 +68,20 @@ const GithubSyncSettings = ({
       return;
     }
 
-    setIsCreating(true);
     setError(null);
 
-    try {
-      // TODO: 백엔드 API 호출
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      setRepoId(123456789);
-      setConnectionStatus('connected');
-    } catch {
-      setError('저장소 생성에 실패했습니다. 다시 시도해주세요.');
-      setConnectionStatus('error');
-    } finally {
-      setIsCreating(false);
-    }
-  }, [repoName]);
+    createRepoMutation.mutate(repoName, {
+      onSuccess: () => {
+        setConnectionStatus('connected');
+      },
+      onError: (err: unknown) => {
+        const errorMessage =
+          err instanceof Error ? err.message : '저장소 생성에 실패했습니다.';
+        setError(errorMessage);
+        setConnectionStatus('error');
+      },
+    });
+  }, [repoName, createRepoMutation]);
 
   // 연결 해제
   const handleDisconnect = useCallback(() => {
@@ -81,18 +89,35 @@ const GithubSyncSettings = ({
       '저장소 연결을 해제하시겠습니까?\nGitHub의 저장소와 파일은 삭제되지 않습니다.'
     );
     if (confirmed) {
-      setRepoId(null);
-      setRepoName('');
-      setConnectionStatus('disconnected');
-      // TODO: 백엔드 API 호출
+      disconnectMutation.mutate(undefined, {
+        onSuccess: () => {
+          setRepoName('');
+          setConnectionStatus('disconnected');
+        },
+      });
     }
-  }, []);
+  }, [disconnectMutation]);
 
   // 권한 재인증
   const handleReauthorize = useCallback(() => {
-    // TODO: GitHub OAuth 재인증
-    alert('GitHub 권한 재인증이 필요합니다.\n(백엔드 연동 후 구현 예정)');
+    // GitHub OAuth 재인증 페이지로 이동
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/github/callback`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo`;
   }, []);
+
+  // 로딩 중
+  if (isLoading || connectionStatus === 'loading') {
+    return (
+      <section className="p-8 bg-white rounded-xl border border-blue-100 shadow-sm">
+        <div className="flex gap-2 items-center mb-6">
+          <FiGithub className="w-5 h-5 text-gray-700" />
+          <h2 className="text-xl font-semibold text-gray-900">GitHub 동기화</h2>
+        </div>
+        <div className="h-20 bg-gray-100 rounded-lg animate-pulse" />
+      </section>
+    );
+  }
 
   return (
     <section className="p-8 bg-white rounded-xl border border-blue-100 shadow-sm">
@@ -127,7 +152,7 @@ const GithubSyncSettings = ({
               setRepoName={setRepoName}
               error={error}
               clearError={() => setError(null)}
-              isCreating={isCreating}
+              isCreating={createRepoMutation.isLoading}
               onCreateRepo={handleCreateRepo}
             />
           )}
@@ -135,7 +160,7 @@ const GithubSyncSettings = ({
           {connectionStatus === 'connected' && (
             <ConnectedState
               repoName={repoName}
-              syncedPostCount={syncedPostCount}
+              syncedPostCount={syncSettings?.syncedPostCount || 0}
               onDisconnect={handleDisconnect}
             />
           )}
