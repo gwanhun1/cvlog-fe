@@ -22,8 +22,8 @@ const RecentActivity: React.FC = () => {
   );
 
   return (
-    <section className="bg-white rounded-xl p-8 shadow-sm border border-blue-100">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">최근 활동</h2>
+    <section className="p-8 bg-white rounded-xl border border-blue-100 shadow-sm">
+      <h2 className="mb-6 text-xl font-semibold text-gray-900">최근 활동</h2>
       <div className="space-y-4">
         {displayedActivities.map(activity => (
           <ActivityRow
@@ -35,7 +35,7 @@ const RecentActivity: React.FC = () => {
         ))}
       </div>
       {totalPages > 1 && (
-        <div className="mt-6 flex justify-center gap-2">
+        <div className="flex gap-2 justify-center mt-6">
           {Array.from({ length: totalPages }).map((_, index) => (
             <button
               key={index}
