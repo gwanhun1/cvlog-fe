@@ -88,10 +88,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
 
   // 수정 창
   const updateCheck = () => {
-    const check = confirm('수정하시겠습니까?');
-    if (check == true) {
-      router.push(`/article/modify/${pid}`);
-    }
+    router.push(`/article/modify/${pid}`);
   };
 
   useEffect(() => {
@@ -101,7 +98,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   }, [pid]);
 
   return (
-    <div className="flex flex-col items-center  justify-center rounded-lg pb-7 tablet:my-15 w-full">
+    <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
       {getMyDetail.data?.post && (
         <Head>
           <title>{getMyDetail.data.post.title} | LogMe</title>
@@ -175,25 +172,25 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       )}
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
         {getMyDetail.isLoading ? (
-          <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
+          <div className="mb-3 w-28 h-14 bg-gray-200 rounded-lg" />
         ) : (
-          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-6xl ">
+          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-6xl">
             {getMyDetail?.data?.post.title}
           </h1>
         )}
       </header>
-      <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
-        <div className="flex flex-wrap justify-start w-full text-ftBlack mb-1 ">
+      <section className="flex justify-between items-center w-full h-full border-b border-gray-400">
+        <div className="flex flex-wrap justify-start mb-1 w-full text-ftBlack">
           {getMyDetail.isLoading ? (
             <>
-              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
-              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
-              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
+              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
+              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
             </>
           ) : (
             getMyDetail.data?.post.tags.map((tag: TagType) => (
               <Badge
-                className=" mr-1 duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all"
+                className="flex relative items-center px-3 mt-1 mr-1 text-blue-800 bg-blue-200 rounded-full border-2 border-blue-300 transition-all duration-300  hover:scale-105 hover:cursor-pointer hover:bg-blue-200 hover:border-blue-400"
                 color="default"
                 size="sm"
                 key={tag.id}
@@ -211,7 +208,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
           )}
         </div>
         <section className="flex items-end w-28">
-          <time className="text-xs text-gray-600 tablet:text-sm mb-1">
+          <time className="mb-1 text-xs text-gray-600 tablet:text-sm">
             {getMyDetail && getMyDetail.data?.post.created_at.slice(0, 10)}
           </time>
         </section>
@@ -219,7 +216,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       <main className="w-full h-min-screen tablet:pb-12">
         <section>
           <div className="flex justify-end w-full">
-            <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0  h-10">
+            <article className="flex flex-row mt-1 mr-1 h-10 tablet:mt-1 tablet:m-0">
               {Number(userInfo?.id) === getMyDetail?.data?.post.user_id.id ||
               userInfo?.github_id ===
                 String(getMyDetail?.data?.post.user_id.id) ? (
@@ -262,20 +259,20 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
         </section>
       </main>
       <section className="flex justify-between w-full max-w-[60rem] gap-2 px-2 tablet:px-4 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
-        <article className="mb-4 mobile:mb-0 w-1/2">
+        <article className="mb-4 w-1/2 mobile:mb-0">
           <Profile getDetailData={getMyDetail?.data?.post.user_id} />
         </article>
-        <div className="flex items-center justify-between w-1/2">
+        <div className="flex justify-between items-center w-1/2">
           <div className="w-[48%] tablet:w-[49%]">
             {getMyDetail.data?.prevPostInfo ? (
               <Link
                 href={`/article/content/${getMyDetail.data.prevPostInfo.id}`}
                 prefetch
               >
-                <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                <div className="flex justify-start items-center px-2 w-full h-10 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
                   <div className="pr-2 text-lg tablet:text-xl">←</div>
-                  <div className="flex-col flex w-full truncate">
-                    <div className="text-xs tablet:text-sm text-gray-500">
+                  <div className="flex flex-col w-full truncate">
+                    <div className="text-xs text-gray-500 tablet:text-sm">
                       이전 포스트
                     </div>
                     <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
@@ -285,7 +282,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 </div>
               </Link>
             ) : (
-              <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+              <div className="flex justify-start items-center px-2 w-full h-10 bg-gray-200 rounded-md opacity-50 cursor-not-allowed text-ftBlack mobile:h-12 tablet:h-14 tablet:px-4" />
             )}
           </div>
 
@@ -295,9 +292,9 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 href={`/article/content/${getMyDetail.data.nextPostInfo.id}`}
                 prefetch
               >
-                <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
-                  <div className="flex-col flex w-full truncate text-right">
-                    <div className="text-xs tablet:text-sm text-gray-500">
+                <div className="flex justify-end items-center px-2 w-full h-10 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                  <div className="flex flex-col w-full text-right truncate">
+                    <div className="text-xs text-gray-500 tablet:text-sm">
                       다음 포스트
                     </div>
                     <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
@@ -308,7 +305,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 </div>
               </Link>
             ) : (
-              <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+              <div className="flex justify-end items-center px-2 w-full h-10 bg-gray-200 rounded-md opacity-50 cursor-not-allowed text-ftBlack mobile:h-12 tablet:h-14 tablet:px-4" />
             )}
           </div>
         </div>

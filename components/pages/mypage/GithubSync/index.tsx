@@ -37,7 +37,7 @@ const GithubSyncSettings = () => {
   const handleToggle = useCallback(() => {
     if (isEnabled) {
       const confirmed = window.confirm(
-        'GitHub 동기화를 비활성화하시겠습니까?\n기존에 동기화된 파일은 GitHub에 그대로 유지됩니다.'
+        'GitHub 동기화를 비활성화하시겠습니까?\nGitHub의 저장소와 파일도 함께 삭제됩니다.',
       );
       if (confirmed) {
         disconnectMutation.mutate(undefined, {
@@ -63,7 +63,7 @@ const GithubSyncSettings = () => {
     const repoNameRegex = /^[a-zA-Z0-9._-]+$/;
     if (!repoNameRegex.test(repoName)) {
       setError(
-        '저장소 이름은 영문, 숫자, 점(.), 하이픈(-), 언더스코어(_)만 사용 가능합니다.'
+        '저장소 이름은 영문, 숫자, 점(.), 하이픈(-), 언더스코어(_)만 사용 가능합니다.',
       );
       return;
     }
@@ -74,11 +74,12 @@ const GithubSyncSettings = () => {
       onSuccess: () => {
         setConnectionStatus('connected');
       },
-      onError: (err: unknown) => {
-        const errorMessage =
-          err instanceof Error ? err.message : '저장소 생성에 실패했습니다.';
-        setError(errorMessage);
+      onError: (err: any) => {
+        const apiMessage =
+          err?.response?.data?.message ?? '저장소 생성에 실패했습니다.';
+        setError(apiMessage);
         setConnectionStatus('error');
+        alert(apiMessage);
       },
     });
   }, [repoName, createRepoMutation]);
@@ -86,7 +87,7 @@ const GithubSyncSettings = () => {
   // 연결 해제
   const handleDisconnect = useCallback(() => {
     const confirmed = window.confirm(
-      '저장소 연결을 해제하시겠습니까?\nGitHub의 저장소와 파일은 삭제되지 않습니다.'
+      '저장소 연결을 해제하시겠습니까?\nGitHub의 저장소와 파일도 함께 삭제됩니다.',
     );
     if (confirmed) {
       disconnectMutation.mutate(undefined, {
@@ -103,7 +104,7 @@ const GithubSyncSettings = () => {
     // GitHub OAuth 재인증 페이지로 이동
     const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
     const redirectUri = `${window.location.origin}/github/callback`;
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo delete_repo`;
   }, []);
 
   // 로딩 중

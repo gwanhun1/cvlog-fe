@@ -1,11 +1,13 @@
 import { GiHamburgerMenu } from 'react-icons/gi';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Avatar, Dropdown } from 'flowbite-react';
 import Link from 'next/link';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import Cookie from 'public/utils/Cookie';
-import LocalStorage from 'public/utils/Localstorage';
-import { authorityState, userIdAtom } from 'service/atoms/atoms';
+import {
+  authorityState,
+  userIdAtom,
+  accessTokenAtom,
+} from 'service/atoms/atoms';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
 
@@ -17,17 +19,9 @@ interface MobileNavProps {
 
 const MobileNav = ({ isLoading }: MobileNavProps) => {
   const [page, setPage] = useState(menu[0]);
-  const [token, setToken] = useState(LocalStorage.getItem('LogmeToken'));
-  const [profile_image, setLogmeRefreshToken] = useState(
-    Cookie.getItem('refreshToken')
-  );
+  const token = useRecoilValue(accessTokenAtom);
   const [authority, setAuthority] = useRecoilState(authorityState);
   const userInfo = useRecoilValue(userIdAtom);
-
-  useEffect(() => {
-    setToken(LocalStorage.getItem('LogmeToken'));
-    setLogmeRefreshToken(Cookie.getItem('refreshToken'));
-  }, []);
 
   const onClickLogout = async () => {
     await handleSignOut((value: string | null) => setAuthority(!!value));
