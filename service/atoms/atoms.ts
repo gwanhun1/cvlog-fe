@@ -8,16 +8,11 @@ const { persistAtom } = recoilPersist({
   storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 });
 
-const getUniqueId = () => {
-  const isClient = typeof window !== 'undefined';
-  return isClient ? undefined : (Math.random() * 100000).toString();
-};
+const getAtomKey = (key: string) => key;
 
-const getAtomKey = (key: string) => {
-  if (process.env.NODE_ENV === 'development') {
-    return `${key}_${getUniqueId()}`;
-  }
-  return key;
+const getClientItem = (key: string) => {
+  if (typeof window === 'undefined') return '';
+  return window.localStorage.getItem(key) ?? '';
 };
 
 export const authorityState = atom<boolean>({
@@ -32,7 +27,7 @@ export const refreshTokenAtom = atom<string>({
 
 export const accessTokenAtom = atom<string>({
   key: getAtomKey('logme_access_token_v1'),
-  default: '',
+  default: getClientItem('LogmeToken'),
 });
 
 export const listIndexAtom = atom<number>({

@@ -38,18 +38,15 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
     data: detailData,
     isLoading,
     refetch: detailRefetch,
-  } = useGetDetail(
-    parseInt(pid), 
-    data => {
-      if (data?.post) {
-        setPatchMessage(data.post.public_status);
-        setTagList(data.post.tags);
-      }
+  } = useGetDetail(parseInt(pid), data => {
+    if (data?.post) {
+      setPatchMessage(data.post.public_status);
+      setTagList(data.post.tags);
     }
-  );
+  });
 
   const { data: commentData, refetch: commentRefetch } = useGetCommentList(
-    parseInt(pid)
+    parseInt(pid),
   );
   const patchDetailMutation = usePatchDetail();
 
@@ -93,10 +90,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
 
   // 수정 창
   const updateCheck = () => {
-    const check = confirm('수정하시겠습니까?');
-    if (check == true) {
-      router.push(`/article/modify/${pid}`);
-    }
+    router.push(`/article/modify/${pid}`);
   };
 
   useEffect(() => {
@@ -119,76 +113,86 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   // SEO를 위한 메타데이터 준비
   const postTitle = detailData?.post?.title || 'LogMe 게시물';
   // 콘텐츠에서 처음 160자를 요약문으로 사용
-  const postDescription = detailData?.post?.content?.substring(0, 160) + '...' || 'LogMe 블로그의 게시물입니다.';
+  const postDescription =
+    detailData?.post?.content?.substring(0, 160) + '...' ||
+    'LogMe 블로그의 게시물입니다.';
   // 이미지가 없으면 기본 로고 사용
   const postImage = 'https://logme.shop/assets/NavLogo.svg';
   const canonicalUrl = `https://logme.shop/article/content/all/${pid}`;
-  
+
   return (
-    <div className="flex flex-col items-center justify-center rounded-lg pb-7 tablet:my-15 w-full">
+    <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
       {detailData?.post && (
         <Head>
           <title>{postTitle} | LogMe</title>
           <meta name="description" content={postDescription} />
-          <meta name="keywords" content={detailData?.post?.tags?.map((tag: TagType) => tag.name).join(', ') || '기술블로그,개발자,프로그래밍'} />
-          
+          <meta
+            name="keywords"
+            content={
+              detailData?.post?.tags
+                ?.map((tag: TagType) => tag.name)
+                .join(', ') || '기술블로그,개발자,프로그래밍'
+            }
+          />
+
           <meta property="og:title" content={postTitle} />
           <meta property="og:description" content={postDescription} />
           <meta property="og:type" content="article" />
           <meta property="og:url" content={canonicalUrl} />
           <meta property="og:image" content={postImage} />
           <meta property="og:site_name" content="LogMe" />
-          
+
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:title" content={postTitle} />
           <meta name="twitter:description" content={postDescription} />
           <meta name="twitter:image" content={postImage} />
-          
+
           <link rel="canonical" href={canonicalUrl} />
-          
+
           <script type="application/ld+json">
             {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              "headline": postTitle,
-              "description": postDescription,
-              "image": postImage,
-              "url": canonicalUrl,
-              "datePublished": detailData?.post?.created_at,
-              "dateModified": detailData?.post?.updated_at || detailData?.post?.created_at,
-              "author": {
-                "@type": "Person",
-                "name": detailData?.post?.user_id?.name || "LogMe 사용자"
+              '@context': 'https://schema.org',
+              '@type': 'BlogPosting',
+              headline: postTitle,
+              description: postDescription,
+              image: postImage,
+              url: canonicalUrl,
+              datePublished: detailData?.post?.created_at,
+              dateModified:
+                detailData?.post?.updated_at || detailData?.post?.created_at,
+              author: {
+                '@type': 'Person',
+                name: detailData?.post?.user_id?.name || 'LogMe 사용자',
               },
-              "publisher": {
-                "@type": "Organization",
-                "name": "LogMe",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://logme.shop/assets/NavLogo.svg"
-                }
+              publisher: {
+                '@type': 'Organization',
+                name: 'LogMe',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://logme.shop/assets/NavLogo.svg',
+                },
               },
-              "mainEntityOfPage": canonicalUrl
+              mainEntityOfPage: canonicalUrl,
             })}
           </script>
         </Head>
       )}
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
         {isLoading ? (
-          <div className="h-14 mb-3 bg-gray-200 rounded-lg w-28" />
+          <div className="mb-3 w-28 h-14 bg-gray-200 rounded-lg" />
         ) : (
-          <h1 className="mr-1 text-xl  text-ftBlack mobile:text-3xl tablet:text-6xl ">
+          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-6xl">
             {detailData?.post.title}
           </h1>
         )}
       </header>
-      <section className=" flex items-center justify-between w-full h-full border-b border-gray-400 ">
-        <div className="flex flex-wrap justify-start w-full text-ftBlack mb-1">
+      <section className="flex justify-between items-center w-full h-full border-b border-gray-400">
+        <div className="flex flex-wrap justify-start mb-1 w-full text-ftBlack">
           {isLoading ? (
             <>
-              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
-              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
-              <div className="h-6 mt-2 ml-2 bg-gray-200 rounded-lg w-16" />
+              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
+              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
+              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
             </>
           ) : (
             detailData?.post.tags.map((tag: TagType) => (
@@ -209,7 +213,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
           )}
         </div>
         <section className="flex items-end w-28">
-          <time className="text-xs text-gray-600 tablet:text-sm mb-1">
+          <time className="mb-1 text-xs text-gray-600 tablet:text-sm">
             {detailData && detailData.post.created_at.slice(0, 10)}
           </time>
         </section>
@@ -262,7 +266,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
           </div>
         </section>
       </main>
-      <section className="relative flex justify-between w-full pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
+      <section className="flex relative justify-between pb-2 mt-7 w-full border-b border-gray-400 mobile:pb-5">
         <article className="mb-4 mobile:mb-0">
           <Profile getDetailData={detailData?.post.user_id} />
         </article>
@@ -273,9 +277,9 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 href={`/article/content/all/${detailData.prevPostInfo.id}`}
                 prefetch
               >
-                <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                <div className="flex justify-start items-center px-2 w-full h-10 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
                   <div className="pr-2 text-lg tablet:text-xl">←</div>
-                  <div className="flex-col flex w-full truncate">
+                  <div className="flex flex-col w-full truncate">
                     <div className="text-xs tablet:text-sm">이전 포스트</div>
                     <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
                       {detailData.prevPostInfo.title}
@@ -284,7 +288,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 </div>
               </Link>
             ) : (
-              <div className="flex items-center justify-start w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+              <div className="flex justify-start items-center px-2 w-full h-10 bg-gray-200 rounded-md opacity-50 cursor-not-allowed text-ftBlack mobile:h-12 tablet:h-14 tablet:px-4" />
             )}
           </div>
 
@@ -294,8 +298,8 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 href={`/article/content/all/${detailData.nextPostInfo.id}`}
                 prefetch
               >
-                <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
-                  <div className="flex-col flex w-full truncate text-right">
+                <div className="flex justify-end items-center px-2 w-full h-10 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
+                  <div className="flex flex-col w-full text-right truncate">
                     <div className="text-xs tablet:text-sm">다음 포스트</div>
                     <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
                       {detailData.nextPostInfo.title}
@@ -305,7 +309,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 </div>
               </Link>
             ) : (
-              <div className="flex items-center justify-end w-full h-10 px-2 bg-gray-200 rounded-md cursor-not-allowed text-ftBlack opacity-50 mobile:h-12 tablet:h-14 tablet:px-4" />
+              <div className="flex justify-end items-center px-2 w-full h-10 bg-gray-200 rounded-md opacity-50 cursor-not-allowed text-ftBlack mobile:h-12 tablet:h-14 tablet:px-4" />
             )}
           </div>
         </div>
@@ -336,25 +340,25 @@ export const getStaticPaths = async () => {
   try {
     // 백엔드 API URL 설정
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
-    
+
     // 공개 상태(public_status가 true)인 게시물 데이터 가져오기
     const response = await fetch(`${API_URL}/post/posts/public`);
-    
+
     if (!response.ok) {
       throw new Error(`API request failed with status ${response.status}`);
     }
-    
-    const posts = await response.json() as PostType[];
-    
+
+    const posts = (await response.json()) as PostType[];
+
     // 유효한 ID를 가진 공개 게시물에 대한 경로 생성
     const paths = posts
       .filter((post: PostType) => post.public_status && post.id) // 공개 상태이고 유효한 ID가 있는 게시물만 필터링
       .map((post: PostType) => ({
-        params: { pid: post.id.toString() }
+        params: { pid: post.id.toString() },
       }));
-      
+
     console.log(`Pre-generating ${paths.length} public article pages`);
-    
+
     return {
       paths,
       fallback: true, // Changed from 'blocking' to true for better error handling
@@ -381,10 +385,10 @@ export const getStaticProps = async ({ params }: any) => {
   try {
     // 백엔드 API URL 설정
     const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
-    
+
     // 게시물 데이터 미리 가져오기
     const response = await fetch(`${API_URL}/post/posts/${pid}`);
-    
+
     if (!response.ok) {
       console.error(`Failed to fetch post data: ${response.status}`);
       return {
@@ -395,16 +399,16 @@ export const getStaticProps = async ({ params }: any) => {
         revalidate: 10, // Reduced revalidation time for error cases
       };
     }
-    
+
     const postData = await response.json();
-    
+
     // 게시물이 공개 상태가 아니면 404 페이지 반환
     if (postData && postData.post && !postData.post.public_status) {
       return {
         notFound: true,
       };
     }
-    
+
     return {
       props: {
         pid,

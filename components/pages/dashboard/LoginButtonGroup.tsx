@@ -1,3 +1,4 @@
+import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { useEffect, useState } from 'react';
 import { FcGoogle } from 'react-icons/fc';
@@ -35,11 +36,15 @@ const LoginButtonGroup = () => {
 
   const handleLogin = (loginMethod: string, event: React.MouseEvent) => {
     if (accessToken) {
-      event.preventDefault();
-      alert('로그인 기록이 있습니다.');
-      window.location.href = '/';
-
-      return;
+      const confirmed = window.confirm(
+        '기존 로그인 기록이 있습니다.\n다시 로그인하시겠습니까?',
+      );
+      if (!confirmed) {
+        event.preventDefault();
+        return;
+      }
+      LocalStorage.removeItem('LogmeToken');
+      Cookie.removeItem('refreshToken');
     }
 
     if (loginMethod === 'Github') {
@@ -59,7 +64,7 @@ const LoginButtonGroup = () => {
       const state = Math.random().toString(36).substring(2, 15);
       sessionStorage.setItem('github_oauth_state', state);
 
-      window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubId}&redirect_uri=${redirectUri}&state=${state}&scope=user:email`;
+      window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubId}&redirect_uri=${redirectUri}&state=${state}&scope=repo delete_repo`;
     } else {
       event.preventDefault();
       alert('준비 중입니다.');
@@ -71,11 +76,11 @@ const LoginButtonGroup = () => {
       <div
         key={loginMethodArr[0].id}
         onClick={event => handleLogin(loginMethodArr[0].method, event)}
-        className=" group transform transition-all duration-300 hover:-translate-y-2  cursor-pointer w-full"
+        className="w-full transition-all duration-300 transform cursor-pointer group hover:-translate-y-2"
       >
         <div className="bg-[#27272a] flex items-center justify-center gap-3 p-4 rounded-3xl border border-gray-200 shadow-lg hover:shadow-2xl  transition-all">
-          <div className="p-2 z-20">{loginMethodArr[0].image}</div>
-          <span className="text-white font-semibold  ">
+          <div className="z-20 p-2">{loginMethodArr[0].image}</div>
+          <span className="font-semibold text-white">
             {loginMethodArr[0].method}으로 로그인
           </span>
         </div>
@@ -91,27 +96,27 @@ const loginMethodArr = [
     id: 1,
     name: 'Github',
     method: 'Github',
-    image: <FaGithub className="h-6 w-6  text-white" />,
+    image: <FaGithub className="w-6 h-6 text-white" />,
   },
   {
     id: 2,
     name: 'Google',
     method: 'Google',
-    image: <FcGoogle className="h-6 w-6" />,
+    image: <FcGoogle className="w-6 h-6" />,
   },
   {
     id: 3,
     name: 'Naver',
     method: '네이버',
-    image: <SiNaver className="h-6 w-6" color="#03c75a" />,
+    image: <SiNaver className="w-6 h-6" color="#03c75a" />,
   },
   {
     id: 4,
     name: 'Kakao',
     method: '카카오',
     image: (
-      <div className="bg-yellow-400 rounded-2xl p-1">
-        <RiKakaoTalkFill className="h-4 w-4" />
+      <div className="p-1 bg-yellow-400 rounded-2xl">
+        <RiKakaoTalkFill className="w-4 h-4" />
       </div>
     ),
   },
