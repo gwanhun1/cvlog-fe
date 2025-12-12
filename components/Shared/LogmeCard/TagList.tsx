@@ -1,19 +1,16 @@
-import { Badge } from 'flowbite-react';
 import { TagItem } from '.';
 
 const TagList = ({ tags }: { tags: TagItem[] }) => {
   if (!tags || tags.length === 0) return null;
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1.5">
       {tags.map(tag => (
-        <Badge
+        <span
           key={tag.id}
-          className="relative flex items-center rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
-          color="default"
-          size="sm"
+          className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100 shadow-[0_4px_12px_-8px_rgba(37,99,235,0.6)]"
         >
           {tag.name}
-        </Badge>
+        </span>
       ))}
     </div>
   );

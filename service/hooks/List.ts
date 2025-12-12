@@ -89,11 +89,9 @@ export const usePutTagsFolder = () => {
       return putTagsFolders(params);
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['tagsFolder']);
-      },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
+        queryClient.invalidateQueries(['tagsFolder']);
       },
     }
   );

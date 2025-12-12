@@ -1,35 +1,33 @@
 import LocalStorage from 'public/utils/Localstorage';
-import React from 'react';
 
 interface MenuTabProps {
   setMenu: React.Dispatch<React.SetStateAction<'list' | 'all'>>;
   activeMenu?: 'list' | 'all';
 }
 
-const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
+const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
   const accessToken = LocalStorage.getItem('LogmeToken');
   const handleSetMenu = (menu: 'list' | 'all') => {
     setMenu(menu);
   };
 
   return (
-    <div className="w-full  rounded-lg shadow-sm my-3">
-      <div className="flex items-center justify-center">
+    <div className="my-2 w-full">
+      <div className="flex gap-2 items-center p-1 rounded-2xl border bg-slate-50 border-slate-200">
         {accessToken && (
           <button
             onClick={() => handleSetMenu('list')}
-            className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-l-lg transition-colors duration-200 focus:outline-none
-            ${
+            className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none ${
               activeMenu === 'list'
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? 'bg-white text-blue-600 shadow-sm border border-blue-100'
+                : 'text-slate-500 hover:text-slate-700'
             }`}
             aria-current={activeMenu === 'list' ? 'page' : undefined}
           >
-            <div className="flex items-center justify-center">
+            <span className="flex gap-2 justify-center items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 mr-2"
+                className="w-4 h-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -42,23 +40,22 @@ const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
                 />
               </svg>
               나의 게시물
-            </div>
+            </span>
           </button>
         )}
         <button
           onClick={() => handleSetMenu('all')}
-          className={`flex-1 py-2.5 px-4 text-sm font-medium rounded-r-lg transition-colors duration-200 focus:outline-none
-            ${
-              activeMenu === 'all'
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+          className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none ${
+            activeMenu === 'all'
+              ? 'bg-white text-blue-600 shadow-sm border border-blue-100'
+              : 'text-slate-500 hover:text-slate-700'
+          }`}
           aria-current={activeMenu === 'all' ? 'page' : undefined}
         >
-          <div className="flex items-center justify-center">
+          <span className="flex gap-2 justify-center items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-2"
+              className="mr-2 w-4 h-4"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -71,7 +68,7 @@ const MenuTab: React.FC<MenuTabProps> = ({ setMenu, activeMenu = 'list' }) => {
               />
             </svg>
             전체 게시물
-          </div>
+          </span>
         </button>
       </div>
     </div>
