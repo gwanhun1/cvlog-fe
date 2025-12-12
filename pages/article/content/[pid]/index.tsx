@@ -258,58 +258,71 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
           </div>
         </section>
       </main>
-      <section className="flex justify-between w-full max-w-[60rem] gap-2 px-2 tablet:px-4 pb-2 border-b border-gray-400 mobile:pb-5 mt-7">
-        <article className="mb-4 w-1/2 mobile:mb-0">
-          <Profile getDetailData={getMyDetail?.data?.post.user_id} />
-        </article>
-        <div className="flex justify-between items-center w-1/2">
-          <div className="w-[48%] tablet:w-[49%]">
+      {/* 프로필 영역 */}
+      <section className="w-full mt-10 pb-6 border-b border-gray-200">
+        <Profile getDetailData={getMyDetail?.data?.post.user_id} />
+      </section>
+
+      {/* 이전/다음 포스트 네비게이션 */}
+      <nav className="w-full mt-8 mb-4">
+        <div className="grid grid-cols-2 gap-3 tablet:gap-4">
+          <div>
             {getMyDetail.data?.prevPostInfo ? (
               <Link
                 href={`/article/content/${getMyDetail.data.prevPostInfo.id}`}
                 prefetch
               >
-                <div className="flex justify-start items-center px-2 w-full h-10 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
-                  <div className="pr-2 text-lg tablet:text-xl">←</div>
-                  <div className="flex flex-col w-full truncate">
-                    <div className="text-xs text-gray-500 tablet:text-sm">
+                <div className="group flex items-center gap-3 p-4 h-full bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-200 cursor-pointer">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 group-hover:bg-gray-300 transition-colors">
+                    <span className="text-gray-600">←</span>
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="text-xs text-gray-500 mb-1">
                       이전 포스트
-                    </div>
-                    <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
+                    </span>
+                    <span className="text-sm font-semibold text-gray-800 truncate">
                       {getMyDetail.data.prevPostInfo.title}
-                    </div>
+                    </span>
                   </div>
                 </div>
               </Link>
             ) : (
-              <div className="flex justify-start items-center px-2 w-full h-10 bg-gray-200 rounded-md opacity-50 cursor-not-allowed text-ftBlack mobile:h-12 tablet:h-14 tablet:px-4" />
+              <div className="flex items-center gap-3 p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
+                <div className="w-8 h-8 rounded-full bg-gray-200" />
+                <span className="text-sm text-gray-400">이전 포스트 없음</span>
+              </div>
             )}
           </div>
 
-          <div className="w-[48%] tablet:w-[49%]">
+          <div>
             {getMyDetail.data?.nextPostInfo ? (
               <Link
                 href={`/article/content/${getMyDetail.data.nextPostInfo.id}`}
                 prefetch
               >
-                <div className="flex justify-end items-center px-2 w-full h-10 bg-gray-200 rounded-md cursor-pointer text-ftBlack hover:opacity-70 mobile:h-12 tablet:h-14 tablet:px-4">
-                  <div className="flex flex-col w-full text-right truncate">
-                    <div className="text-xs text-gray-500 tablet:text-sm">
+                <div className="group flex items-center justify-end gap-3 p-4 h-full bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-200 cursor-pointer">
+                  <div className="flex flex-col min-w-0 flex-1 text-right">
+                    <span className="text-xs text-gray-500 mb-1">
                       다음 포스트
-                    </div>
-                    <div className="h-5 overflow-hidden text-sm font-bold tablet:text-base flex-nowrap mt-[2px] truncate">
+                    </span>
+                    <span className="text-sm font-semibold text-gray-800 truncate">
                       {getMyDetail.data.nextPostInfo.title}
-                    </div>
+                    </span>
                   </div>
-                  <div className="pl-2 text-lg tablet:text-xl">→</div>
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 group-hover:bg-gray-300 transition-colors">
+                    <span className="text-gray-600">→</span>
+                  </div>
                 </div>
               </Link>
             ) : (
-              <div className="flex justify-end items-center px-2 w-full h-10 bg-gray-200 rounded-md opacity-50 cursor-not-allowed text-ftBlack mobile:h-12 tablet:h-14 tablet:px-4" />
+              <div className="flex items-center justify-end gap-3 p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
+                <span className="text-sm text-gray-400">다음 포스트 없음</span>
+                <div className="w-8 h-8 rounded-full bg-gray-200" />
+              </div>
             )}
           </div>
         </div>
-      </section>
+      </nav>
       <CommentBox pid={pid} />
     </div>
   );

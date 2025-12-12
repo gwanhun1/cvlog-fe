@@ -24,7 +24,7 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
 
     setIsLoading(true);
     document.body.style.cursor = 'wait';
-    
+
     try {
       await mutationCreateTagsFolders.mutateAsync(
         { name: folderName },
@@ -60,11 +60,11 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
       onClose={() => !isLoading && setShowModal(false)}
       className="dark:bg-gray-900"
     >
-      <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+      <div className="relative bg-white rounded-lg shadow-xl dark:bg-gray-900">
         <Modal.Header className="p-4 pb-0 border-b-0" />
         <Modal.Body className="px-6 py-4">
           <div className="space-y-8 text-center">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+            <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
               새 폴더 만들기
             </h3>
             <p className="text-base text-gray-600 dark:text-gray-400">
@@ -81,7 +81,7 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
                 ref={inputRef}
                 id="folderName"
                 type="text"
-                className="w-full px-4 py-3 text-base text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+                className="px-4 py-3 w-full text-base placeholder-gray-400 text-gray-900 bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 dark:text-white dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent"
                 placeholder="폴더 이름을 입력하세요"
                 onKeyPress={handleKeyPress}
                 autoFocus
@@ -89,11 +89,11 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
               />
             </div>
 
-            <div className="flex space-x-4 pt-2">
+            <div className="flex pt-2 space-x-4">
               <Button
                 type="button"
                 className={`w-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 ${
-                  isLoading ? 'cursor-not-allowed opacity-50' : ''
+                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 onClick={() => !isLoading && setShowModal(false)}
                 disabled={isLoading}
@@ -103,15 +103,15 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
               <Button
                 type="button"
                 className={`w-full bg-blue-600 text-white hover:bg-blue-700 ${
-                  isLoading ? 'cursor-not-allowed opacity-50' : ''
+                  isLoading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 onClick={handleAddFolder}
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="flex items-center justify-center">
+                  <div className="flex justify-center items-center">
                     <svg
-                      className="w-5 h-5 mr-3 animate-spin"
+                      className="mr-3 w-5 h-5 animate-spin"
                       fill="none"
                       viewBox="0 0 24 24"
                     >

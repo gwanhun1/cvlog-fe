@@ -1,11 +1,11 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useMemo } from 'react';
+import { useQueryClient } from 'react-query';
 import {
   DragEndEvent,
   DragStartEvent,
   DragMoveEvent,
   DragCancelEvent,
 } from '@dnd-kit/core';
-import { useQueryClient } from 'react-query';
 import { Folder, Tag } from 'service/api/tag/type';
 import { usePutTagsFolder } from 'service/hooks/List';
 
@@ -25,34 +25,41 @@ interface DragOperation {
 export const useTagDragState = (foldersData: Folder[] | undefined) => {
   const [activeTag, setActiveTag] = useState<ActiveTag | null>(null);
   const [draggedTagName, setDraggedTagName] = useState('');
-  const [isUpdating, setIsUpdating] = useState(false);
   const lastDropTargetRef = useRef<number | null>(null);
+  const processingTagsRef = useRef<Set<number>>(new Set());
 
   const [pendingOperations, setPendingOperations] = useState<DragOperation[]>(
     []
   );
 
-  const originalFoldersDataRef = useRef<Folder[] | undefined>(undefined);
-
   const optimisticFoldersData = useCallback(() => {
-    if (!pendingOperations.length || !foldersData) return foldersData;
-
-    if (!originalFoldersDataRef.current) {
-      originalFoldersDataRef.current = JSON.parse(JSON.stringify(foldersData));
-    }
+    if (!foldersData) return foldersData;
+    if (!pendingOperations.length) return foldersData;
 
     const clonedFolders: Folder[] = JSON.parse(JSON.stringify(foldersData));
 
     pendingOperations.forEach(op => {
-      const sourceFolder = clonedFolders.find(f => f.id === op.sourceFolderId);
+      // 태그가 현재 어느 폴더에 있는지 찾기
+      let tagFoundInFolder: Folder | undefined;
+      let tagIndex = -1;
+
+      for (const folder of clonedFolders) {
+        const idx = folder.tags.findIndex(t => t.id === op.tagId);
+        if (idx !== -1) {
+          tagFoundInFolder = folder;
+          tagIndex = idx;
+          break;
+        }
+      }
+
+      // 태그를 찾지 못했거나 이미 목표 폴더에 있으면 스킵
+      if (!tagFoundInFolder || tagIndex === -1) return;
+      if (tagFoundInFolder.id === op.targetFolderId) return;
+
       const targetFolder = clonedFolders.find(f => f.id === op.targetFolderId);
+      if (!targetFolder) return;
 
-      if (!sourceFolder || !targetFolder) return;
-
-      const tagIndex = sourceFolder.tags.findIndex(t => t.id === op.tagId);
-      if (tagIndex === -1) return;
-
-      const [movedTag] = sourceFolder.tags.splice(tagIndex, 1);
+      const [movedTag] = tagFoundInFolder.tags.splice(tagIndex, 1);
       targetFolder.tags.push(movedTag);
     });
 
@@ -68,10 +75,6 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
-      if (isUpdating) {
-        return;
-      }
-
       try {
         const { active } = event;
         const idString = String(active.id);
@@ -94,7 +97,9 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           return;
         }
 
-        const folder = foldersData?.find(f => {
+        // optimisticFoldersData 또는 foldersData에서 찾기
+        const currentData = optimisticFoldersData() || foldersData;
+        const folder = currentData?.find(f => {
           if (parts[0] === 'unassigned') {
             return f.id === 999;
           }
@@ -112,59 +117,59 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           return;
         }
 
-        requestAnimationFrame(() => {
-          setActiveTag({
-            tag,
-            folderId,
-          });
-          setDraggedTagName(tag.name);
-        });
+        setActiveTag({ tag, folderId });
+        setDraggedTagName(tag.name);
       } catch (error) {
         console.error('Error in handleDragStart:', error);
       }
     },
-    [foldersData, isUpdating]
+    [foldersData, optimisticFoldersData]
   );
 
   const handleDragMove = useCallback((event: DragMoveEvent) => {}, []);
 
-  const handleDragCancel = useCallback(
-    (event?: DragCancelEvent) => {
-      requestAnimationFrame(() => {
-        setActiveTag(null);
-        setDraggedTagName('');
-        document.body.style.cursor = 'default';
-      });
-
-      lastDropTargetRef.current = null;
-
-      if (isUpdating) {
-        setIsUpdating(false);
-      }
-    },
-    [isUpdating]
-  );
+  const handleDragCancel = useCallback((event?: DragCancelEvent) => {
+    setActiveTag(null);
+    setDraggedTagName('');
+    document.body.style.cursor = 'default';
+    lastDropTargetRef.current = null;
+  }, []);
 
   const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
+    async (event: DragEndEvent) => {
       try {
         const { active, over } = event;
 
-        requestAnimationFrame(() => {
-          setActiveTag(null);
-          setDraggedTagName('');
-        });
+        setActiveTag(null);
+        setDraggedTagName('');
 
         if (!over) {
-          console.log('No drop target');
           return;
         }
 
         const activeId = String(active.id);
-        const overId = parseInt(String(over.id), 10);
+        const overIdRaw = over.id;
+
+        // over.id가 태그 id(문자열 "folderId-tagId")인지 폴더 id(숫자)인지 확인
+        let overId: number;
+        if (typeof overIdRaw === 'number') {
+          overId = overIdRaw;
+        } else {
+          const overIdStr = String(overIdRaw);
+          // 태그 id 형식이면 폴더 id 추출
+          if (overIdStr.includes('-')) {
+            const parts = overIdStr.split('-');
+            if (parts[0] === 'unassigned') {
+              overId = 999;
+            } else {
+              overId = parseInt(parts[0], 10);
+            }
+          } else {
+            overId = parseInt(overIdStr, 10);
+          }
+        }
 
         if (isNaN(overId)) {
-          console.error('Invalid destination folder ID:', over.id);
           return;
         }
 
@@ -188,11 +193,12 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           return;
         }
 
-        if (lastDropTargetRef.current === overId) {
+        // 같은 태그가 이미 처리 중이면 무시
+        if (processingTagsRef.current.has(tagId)) {
           return;
         }
 
-        lastDropTargetRef.current = overId;
+        processingTagsRef.current.add(tagId);
 
         const operationId = generateOperationId();
 
@@ -206,56 +212,34 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
 
         setPendingOperations(prev => [...prev, newOperation]);
 
-        setIsUpdating(true);
-        document.body.style.cursor = 'wait';
-
-        mutationUpdateTagsFolders.mutateAsync(
-          {
+        try {
+          await mutationUpdateTagsFolders.mutateAsync({
             tag_id: tagId,
             folder_id: overId,
-          },
-          {
-            onSuccess: () => {
-              setPendingOperations(prev =>
-                prev.filter(op => op.id !== operationId)
-              );
-
-              queryClient.invalidateQueries(['tagsFolder']);
-            },
-            onError: error => {
-              console.error('Error updating tag folder:', error);
-
-              setPendingOperations(prev =>
-                prev.filter(op => op.id !== operationId)
-              );
-
-              queryClient.invalidateQueries(['tagsFolder']);
-            },
-            onSettled: () => {
-              setIsUpdating(false);
-              document.body.style.cursor = 'default';
-              lastDropTargetRef.current = null;
-
-              if (pendingOperations.length <= 1) {
-                originalFoldersDataRef.current = undefined;
-              }
-            },
-          }
-        );
+          });
+          // refetchQueries는 실제로 데이터를 다시 가져올 때까지 대기
+          await queryClient.refetchQueries(['tagsFolder'], { active: true });
+        } catch (error) {
+          console.error('Error updating folder:', error);
+        } finally {
+          processingTagsRef.current.delete(tagId);
+          document.body.style.cursor = 'default';
+          setPendingOperations(prev =>
+            prev.filter(op => op.id !== operationId)
+          );
+        }
       } catch (error) {
         console.error('Error in handleDragEnd:', error);
-        setIsUpdating(false);
         document.body.style.cursor = 'default';
-        lastDropTargetRef.current = null;
       }
     },
-    [
-      mutationUpdateTagsFolders,
-      queryClient,
-      generateOperationId,
-      pendingOperations,
-    ]
+    [mutationUpdateTagsFolders, generateOperationId, queryClient]
   );
+
+  const hasPendingOperations = pendingOperations.length > 0;
+
+  // 이동 중인 태그 ID 배열 (스켈레톤 표시용)
+  const movingTagIds = pendingOperations.map(op => op.tagId);
 
   return {
     activeTag,
@@ -264,8 +248,8 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     handleDragMove,
     handleDragEnd,
     handleDragCancel,
-    isUpdating,
     optimisticFoldersData: optimisticFoldersData(),
-    hasPendingOperations: pendingOperations.length > 0,
+    hasPendingOperations,
+    movingTagIds: new Set(movingTagIds),
   };
 };

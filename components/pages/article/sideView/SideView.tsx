@@ -9,6 +9,9 @@ import {
   DragStartEvent,
   DragEndEvent,
   DragCancelEvent,
+  pointerWithin,
+  rectIntersection,
+  CollisionDetection,
 } from '@dnd-kit/core';
 import {
   restrictToVerticalAxis,
@@ -59,17 +62,43 @@ const SideMenu = () => {
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
-        delay: 100,
-        tolerance: 5,
+        distance: 5,
       },
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 150,
-        tolerance: 8,
+        delay: 100,
+        tolerance: 5,
       },
     })
   );
+
+  // 폴더 영역 우선 감지를 위한 커스텀 collision detection
+  const collisionDetection: CollisionDetection = useCallback(args => {
+    // pointerWithin으로 먼저 감지
+    const pointerCollisions = pointerWithin(args);
+
+    if (pointerCollisions.length > 0) {
+      // 폴더(droppable)를 우선 반환
+      const folderCollision = pointerCollisions.find(
+        collision => !String(collision.id).includes('-')
+      );
+      if (folderCollision) {
+        return [folderCollision];
+      }
+    }
+
+    // fallback으로 rectIntersection 사용
+    const rectCollisions = rectIntersection(args);
+    const folderRectCollision = rectCollisions.find(
+      collision => !String(collision.id).includes('-')
+    );
+    if (folderRectCollision) {
+      return [folderRectCollision];
+    }
+
+    return rectCollisions;
+  }, []);
 
   const {
     activeTag,
@@ -78,9 +107,9 @@ const SideMenu = () => {
     handleDragMove,
     handleDragEnd,
     handleDragCancel,
-    isUpdating,
     optimisticFoldersData,
     hasPendingOperations,
+    movingTagIds,
   } = useTagDragState(queryGetTagsFolders.data);
 
   const unassignedFolder = useMemo(
@@ -90,10 +119,7 @@ const SideMenu = () => {
 
   const { namedFolder, defaultFolder } = useMemo(
     () => ({
-      namedFolder:
-        optimisticFoldersData?.filter(
-          item => item.name !== '' && item.id !== 999
-        ) ?? [],
+      namedFolder: optimisticFoldersData?.filter(item => item.id !== 999) ?? [],
       defaultFolder:
         optimisticFoldersData?.filter(item => item.id === 999) ?? [],
     }),
@@ -169,30 +195,24 @@ const SideMenu = () => {
 
   const onClickAccordion = useCallback(
     (id: number) => (e: React.MouseEvent<HTMLDivElement>) => {
-      // 업데이트 중이거나 드래그 중이면 아코디언 동작을 중지
-      if (isUpdating || dragActive) return;
-      
-      // 이벤트 전파 중지
+      // 드래그 중이면 아코디언 동작을 중지
+      if (dragActive) return;
+
       e.preventDefault();
       e.stopPropagation();
-      
-      // 아코디언 상태 변경
+
       setClosedIdx(prev => {
         const hasId = prev.includes(id);
         return hasId ? prev.filter(storedId => storedId !== id) : [...prev, id];
       });
     },
-    [isUpdating, dragActive]
+    [dragActive]
   );
 
-  const tryOpenModal = useCallback(
-    (name: string) => {
-      if (isUpdating) return;
-      setSelectModal(name);
-      setShowModal(true);
-    },
-    [isUpdating]
-  );
+  const tryOpenModal = useCallback((name: string) => {
+    setSelectModal(name);
+    setShowModal(true);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -225,9 +245,9 @@ const SideMenu = () => {
       )}
 
       <div
-        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-blue-100 overflow-hidden transition-opacity duration-200 ${
-          isUpdating && !hasPendingOperations ? 'pointer-events-none opacity-80' : ''
-        } ${hasPendingOperations ? 'border-blue-300' : ''}`}
+        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden transition-opacity duration-200 ${
+          hasPendingOperations ? 'border-blue-300' : ''
+        }`}
       >
         <SideViewHeader
           hasContent={hasContent}
@@ -242,6 +262,7 @@ const SideMenu = () => {
             <div className="dnd-container">
               <DndContext
                 sensors={sensors}
+                collisionDetection={collisionDetection}
                 onDragStart={onDragStart}
                 onDragMove={handleDragMove}
                 onDragEnd={onDragEnd}
@@ -252,12 +273,14 @@ const SideMenu = () => {
                   items={sortableItems}
                   strategy={verticalListSortingStrategy}
                 >
-                  <div className="space-y-4 ">
+                  <div className="space-y-4">
                     <NamedFolderList
                       folders={namedFolder}
                       draggedTagName={draggedTagName}
                       closedIdx={closedIdx}
                       onClickAccordion={onClickAccordion}
+                      movingTagIds={movingTagIds}
+                      disabled={hasPendingOperations}
                     />
 
                     {unassignedFolder && (
@@ -265,6 +288,8 @@ const SideMenu = () => {
                         <UnassignedTagListContent
                           folder={unassignedFolder}
                           draggedTagName={draggedTagName}
+                          movingTagIds={movingTagIds}
+                          disabled={hasPendingOperations}
                         />
                       </div>
                     )}

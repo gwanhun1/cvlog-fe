@@ -9,16 +9,20 @@ import { Folder } from 'service/api/tag/type';
 interface UnassignedTagListContentProps {
   folder: Folder;
   draggedTagName: string;
+  movingTagIds: Set<number>;
+  disabled: boolean;
 }
 
 const UnassignedTagListContent = ({
   folder,
   draggedTagName,
+  movingTagIds,
+  disabled,
 }: UnassignedTagListContentProps) => {
   return (
-    <div className="relative rounded-lg overflow-hidden">
+    <div className="overflow-hidden relative rounded-xl">
       <div
-        className="bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300"
+        className="bg-white rounded-xl shadow-sm transition-all duration-200"
         style={{ touchAction: 'none' }}
       >
         <DroppableFolder
@@ -27,7 +31,7 @@ const UnassignedTagListContent = ({
           includeHeader={true}
         >
           <div className="p-3 w-full">
-            <div className="text-xs font-medium text-gray-500 mb-2 select-none">
+            <div className="mb-2 text-xs font-medium text-gray-500 select-none">
               {folder.name}
             </div>
             <SortableContext
@@ -44,6 +48,8 @@ const UnassignedTagListContent = ({
                     key={`unassigned-${tag.id}`}
                     tag={tag}
                     folderId={folder.id}
+                    isMoving={movingTagIds.has(tag.id)}
+                    disabled={disabled}
                   />
                 ))}
               </div>

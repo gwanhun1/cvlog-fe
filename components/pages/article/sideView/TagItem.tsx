@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { memo, useMemo, useCallback, CSSProperties } from 'react';
+import { useMemo, useCallback, CSSProperties } from 'react';
 import { useRecoilState } from 'recoil';
 import { tagAtom } from 'service/atoms/atoms';
 import { Tag } from 'service/api/tag/type';
@@ -8,11 +8,18 @@ import { Tag } from 'service/api/tag/type';
 export interface TagItemProps {
   tag: Tag;
   folderId: number;
+  isMoving?: boolean;
+  disabled?: boolean;
 }
 
-const TagItem = ({ tag, folderId }: TagItemProps) => {
+const TagItem = ({
+  tag,
+  folderId,
+  isMoving = false,
+  disabled = false,
+}: TagItemProps) => {
   const itemId = useMemo(() => {
-    return `${folderId === 0 ? 'unassigned' : folderId}-${tag.id}`;
+    return `${folderId === 999 ? 'unassigned' : folderId}-${tag.id}`;
   }, [folderId, tag.id]);
 
   const {
@@ -24,6 +31,7 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
     isDragging,
   } = useSortable({
     id: itemId,
+    disabled: disabled || isMoving,
     data: {
       tag,
       folderId,
@@ -49,6 +57,18 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
     }),
     [transform, transition, isDragging]
   );
+
+  // 이동 중인 태그는 스켈레톤으로 표시
+  if (isMoving) {
+    return (
+      <div className="flex items-center justify-between w-full py-2.5 px-3 mb-2 rounded-lg border border-blue-200 bg-blue-50 animate-pulse">
+        <div className="flex items-center space-x-3 w-full">
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-300 flex-shrink-0 animate-pulse" />
+          <div className="w-3/4 h-4 bg-blue-200 rounded animate-pulse" />
+        </div>
+      </div>
+    );
+  }
 
   const isSelected = keyword === tag.name.toLocaleLowerCase();
 
@@ -77,7 +97,7 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
             isSelected ? 'bg-white' : 'bg-blue-300'
           } flex-shrink-0`}
         />
-        <span className="text-sm font-medium truncate max-w-full">
+        <span className="max-w-full text-sm font-medium truncate">
           {tag.name}
         </span>
       </div>
@@ -85,10 +105,4 @@ const TagItem = ({ tag, folderId }: TagItemProps) => {
   );
 };
 
-export default memo(TagItem, (prevProps, nextProps) => {
-  return (
-    prevProps.tag.id === nextProps.tag.id &&
-    prevProps.tag.name === nextProps.tag.name &&
-    prevProps.folderId === nextProps.folderId
-  );
-});
+export default TagItem;
