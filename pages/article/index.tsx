@@ -19,7 +19,7 @@ const Article: NextPage = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-gradient-to-b via-white to-white from-slate-50">
+    <div className="w-full min-h-screen">
       <Head>
         <title>LOGME - 게시물 목록</title>
         <meta
@@ -42,15 +42,16 @@ const Article: NextPage = () => {
         <link rel="canonical" href="https://logme.shop/article" />
       </Head>
 
-      {accessToken && menu === 'list' && (
-        <div className="hidden fixed left-4 top-32 z-40 w-52 desktop:block desktop:left-16 desktop:w-56">
-          <SideView />
-        </div>
-      )}
-
-      <div className="flex justify-center pt-6 pb-12 mx-auto w-full max-w-screen-xl tablet:px-8 tablet:py-10">
-        <div className="px-4 w-full max-w-4xl tablet:px-0">
-          <div className="rounded-3xl border border-slate-100 bg-white/80 backdrop-blur shadow-[0_20px_60px_-28px_rgba(15,23,42,0.35)] p-4 tablet:p-6 space-y-4">
+      <main className="w-full">
+        <div className="relative px-4 pt-10 pb-16 mx-auto max-w-4xl tablet:px-6 desktop:px-8">
+          {accessToken && menu === 'list' && (
+            <div className="hidden absolute top-0 right-full h-full desktop:block">
+              <aside className="sticky top-32 z-30 w-56">
+                <SideView />
+              </aside>
+            </div>
+          )}
+          <div className="rounded-3xl border border-slate-100 bg-white shadow-[0_20px_60px_-28px_rgba(15,23,42,0.35)] p-4 tablet:p-6 space-y-4">
             <FilterBox
               keyword={keyword}
               setKeyword={setKeyword}
@@ -74,7 +75,7 @@ const Article: NextPage = () => {
             )}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
