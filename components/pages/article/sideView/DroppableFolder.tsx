@@ -1,5 +1,5 @@
 import { useDroppable } from '@dnd-kit/core';
-import { memo, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Folder } from 'service/api/tag/type';
 
 interface DroppableFolderProps {
@@ -55,10 +55,4 @@ const DroppableFolder = ({
   );
 };
 
-export default memo(DroppableFolder, (prevProps, nextProps) => {
-  return (
-    prevProps.folder.id === nextProps.folder.id &&
-    prevProps.draggedTagName === nextProps.draggedTagName &&
-    prevProps.includeHeader === nextProps.includeHeader
-  );
-});
+export default DroppableFolder;

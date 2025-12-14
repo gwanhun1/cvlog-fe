@@ -7,6 +7,12 @@ import DroppableFolder from './DroppableFolder';
 import FolderItem from './FolderItem';
 import TagItem from './TagItem';
 
+interface MovingTagInfo {
+  tagId: number;
+  sourceFolderId: number;
+  targetFolderId: number;
+}
+
 interface NamedFolderListProps {
   folders: Folder[];
   draggedTagName: string;
@@ -14,7 +20,7 @@ interface NamedFolderListProps {
   onClickAccordion: (
     id: number
   ) => (e: React.MouseEvent<HTMLDivElement>) => void;
-  movingTagIds: Set<number>;
+  movingTags: MovingTagInfo[];
   disabled: boolean;
 }
 
@@ -23,9 +29,16 @@ const NamedFolderList = ({
   draggedTagName,
   closedIdx,
   onClickAccordion,
-  movingTagIds,
+  movingTags,
   disabled,
 }: NamedFolderListProps) => {
+  // 해당 폴더에서 이동 중인 태그인지 확인 (소스/타겟 모두 스켈레톤 표시)
+  const isTagMovingInFolder = (tagId: number, folderId: number) =>
+    movingTags.some(
+      mt =>
+        mt.tagId === tagId &&
+        (mt.sourceFolderId === folderId || mt.targetFolderId === folderId)
+    );
   return (
     <>
       {folders.map((folder: Folder) => (
@@ -66,7 +79,7 @@ const NamedFolderList = ({
                           key={`${folder.id}-${tag.id}`}
                           tag={tag}
                           folderId={folder.id}
-                          isMoving={movingTagIds.has(tag.id)}
+                          isMoving={isTagMovingInFolder(tag.id, folder.id)}
                           disabled={disabled}
                         />
                       ))}

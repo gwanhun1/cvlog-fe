@@ -109,7 +109,7 @@ const SideMenu = () => {
     handleDragCancel,
     optimisticFoldersData,
     hasPendingOperations,
-    movingTagIds,
+    movingTags,
   } = useTagDragState(queryGetTagsFolders.data);
 
   const unassignedFolder = useMemo(
@@ -279,7 +279,7 @@ const SideMenu = () => {
                       draggedTagName={draggedTagName}
                       closedIdx={closedIdx}
                       onClickAccordion={onClickAccordion}
-                      movingTagIds={movingTagIds}
+                      movingTags={movingTags}
                       disabled={hasPendingOperations}
                     />
 
@@ -288,7 +288,7 @@ const SideMenu = () => {
                         <UnassignedTagListContent
                           folder={unassignedFolder}
                           draggedTagName={draggedTagName}
-                          movingTagIds={movingTagIds}
+                          movingTags={movingTags}
                           disabled={hasPendingOperations}
                         />
                       </div>

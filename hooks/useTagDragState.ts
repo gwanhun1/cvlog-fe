@@ -22,6 +22,13 @@ interface DragOperation {
   id: string;
 }
 
+// 이동 중인 태그 정보 (소스 폴더 ID 포함)
+interface MovingTagInfo {
+  tagId: number;
+  sourceFolderId: number;
+  targetFolderId: number;
+}
+
 export const useTagDragState = (foldersData: Folder[] | undefined) => {
   const [activeTag, setActiveTag] = useState<ActiveTag | null>(null);
   const [draggedTagName, setDraggedTagName] = useState('');
@@ -32,7 +39,8 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     []
   );
 
-  const optimisticFoldersData = useCallback(() => {
+  // useMemo로 변경: pendingOperations 변경 시 새 값이 계산되어 리렌더링 유도
+  const optimisticFoldersData = useMemo(() => {
     if (!foldersData) return foldersData;
     if (!pendingOperations.length) return foldersData;
 
@@ -98,27 +106,28 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
         }
 
         // optimisticFoldersData 또는 foldersData에서 찾기
-        const currentData = optimisticFoldersData() || foldersData;
-        const folder = currentData?.find(f => {
-          if (parts[0] === 'unassigned') {
-            return f.id === 999;
+        const currentData = optimisticFoldersData || foldersData;
+
+        // 모든 폴더에서 태그 검색 (폴더 ID가 변경되었을 수 있음)
+        let foundTag: Tag | undefined;
+        let foundFolderId: number | undefined;
+
+        for (const folder of currentData || []) {
+          const tag = folder.tags.find(t => t.id === tagId);
+          if (tag) {
+            foundTag = tag;
+            foundFolderId = folder.id;
+            break;
           }
-          return f.id === folderId;
-        });
+        }
 
-        if (!folder) {
-          console.error('Folder not found:', folderId);
+        if (!foundTag || foundFolderId === undefined) {
+          console.error('Tag not found in any folder:', tagId);
           return;
         }
 
-        const tag = folder.tags.find(t => t.id === tagId);
-        if (!tag) {
-          console.error('Tag not found:', tagId, 'in folder', folderId);
-          return;
-        }
-
-        setActiveTag({ tag, folderId });
-        setDraggedTagName(tag.name);
+        setActiveTag({ tag: foundTag, folderId: foundFolderId });
+        setDraggedTagName(foundTag.name);
       } catch (error) {
         console.error('Error in handleDragStart:', error);
       }
@@ -238,8 +247,12 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
 
   const hasPendingOperations = pendingOperations.length > 0;
 
-  // 이동 중인 태그 ID 배열 (스켈레톤 표시용)
-  const movingTagIds = pendingOperations.map(op => op.tagId);
+  // 이동 중인 태그 정보 (소스/타겟 폴더 ID 포함)
+  const movingTags: MovingTagInfo[] = pendingOperations.map(op => ({
+    tagId: op.tagId,
+    sourceFolderId: op.sourceFolderId,
+    targetFolderId: op.targetFolderId,
+  }));
 
   return {
     activeTag,
@@ -248,8 +261,8 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
     handleDragMove,
     handleDragEnd,
     handleDragCancel,
-    optimisticFoldersData: optimisticFoldersData(),
+    optimisticFoldersData,
     hasPendingOperations,
-    movingTagIds: new Set(movingTagIds),
+    movingTags,
   };
 };

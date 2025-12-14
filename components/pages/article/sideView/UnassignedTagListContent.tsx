@@ -6,19 +6,33 @@ import DroppableFolder from './DroppableFolder';
 import TagItem from './TagItem';
 import { Folder } from 'service/api/tag/type';
 
+interface MovingTagInfo {
+  tagId: number;
+  sourceFolderId: number;
+  targetFolderId: number;
+}
+
 interface UnassignedTagListContentProps {
   folder: Folder;
   draggedTagName: string;
-  movingTagIds: Set<number>;
+  movingTags: MovingTagInfo[];
   disabled: boolean;
 }
 
 const UnassignedTagListContent = ({
   folder,
   draggedTagName,
-  movingTagIds,
+  movingTags,
   disabled,
 }: UnassignedTagListContentProps) => {
+  // 이동 중인 태그인지 확인 (소스/타겟 모두 스켈레톤 표시)
+  const isTagMovingInFolder = (tagId: number, folderId: number) => {
+    return movingTags.some(
+      mt =>
+        mt.tagId === tagId &&
+        (mt.sourceFolderId === folderId || mt.targetFolderId === folderId)
+    );
+  };
   return (
     <div className="overflow-hidden relative rounded-xl">
       <div
@@ -48,7 +62,7 @@ const UnassignedTagListContent = ({
                     key={`unassigned-${tag.id}`}
                     tag={tag}
                     folderId={folder.id}
-                    isMoving={movingTagIds.has(tag.id)}
+                    isMoving={isTagMovingInFolder(tag.id, folder.id)}
                     disabled={disabled}
                   />
                 ))}
