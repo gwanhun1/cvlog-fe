@@ -18,10 +18,10 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col tablet:flex-row tablet:items-center gap-3 w-full">
+      <div className="flex flex-col gap-3 w-full tablet:flex-row tablet:items-center">
         <label className="flex-1">
           <div className="relative group">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500">
+            <div className="absolute left-4 top-1/2 text-blue-500 -translate-y-1/2">
               <IoMdSearch className="w-5 h-5" />
             </div>
             <input

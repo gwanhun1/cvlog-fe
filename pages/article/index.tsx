@@ -21,7 +21,7 @@ const Article: NextPage = () => {
   return (
     <div className="flex justify-center w-full min-h-screen bg-gradient-to-b via-white to-white from-slate-50">
       <Head>
-        <title>LOGME - 모든 게시물 목록</title>
+        <title>LOGME - 게시물 목록</title>
         <meta
           name="description"
           content="LOGME의 모든 게시물 목록입니다. 프로그래밍, 개발, 기술 관련 다양한 게시물을 확인하세요."
