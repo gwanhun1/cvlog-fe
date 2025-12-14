@@ -73,7 +73,6 @@ export const useModifyPost = (pid: number) => {
     },
     {
       onSuccess: async () => {
-        await alert('성공적으로 저장되었습니다.');
         await router.push('/article');
       },
       retry: 0,

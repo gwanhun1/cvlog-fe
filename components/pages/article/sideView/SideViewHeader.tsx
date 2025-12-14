@@ -11,16 +11,14 @@ const SideViewHeader = ({
   onAddClick,
   onDeleteClick,
 }: SideViewHeaderProps) => (
-  <div className="flex justify-between items-center p-2 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-    <h2 className="text-sm font-bold bg-gradient-to-r from-gray-600 to-gray-700 bg-clip-text text-transparent mt-2">
-      태그 관리
-    </h2>
+  <div className="flex justify-between items-center p-2 border-b border-ftBlue/15 bg-white/90">
+    <h2 className="mt-2 text-sm font-bold text-ftBlue">태그 관리</h2>
 
     {hasContent && (
-      <div className="flex ">
+      <div className="flex">
         <button
           onClick={onAddClick}
-          className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300"
+          className="p-2 rounded-xl transition-all duration-200 text-ftGray hover:text-ftBlue hover:bg-ftBlue/10"
           title="태그 추가"
         >
           <svg
@@ -39,7 +37,7 @@ const SideViewHeader = ({
         </button>
         <button
           onClick={onDeleteClick}
-          className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300"
+          className="p-2 rounded-xl transition-all duration-200 text-ftGray hover:text-red-600 hover:bg-red-50"
           title="태그 삭제"
         >
           <svg

@@ -2,6 +2,7 @@ import { Badge } from 'flowbite-react';
 import { useRouter } from 'next/router';
 import { KeyboardEvent, useCallback, useState } from 'react';
 import * as Shared from 'components/Shared';
+import { useToast } from 'components/Shared';
 import { EDITOR_CONSTANTS, ERROR_MESSAGES, KeyMap } from 'lib/constants';
 import LocalStorage from 'public/utils/Localstorage';
 import { useCreatePost } from 'service/hooks/New';
@@ -23,6 +24,7 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const userInfo = useRecoilValue(userIdAtom);
+  const { showToast } = useToast();
 
   const mutationCreateNewPost = useCreatePost();
   const accessToken = LocalStorage.getItem('LogmeToken') as string;
@@ -45,15 +47,15 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
       if (!tag || e.key !== KeyMap.ENTER || e.nativeEvent.isComposing) return;
 
       if (tag && tag.length >= EDITOR_CONSTANTS.TAG_MAX_LENGTH) {
-        alert(ERROR_MESSAGES.TAG_TOO_LONG);
+        showToast(ERROR_MESSAGES.TAG_TOO_LONG, 'warning');
       } else if (doc.tags.includes(tag)) {
-        alert(ERROR_MESSAGES.DUPLICATE_TAG);
+        showToast(ERROR_MESSAGES.DUPLICATE_TAG, 'warning');
       } else {
         setDoc(prev => ({ ...prev, tags: [...prev.tags, tag] }));
       }
       setTag('');
     },
-    [doc.tags, tag, setDoc]
+    [doc.tags, tag, setDoc, showToast]
   );
 
   const handleRemoveTag = useCallback(
@@ -70,17 +72,17 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
     const userId = userInfo?.id;
 
     if (!doc.title.trim()) {
-      alert(ERROR_MESSAGES.TITLE_REQUIRED);
+      showToast(ERROR_MESSAGES.TITLE_REQUIRED, 'warning');
       return;
     }
 
     if (!doc.content.trim()) {
-      alert(ERROR_MESSAGES.CONTENT_REQUIRED);
+      showToast(ERROR_MESSAGES.CONTENT_REQUIRED, 'warning');
       return;
     }
 
     if (!userId) {
-      alert(ERROR_MESSAGES.USER_INFO_REQUIRED);
+      showToast(ERROR_MESSAGES.USER_INFO_REQUIRED, 'error');
       return;
     }
 
@@ -102,15 +104,15 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
     } catch (error) {
       setIsLoading(false);
       console.error('게시글 저장 중 오류 발생:', error);
-      alert(ERROR_MESSAGES.POST_SAVE_FAILED);
+      showToast(ERROR_MESSAGES.POST_SAVE_FAILED, 'error');
     }
-  }, [doc, imageArr, userInfo?.id, mutationCreateNewPost]);
+  }, [doc, imageArr, userInfo?.id, mutationCreateNewPost, showToast]);
 
   return (
     <>
       {isLoading && <LoaderAnimation />}
       <div className="tablet:pt-4 tablet:relative">
-        <div className="z-30 flex items-center justify-end gap-2 absolute bottom-0 tablet:top-0 tablet:bottom-auto right-0 tablet:mt-2 mb-2 tablet:mb-0">
+        <div className="flex absolute right-0 bottom-0 z-30 gap-2 justify-end items-center mb-2 tablet:top-0 tablet:bottom-auto tablet:mt-2 tablet:mb-0">
           <Shared.LogmeButton
             variant="ghost"
             size="small"
@@ -127,7 +129,9 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
             variant="classic"
             size="small"
             onClick={() =>
-              accessToken ? saveNewPost() : alert(ERROR_MESSAGES.LOGIN_REQUIRED)
+              accessToken
+                ? saveNewPost()
+                : showToast(ERROR_MESSAGES.LOGIN_REQUIRED, 'warning')
             }
           >
             <Shared.LogmeHeadline
@@ -140,9 +144,9 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
           </Shared.LogmeButton>
         </div>
 
-        <div className="flex relative px-2 border-b tablet:pt-2 border-gray-400">
+        <div className="flex relative px-2 border-b border-gray-400 tablet:pt-2">
           <input
-            className="tablet:mt-0 w-full h-10  font-bold  placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
+            className="w-full h-10 font-bold tablet:mt-0 placeholder:text-gray-500 placeholder:text-xs tablet:text-2xl placeholder-zinc-600 tablet:placeholder:text-2xl"
             name="title"
             value={doc.title}
             placeholder="오늘의 특별한 주제는 무엇인가요? 🌟"
@@ -151,13 +155,13 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
           />
         </div>
         <div className="min-h-[83px]">
-          <div className="relative flex px-2 pt-4 border-b border-gray-400">
+          <div className="flex relative px-2 pt-4 border-b border-gray-400">
             <Tooltip
               content="태그를 입력하면 검색, 필터, 하이라이트 기능을 사용할 수 있어요. Enter 키로 추가해 주세요."
               position="bottom"
             >
               <input
-                className="z-10 w-full text-sm  placeholder:text-gray-500 h-7 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
+                className="z-10 w-full h-7 text-sm placeholder:text-gray-500 tablet:text-xl placeholder:text-xs placeholder-zinc-600 tablet:placeholder:text-lg placeholder:italic"
                 name="tag"
                 value={tag}
                 placeholder="태그를 만들어주세요."
@@ -168,12 +172,12 @@ const NewBtn = ({ doc, setDoc, imageArr }: NewBtnProps) => {
           </div>
           <div className="flex justify-between mt-2">
             <div
-              className="h-10 overflow-x-scroll mb-1 whitespace-nowrap"
+              className="overflow-x-scroll mb-1 h-10 whitespace-nowrap"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {doc.tags.map((tag, index) => (
                 <Badge
-                  className="relative inline-flex items-center px-3 mr-1 mt-1 rounded-full border-2 border-blue-300 bg-blue-200 text-blue-800 hover:bg-blue-200 hover:border-blue-400 transition-all duration-300"
+                  className="inline-flex relative items-center px-3 mt-1 mr-1 text-blue-800 bg-blue-200 rounded-full border-2 border-blue-300 transition-all duration-300 hover:bg-blue-200 hover:border-blue-400"
                   color="default"
                   size="sm"
                   key={`${tag}-${index}`}

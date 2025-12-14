@@ -4,6 +4,7 @@ import { Avatar } from 'flowbite-react';
 import { useMutation, useQueryClient } from 'react-query';
 import CommentLayout from 'components/Shared/LogmeComment/CommentLayout';
 import LocalStorage from 'public/utils/Localstorage';
+import { useToast } from 'components/Shared';
 
 interface ReCommentProps {
   reComment: ReCommentType;
@@ -22,6 +23,7 @@ export interface ReCommentType {
 const ReComment = ({ reComment }: ReCommentProps) => {
   const accessToken = LocalStorage.getItem('LogmeToken') as string;
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   //삭제 기능
   const deleteComment = useMutation(
@@ -32,14 +34,11 @@ const ReComment = ({ reComment }: ReCommentProps) => {
     },
     {
       onSuccess: () => {
-        if (window.confirm('정말 삭제합니까?')) {
-          alert('삭제되었습니다.');
-        } else {
-          alert('취소합니다.');
-        }
+        showToast('삭제되었습니다.', 'success');
       },
       onError: ({ message }) => {
         console.log(message);
+        showToast('삭제에 실패했습니다.', 'error');
       },
     }
   );
@@ -51,14 +50,11 @@ const ReComment = ({ reComment }: ReCommentProps) => {
     },
     {
       onSuccess: () => {
-        if (window.confirm('정말 수정합니까?')) {
-          alert('수정되었습니다.');
-        } else {
-          alert('취소합니다.');
-        }
+        showToast('수정되었습니다.', 'success');
       },
       onError: ({ message }) => {
         console.log(message);
+        showToast('수정에 실패했습니다.', 'error');
       },
     }
   );
@@ -69,13 +65,13 @@ const ReComment = ({ reComment }: ReCommentProps) => {
         ({ id, profile_image, name, comment }: ReComment) => (
           <CommentLayout key={id}>
             <div className="mobile:mt-3">
-              <div className="flex justify-between w-full ">
+              <div className="flex justify-between w-full">
                 <Avatar
                   img={profile_image}
                   rounded={true}
-                  className="flex justify-start "
+                  className="flex justify-start"
                 >
-                  <div className="space-y-1 font-medium dark:text-white ">
+                  <div className="space-y-1 font-medium dark:text-white">
                     <div className="text-[11px] tablet:text-base text-ftBlack">
                       {name}
                     </div>
@@ -107,7 +103,7 @@ const ReComment = ({ reComment }: ReCommentProps) => {
                   </article>
                 </section>
               </div>
-              <main className="w-full p-2 pl-6 text-sm tablet:text-base mobile:text-md desktop:py-5 text-ftBlack">
+              <main className="p-2 pl-6 w-full text-sm tablet:text-base mobile:text-md desktop:py-5 text-ftBlack">
                 {comment}
               </main>
             </div>

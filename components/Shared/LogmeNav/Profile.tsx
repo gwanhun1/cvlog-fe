@@ -1,64 +1,12 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Avatar, Dropdown } from 'flowbite-react';
-import dynamic from 'next/dynamic';
+import { LogmeDropdown, DropdownHeader, DropdownItem } from 'components/Shared';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
 import { userIdAtom } from 'service/atoms/atoms';
 import { useRecoilValue } from 'recoil';
 
-const ClientDropdown = dynamic(
-  () =>
-    Promise.resolve(({ info, onClickLogout }: any) => (
-      <Dropdown
-        arrowIcon={false}
-        inline={true}
-        label={
-          <Avatar
-            alt="User settings"
-            img={`${info && info.profile_image}`}
-            rounded={true}
-          />
-        }
-        className="!bg-white shadow-lg border border-gray-200"
-        theme={{
-          floating: {
-            target: 'w-fit',
-            base: 'z-10 w-fit rounded-xl divide-y divide-gray-100 shadow-lg border border-gray-200',
-            content: 'py-1 bg-white rounded-xl text-gray-900',
-            header: 'block py-2 px-4 text-sm text-gray-900 bg-white',
-            item: {
-              base: 'block w-full py-2 px-4 text-sm text-gray-900 bg-white hover:bg-gray-50',
-              icon: 'mr-2 h-4 w-4',
-            },
-          },
-        }}
-      >
-        <Dropdown.Header className="flex justify-center py-2 border-b border-gray-100 bg-white">
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-sm font-semibold text-gray-900">
-              {info ? info.github_id : '아이디가 없어요'}
-            </span>
-            <span className="text-xs text-gray-600">
-              {info && info.name !== null
-                ? info.name + '님 환영합니다'
-                : '이름을 등록해주세요'}
-            </span>
-          </div>
-        </Dropdown.Header>
-        <Dropdown.Item
-          className="flex justify-center py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-          onClick={onClickLogout}
-        >
-          로그아웃
-        </Dropdown.Item>
-      </Dropdown>
-    )),
-  { ssr: false }
-);
-
-const NavPriofile = ({ setAuthority }: Props) => {
+const NavProfile = ({ setAuthority }: Props) => {
   const userInfo = useRecoilValue(userIdAtom);
-
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -73,18 +21,43 @@ const NavPriofile = ({ setAuthority }: Props) => {
     return null;
   }
 
+  if (!userInfo) {
+    return <Loader />;
+  }
+
   return (
     <nav>
-      {userInfo ? (
-        <ClientDropdown info={userInfo} onClickLogout={onClickLogout} />
-      ) : (
-        <Loader />
-      )}
+      <LogmeDropdown
+        trigger={
+          <img
+            src={userInfo.profile_image || '/images/github.png'}
+            alt="User"
+            className="w-10 h-10 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-ftBlue/30 transition-all"
+          />
+        }
+        align="right"
+      >
+        <DropdownHeader>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-sm font-semibold text-gray-900">
+              {userInfo.github_id || '아이디가 없어요'}
+            </span>
+            <span className="text-xs text-gray-500">
+              {userInfo.name
+                ? `${userInfo.name}님 환영합니다`
+                : '이름을 등록해주세요'}
+            </span>
+          </div>
+        </DropdownHeader>
+        <DropdownItem onClick={onClickLogout} danger>
+          로그아웃
+        </DropdownItem>
+      </LogmeDropdown>
     </nav>
   );
 };
 
-export default NavPriofile;
+export default NavProfile;
 
 interface Props {
   setAuthority: Dispatch<SetStateAction<boolean>>;

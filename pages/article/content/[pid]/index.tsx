@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useToast } from 'components/Shared';
 import { useQueryClient } from 'react-query';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -27,6 +28,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
+  const { showToast, showConfirm } = useToast();
 
   const userInfo = useRecoilValue(userIdAtom);
 
@@ -63,27 +65,26 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       await queryClient.invalidateQueries('publicPosts');
 
       if (!newPublicStatus) {
-        alert('이 게시물은 "나만보기"가 설정 되었습니다.');
+        showToast('이 게시물은 "나만보기"가 설정 되었습니다.', 'success');
       } else {
-        alert('이 게시물은 전체에게 보입니다.');
+        showToast('이 게시물은 전체에게 보입니다.', 'success');
       }
     } catch (error) {
       console.error('Error toggling private status:', error);
-      alert('상태 변경 중 오류가 발생했습니다.');
+      showToast('상태 변경 중 오류가 발생했습니다.', 'error');
     }
   };
 
   // 삭제 창
   const deleteContent = DeleteDetail(parseInt(pid));
-  const deleteCheck = async () => {
-    const check = confirm('삭제하시겠습니까?');
-    if (check == true) {
+  const deleteCheck = () => {
+    showConfirm('삭제하시겠습니까?', async () => {
       await deleteContent.mutate();
       await queryClient.invalidateQueries(['tagsFolder']);
       await queryClient.invalidateQueries('list');
-      alert('삭제되었습니다.');
+      showToast('삭제되었습니다.', 'success');
       router.push('/article');
-    }
+    });
   };
 
   // 수정 창

@@ -1,6 +1,7 @@
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 import { useEffect, useState } from 'react';
+import { useToast } from 'components/Shared';
 import { FcGoogle } from 'react-icons/fc';
 import { SiNaver } from 'react-icons/si';
 import { RiKakaoTalkFill } from 'react-icons/ri';
@@ -10,6 +11,7 @@ const LoginButtonGroup = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const token = LocalStorage.getItem('LogmeToken');
+  const { showToast, showConfirm } = useToast();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -22,10 +24,10 @@ const LoginButtonGroup = () => {
     }
 
     if (error === 'auth_failed') {
-      alert('로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      showToast('로그인에 실패했습니다. 잠시 후 다시 시도해주세요.', 'error');
       console.error('GitHub OAuth 인증 실패:', error);
     }
-  }, []);
+  }, [showToast]);
 
   useEffect(() => {
     setMounted(true);
@@ -36,17 +38,21 @@ const LoginButtonGroup = () => {
 
   const handleLogin = (loginMethod: string, event: React.MouseEvent) => {
     if (accessToken) {
-      const confirmed = window.confirm(
-        '기존 로그인 기록이 있습니다.\n다시 로그인하시겠습니까?',
+      showConfirm(
+        '기존 로그인 기록이 있습니다. 다시 로그인하시겠습니까?',
+        () => {
+          LocalStorage.removeItem('LogmeToken');
+          Cookie.removeItem('refreshToken');
+          proceedLogin(loginMethod);
+        }
       );
-      if (!confirmed) {
-        event.preventDefault();
-        return;
-      }
-      LocalStorage.removeItem('LogmeToken');
-      Cookie.removeItem('refreshToken');
+      event.preventDefault();
+      return;
     }
+    proceedLogin(loginMethod);
+  };
 
+  const proceedLogin = (loginMethod: string) => {
     if (loginMethod === 'Github') {
       const githubId = process.env.NEXT_PUBLIC_GITHUB_ID;
       const redirectUri = process.env.NEXT_PUBLIC_URL;
@@ -56,7 +62,10 @@ const LoginButtonGroup = () => {
           githubId,
           redirectUri,
         });
-        alert('GitHub 로그인 설정이 잘못되었습니다. 관리자에게 문의하세요.');
+        showToast(
+          'GitHub 로그인 설정이 잘못되었습니다. 관리자에게 문의하세요.',
+          'error'
+        );
         return;
       }
 
@@ -66,8 +75,7 @@ const LoginButtonGroup = () => {
 
       window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubId}&redirect_uri=${redirectUri}&state=${state}&scope=repo delete_repo`;
     } else {
-      event.preventDefault();
-      alert('준비 중입니다.');
+      showToast('준비 중입니다.', 'info');
     }
   };
 

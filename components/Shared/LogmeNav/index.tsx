@@ -22,11 +22,11 @@ const Nav = () => {
   const isAuth = !!accessToken || isAuthenticated;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 shadow-md bg-bgWhite shadow-gray-200">
+    <header className="fixed top-0 left-0 right-0 z-50 w-full h-24 border-b border-slate-200/80 bg-white/80 backdrop-blur-md shadow-sm">
       <div className="grid h-full grid-cols-12 gap-4 px-4 mx-auto max-w-7xl">
         <div className="flex items-center col-span-4 tablet:col-span-3">
           <Link href="/" className="flex items-center" prefetch={true}>
-            <Shared.LogmeIcon.LogmeMarkIcon alt="로고" width={70} height={70} />
+            <Shared.LogmeIcon.LogmeMarkIcon alt="로고" width={72} height={72} />
           </Link>
         </div>
 

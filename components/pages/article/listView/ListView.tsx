@@ -107,11 +107,11 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 ">
+      <div className="flex flex-col gap-4">
         <div
           className={`${
             posts.length === 0
-              ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
+              ? 'bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/15'
               : 'masonry-grid'
           }`}
         >
@@ -136,10 +136,10 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
 
               <div
                 ref={loadingRef}
-                className="w-full flex flex-col items-center my-4"
+                className="flex flex-col items-center my-4 w-full"
               >
                 {!hasMore && !isInitialLoading && (
-                  <div className="text-gray-300 text-sm py-4">
+                  <div className="py-4 text-sm text-ftGray">
                     모든 게시물을 불러왔습니다
                   </div>
                 )}
@@ -152,7 +152,7 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
       </div>
 
       {hasMore && isLoadingMore && (
-        <div className="masonry-grid w-full">
+        <div className="w-full masonry-grid">
           {[...Array(3)].map((_, index) => (
             <div
               key={`skeleton-${index}`}

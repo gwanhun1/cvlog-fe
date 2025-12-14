@@ -2,6 +2,7 @@ import { IoIosCloseCircle } from 'react-icons/io';
 import { useRouter } from 'next/router';
 import { EDITOR_CONSTANTS, ERROR_MESSAGES, KeyMap } from 'lib/constants';
 import * as Shared from 'components/Shared';
+import { useToast } from 'components/Shared';
 import { Badge } from 'flowbite-react';
 import { useModifyPost } from 'service/hooks/Detail';
 import { DocType } from 'pages/article/modify/[pid]';
@@ -24,6 +25,7 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
   const accessToken = LocalStorage.getItem('LogmeToken') as string;
   const [tag, setTag] = useState('');
   const userInfo = useRecoilValue(userIdAtom);
+  const { showToast } = useToast();
 
   const mutationCreatModifyPost = useModifyPost(parseInt(pid));
   const [isLoading, setIsLoading] = useState(false);
@@ -49,13 +51,13 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
       if (!tag || e.key !== KeyMap.ENTER || e.nativeEvent.isComposing) return;
 
       if (tag && tag.length >= EDITOR_CONSTANTS.TAG_MAX_LENGTH) {
-        alert(ERROR_MESSAGES.TAG_TOO_LONG);
+        showToast(ERROR_MESSAGES.TAG_TOO_LONG, 'warning');
         setTag('');
         return;
       }
 
       if (doc.tags.includes(tag)) {
-        alert(ERROR_MESSAGES.DUPLICATE_TAG);
+        showToast(ERROR_MESSAGES.DUPLICATE_TAG, 'warning');
         setTag('');
         return;
       }
@@ -63,7 +65,7 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
       setDoc(prev => ({ ...prev, tags: [...prev.tags, tag] }));
       setTag('');
     },
-    [tag, doc.tags, setDoc]
+    [tag, doc.tags, setDoc, showToast]
   );
 
   const handleRemoveTag = useCallback(
@@ -79,7 +81,7 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
   const handleSavePost = useCallback(() => {
     const userId = userInfo?.id;
     if (!userId || !accessToken) {
-      alert(ERROR_MESSAGES.LOGIN_REQUIRED);
+      showToast(ERROR_MESSAGES.LOGIN_REQUIRED, 'warning');
       return;
     }
 
@@ -98,7 +100,14 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
         setIsLoading(false);
       },
     });
-  }, [doc, imageArr, userInfo?.id, accessToken, mutationCreatModifyPost]);
+  }, [
+    doc,
+    imageArr,
+    userInfo?.id,
+    accessToken,
+    mutationCreatModifyPost,
+    showToast,
+  ]);
 
   return (
     <>
@@ -121,7 +130,9 @@ const ModifyBtn = ({ doc, setDoc, pid, imageArr }: ModifyBtnProps) => {
             variant="classic"
             size="small"
             onClick={() =>
-              accessToken ? handleSavePost() : alert('로그인 먼저 해주세요..')
+              accessToken
+                ? handleSavePost()
+                : showToast('로그인 먼저 해주세요..', 'warning')
             }
           >
             <Shared.LogmeHeadline

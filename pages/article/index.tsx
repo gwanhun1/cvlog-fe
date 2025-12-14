@@ -43,15 +43,15 @@ const Article: NextPage = () => {
       </Head>
 
       <main className="w-full">
-        <div className="relative px-4 pt-10 pb-16 mx-auto max-w-4xl tablet:px-6 desktop:px-8">
+        <div className="relative px-4 pt-10 pb-16 mx-auto max-w-5xl tablet:px-6 desktop:px-8">
           {accessToken && menu === 'list' && (
             <div className="hidden absolute top-0 right-full h-full desktop:block">
-              <aside className="sticky top-32 z-30 w-56">
+              <aside className="sticky top-32 z-30 w-64">
                 <SideView />
               </aside>
             </div>
           )}
-          <div className="rounded-3xl border border-slate-100 bg-white shadow-[0_20px_60px_-28px_rgba(15,23,42,0.35)] p-4 tablet:p-6 space-y-4">
+          <div className="rounded-3xl border border-ftBlue/25 bg-white/90 backdrop-blur p-4 tablet:p-6 space-y-4">
             <FilterBox
               keyword={keyword}
               setKeyword={setKeyword}

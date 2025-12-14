@@ -43,8 +43,8 @@ const Card = ({ title, updated_at, content, tags }: CardProps) => {
 
   return (
     <article
-      className={`group block w-full overflow-hidden transition-all duration-300 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 shadow-sm hover:shadow-xl hover:-translate-y-1 ${
-        isMatched ? 'border-blue-300 ring-2 ring-blue-400' : ''
+      className={`group block w-full overflow-hidden transition-all duration-300 bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/20 hover:border-ftBlue/40 hover:-translate-y-1 ${
+        isMatched ? 'border-ftBlue/50 ring-2 ring-ftBlue/40' : ''
       }`}
       itemScope
       itemType="http://schema.org/BlogPosting"
@@ -73,13 +73,13 @@ const Card = ({ title, updated_at, content, tags }: CardProps) => {
         <div className="flex flex-col flex-grow justify-between p-5 w-full">
           <div className="flex flex-col gap-3">
             <h3
-              className="text-lg font-bold leading-snug transition-colors text-slate-800 group-hover:text-blue-600 line-clamp-2"
+              className="text-lg font-bold leading-snug transition-colors text-slate-800 group-hover:text-ftBlue line-clamp-2"
               itemProp="headline"
             >
               {title}
             </h3>
             <p
-              className="text-sm leading-relaxed text-slate-500 line-clamp-2"
+              className="text-sm leading-relaxed text-ftGray line-clamp-2"
               itemProp="description"
             >
               {summary}

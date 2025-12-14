@@ -1,4 +1,5 @@
 import * as Shared from 'components/Shared';
+import { useToast } from 'components/Shared';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -14,13 +15,14 @@ const NavMenuItem = ({
   isAuthenticated: boolean;
 }) => {
   const router = useRouter();
+  const { showToast } = useToast();
 
   const isActive =
     path === '/' ? router.pathname === '/' : router.pathname.includes(path);
 
   const handleClick = () => {
     if (requiresAuth && !isAuthenticated) {
-      alert('로그인이 필요합니다.');
+      showToast('로그인이 필요합니다.', 'warning');
       return;
     }
   };
@@ -35,12 +37,11 @@ const NavMenuItem = ({
         <Shared.LogmeHeadline
           type="medium"
           fontStyle="semibold"
-          className={`px-4 py-2 transition-all duration-200 hover:cursor-pointer 
-            ${
-              isActive
-                ? 'text-ftBlue bg-white rounded-3xl shadow-md group-hover:text-blue-700'
-                : 'text-ftGray hover:text-blue-700'
-            }`}
+          className={`px-4 py-2 rounded-2xl transition-all duration-200 hover:cursor-pointer ${
+            isActive
+              ? 'text-ftBlue bg-white/90 shadow-md border border-ftBlue/20 group-hover:text-ftBlue'
+              : 'text-ftGray hover:text-ftBlue/90 hover:bg-bgWhite border border-transparent'
+          }`}
         >
           {name}
         </Shared.LogmeHeadline>

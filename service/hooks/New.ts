@@ -13,7 +13,6 @@ export const useCreatePost = () => {
     },
     {
       onSuccess: () => {
-        alert('성공적으로 저장되었습니다.');
         router.push('/article');
       },
       onError: (error: ErrorResponse) => {

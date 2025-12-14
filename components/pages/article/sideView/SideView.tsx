@@ -245,8 +245,8 @@ const SideMenu = () => {
       )}
 
       <div
-        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white rounded-xl shadow-lg border border-slate-100 overflow-hidden transition-opacity duration-200 ${
-          hasPendingOperations ? 'border-blue-300' : ''
+        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white/90 backdrop-blur rounded-xl border border-ftBlue/20 overflow-hidden transition-opacity duration-200 ${
+          hasPendingOperations ? 'border-ftBlue/40 ring-2 ring-ftBlue/30' : ''
         }`}
       >
         <SideViewHeader

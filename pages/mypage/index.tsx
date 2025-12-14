@@ -17,7 +17,7 @@ const RecentActivity = dynamic(
       <div className="p-8 h-48 rounded-lg animate-pulse bg-white/5" />
     ),
     ssr: false,
-  },
+  }
 );
 
 const Mypage: NextPage = () => {
@@ -34,28 +34,28 @@ const Mypage: NextPage = () => {
   }, [userInfo?.created_at]);
 
   return (
-    <div className="flex justify-center w-full min-h-[calc(100vh-80px)] bg-gradient-to-b from-blue-50 to-white">
-      <div className="px-4 py-8 w-full max-w-6xl">
+    <section className="w-full min-h-screen bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+      <div className="px-4 py-10 mx-auto space-y-8 w-full max-w-6xl tablet:px-6 desktop:px-10">
         <ProfileHeader
           profileImage={userInfo?.profile_image}
           githubId={userInfo?.github_id}
         />
 
-        <div className="grid grid-cols-1 gap-4 tablet:grid-cols-3">
-          <div className="space-y-4 tablet:col-span-2">
+        <div className="grid grid-cols-1 gap-6 tablet:grid-cols-3">
+          <div className="space-y-6 tablet:col-span-2">
             <StatsCard icon={FiCalendar} title="가입일" value={formattedDate} />
             <HomeSection description={userInfo?.description} />
             <RecentActivity />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-6">
             <ContactInfo githubId={userInfo?.github_id} />
             <GithubSyncSettings />
             <AccountManagement />
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

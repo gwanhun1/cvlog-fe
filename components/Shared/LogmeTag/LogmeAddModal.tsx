@@ -2,6 +2,7 @@ import React, { useState, KeyboardEvent, useRef } from 'react';
 import { Button, Label, Modal } from 'flowbite-react';
 import { useQueryClient } from 'react-query';
 import { useCreateFolders } from 'service/hooks/List';
+import { useToast } from 'components/Shared';
 
 interface TagAddModalProps {
   showModal: boolean;
@@ -13,12 +14,13 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const mutationCreateTagsFolders = useCreateFolders();
+  const { showToast } = useToast();
 
   const handleAddFolder = async () => {
     const folderName = inputRef.current?.value.trim();
     if (!folderName) return;
     if (folderName === '미할당') {
-      alert('생성할 수 없는 이름입니다.');
+      showToast('생성할 수 없는 이름입니다.', 'warning');
       return;
     }
 
@@ -35,7 +37,10 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
             setShowModal(false);
           },
           onError: () => {
-            alert('중복된 폴더 이름이거나, 폴더 생성에 실패했습니다.');
+            showToast(
+              '중복된 폴더 이름이거나, 폴더 생성에 실패했습니다.',
+              'error'
+            );
           },
         }
       );

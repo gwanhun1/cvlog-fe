@@ -13,14 +13,14 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
 
   return (
     <div className="my-2 w-full">
-      <div className="flex gap-2 items-center p-1 rounded-2xl border bg-slate-50 border-slate-200">
+      <div className="flex gap-2 items-center p-1 rounded-2xl border border-ftBlue/20 bg-bgWhite">
         {accessToken && (
           <button
             onClick={() => handleSetMenu('list')}
-            className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none ${
+            className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none border ${
               activeMenu === 'list'
-                ? 'bg-white text-blue-600 shadow-sm border border-blue-100'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-ftBlue text-white border-ftBlue'
+                : 'bg-white text-ftGray border-transparent hover:border-ftBlue/40 hover:text-ftBlue'
             }`}
             aria-current={activeMenu === 'list' ? 'page' : undefined}
           >
@@ -45,10 +45,10 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
         )}
         <button
           onClick={() => handleSetMenu('all')}
-          className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none ${
+          className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none border ${
             activeMenu === 'all'
-              ? 'bg-white text-blue-600 shadow-sm border border-blue-100'
-              : 'text-slate-500 hover:text-slate-700'
+              ? 'bg-ftBlue text-white border-ftBlue'
+              : 'bg-white text-ftGray border-transparent hover:border-ftBlue/40 hover:text-ftBlue'
           }`}
           aria-current={activeMenu === 'all' ? 'page' : undefined}
         >

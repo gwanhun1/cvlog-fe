@@ -26,16 +26,14 @@ const FolderItem = ({
     <div
       className="flex items-center justify-between p-3.5 cursor-pointer bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 transition-all duration-300 border-b border-gray-100 select-none w-full z-30 relative"
       onClick={handleClick}
-      onMouseDown={(e) => e.stopPropagation()}
+      onMouseDown={e => e.stopPropagation()}
       role="button"
       tabIndex={0}
       aria-expanded={!isOpened}
       data-folder-id={folder.id}
       data-accordion-header="true"
     >
-      <span 
-        className="text-sm font-semibold text-gray-900 select-none w-full overflow-hidden text-ellipsis"
-      >
+      <span className="text-sm font-semibold text-gray-900 select-none w-full overflow-hidden text-ellipsis">
         {folder.name}
       </span>
       <svg

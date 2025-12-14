@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FiEdit3 } from 'react-icons/fi';
 import { useUpdateUserDescription } from 'service/hooks/Login';
+import { useToast } from 'components/Shared';
 
 interface HomeSectionProps {
   description: string | null | undefined;
@@ -11,6 +12,7 @@ const HomeSection = ({ description }: HomeSectionProps) => {
   const [currentDescription, setCurrentDescription] = useState(
     description || ''
   );
+  const { showToast } = useToast();
 
   useEffect(() => {
     setCurrentDescription(description || '');
@@ -30,11 +32,11 @@ const HomeSection = ({ description }: HomeSectionProps) => {
     updateDescriptionMutation.mutate(currentDescription, {
       onSuccess: () => {
         setIsEditing(false);
-        alert('자기소개가 저장되었습니다.');
+        showToast('자기소개가 저장되었습니다.', 'success');
       },
       onError: error => {
         console.error('자기소개 저장 중 오류가 발생했습니다:', error);
-        alert('자기소개 저장 중 오류가 발생했습니다.');
+        showToast('자기소개 저장 중 오류가 발생했습니다.', 'error');
       },
     });
   };

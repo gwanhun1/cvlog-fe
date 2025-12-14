@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
 import Layout from 'components/Layout/layout';
 import Nav from 'components/Shared/LogmeNav';
+import { ToastProvider } from 'components/Shared';
 import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import 'styles/globals.css';
@@ -33,26 +34,28 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
-        <SafeHydrate>
-          <Head>
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-            />
-          </Head>
-          {router.pathname === '/login' ||
-          router.pathname === '/article/new' ||
-          router.pathname.startsWith('/article/modify/') ? null : (
-            <ClientNav />
-          )}
-          <Layout>
-            <ErrorBoundary>
-              <AuthGuard>
-                <Component {...pageProps} />
-              </AuthGuard>
-            </ErrorBoundary>
-          </Layout>
-        </SafeHydrate>
+        <ToastProvider>
+          <SafeHydrate>
+            <Head>
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+              />
+            </Head>
+            {router.pathname === '/login' ||
+            router.pathname === '/article/new' ||
+            router.pathname.startsWith('/article/modify/') ? null : (
+              <ClientNav />
+            )}
+            <Layout>
+              <ErrorBoundary>
+                <AuthGuard>
+                  <Component {...pageProps} />
+                </AuthGuard>
+              </ErrorBoundary>
+            </Layout>
+          </SafeHydrate>
+        </ToastProvider>
       </QueryClientProvider>
     </RecoilRoot>
   );

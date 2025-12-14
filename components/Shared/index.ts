@@ -8,6 +8,13 @@ import LogmeRecomment from './LogmeRecomment';
 import LogmeRemoveModal from './LogmeTag/LogmeRemoveModal';
 import LogmeTag from './LogmeTag';
 import { LogmeText, LogmeHeadline } from './LogmeTypo';
+import { ToastProvider, useToast } from './LogmeToast';
+import {
+  LogmeDropdown,
+  DropdownHeader,
+  DropdownItem,
+  DropdownDivider,
+} from './LogmeDropdown';
 
 export {
   LogmeCard,
@@ -21,4 +28,10 @@ export {
   LogmeText,
   LogmeHeadline,
   LogmeButton,
+  ToastProvider,
+  useToast,
+  LogmeDropdown,
+  DropdownHeader,
+  DropdownItem,
+  DropdownDivider,
 };

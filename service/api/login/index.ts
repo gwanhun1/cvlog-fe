@@ -43,7 +43,13 @@ export const handleMutateErrors = async (
       await LocalStorage.setItem('LogmeToken', newToken.data.accessToken);
     } catch (refreshError) {
       console.error('Token refresh failed:', refreshError);
-      await alert('인증이 만료되었습니다. 다시 로그인해주세요.');
+      // 로그인 페이지로 리다이렉트 (alert 대신)
+      if (
+        typeof window !== 'undefined' &&
+        !window.location.pathname.includes('/login')
+      ) {
+        window.location.href = '/login';
+      }
     }
   }
 };

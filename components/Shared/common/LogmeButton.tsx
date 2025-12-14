@@ -24,17 +24,17 @@ const getColor = (variant: string) => {
       };
     case 'disabled':
       return {
-        bg: '#6b7280',
-        border: '#4b5563',
-        text: '#ffffff',
-        shadow: 'rgba(107, 114, 128, 0.3)',
+        bg: '#d4d7dd',
+        border: '#c1c5cc',
+        text: '#788699',
+        shadow: 'rgba(120, 134, 153, 0.25)',
       };
     default:
       return {
-        bg: '#1a56db',
-        border: '#174ab3',
+        bg: '#2657A6',
+        border: '#1f4a8c',
         text: '#ffffff',
-        shadow: 'rgba(26, 86, 219, 0.5)',
+        shadow: 'rgba(38, 87, 166, 0.3)',
       };
   }
 };

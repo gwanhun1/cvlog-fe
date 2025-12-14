@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { FiGithub } from 'react-icons/fi';
+import { useToast } from 'components/Shared';
 import DisconnectedState from './DisconnectedState';
 import ConnectedState from './ConnectedState';
 import ErrorState from './ErrorState';
@@ -15,6 +16,7 @@ const GithubSyncSettings = () => {
   const { data: syncSettings, isLoading } = useGithubSyncSettings();
   const createRepoMutation = useCreateGithubRepo();
   const disconnectMutation = useDisconnectGithubSync();
+  const { showToast, showConfirm } = useToast();
 
   const [isEnabled, setIsEnabled] = useState(false);
   const [repoName, setRepoName] = useState('');
@@ -36,22 +38,22 @@ const GithubSyncSettings = () => {
   // 토글 핸들러
   const handleToggle = useCallback(() => {
     if (isEnabled) {
-      const confirmed = window.confirm(
-        'GitHub 동기화를 비활성화하시겠습니까?\nGitHub의 저장소와 파일도 함께 삭제됩니다.',
+      showConfirm(
+        'GitHub 동기화를 비활성화하시겠습니까? GitHub의 저장소와 파일도 함께 삭제됩니다.',
+        () => {
+          disconnectMutation.mutate(undefined, {
+            onSuccess: () => {
+              setIsEnabled(false);
+              setConnectionStatus('disconnected');
+              setRepoName('');
+            },
+          });
+        }
       );
-      if (confirmed) {
-        disconnectMutation.mutate(undefined, {
-          onSuccess: () => {
-            setIsEnabled(false);
-            setConnectionStatus('disconnected');
-            setRepoName('');
-          },
-        });
-      }
     } else {
       setIsEnabled(true);
     }
-  }, [isEnabled, disconnectMutation]);
+  }, [isEnabled, disconnectMutation, showConfirm]);
 
   // 저장소 생성
   const handleCreateRepo = useCallback(async () => {
@@ -63,7 +65,7 @@ const GithubSyncSettings = () => {
     const repoNameRegex = /^[a-zA-Z0-9._-]+$/;
     if (!repoNameRegex.test(repoName)) {
       setError(
-        '저장소 이름은 영문, 숫자, 점(.), 하이픈(-), 언더스코어(_)만 사용 가능합니다.',
+        '저장소 이름은 영문, 숫자, 점(.), 하이픈(-), 언더스코어(_)만 사용 가능합니다.'
       );
       return;
     }
@@ -79,25 +81,25 @@ const GithubSyncSettings = () => {
           err?.response?.data?.message ?? '저장소 생성에 실패했습니다.';
         setError(apiMessage);
         setConnectionStatus('error');
-        alert(apiMessage);
+        showToast(apiMessage, 'error');
       },
     });
-  }, [repoName, createRepoMutation]);
+  }, [repoName, createRepoMutation, showToast]);
 
   // 연결 해제
   const handleDisconnect = useCallback(() => {
-    const confirmed = window.confirm(
-      '저장소 연결을 해제하시겠습니까?\nGitHub의 저장소와 파일도 함께 삭제됩니다.',
+    showConfirm(
+      '저장소 연결을 해제하시겠습니까? GitHub의 저장소와 파일도 함께 삭제됩니다.',
+      () => {
+        disconnectMutation.mutate(undefined, {
+          onSuccess: () => {
+            setRepoName('');
+            setConnectionStatus('disconnected');
+          },
+        });
+      }
     );
-    if (confirmed) {
-      disconnectMutation.mutate(undefined, {
-        onSuccess: () => {
-          setRepoName('');
-          setConnectionStatus('disconnected');
-        },
-      });
-    }
-  }, [disconnectMutation]);
+  }, [disconnectMutation, showConfirm]);
 
   // 권한 재인증
   const handleReauthorize = useCallback(() => {

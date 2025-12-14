@@ -28,29 +28,29 @@ const Github: NextPage = () => {
   }
 
   return (
-    <div className="min-h-[90vh] bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-[90vh] bg-gradient-to-br from-bgWhite via-white to-[#e7edf5]">
       <div className="px-4 py-10 mx-auto space-y-8 max-w-5xl sm:px-6">
-        <section className="overflow-hidden relative p-6 rounded-2xl border shadow-xl backdrop-blur border-slate-100 bg-white/90 sm:p-8">
-          <div className="absolute inset-0 bg-gradient-to-r via-white pointer-events-none from-blue-50/60 to-slate-50/60" />
+        <section className="overflow-hidden relative p-6 rounded-3xl border backdrop-blur border-ftBlue/20 bg-white/90 sm:p-8">
+          <div className="absolute inset-0 bg-gradient-to-r via-white to-transparent pointer-events-none from-ftBlue/5" />
           <div className="flex relative flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.25em] text-slate-500">
+              <p className="text-xs uppercase tracking-[0.25em] text-ftGray">
                 GitHub Profile
               </p>
-              <h1 className="text-3xl font-bold text-slate-900">
+              <h1 className="text-3xl font-bold text-ftBlack">
                 {userInfo.name || userInfo.github_id}
               </h1>
-              <p className="text-sm leading-relaxed text-slate-600">
+              <p className="text-sm leading-relaxed text-ftGray">
                 활동 히스토리와 주요 저장소를 한눈에 확인하세요.
               </p>
-              <div className="inline-flex gap-2 items-center px-3 py-1 text-xs text-blue-700 bg-blue-50 rounded-full border border-blue-100">
+              <div className="inline-flex gap-2 items-center px-3 py-1 text-xs rounded-full border text-ftBlue bg-ftBlue/10 border-ftBlue/20">
                 GitHub ID
                 <span className="font-semibold">{userInfo.github_id}</span>
               </div>
             </div>
             <div className="flex gap-4 items-center">
               {userInfo.profile_image && (
-                <div className="overflow-hidden relative w-16 h-16 rounded-full border shadow-md border-slate-200">
+                <div className="overflow-hidden relative w-16 h-16 rounded-full border border-ftBlue/20">
                   <Image
                     src={userInfo.profile_image}
                     alt={`${userInfo.name || userInfo.github_id} avatar`}
@@ -64,7 +64,7 @@ const Github: NextPage = () => {
                 href={`https://github.com/${userInfo.github_id}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm text-blue-600 underline hover:text-blue-700"
+                className="text-sm text-ftBlue underline hover:text-[#1f4a8c]"
               >
                 GitHub 프로필 열기
               </a>

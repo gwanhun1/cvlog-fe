@@ -34,7 +34,6 @@ export const useModifyComment = (params: number) => {
     },
     {
       onSuccess: () => {
-        alert('수정되었습니다.');
         return queryClient.invalidateQueries(['commentList']);
       },
       onError: (error: ErrorResponse) => {
@@ -52,7 +51,6 @@ export const useDeleteComment = (params: number) => {
     },
     {
       onSuccess: () => {
-        alert('삭제되었습니다.');
         return queryClient.invalidateQueries(['commentList']);
       },
       onError: (error: ErrorResponse) => {

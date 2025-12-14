@@ -155,7 +155,10 @@ axiosInstance.interceptors.response.use(
         if (typeof window !== 'undefined') {
           LocalStorage.removeItem('LogmeToken');
           Cookie.removeItem('refreshToken');
-          alert('로그인이 필요합니다.');
+          // 로그인 페이지로 리다이렉트 (alert 대신)
+          if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/login';
+          }
         }
 
         return Promise.reject(refreshError);

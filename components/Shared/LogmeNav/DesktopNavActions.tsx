@@ -1,6 +1,7 @@
 import { CiSettings, CiBellOn } from 'react-icons/ci';
 import { Dispatch, SetStateAction } from 'react';
 import * as Shared from 'components/Shared';
+import { useToast } from 'components/Shared';
 import Link from 'next/link';
 import NavPriofile from './Profile';
 import { useRouter } from 'next/router';
@@ -18,6 +19,7 @@ const DesktopNavActions = ({
   setAuthority,
 }: DesktopNavActionsProps) => {
   const router = useRouter();
+  const { showToast } = useToast();
 
   if (isLoading) {
     return <Loader />;
@@ -27,17 +29,17 @@ const DesktopNavActions = ({
     return (
       <div className="items-center hidden gap-4 tablet:flex">
         <button
-          className="transition-all duration-300 ease-in-out opacity-100 hover:opacity-50 transform hover:scale-110 hover:bg-gray-100 rounded-full"
+          className="transition-all duration-200 ease-in-out hover:-translate-y-0.5 rounded-full p-2 bg-bgWhite hover:bg-ftBlue/10"
           onClick={() => router.push('/mypage')}
         >
-          <CiSettings className="w-8 h-8" color="grey" />
+          <CiSettings className="w-7 h-7" color="#2657A6" />
         </button>
 
         <button
-          className="transition-all duration-300 ease-in-out opacity-100 hover:opacity-50 transform hover:scale-110 hover:bg-gray-100 rounded-full"
-          onClick={() => alert('v1.1에서 만나요 🥰')}
+          className="transition-all duration-200 ease-in-out hover:-translate-y-0.5 rounded-full p-2 bg-bgWhite hover:bg-ftBlue/10"
+          onClick={() => showToast('v1.1에서 만나요 🥰', 'info')}
         >
-          <CiBellOn className="w-8 h-8" color="grey" />
+          <CiBellOn className="w-7 h-7" color="#2657A6" />
         </button>
 
         <NavPriofile setAuthority={setAuthority} />
@@ -56,7 +58,7 @@ const DesktopNavActions = ({
           <Shared.LogmeHeadline
             type="medium"
             fontStyle="semibold"
-            style={{ color: '#fff' }}
+            className="text-white"
           >
             Login
           </Shared.LogmeHeadline>
