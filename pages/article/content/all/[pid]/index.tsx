@@ -354,21 +354,36 @@ interface PostType {
 
 export const getStaticPaths = async () => {
   try {
-    // 백엔드 API URL 설정
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
+    const API_URL =
+      process.env.NEXT_PUBLIC_API_URL ||
+      'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
-    // 공개 상태(public_status가 true)인 게시물 데이터 가져오기
-    const response = await fetch(`${API_URL}/post/posts/public`);
+    const allPosts: PostType[] = [];
 
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}`);
+    for (let page = 1; page <= 10; page++) {
+      try {
+        const response = await fetch(`${API_URL}/posts/public/page/${page}`, {
+          headers: { 'Cache-Control': 'no-cache' },
+        });
+
+        if (!response.ok) break;
+
+        const responseData = await response.json();
+        const posts = responseData?.data?.posts || responseData?.posts || [];
+
+        if (!Array.isArray(posts) || posts.length === 0) break;
+
+        allPosts.push(...posts);
+
+        const maxPage = responseData?.data?.maxPage || 10;
+        if (page >= maxPage) break;
+      } catch {
+        break;
+      }
     }
 
-    const posts = (await response.json()) as PostType[];
-
-    // 유효한 ID를 가진 공개 게시물에 대한 경로 생성
-    const paths = posts
-      .filter((post: PostType) => post.public_status && post.id) // 공개 상태이고 유효한 ID가 있는 게시물만 필터링
+    const paths = allPosts
+      .filter((post: PostType) => post.public_status && post.id)
       .map((post: PostType) => ({
         params: { pid: post.id.toString() },
       }));
@@ -377,14 +392,13 @@ export const getStaticPaths = async () => {
 
     return {
       paths,
-      fallback: true, // Changed from 'blocking' to true for better error handling
+      fallback: 'blocking',
     };
   } catch (error) {
     console.error('Error fetching public posts for static paths:', error);
-    // 오류 발생 시 빈 paths 배열 반환하고 fallback으로 처리
     return {
       paths: [],
-      fallback: true, // Changed from 'blocking' to true
+      fallback: 'blocking',
     };
   }
 };
