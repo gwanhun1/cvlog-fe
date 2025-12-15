@@ -38,7 +38,23 @@ const Article: NextPage = () => {
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://logme.shop/article" />
+        <meta
+          property="og:image"
+          content="https://logme.shop/assets/NavLogo.svg"
+        />
         <meta property="og:site_name" content="LOGME" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="LOGME - 모든 게시물 목록" />
+        <meta
+          name="twitter:description"
+          content="LOGME의 다양한 개발 관련 게시물을 확인하세요."
+        />
+        <meta
+          name="twitter:image"
+          content="https://logme.shop/assets/NavLogo.svg"
+        />
+
         <link rel="canonical" href="https://logme.shop/article" />
       </Head>
 

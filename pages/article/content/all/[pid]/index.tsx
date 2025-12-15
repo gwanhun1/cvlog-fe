@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { useToast } from 'components/Shared';
 import { useQueryClient } from 'react-query';
 import Link from 'next/link';
 import Head from 'next/head';
+import removeMarkdown from 'markdown-to-text';
 import CommentBox from 'components/Shared/LogmeComment';
 import { useGetCommentList } from 'service/hooks/Comment';
 import {
@@ -113,10 +114,19 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
 
   // SEO를 위한 메타데이터 준비
   const postTitle = detailData?.post?.title || 'LogMe 게시물';
-  // 콘텐츠에서 처음 160자를 요약문으로 사용
-  const postDescription =
-    detailData?.post?.content?.substring(0, 160) + '...' ||
-    'LogMe 블로그의 게시물입니다.';
+
+  // 마크다운 제거 후 plain text로 변환하여 description 생성
+  const postDescription = useMemo(() => {
+    if (!detailData?.post?.content) return 'LogMe 블로그의 게시물입니다.';
+    const plainText = removeMarkdown(detailData.post.content)
+      .replace(/\n+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    return plainText.length > 155
+      ? plainText.substring(0, 155) + '...'
+      : plainText;
+  }, [detailData?.post?.content]);
+
   // 이미지가 없으면 기본 로고 사용
   const postImage = 'https://logme.shop/assets/NavLogo.svg';
   const canonicalUrl = `https://logme.shop/article/content/all/${pid}`;
@@ -268,12 +278,12 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
         </section>
       </main>
       {/* 프로필 영역 */}
-      <section className="w-full mt-10 pb-6 border-b border-gray-200">
+      <section className="pb-6 mt-10 w-full border-b border-gray-200">
         <Profile getDetailData={detailData?.post.user_id} />
       </section>
 
       {/* 이전/다음 포스트 네비게이션 */}
-      <nav className="w-full mt-8 mb-4">
+      <nav className="mt-8 mb-4 w-full">
         <div className="grid grid-cols-2 gap-3 tablet:gap-4">
           <div>
             {detailData?.prevPostInfo ? (
@@ -281,12 +291,12 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 href={`/article/content/all/${detailData.prevPostInfo.id}`}
                 prefetch
               >
-                <div className="group flex items-center gap-3 p-4 h-full bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-200 cursor-pointer">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 group-hover:bg-gray-300 transition-colors">
+                <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
+                  <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
                     <span className="text-gray-600">←</span>
                   </div>
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <span className="text-xs text-gray-500 mb-1">
+                  <div className="flex flex-col flex-1 min-w-0">
+                    <span className="mb-1 text-xs text-gray-500">
                       이전 포스트
                     </span>
                     <span className="text-sm font-semibold text-gray-800 truncate">
@@ -296,8 +306,8 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 </div>
               </Link>
             ) : (
-              <div className="flex items-center gap-3 p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
-                <div className="w-8 h-8 rounded-full bg-gray-200" />
+              <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
+                <div className="w-8 h-8 bg-gray-200 rounded-full" />
                 <span className="text-sm text-gray-400">이전 포스트 없음</span>
               </div>
             )}
@@ -309,24 +319,24 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 href={`/article/content/all/${detailData.nextPostInfo.id}`}
                 prefetch
               >
-                <div className="group flex items-center justify-end gap-3 p-4 h-full bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 hover:border-gray-300 transition-all duration-200 cursor-pointer">
-                  <div className="flex flex-col min-w-0 flex-1 text-right">
-                    <span className="text-xs text-gray-500 mb-1">
+                <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
+                  <div className="flex flex-col flex-1 min-w-0 text-right">
+                    <span className="mb-1 text-xs text-gray-500">
                       다음 포스트
                     </span>
                     <span className="text-sm font-semibold text-gray-800 truncate">
                       {detailData.nextPostInfo.title}
                     </span>
                   </div>
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 group-hover:bg-gray-300 transition-colors">
+                  <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
                     <span className="text-gray-600">→</span>
                   </div>
                 </div>
               </Link>
             ) : (
-              <div className="flex items-center justify-end gap-3 p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
+              <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
                 <span className="text-sm text-gray-400">다음 포스트 없음</span>
-                <div className="w-8 h-8 rounded-full bg-gray-200" />
+                <div className="w-8 h-8 bg-gray-200 rounded-full" />
               </div>
             )}
           </div>

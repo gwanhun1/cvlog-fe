@@ -35,7 +35,26 @@ const Home = () => {
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://logme.shop" />
+        <meta
+          property="og:image"
+          content="https://logme.shop/assets/NavLogo.svg"
+        />
         <meta property="og:site_name" content="LOGME" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="LOGME - 개발자를 위한 마크다운 블로그"
+        />
+        <meta
+          name="twitter:description"
+          content="개발자를 위한 궁극의 마크다운 블로그 플랫폼"
+        />
+        <meta
+          name="twitter:image"
+          content="https://logme.shop/assets/NavLogo.svg"
+        />
+
         <link rel="canonical" href="https://logme.shop" />
       </Head>
 

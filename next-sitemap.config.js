@@ -3,20 +3,19 @@ const axios = require('axios');
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl: 'https://logme.shop',
-  generateRobotsTxt: true,
-  robotsTxtOptions: {
-    policies: [
-      {
-        userAgent: '*',
-        allow: '/',
-      },
-    ],
-    additionalSitemaps: [
-      'https://logme.shop/sitemap.xml',
-      'https://logme.shop/server-sitemap.xml',
-    ],
-  },
-  exclude: ['/api/*', '/join', '/login', '/mypage', '/article/modify/*'],
+  generateRobotsTxt: false, // public/robots.txt 직접 관리
+  exclude: [
+    '/api/*',
+    '/join',
+    '/login',
+    '/mypage',
+    '/article/modify/*',
+    '/article/new',
+    '/article/new/*',
+    '/github',
+    '/github/*',
+    '/SafeHydrate',
+  ],
   generateIndexSitemap: false,
   changefreq: 'daily',
   priority: 0.7,
@@ -24,62 +23,63 @@ module.exports = {
   // 빌드 후 생성된 정적 페이지에 대한 추가 sitemap 항목 생성
   additionalPaths: async config => {
     try {
-      // 백엔드 API URL 설정
       const API_URL =
         process.env.NEXT_PUBLIC_API_URL ||
         'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
-      // 공개 상태인 게시물만 가져오기
-      const response = await axios.get(`${API_URL}/post/posts/public`, {
-        headers: {
-          'Cache-Control': 'no-cache',
-          Pragma: 'no-cache',
-        },
-      });
+      // 여러 페이지의 공개 게시물 수집 (최대 10페이지)
+      const allPosts = [];
+      for (let page = 1; page <= 10; page++) {
+        try {
+          const response = await axios.get(
+            `${API_URL}/posts/public/page/${page}`,
+            {
+              headers: { 'Cache-Control': 'no-cache' },
+              timeout: 10000,
+            }
+          );
 
-      const data = response.data;
-      if (!data || !Array.isArray(data)) {
-        console.error('[Sitemap] Invalid data format received from API');
-        return [];
+          // API 응답: { success: true, data: { posts: [...], maxPage: N } }
+          const responseData = response.data;
+          const posts =
+            responseData?.data?.posts ||
+            responseData?.data ||
+            responseData?.posts ||
+            [];
+
+          if (!Array.isArray(posts) || posts.length === 0) {
+            console.log(`[Sitemap] Page ${page}: no posts, stopping`);
+            break;
+          }
+
+          allPosts.push(...posts);
+          console.log(`[Sitemap] Page ${page}: ${posts.length} posts`);
+
+          // maxPage 확인하여 불필요한 요청 방지
+          const maxPage = responseData?.data?.maxPage || 10;
+          if (page >= maxPage) break;
+        } catch (pageError) {
+          console.log(`[Sitemap] Page ${page} error:`, pageError.message);
+          break;
+        }
       }
 
-      // 필터링 후 공개 게시물만 선택
-      const publicPosts = data.filter(
-        post => post && post.public_status === true && post.id
-      );
       console.log(
-        `[Sitemap] Including ${publicPosts.length} public posts in sitemap`
+        `[Sitemap] Total ${allPosts.length} public posts for sitemap`
       );
 
-      // 각 게시물에 대한 URL 생성
-      return publicPosts.map(post => {
-        const lastModDate = new Date(
-          post.updated_at || post.created_at
-        ).toISOString();
-
-        // 게시물이 특별히 중요하면 우선순위 높게 설정
-        const isImportantPost =
-          post.title &&
-          (post.title.includes('React 훅') ||
-            post.title.includes('setInterval') ||
-            post.is_featured);
-        const priority = isImportantPost ? 0.9 : 0.8;
-
-        return {
+      return allPosts
+        .filter(post => post && post.id)
+        .map(post => ({
           loc: `/article/content/all/${post.id}`,
           changefreq: 'weekly',
-          priority,
-          lastmod: lastModDate,
-          alternateRefs: [
-            {
-              href: `https://logme.shop/article/content/all/${post.id}`,
-              hreflang: 'ko',
-            },
-          ],
-        };
-      });
+          priority: 0.8,
+          lastmod: new Date(
+            post.updated_at || post.created_at || Date.now()
+          ).toISOString(),
+        }));
     } catch (error) {
-      console.error('[Sitemap] Error generating dynamic paths:', error);
+      console.error('[Sitemap] Error:', error.message);
       return [];
     }
   },
