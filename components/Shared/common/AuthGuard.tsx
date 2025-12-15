@@ -7,13 +7,10 @@ import LoaderAnimation from './LoaderAnimation';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  // SSR에서는 로딩 없이 바로 children 렌더링 (SEO 메타태그 포함 위해)
   const isSSR = typeof window === 'undefined';
   const [isLoading, setIsLoading] = useState(!isSSR);
   const [isAuthenticated, setIsAuthenticated] = useState(isSSR);
 
-  // 로그인 없이 접근 가능한 경로 목록
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const publicRoutes = [
     '/',
     '/join',
@@ -21,7 +18,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     '/article',
     /^\/article\/all\/\d+$/,
     /^\/article\/content\/all\/\d+$/,
-    '/article/content/all/[pid]', // 동적 라우트 패턴 추가
+    '/article/content/all/[pid]',
   ];
 
   const checkAuthStatus = useCallback(async () => {
@@ -31,16 +28,11 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       const accessToken = LocalStorage.getItem('LogmeToken');
       const refreshToken = Cookie.getItem('refreshToken');
 
-      // 현재 경로가 publicRoutes에 포함되는지 확인
-
-      // 정적 경로는 pathname으로, 정규식 패턴은 asPath로 확인
       const isPublicRoute = publicRoutes.some(route => {
         let result;
         if (typeof route === 'string') {
-          // 정적 경로는 pathname으로 확인
           result = route === router.pathname;
         } else {
-          // 정규식 패턴은 asPath로 확인 (실제 URL에 대해 테스트)
           result = route.test(router.asPath);
         }
         return result;
@@ -52,7 +44,6 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      // 엑세스 토큰이 없는 경우
       if (!accessToken) {
         if (refreshToken) {
           try {

@@ -26,17 +26,17 @@ import { NextPage } from 'next';
 
 interface DetailProps {
   pid: string;
-  initialData?: any; // getStaticProps에서 가져온 초기 데이터 (선택사항)
+  initialData?: any;
 }
 
-const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
+const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const router = useRouter();
+  const pid = propsPid || (router.query.pid as string);
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
   const userInfo = useRecoilValue(userIdAtom);
   const { showToast, showConfirm } = useToast();
   const [_, setTagList] = useRecoilState(tagListAtom);
-  // 데이터 받기 - initialData를 사용하여 초기 상태 설정
   const {
     data: detailData,
     isLoading,
@@ -53,7 +53,6 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   );
   const patchDetailMutation = usePatchDetail();
 
-  // 나만보기 메세지 창
   const handlePrivateToggle = async () => {
     const newPublicStatus = !patchMessage;
     try {
@@ -63,7 +62,6 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       });
       setPatchMessage(newPublicStatus);
 
-      // 캐시 업데이트
       await queryClient.invalidateQueries(['detail', pid]);
       await queryClient.invalidateQueries('publicPosts');
 
@@ -78,7 +76,6 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
     }
   };
 
-  // 삭제 창
   const deleteContent = DeleteDetail(parseInt(pid));
   const deleteCheck = () => {
     showConfirm('삭제하시겠습니까?', async () => {
@@ -90,7 +87,6 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
     });
   };
 
-  // 수정 창
   const updateCheck = () => {
     router.push(`/article/modify/${pid}`);
   };
@@ -98,12 +94,10 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   useEffect(() => {
     detailRefetch();
     commentRefetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pid]);
 
   const [selectTagList, setSelectTagList] = useRecoilState(selectedTagListAtom);
 
-  // 태그 선택 처리 함수
   const handleTagSelect = (tag: TagType) => {
     if (selectTagList.includes(tag)) {
       setSelectTagList(selectTagList.filter(item => item !== tag));
@@ -112,10 +106,8 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
     }
   };
 
-  // SSR용 데이터: initialData 우선, 없으면 CSR detailData 사용
   const postData = initialData?.post || detailData?.post;
 
-  // SEO 메타데이터 (SSR에서도 initialData로 렌더링됨)
   const postTitle = postData?.title || 'LogMe 게시물';
   const postDescription = useMemo(() => {
     const content = postData?.content;
