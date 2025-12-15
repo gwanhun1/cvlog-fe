@@ -7,8 +7,10 @@ import LoaderAnimation from './LoaderAnimation';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // SSR에서는 로딩 없이 바로 children 렌더링 (SEO 메타태그 포함 위해)
+  const isSSR = typeof window === 'undefined';
+  const [isLoading, setIsLoading] = useState(!isSSR);
+  const [isAuthenticated, setIsAuthenticated] = useState(isSSR);
 
   // 로그인 없이 접근 가능한 경로 목록
   // eslint-disable-next-line react-hooks/exhaustive-deps
