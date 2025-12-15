@@ -112,82 +112,78 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
     }
   };
 
-  // SEO를 위한 메타데이터 준비
-  const postTitle = detailData?.post?.title || 'LogMe 게시물';
+  // SSR용 데이터: initialData 우선, 없으면 CSR detailData 사용
+  const postData = initialData?.post || detailData?.post;
 
-  // 마크다운 제거 후 plain text로 변환하여 description 생성
+  // SEO 메타데이터 (SSR에서도 initialData로 렌더링됨)
+  const postTitle = postData?.title || 'LogMe 게시물';
   const postDescription = useMemo(() => {
-    if (!detailData?.post?.content) return 'LogMe 블로그의 게시물입니다.';
-    const plainText = removeMarkdown(detailData.post.content)
+    const content = postData?.content;
+    if (!content) return 'LogMe 블로그의 게시물입니다.';
+    const plainText = removeMarkdown(content)
       .replace(/\n+/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
     return plainText.length > 155
       ? plainText.substring(0, 155) + '...'
       : plainText;
-  }, [detailData?.post?.content]);
-
-  // 이미지가 없으면 기본 로고 사용
+  }, [postData?.content]);
   const postImage = 'https://logme.shop/assets/NavLogo.svg';
   const canonicalUrl = `https://logme.shop/article/content/all/${pid}`;
 
   return (
     <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
-      {detailData?.post && (
-        <Head>
-          <title>{postTitle} | LogMe</title>
-          <meta name="description" content={postDescription} />
-          <meta
-            name="keywords"
-            content={
-              detailData?.post?.tags
-                ?.map((tag: TagType) => tag.name)
-                .join(', ') || '기술블로그,개발자,프로그래밍'
-            }
-          />
+      <Head>
+        <title>{postTitle} | LogMe</title>
+        <meta name="description" content={postDescription} />
+        <meta
+          name="keywords"
+          content={
+            postData?.tags?.map((tag: TagType) => tag.name).join(', ') ||
+            '기술블로그,개발자,프로그래밍'
+          }
+        />
 
-          <meta property="og:title" content={postTitle} />
-          <meta property="og:description" content={postDescription} />
-          <meta property="og:type" content="article" />
-          <meta property="og:url" content={canonicalUrl} />
-          <meta property="og:image" content={postImage} />
-          <meta property="og:site_name" content="LogMe" />
+        <meta property="og:title" content={postTitle} />
+        <meta property="og:description" content={postDescription} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={postImage} />
+        <meta property="og:site_name" content="LogMe" />
 
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:title" content={postTitle} />
-          <meta name="twitter:description" content={postDescription} />
-          <meta name="twitter:image" content={postImage} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={postTitle} />
+        <meta name="twitter:description" content={postDescription} />
+        <meta name="twitter:image" content={postImage} />
 
-          <link rel="canonical" href={canonicalUrl} />
+        <link rel="canonical" href={canonicalUrl} />
 
-          <script type="application/ld+json">
-            {JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'BlogPosting',
-              headline: postTitle,
-              description: postDescription,
-              image: postImage,
-              url: canonicalUrl,
-              datePublished: detailData?.post?.created_at,
-              dateModified:
-                detailData?.post?.updated_at || detailData?.post?.created_at,
-              author: {
-                '@type': 'Person',
-                name: detailData?.post?.user_id?.name || 'LogMe 사용자',
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: postTitle,
+            description: postDescription,
+            image: postImage,
+            url: canonicalUrl,
+            datePublished: postData?.created_at,
+            dateModified: postData?.updated_at || postData?.created_at,
+            author: {
+              '@type': 'Person',
+              name: postData?.user_id?.name || 'LogMe 사용자',
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'LogMe',
+              logo: {
+                '@type': 'ImageObject',
+                url: 'https://logme.shop/assets/NavLogo.svg',
               },
-              publisher: {
-                '@type': 'Organization',
-                name: 'LogMe',
-                logo: {
-                  '@type': 'ImageObject',
-                  url: 'https://logme.shop/assets/NavLogo.svg',
-                },
-              },
-              mainEntityOfPage: canonicalUrl,
-            })}
-          </script>
-        </Head>
-      )}
+            },
+            mainEntityOfPage: canonicalUrl,
+          })}
+        </script>
+      </Head>
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
         {isLoading ? (
           <div className="mb-3 w-28 h-14 bg-gray-200 rounded-lg" />
