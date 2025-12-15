@@ -408,10 +408,12 @@ export const getStaticProps = async ({ params }: any) => {
 
   try {
     // 백엔드 API URL 설정
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
+    const API_URL =
+      process.env.NEXT_PUBLIC_API_URL ||
+      'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
     // 게시물 데이터 미리 가져오기
-    const response = await fetch(`${API_URL}/post/posts/${pid}`);
+    const response = await fetch(`${API_URL}/posts/${pid}`);
 
     if (!response.ok) {
       console.error(`Failed to fetch post data: ${response.status}`);
@@ -424,10 +426,12 @@ export const getStaticProps = async ({ params }: any) => {
       };
     }
 
-    const postData = await response.json();
+    const responseData = await response.json();
+    // API 응답: { success: true, data: { post: {...} } }
+    const postData = responseData?.data || responseData;
 
     // 게시물이 공개 상태가 아니면 404 페이지 반환
-    if (postData && postData.post && !postData.post.public_status) {
+    if (postData?.post && !postData.post.public_status) {
       return {
         notFound: true,
       };
