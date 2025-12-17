@@ -106,7 +106,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     }
   };
 
-  const postData = initialData?.post || detailData?.post;
+  const resolvedDetailData = initialData || detailData;
+  const shouldShowSkeleton = isLoading && !initialData;
+
+  const postData = resolvedDetailData?.post;
 
   const postTitle = postData?.title || 'LogMe 게시물';
   const postDescription = useMemo(() => {
@@ -177,24 +180,24 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         </script>
       </Head>
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
-        {isLoading ? (
+        {shouldShowSkeleton ? (
           <div className="mb-3 w-28 h-14 bg-gray-200 rounded-lg" />
         ) : (
           <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-6xl">
-            {detailData?.post.title}
+            {resolvedDetailData?.post?.title}
           </h1>
         )}
       </header>
       <section className="flex justify-between items-center w-full h-full border-b border-gray-400">
         <div className="flex flex-wrap justify-start mb-1 w-full text-ftBlack">
-          {isLoading ? (
+          {shouldShowSkeleton ? (
             <>
               <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
               <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
               <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
             </>
           ) : (
-            detailData?.post.tags.map((tag: TagType) => (
+            resolvedDetailData?.post?.tags?.map((tag: TagType) => (
               <Badge
                 className={`mr-1 duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 py-1 rounded-full border-2 ${
                   selectTagList.includes(tag)
@@ -213,7 +216,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         </div>
         <section className="flex items-end w-28">
           <time className="mb-1 text-xs text-gray-600 tablet:text-sm">
-            {detailData && detailData.post.created_at.slice(0, 10)}
+            {resolvedDetailData?.post?.created_at?.slice(0, 10)}
           </time>
         </section>
       </section>
@@ -221,9 +224,9 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         <section>
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-              {Number(userInfo?.id) === detailData?.post.user_id.id ||
+              {Number(userInfo?.id) === resolvedDetailData?.post?.user_id?.id ||
               userInfo?.github_id ===
-                String(detailData?.post?.user_id?.github_id) ? (
+                String(resolvedDetailData?.post?.user_id?.github_id) ? (
                 <>
                   <button
                     className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
@@ -257,26 +260,24 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
 
           <div className="flex justify-center">
             <Content
-              data={detailData?.post.content}
-              isLoading={isLoading}
-              writer={detailData?.post.user_id.github_id}
-              id={detailData?.post.id}
+              data={resolvedDetailData?.post?.content}
+              isLoading={shouldShowSkeleton}
+              writer={resolvedDetailData?.post?.user_id?.github_id}
+              id={resolvedDetailData?.post?.id}
             />
           </div>
         </section>
       </main>
-      {/* 프로필 영역 */}
       <section className="pb-6 mt-10 w-full border-b border-gray-200">
-        <Profile getDetailData={detailData?.post.user_id} />
+        <Profile getDetailData={resolvedDetailData?.post?.user_id} />
       </section>
 
-      {/* 이전/다음 포스트 네비게이션 */}
       <nav className="mt-8 mb-4 w-full">
         <div className="grid grid-cols-2 gap-3 tablet:gap-4">
           <div>
-            {detailData?.prevPostInfo ? (
+            {resolvedDetailData?.prevPostInfo ? (
               <Link
-                href={`/article/content/all/${detailData.prevPostInfo.id}`}
+                href={`/article/content/all/${resolvedDetailData.prevPostInfo.id}`}
                 prefetch
               >
                 <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
@@ -288,7 +289,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                       이전 포스트
                     </span>
                     <span className="text-sm font-semibold text-gray-800 truncate">
-                      {detailData.prevPostInfo.title}
+                      {resolvedDetailData.prevPostInfo.title}
                     </span>
                   </div>
                 </div>
@@ -302,9 +303,9 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
           </div>
 
           <div>
-            {detailData?.nextPostInfo ? (
+            {resolvedDetailData?.nextPostInfo ? (
               <Link
-                href={`/article/content/all/${detailData.nextPostInfo.id}`}
+                href={`/article/content/all/${resolvedDetailData.nextPostInfo.id}`}
                 prefetch
               >
                 <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
@@ -313,7 +314,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                       다음 포스트
                     </span>
                     <span className="text-sm font-semibold text-gray-800 truncate">
-                      {detailData.nextPostInfo.title}
+                      {resolvedDetailData.nextPostInfo.title}
                     </span>
                   </div>
                   <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
