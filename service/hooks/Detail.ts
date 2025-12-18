@@ -25,6 +25,7 @@ export const useGetDetail = (
     onError: handleGetErrors,
     onSuccess: onSuccess ? data => onSuccess(data) : undefined,
     enabled: !isNaN(params),
+    useErrorBoundary: false,
   });
 };
 
