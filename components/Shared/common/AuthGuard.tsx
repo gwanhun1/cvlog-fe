@@ -8,8 +8,6 @@ import LoaderAnimation from './LoaderAnimation';
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const isSSR = typeof window === 'undefined';
-  const [isLoading, setIsLoading] = useState(!isSSR);
-  const [isAuthenticated, setIsAuthenticated] = useState(isSSR);
 
   const publicRoutes = [
     '/',
@@ -21,22 +19,29 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     '/article/content/all/[pid]',
   ];
 
+  const isPublicRoute = publicRoutes.some(route => {
+    if (typeof route === 'string') {
+      return route === router.pathname;
+    }
+    return route.test(router.asPath);
+  });
+
+  const [isLoading, setIsLoading] = useState(() => {
+    if (isSSR) return false;
+    return !isPublicRoute;
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (isSSR) return true;
+    return isPublicRoute;
+  });
+
   const checkAuthStatus = useCallback(async () => {
     setIsLoading(true);
 
     try {
       const accessToken = LocalStorage.getItem('LogmeToken');
       const refreshToken = Cookie.getItem('refreshToken');
-
-      const isPublicRoute = publicRoutes.some(route => {
-        let result;
-        if (typeof route === 'string') {
-          result = route === router.pathname;
-        } else {
-          result = route.test(router.asPath);
-        }
-        return result;
-      });
 
       if (isPublicRoute) {
         setIsAuthenticated(true);
@@ -83,7 +88,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [publicRoutes, router]);
+  }, [isPublicRoute, router]);
 
   useEffect(() => {
     if (router.pathname === '/login' || router.pathname === '/join') {
@@ -91,8 +96,14 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       return;
     }
 
+    if (isPublicRoute) {
+      setIsAuthenticated(true);
+      setIsLoading(false);
+      return;
+    }
+
     checkAuthStatus();
-  }, [router.pathname, checkAuthStatus]);
+  }, [router.pathname, isPublicRoute, checkAuthStatus]);
 
   if (isLoading) {
     return <LoaderAnimation />;
