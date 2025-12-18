@@ -12,13 +12,16 @@ import ListEmpty from '../../../Shared/common/ListEmpty';
 interface AllViewProps {
   inputRef: React.RefObject<HTMLInputElement>;
   setKeyword: React.Dispatch<React.SetStateAction<string>>;
+  initialPosts?: BlogType[];
 }
 
-const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
+const AllView = ({ inputRef, setKeyword, initialPosts }: AllViewProps) => {
   const [page, setPage] = useState<number>(1);
-  const [posts, setPosts] = useState<BlogType[]>([]);
+  const [posts, setPosts] = useState<BlogType[]>(initialPosts || []);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(
+    !(initialPosts && initialPosts.length > 0)
+  );
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -107,7 +110,7 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
 
   return (
     <>
-      <div className="flex flex-col gap-4 ">
+      <div className="flex flex-col gap-4">
         <div
           className={`${
             posts.length === 0
@@ -151,10 +154,10 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
 
               <div
                 ref={loadingRef}
-                className="w-full flex flex-col items-center my-4"
+                className="flex flex-col items-center my-4 w-full"
               >
                 {!hasMore && !isInitialLoading && (
-                  <div className="text-gray-300 text-sm py-4">
+                  <div className="py-4 text-sm text-gray-300">
                     모든 게시물을 불러왔습니다
                   </div>
                 )}
@@ -167,7 +170,7 @@ const AllView = ({ inputRef, setKeyword }: AllViewProps) => {
       </div>
 
       {hasMore && isLoadingMore && (
-        <div className="masonry-grid w-full">
+        <div className="w-full masonry-grid">
           {[...Array(3)].map((_, index) => (
             <div
               key={`skeleton-${index}`}

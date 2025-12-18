@@ -9,8 +9,13 @@ import MenuTab from 'components/pages/article/sideView/MenuTab';
 import FilterBox from 'components/Shared/LogmeFilterBox.tsx/FilterBox';
 import { useRecoilState } from 'recoil';
 import { tagAtom } from 'service/atoms/atoms';
+import { BlogType } from 'service/api/tag/type';
 
-const Article: NextPage = () => {
+type ArticleProps = {
+  initialPosts?: BlogType[];
+};
+
+const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
   const accessToken = LocalStorage.getItem('LogmeToken');
   const [menu, setMenu] = useState<'list' | 'all'>(
     accessToken ? 'list' : 'all'
@@ -67,7 +72,7 @@ const Article: NextPage = () => {
               </aside>
             </div>
           )}
-          <div className="rounded-3xl border border-ftBlue/25 bg-white/90 backdrop-blur p-4 tablet:p-6 space-y-4">
+          <div className="p-4 space-y-4 rounded-3xl border backdrop-blur border-ftBlue/25 bg-white/90 tablet:p-6">
             <FilterBox
               keyword={keyword}
               setKeyword={setKeyword}
@@ -86,7 +91,11 @@ const Article: NextPage = () => {
               </>
             ) : (
               <div className="w-full">
-                <AllView inputRef={inputRef} setKeyword={setKeyword} />
+                <AllView
+                  inputRef={inputRef}
+                  setKeyword={setKeyword}
+                  initialPosts={initialPosts}
+                />
               </div>
             )}
           </div>
@@ -94,6 +103,43 @@ const Article: NextPage = () => {
       </main>
     </div>
   );
+};
+
+export const getStaticProps = async () => {
+  try {
+    const API_URL =
+      process.env.NEXT_PUBLIC_API_URL ||
+      'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
+
+    const response = await fetch(`${API_URL}/posts/public/page/1`);
+    if (!response.ok) {
+      return {
+        props: {
+          initialPosts: [],
+        },
+        revalidate: 60,
+      };
+    }
+
+    const responseData = await response.json();
+    const posts = (responseData?.data?.posts || []) as BlogType[];
+
+    const initialPosts = posts.filter(post => post?.id && post?.public_status);
+
+    return {
+      props: {
+        initialPosts,
+      },
+      revalidate: 60,
+    };
+  } catch {
+    return {
+      props: {
+        initialPosts: [],
+      },
+      revalidate: 60,
+    };
+  }
 };
 
 export default Article;
