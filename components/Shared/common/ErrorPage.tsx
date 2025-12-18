@@ -10,15 +10,77 @@ interface Props {
 const ErrorBoundary = ({ children }: Props) => {
   const [hasError, setHasError] = useState(false);
 
+  const reportClientError = (payload: Record<string, unknown>) => {
+    try {
+      const body = JSON.stringify({
+        ...payload,
+        href: typeof window !== 'undefined' ? window.location.href : undefined,
+        pathname:
+          typeof window !== 'undefined' ? window.location.pathname : undefined,
+        userAgent:
+          typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
+        timestamp: Date.now(),
+      });
+
+      if (typeof navigator !== 'undefined' && 'sendBeacon' in navigator) {
+        navigator.sendBeacon('/api/client-error', body);
+        return;
+      }
+
+      fetch('/api/client-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        keepalive: true,
+      }).catch(() => undefined);
+    } catch {
+      return;
+    }
+  };
+
   useEffect(() => {
     const errorHandler = (event: ErrorEvent) => {
       console.error('Uncaught error:', event.error);
+      reportClientError({
+        type: 'error',
+        message: event.error?.message || event.message,
+        stack: event.error?.stack,
+        source: event.filename,
+        lineno: event.lineno,
+        colno: event.colno,
+      });
+      setHasError(true);
+    };
+
+    const rejectionHandler = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled rejection:', event.reason);
+
+      const reason: unknown = event.reason;
+      const message =
+        typeof reason === 'object' && reason !== null && 'message' in reason
+          ? String((reason as { message: unknown }).message)
+          : typeof reason === 'string'
+          ? reason
+          : String(reason);
+      const stack =
+        typeof reason === 'object' && reason !== null && 'stack' in reason
+          ? String((reason as { stack: unknown }).stack)
+          : undefined;
+
+      reportClientError({
+        type: 'unhandledrejection',
+        reason,
+        message,
+        stack,
+      });
       setHasError(true);
     };
 
     window.addEventListener('error', errorHandler);
+    window.addEventListener('unhandledrejection', rejectionHandler);
     return () => {
       window.removeEventListener('error', errorHandler);
+      window.removeEventListener('unhandledrejection', rejectionHandler);
     };
   }, []);
 
