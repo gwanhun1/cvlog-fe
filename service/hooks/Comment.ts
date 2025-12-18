@@ -69,5 +69,6 @@ export const useGetCommentList = (params: number) => {
     staleTime: 1000 * 60 * 5,
     cacheTime: 1000 * 60 * 10,
     onError: handleGetErrors,
+    enabled: !isNaN(params),
   });
 };

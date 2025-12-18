@@ -1,20 +1,33 @@
 class Sessionstorage {
   static setItem(key: string, item: string) {
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem(key, item);
+      try {
+        sessionStorage.setItem(key, item);
+      } catch (e) {
+        console.warn('SessionStorage access failed:', e);
+      }
     }
   }
 
   static getItem(key: string) {
     if (typeof window !== 'undefined') {
-      return sessionStorage.getItem(key);
+      try {
+        return sessionStorage.getItem(key);
+      } catch (e) {
+        console.warn('SessionStorage access failed:', e);
+        return null;
+      }
     }
     return null;
   }
 
   static removeItem(key: string) {
     if (typeof window !== 'undefined') {
-      sessionStorage.removeItem(key);
+      try {
+        sessionStorage.removeItem(key);
+      } catch (e) {
+        console.warn('SessionStorage access failed:', e);
+      }
     }
   }
 }

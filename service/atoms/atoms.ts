@@ -3,16 +3,46 @@ import { recoilPersist } from 'recoil-persist';
 import { TagType } from 'service/api/detail/type';
 import { UserInfoType } from 'service/api/login/type';
 
+const safeLocalStorage = {
+  setItem: (key: string, value: string) => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(key, value);
+      } catch (e) {
+        // storage access failed
+      }
+    }
+  },
+  getItem: (key: string) => {
+    if (typeof window !== 'undefined') {
+      try {
+        return window.localStorage.getItem(key);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  },
+  removeItem: (key: string) => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.removeItem(key);
+      } catch (e) {
+        // storage access failed
+      }
+    }
+  },
+};
+
 const { persistAtom } = recoilPersist({
   key: 'recoil-persist',
-  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+  storage: safeLocalStorage,
 });
 
 const getAtomKey = (key: string) => key;
 
 const getClientItem = (key: string) => {
-  if (typeof window === 'undefined') return '';
-  return window.localStorage.getItem(key) ?? '';
+  return safeLocalStorage.getItem(key) ?? '';
 };
 
 export const authorityState = atom<boolean>({

@@ -1,4 +1,4 @@
-'use client';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
@@ -18,17 +18,20 @@ import Head from 'next/head';
 const ClientNav = dynamic(() => Promise.resolve(Nav), { ssr: false });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        refetchOnWindowFocus: false,
-        staleTime: 1000 * 60 * 5,
-        cacheTime: 1000 * 60 * 30,
-        useErrorBoundary: true,
-      },
-    },
-  });
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+            refetchOnWindowFocus: false,
+            staleTime: 1000 * 60 * 5,
+            cacheTime: 1000 * 60 * 30,
+            useErrorBoundary: true,
+          },
+        },
+      })
+  );
   const router = useRouter();
 
   return (

@@ -17,6 +17,8 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     /^\/article\/all\/\d+$/,
     /^\/article\/content\/all\/\d+$/,
     '/article/content/all/[pid]',
+    '/404',
+    '/_error',
   ];
 
   const isPublicRoute = publicRoutes.some(route => {
