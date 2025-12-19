@@ -99,7 +99,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
         response = await axios.get(url, {
           withCredentials: true,
-          timeout: 15000,
+          timeout: 30000,
           headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
         if (retryCount >= maxRetries) {
           throw error;
         }
-        await new Promise(resolve => setTimeout(resolve, 2000 * retryCount));
+        await new Promise(resolve => setTimeout(resolve, 3000 * retryCount));
       }
     }
 
@@ -147,17 +147,22 @@ export const getServerSideProps: GetServerSideProps = async context => {
   } catch (error: any) {
     console.error('로그인 에러:', error.message, error.response?.data);
 
-    // 좀 더 구체적인 에러 메시지로 리디렉션
     let errorParam = 'auth_failed';
 
     if (error.response?.status === 404) {
       errorParam = 'api_not_found';
     } else if (error.response?.status === 401) {
       errorParam = 'unauthorized';
+    } else if (error.response?.status === 504) {
+      errorParam = 'gateway_timeout';
+    } else if (error.response?.status === 503) {
+      errorParam = 'service_unavailable';
     } else if (error.code === 'ECONNABORTED') {
       errorParam = 'timeout';
     } else if (error.code === 'ECONNREFUSED') {
       errorParam = 'connection_refused';
+    } else if (error.code === 'ENOTFOUND') {
+      errorParam = 'dns_error';
     }
 
     return {

@@ -23,8 +23,23 @@ const LoginButtonGroup = () => {
       sessionStorage.setItem('cleared', 'true');
     }
 
-    if (error === 'auth_failed') {
-      showToast('로그인에 실패했습니다. 잠시 후 다시 시도해주세요.', 'error');
+    const errorMessages: Record<string, string> = {
+      auth_failed: '로그인에 실패했습니다. 잠시 후 다시 시도해주세요.',
+      gateway_timeout:
+        '서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.',
+      service_unavailable:
+        '서비스가 일시적으로 이용 불가능합니다. 잠시 후 다시 시도해주세요.',
+      timeout:
+        '요청 시간이 초과되었습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
+      connection_refused:
+        '서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.',
+      dns_error: 'DNS 오류가 발생했습니다. 네트워크 연결을 확인해주세요.',
+      api_not_found: 'API 서버를 찾을 수 없습니다. 관리자에게 문의해주세요.',
+      unauthorized: '인증에 실패했습니다. 다시 시도해주세요.',
+    };
+
+    if (error && errorMessages[error]) {
+      showToast(errorMessages[error], 'error');
       console.error('GitHub OAuth 인증 실패:', error);
     }
   }, [showToast]);

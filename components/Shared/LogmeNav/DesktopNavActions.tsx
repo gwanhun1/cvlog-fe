@@ -27,7 +27,7 @@ const DesktopNavActions = ({
 
   if (isAuthenticated) {
     return (
-      <div className="items-center hidden gap-4 tablet:flex">
+      <div className="hidden gap-4 items-center tablet:flex">
         <button
           className="transition-all duration-200 ease-in-out hover:-translate-y-0.5 rounded-full p-2 bg-bgWhite hover:bg-ftBlue/10"
           onClick={() => router.push('/mypage')}
@@ -48,7 +48,7 @@ const DesktopNavActions = ({
   }
 
   return (
-    <div className="items-center hidden tablet:flex">
+    <div className="hidden items-center tablet:flex">
       <Link href="/login" prefetch={true}>
         <Shared.LogmeButton
           variant="classic"
@@ -60,7 +60,7 @@ const DesktopNavActions = ({
             fontStyle="semibold"
             className="text-white"
           >
-            Login
+            로그인
           </Shared.LogmeHeadline>
         </Shared.LogmeButton>
       </Link>
