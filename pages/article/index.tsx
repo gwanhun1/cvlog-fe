@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { PostListView } from '../../components/pages/article/postList';
@@ -15,12 +15,21 @@ type ArticleProps = {
 };
 
 const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
-  const accessToken = LocalStorage.getItem('LogmeToken');
-  const [menu, setMenu] = useState<'list' | 'all'>(
-    accessToken ? 'list' : 'all'
-  );
+  // SSR/CSR 불일치 방지: 클라이언트에서만 토큰 확인
+  const [isClient, setIsClient] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [menu, setMenu] = useState<'list' | 'all'>('all');
   const [keyword, setKeyword] = useRecoilState(tagAtom);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setIsClient(true);
+    const token = LocalStorage.getItem('LogmeToken');
+    setAccessToken(token);
+    if (token) {
+      setMenu('list');
+    }
+  }, []);
 
   return (
     <div className="w-full min-h-screen">
@@ -64,7 +73,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
 
       <main className="w-full">
         <div className="relative px-4 pt-10 pb-16 mx-auto max-w-5xl tablet:px-6 desktop:px-8">
-          {accessToken && menu === 'list' && (
+          {isClient && accessToken && menu === 'list' && (
             <div className="hidden absolute top-0 right-full h-full desktop:block">
               <aside className="sticky top-[8.5rem] z-30 w-64 pl-16">
                 <SideView />
@@ -82,7 +91,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
 
             {menu === 'list' ? (
               <>
-                {accessToken && (
+                {isClient && accessToken && (
                   <div className="w-full">
                     <PostListView
                       inputRef={inputRef}

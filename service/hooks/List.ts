@@ -17,7 +17,7 @@ import {
   Folder,
 } from 'service/api/tag/type';
 
-export const useGetList = (page: number, userId?: number) => {
+export const useGetList = (page: number, userId?: number, enabled = true) => {
   return useQuery({
     queryKey: ['list', page, userId],
     queryFn: () => {
@@ -25,15 +25,21 @@ export const useGetList = (page: number, userId?: number) => {
     },
     onError: handleGetErrors,
     retry: 0,
+    enabled,
+    staleTime: 1000 * 60 * 2,
+    cacheTime: 1000 * 60 * 10,
   });
 };
 
-export const useGetPublicList = (page: number) => {
+export const useGetPublicList = (page: number, enabled = true) => {
   return useQuery({
     queryKey: ['publicList', page],
     queryFn: () => getPublicList(page),
     onError: handleGetErrors,
     retry: 0,
+    enabled,
+    staleTime: 1000 * 60 * 2,
+    cacheTime: 1000 * 60 * 10,
   });
 };
 

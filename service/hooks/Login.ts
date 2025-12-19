@@ -35,5 +35,8 @@ export const useGetUserInfo = (onSuccess?: (data: any) => void) => {
     retry: 0,
     onError: handleGetErrors,
     onSuccess: onSuccess ? data => onSuccess(data) : undefined,
+    // 성능 최적화: 5분간 캐시 유지, 30분간 stale 데이터 사용
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 30,
   });
 };

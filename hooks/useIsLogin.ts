@@ -2,36 +2,33 @@ import { useRecoilState } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import LocalStorage from 'public/utils/Localstorage';
 import { useGetUserInfo } from 'service/hooks/Login';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const useIsLogin = () => {
   const [userInfo, setUserInfo] = useRecoilState(userIdAtom);
   const accessToken = LocalStorage.getItem('LogmeToken') as string;
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  // useGetUserInfo 훅 호출 (컴포넌트 레벨에서 호출)
-  const { refetch } = useGetUserInfo(data => {
-    if (data) {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!accessToken);
+  const hasFetched = useRef(false);
+
+  // useGetUserInfo 훅 호출 - enabled 옵션으로 조건부 실행
+  const { data, isSuccess } = useGetUserInfo();
+
+  // 데이터가 성공적으로 로드되면 상태 업데이트
+  useEffect(() => {
+    if (isSuccess && data && !hasFetched.current) {
       setUserInfo(data);
       setIsAuthenticated(true);
-      setIsLoading(false);
+      hasFetched.current = true;
     }
-  });
+  }, [isSuccess, data, setUserInfo]);
 
+  // 토큰이 있으면 즉시 인증 상태로 설정 (API 응답 대기 없이)
   useEffect(() => {
-    // 토큰은 있지만 유저 정보가 없는 경우 (리코일 데이터 초기화된 경우)
-    if (accessToken && userInfo.github_id === '') {
-      setIsLoading(true);
-      refetch().catch(error => {
-        console.error('Failed to fetch user info:', error);
-        setIsLoading(false);
-      });
-    } else if (accessToken && userInfo.github_id !== '') {
-      // 토큰과 유저 정보가 모두 있는 경우
+    if (accessToken) {
       setIsAuthenticated(true);
     }
-  }, [accessToken, userInfo.github_id, refetch]);
+  }, [accessToken]);
 
   return { isAuthenticated, isLoading };
 };

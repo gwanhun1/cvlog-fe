@@ -33,9 +33,9 @@ const PostListView = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
 
-  // mode에 따라 다른 훅 사용
-  const publicList = useGetPublicList(page);
-  const myList = useGetList(page);
+  // mode에 따라 필요한 훅만 호출 (성능 최적화)
+  const publicList = useGetPublicList(page, mode === 'public');
+  const myList = useGetList(page, undefined, mode === 'my');
   const List = mode === 'public' ? publicList.data : myList.data;
 
   const { tagKeyword } = router.query;

@@ -28,14 +28,20 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     return route.test(router.asPath);
   });
 
+  // 초기 로딩 상태: public route이거나 이미 토큰이 있으면 로딩 스킵
   const [isLoading, setIsLoading] = useState(() => {
     if (isSSR) return false;
-    return !isPublicRoute;
+    if (isPublicRoute) return false;
+    // 토큰이 이미 있으면 로딩 없이 바로 렌더링
+    const hasToken = !!LocalStorage.getItem('LogmeToken');
+    return !hasToken;
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     if (isSSR) return true;
-    return isPublicRoute;
+    if (isPublicRoute) return true;
+    // 토큰이 있으면 인증된 것으로 간주
+    return !!LocalStorage.getItem('LogmeToken');
   });
 
   const checkAuthStatus = useCallback(async () => {

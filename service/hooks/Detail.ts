@@ -26,6 +26,9 @@ export const useGetDetail = (
     onSuccess: onSuccess ? data => onSuccess(data) : undefined,
     enabled: !isNaN(params),
     useErrorBoundary: false,
+    // 성능 최적화: 2분간 캐시 유지
+    staleTime: 1000 * 60 * 2,
+    cacheTime: 1000 * 60 * 10,
   });
 };
 
@@ -37,6 +40,8 @@ export const useGetMyDetail = (params: number) => {
     },
     retry: 0,
     onError: handleGetErrors,
+    staleTime: 1000 * 60 * 2,
+    cacheTime: 1000 * 60 * 10,
   });
 };
 
