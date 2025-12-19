@@ -16,21 +16,14 @@
     },
     {
       "id": 2,
-      "src": "/videos/3rd.mp4",
-      "title": "텍스트와 코드, 모두를 깔끔하게.",
-      "message": "코드 블록 하이라이트와 표, 리스트까지 바로 확인하며 글을 다듬어 보세요.",
-      "messageBr": "Preview code blocks, tables, and lists instantly while refining your post."
-    },
-    {
-      "id": 3,
       "src": "/videos/4th.mp4",
       "title": "감각적인 Masonry 레이아웃으로 블로그를 탐색하세요.",
       "message": "비대칭 그리드 방식으로 콘텐츠를 배치해 가독성을 높이고, 더욱 손쉽게 원하는 글을 찾아보세요.",
       "messageBr": "Arrange content in an asymmetric grid for better readability and easier navigation."
     },
     {
-      "id": 4,
-      "src": "/videos/5th.mp4",
+      "id": 3,
+      "src": "/videos/3rd.mp4",
       "title": "생성한 태그를 폴더에 정리해보세요.",
       "message": "태그를 폴더에 손쉽게 정리해보세요! 드래그 앤 드롭 기능으로 태그를 원하는 위치로 옮길 수 있어, 블로그 이용이 더욱 편리해집니다.",
       "messageBr": "Easily organize your tags into folders by simply dragging and dropping. This feature makes it even more convenient to use our blog."
