@@ -1,11 +1,16 @@
-import { DocType } from 'pages/article/new';
 import { CopyBlock, dracula } from 'react-code-blocks';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import styles from '../../../../styles/markdown.module.scss';
 
-interface ModifyPreviewProps {
+export interface DocType {
+  title: string;
+  content: string;
+  tags: string[];
+}
+
+interface EditorPreviewProps {
   isVisiblePreview: boolean;
   containerTopRef: React.RefObject<HTMLDivElement>;
   doc: DocType;
@@ -19,11 +24,11 @@ interface CodeBlockProps {
   [key: string]: any;
 }
 
-const ModifyPreview = ({
+const EditorPreview = ({
   isVisiblePreview,
   containerTopRef,
   doc,
-}: ModifyPreviewProps) => {
+}: EditorPreviewProps) => {
   return (
     <>
       {isVisiblePreview && (
@@ -98,4 +103,5 @@ const ModifyPreview = ({
     </>
   );
 };
-export default ModifyPreview;
+
+export default EditorPreview;

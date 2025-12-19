@@ -1,7 +1,12 @@
 import Image from 'next/image';
 
 interface ProfileProps {
-  getDetailData: any;
+  getDetailData?: {
+    profile_image?: string | null;
+    name?: string | null;
+    github_id?: string | null;
+    description?: string | null;
+  };
 }
 
 const Profile = ({ getDetailData }: ProfileProps) => {

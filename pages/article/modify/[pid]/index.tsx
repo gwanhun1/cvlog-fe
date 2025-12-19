@@ -2,16 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import 'easymde/dist/easymde.min.css';
 
-import ModifyBtn from 'components/pages/article/modify/ModifyBtn';
-import ModifyContents from 'components/pages/article/modify/ModifyContents';
+import {
+  EditorHeader,
+  EditorContents,
+  DocType,
+} from 'components/pages/article/editor';
 import { useGetMyDetail } from 'service/hooks/Detail';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
-
-export interface DocType {
-  title: string;
-  content: string;
-  tags: string[];
-}
+import { EDITOR_CONSTANTS } from 'lib/constants';
 
 interface ModifyPostProps {
   pid: string;
@@ -61,7 +59,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      setIsMobile(window.innerWidth < EDITOR_CONSTANTS.MOBILE_BREAKPOINT);
     };
 
     handleResize();
@@ -76,16 +74,17 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
       <main className="h-screen min-h-screen mx-2 tablet:px-10">
         <div className="flex flex-col h-full">
           <header className="flex-none">
-            <ModifyBtn
+            <EditorHeader
               doc={doc}
               setDoc={setDoc}
-              pid={pid}
               imageArr={imageArr}
+              mode="edit"
+              pid={pid}
             />
           </header>
 
           <main className="relative flex flex-col justify-center flex-1 w-full tablet:flex-row">
-            <ModifyContents
+            <EditorContents
               doc={doc}
               setDoc={setDoc}
               setImageArr={setImageArr}

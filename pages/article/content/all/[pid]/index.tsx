@@ -12,8 +12,10 @@ import {
   useGetDetail,
   usePatchDetail,
 } from 'service/hooks/Detail';
-import Content from '../../../../../components/pages/article/content/all/Content';
-import Profile from '../../../../../components/pages/article/content/all/Profile';
+import {
+  Content,
+  Profile,
+} from '../../../../../components/pages/article/content';
 import { Badge } from 'flowbite-react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {

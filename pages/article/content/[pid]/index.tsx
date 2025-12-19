@@ -11,8 +11,7 @@ import {
   useGetMyDetail,
   usePatchDetail,
 } from 'service/hooks/Detail';
-import Content from '../../../../components/pages/article/content/my/Content';
-import Profile from '../../../../components/pages/article/content/my/Profile';
+import { Content, Profile } from '../../../../components/pages/article/content';
 import { Badge } from 'flowbite-react';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';

@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
 import 'easymde/dist/easymde.min.css';
 
-import NewBtn from '../../../components/pages/article/new/NewBtn';
-import NewContents from '../../../components/pages/article/new/NewContents';
+import {
+  EditorHeader,
+  EditorContents,
+  DocType,
+} from '../../../components/pages/article/editor';
 import { EDITOR_CONSTANTS } from 'lib/constants';
 
-export interface DocType {
-  title: string;
-  content: string;
-  tags: string[];
-}
-
-const INIT_USER_INPUT = {
+const INIT_USER_INPUT: DocType = {
   title: '',
   content: '# Hello world',
   tags: [],
@@ -24,7 +21,6 @@ const NewPost: NextPage = () => {
   const [imageArr, setImageArr] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(false);
 
-  //스크롤 이동
   const containerTopRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (
@@ -38,7 +34,6 @@ const NewPost: NextPage = () => {
     }
   }, [doc]);
 
-  //반응형 레이아웃
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < EDITOR_CONSTANTS.MOBILE_BREAKPOINT);
@@ -55,10 +50,15 @@ const NewPost: NextPage = () => {
     <main className="h-screen min-h-screen px-2 tablet:px-10">
       <div className="flex flex-col h-full">
         <header className="flex-none">
-          <NewBtn doc={doc} setDoc={setDoc} imageArr={imageArr} />
+          <EditorHeader
+            doc={doc}
+            setDoc={setDoc}
+            imageArr={imageArr}
+            mode="create"
+          />
         </header>
         <main className="flex flex-col flex-1 w-full tablet:flex-row">
-          <NewContents
+          <EditorContents
             doc={doc}
             setDoc={setDoc}
             setImageArr={setImageArr}

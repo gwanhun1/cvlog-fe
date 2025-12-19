@@ -1,20 +1,15 @@
 import { cn } from 'styles/utils';
-import { MDE_OPTION, MDE_OPTIONMOBILE } from 'service/constants/markdownOpts';
-import css from './new.module.scss';
-import dynamic from 'next/dynamic';
-import { DocType } from 'pages/article/modify/[pid]';
+import css from './editor.module.scss';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MDE_OPTION, MDE_OPTIONMOBILE } from 'service/constants/markdownOpts';
 import { useImageUpload } from 'hooks/useImageUpload';
-import ModifyPreview from './ModifyPreview';
+import dynamic from 'next/dynamic';
+import EditorPreview, { DocType } from './EditorPreview';
 import type { Options } from 'easymde';
 
 type ToolbarItem = Exclude<NonNullable<Options['toolbar']>, boolean>[number];
 
-const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
-  ssr: false,
-});
-
-interface ModifyContentsProps {
+interface EditorContentsProps {
   doc: DocType;
   setDoc: React.Dispatch<React.SetStateAction<DocType>>;
   setImageArr: React.Dispatch<React.SetStateAction<string[]>>;
@@ -23,14 +18,18 @@ interface ModifyContentsProps {
   isMobile: boolean;
 }
 
-const ModifyContents = ({
+const SimpleMDE = dynamic(() => import('react-simplemde-editor'), {
+  ssr: false,
+});
+
+const EditorContents = ({
   doc,
   setDoc,
   setImageArr,
   isVisiblePreview,
-  isMobile,
   containerTopRef,
-}: ModifyContentsProps) => {
+  isMobile,
+}: EditorContentsProps) => {
   const { uploadImage } = useImageUpload();
   const editorRef = useRef<HTMLDivElement>(null);
   const editorInstanceRef = useRef<any>(null);
@@ -323,7 +322,7 @@ const ModifyContents = ({
         />
       </div>
 
-      <ModifyPreview
+      <EditorPreview
         isVisiblePreview={isVisiblePreview}
         containerTopRef={containerTopRef}
         doc={doc}
@@ -332,4 +331,4 @@ const ModifyContents = ({
   );
 };
 
-export default ModifyContents;
+export default EditorContents;
