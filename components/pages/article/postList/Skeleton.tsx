@@ -1,5 +1,3 @@
-import React from 'react';
-
 const CardSkeleton = () => (
   <article className="block overflow-hidden relative bg-white rounded-lg border border-blue-100 shadow-sm transition-all duration-300 animate-pulse group hover:bg-blue-50 hover:shadow-lg">
     <div className="flex flex-col h-full">

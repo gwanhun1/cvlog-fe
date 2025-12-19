@@ -1,8 +1,7 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import AllView from '../../components/pages/article/allView/AllView';
-import ListView from '../../components/pages/article/listView/ListView';
+import { PostListView } from '../../components/pages/article/postList';
 import SideView from '../../components/pages/article/sideView/SideView';
 import LocalStorage from 'public/utils/Localstorage';
 import MenuTab from 'components/pages/article/sideView/MenuTab';
@@ -85,15 +84,20 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
               <>
                 {accessToken && (
                   <div className="w-full">
-                    <ListView inputRef={inputRef} setKeyword={setKeyword} />
+                    <PostListView
+                      inputRef={inputRef}
+                      setKeyword={setKeyword}
+                      mode="my"
+                    />
                   </div>
                 )}
               </>
             ) : (
               <div className="w-full">
-                <AllView
+                <PostListView
                   inputRef={inputRef}
                   setKeyword={setKeyword}
+                  mode="public"
                   initialPosts={initialPosts}
                 />
               </div>

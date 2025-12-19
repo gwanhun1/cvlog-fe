@@ -1,29 +1,42 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import Link from 'next/link';
-import { useRecoilState } from 'recoil';
-import Card from 'components/Shared/LogmeCard';
-import { listIndexAtom } from 'service/atoms/atoms';
-import { useGetList } from 'service/hooks/List';
+import { useEffect, useState, useRef, useCallback } from 'react';
+import { useGetPublicList, useGetList } from 'service/hooks/List';
 import CardSkeleton from './Skeleton';
-import ListEmpty from '../../../Shared/common/ListEmpty';
 import { useRouter } from 'next/router';
 import { BlogType } from 'service/api/tag/type';
+import { useRecoilState } from 'recoil';
+import { listIndexAtom } from 'service/atoms/atoms';
+import Link from 'next/link';
+import Card from 'components/Shared/LogmeCard';
+import ListEmpty from '../../../Shared/common/ListEmpty';
 
-interface ListViewProps {
+interface PostListViewProps {
   inputRef: React.RefObject<HTMLInputElement>;
   setKeyword: React.Dispatch<React.SetStateAction<string>>;
+  mode: 'public' | 'my';
+  initialPosts?: BlogType[];
 }
 
-const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
+const PostListView = ({
+  inputRef,
+  setKeyword,
+  mode,
+  initialPosts,
+}: PostListViewProps) => {
   const [page, setPage] = useState<number>(1);
-  const [posts, setPosts] = useState<BlogType[]>([]);
+  const [posts, setPosts] = useState<BlogType[]>(initialPosts || []);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
+  const [isInitialLoading, setIsInitialLoading] = useState<boolean>(
+    mode === 'public' ? !(initialPosts && initialPosts.length > 0) : true
+  );
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
-  const List = useGetList(page);
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
+
+  // mode에 따라 다른 훅 사용
+  const publicList = useGetPublicList(page);
+  const myList = useGetList(page);
+  const List = mode === 'public' ? publicList.data : myList.data;
 
   const { tagKeyword } = router.query;
 
@@ -45,21 +58,21 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
   }, [hasMore, isLoadingMore]);
 
   useEffect(() => {
-    if (List.data) {
+    if (List) {
       if (page === 1) {
-        setPosts(List.data.posts);
+        setPosts(List.posts);
         setIsInitialLoading(false);
       } else {
-        setPosts(prev => [...prev, ...List.data.posts]);
+        setPosts(prev => [...prev, ...List.posts]);
         setIsLoadingMore(false);
       }
 
-      if (page >= List.data.maxPage) {
+      if (page >= List.maxPage) {
         setHasMore(false);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [List.data]);
+  }, [List]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -91,6 +104,19 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
     setListIndex(params);
   };
 
+  // mode에 따른 링크 경로
+  const getPostLink = (id: number) =>
+    mode === 'public' ? `/article/content/all/${id}` : `/article/content/${id}`;
+
+  // mode에 따른 빈 목록 스타일
+  const emptyContainerClass =
+    mode === 'public'
+      ? 'bg-white rounded-2xl shadow-lg border border-gray-100'
+      : 'bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/15';
+
+  // mode에 따른 끝 메시지 색상
+  const endMessageClass = mode === 'public' ? 'text-gray-300' : 'text-ftGray';
+
   if (isInitialLoading) {
     return (
       <div className="masonry-grid">
@@ -110,9 +136,7 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
       <div className="flex flex-col gap-4">
         <div
           className={`${
-            posts.length === 0
-              ? 'bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/15'
-              : 'masonry-grid'
+            posts.length === 0 ? emptyContainerClass : 'masonry-grid'
           }`}
         >
           {posts.length > 0 ? (
@@ -120,16 +144,42 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
               {posts.map(({ id, title, content, tags, updated_at }, index) => (
                 <div key={id} className="masonry-item break-inside-avoid">
                   <Link
-                    href={`/article/content/${id}`}
+                    href={getPostLink(id)}
                     onClick={() => saveListIndex(index)}
                     className="block h-full"
+                    {...(mode === 'public' && {
+                      title: title,
+                      'aria-label': `게시물 보기: ${title}`,
+                      'data-seo-important': 'true',
+                    })}
                   >
-                    <Card
-                      title={title}
-                      content={content}
-                      tags={tags}
-                      updated_at={updated_at}
-                    />
+                    {mode === 'public' ? (
+                      <div
+                        itemScope
+                        itemType="https://schema.org/BlogPosting"
+                        className="w-full"
+                      >
+                        <meta
+                          itemProp="mainEntityOfPage"
+                          content={`https://logme.shop/article/content/all/${id}`}
+                        />
+                        <meta itemProp="headline" content={title} />
+                        <meta itemProp="dateModified" content={updated_at} />
+                        <Card
+                          title={title}
+                          content={content}
+                          tags={tags}
+                          updated_at={updated_at}
+                        />
+                      </div>
+                    ) : (
+                      <Card
+                        title={title}
+                        content={content}
+                        tags={tags}
+                        updated_at={updated_at}
+                      />
+                    )}
                   </Link>
                 </div>
               ))}
@@ -139,7 +189,7 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
                 className="flex flex-col items-center my-4 w-full"
               >
                 {!hasMore && !isInitialLoading && (
-                  <div className="py-4 text-sm text-ftGray">
+                  <div className={`py-4 text-sm ${endMessageClass}`}>
                     모든 게시물을 불러왔습니다
                   </div>
                 )}
@@ -169,4 +219,4 @@ const ListView = ({ inputRef, setKeyword }: ListViewProps) => {
   );
 };
 
-export default ListView;
+export default PostListView;
