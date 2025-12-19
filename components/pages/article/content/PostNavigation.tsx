@@ -6,17 +6,20 @@ interface PostInfo {
   title: string;
 }
 
+type ProfileDetailData = {
+  id?: number;
+  name?: string | null;
+  github_id?: string | null;
+  profile_image?: string | null;
+  description?: string | null;
+};
+
 interface PostNavigationProps {
   prevPostInfo?: PostInfo | null;
   nextPostInfo?: PostInfo | null;
-  basePath: string; // '/article/content/all' or '/article/content'
-  userInfo?: {
-    id?: number;
-    name?: string;
-    github_id?: string;
-    profile_image?: string;
-  };
-  ProfileComponent: React.ComponentType<{ getDetailData: unknown }>;
+  basePath: string;
+  userInfo?: ProfileDetailData;
+  ProfileComponent: React.ComponentType<{ getDetailData?: ProfileDetailData }>;
 }
 
 const PostNavigation = ({

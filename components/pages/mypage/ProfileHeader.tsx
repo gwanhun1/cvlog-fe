@@ -32,7 +32,7 @@ const ProfileHeader = ({
     </div>
     <div className="flex-1">
       <h1 className="mb-2 text-3xl font-bold text-gray-900">{githubId}</h1>
-      <div className="flex items-center gap-2 text-gray-600">
+      <div className="flex gap-2 items-center text-gray-600">
         <FiGithub className="w-4 h-4" aria-hidden="true" />
         <span>GitHub Developer</span>
       </div>
