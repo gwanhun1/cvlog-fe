@@ -13,10 +13,16 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
     setHasToken(Boolean(LocalStorage.getItem('LogmeToken')));
   }, []);
 
+  useEffect(() => {
+    if (hasToken === false && activeMenu === 'list') {
+      setMenu('all');
+    }
+  }, [activeMenu, hasToken, setMenu]);
+
+  const isReady = hasToken !== null;
   const showMyPostsTab = hasToken === true;
-  const resolvedActiveMenu: 'list' | 'all' = showMyPostsTab
-    ? activeMenu
-    : 'all';
+  const resolvedActiveMenu: 'list' | 'all' | null =
+    hasToken === null ? null : showMyPostsTab ? activeMenu : 'all';
 
   const handleSetMenu = (menu: 'list' | 'all') => {
     setMenu(menu);
@@ -26,9 +32,11 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
     <div className="my-2 w-full">
       <div className="flex gap-2 items-center p-1 rounded-2xl border border-ftBlue/20 bg-bgWhite">
         <button
-          onClick={showMyPostsTab ? () => handleSetMenu('list') : undefined}
-          disabled={!showMyPostsTab}
-          tabIndex={showMyPostsTab ? 0 : -1}
+          onClick={
+            isReady && showMyPostsTab ? () => handleSetMenu('list') : undefined
+          }
+          disabled={!isReady || !showMyPostsTab}
+          tabIndex={isReady && showMyPostsTab ? 0 : -1}
           aria-hidden={!showMyPostsTab}
           className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none border ${
             resolvedActiveMenu === 'list'
@@ -58,7 +66,8 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
           </span>
         </button>
         <button
-          onClick={() => handleSetMenu('all')}
+          onClick={isReady ? () => handleSetMenu('all') : undefined}
+          disabled={!isReady}
           className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none border ${
             resolvedActiveMenu === 'all'
               ? 'bg-ftBlue text-white border-ftBlue'
