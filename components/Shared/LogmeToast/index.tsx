@@ -41,24 +41,34 @@ export const useToast = () => {
 };
 
 const ToastIcon = ({ type }: { type: ToastType }) => {
-  const iconClass = 'w-6 h-6';
+  const iconClass = 'w-5 h-5';
   switch (type) {
     case 'success':
-      return <FiCheckCircle className={`text-green-500 ${iconClass}`} />;
+      return <FiCheckCircle className={`text-green-600 ${iconClass}`} />;
     case 'error':
-      return <FiXCircle className={`text-red-500 ${iconClass}`} />;
+      return <FiXCircle className={`text-red-600 ${iconClass}`} />;
     case 'warning':
-      return <FiAlertTriangle className={`text-amber-500 ${iconClass}`} />;
+      return <FiAlertTriangle className={`text-amber-600 ${iconClass}`} />;
     case 'info':
-      return <FiInfo className={`text-blue-500 ${iconClass}`} />;
+      return <FiInfo className={`text-blue-600 ${iconClass}`} />;
   }
 };
 
 const toastStyles: Record<ToastType, string> = {
-  success: 'bg-white border-2 border-green-400 text-green-700',
-  error: 'bg-white border-2 border-red-400 text-red-700',
-  warning: 'bg-white border-2 border-amber-400 text-amber-700',
-  info: 'bg-white border-2 border-blue-400 text-blue-700',
+  success:
+    'bg-green-50/45 text-green-600 border border-green-300/70 shadow-lg shadow-green-100/30',
+  error:
+    'bg-red-50/45 text-red-600 border border-red-300/70 shadow-lg shadow-red-100/30',
+  warning:
+    'bg-amber-50/45 text-amber-600 border border-amber-300/70 shadow-lg shadow-amber-100/30',
+  info: 'bg-blue-50/45 text-blue-600 border border-blue-300/70 shadow-lg shadow-blue-100/30',
+};
+
+const toastIconWrapStyles: Record<ToastType, string> = {
+  success: 'bg-green-100/60 ring-1 ring-green-300/70',
+  error: 'bg-red-100/60 ring-1 ring-red-300/70',
+  warning: 'bg-amber-100/60 ring-1 ring-amber-300/70',
+  info: 'bg-blue-100/60 ring-1 ring-blue-300/70',
 };
 
 interface ToastProviderProps {
@@ -72,6 +82,8 @@ interface ConfirmState {
   onCancel: () => void;
 }
 
+const MAX_TOASTS = 3;
+
 export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [confirm, setConfirm] = useState<ConfirmState>({
@@ -83,7 +95,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
 
   const showToast = useCallback((message: string, type: ToastType = 'info') => {
     const id = Math.random().toString(36).substring(2, 9);
-    setToasts(prev => [...prev, { id, message, type }]);
+    setToasts(prev => [{ id, message, type }, ...prev].slice(0, MAX_TOASTS));
 
     setTimeout(() => {
       setToasts(prev => prev.filter(toast => toast.id !== id));
@@ -133,14 +145,18 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
               className="pointer-events-auto"
             >
               <div
-                className={`flex items-center gap-4 px-7 py-6 rounded-3xl ${
+                className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl ${
                   toastStyles[toast.type]
-                } shadow-xl shadow-gray-300/50 min-w-[360px] max-w-[520px]`}
+                } w-fit max-w-[calc(100vw-2rem)] backdrop-blur-md backdrop-saturate-200`}
               >
-                <ToastIcon type={toast.type} />
-                <p className="flex-1 text-lg font-semibold leading-relaxed">
-                  {toast.message}
-                </p>
+                <div
+                  className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
+                    toastIconWrapStyles[toast.type]
+                  }`}
+                >
+                  <ToastIcon type={toast.type} />
+                </div>
+                {toast.message}
               </div>
             </motion.div>
           ))}
@@ -169,14 +185,14 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
               <div className="absolute -top-10 -right-10 w-24 h-24 bg-gradient-to-br to-transparent rounded-full blur-2xl from-ftBlue/20" />
 
               <div className="relative space-y-5">
-                <div className="flex gap-3 items-center">
+                <div className="flex flex-col gap-3 items-center text-center">
                   <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-ftBlue to-[#1c3f7a] flex items-center justify-center shadow-md shadow-ftBlue/30">
                     <span className="text-2xl">💬</span>
                   </div>
                   <h3 className="text-lg font-bold text-ftBlue">확인</h3>
                 </div>
 
-                <p className="text-base leading-relaxed text-ftGray">
+                <p className="text-base leading-relaxed text-center text-ftGray">
                   {confirm.message}
                 </p>
 

@@ -14,7 +14,7 @@ export interface IntroduceData {
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+    <div className="min-h-screen bg-gradient-to-b via-white">
       <Head>
         <title>LOGME - 개발자를 위한 마크다운 블로그</title>
         <meta
@@ -62,7 +62,7 @@ const Home = () => {
         <Header />
 
         <section className="space-y-8">
-          <div className="overflow-hidden relative p-8 bg-gradient-to-br from-white via-white rounded-3xl border shadow-lg backdrop-blur border-ftBlue/20 to-ftBlue/5 shadow-ftBlue/10 tablet:p-10">
+          <div className="overflow-hidden relative p-8 bg-gradient-to-br from-white via-white rounded-3xl border shadow-lg backdrop-blur border-ftBlue/20 shadow-ftBlue/10 tablet:p-10">
             {/* 배경 장식 */}
             <div className="absolute -top-16 -right-16 w-40 h-40 bg-gradient-to-br to-transparent rounded-full blur-3xl from-ftBlue/20" />
             <div className="absolute -bottom-10 left-1/4 w-32 h-32 bg-gradient-to-tr to-transparent rounded-full blur-2xl from-ftBlue/10" />

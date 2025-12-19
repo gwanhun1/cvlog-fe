@@ -8,7 +8,7 @@ const Resume: NextPage = () => {
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8">
           {/* 아이콘 */}
           <div className="relative">
-            <div className="flex justify-center items-center w-32 h-32 bg-gradient-to-br rounded-full from-ftBlue/20 to-ftBlue/5">
+            <div className="flex justify-center items-center w-32 h-32 bg-gradient-to-br rounded-full from-ftBlue/20 ">
               <svg
                 className="w-16 h-16 text-ftBlue"
                 fill="none"

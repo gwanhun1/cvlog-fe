@@ -74,7 +74,7 @@ const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: 'easeOut' }}
       viewport={{ once: true, margin: '-50px' }}
-      className="overflow-hidden relative p-6 bg-gradient-to-br from-white via-white rounded-3xl border shadow-lg backdrop-blur border-ftBlue/20 to-ftBlue/5 shadow-ftBlue/10 tablet:p-8"
+      className="overflow-hidden relative p-6 bg-gradient-to-br from-white via-white rounded-3xl border shadow-lg backdrop-blur border-ftBlue/20  shadow-ftBlue/10 tablet:p-8"
     >
       {/* 배경 장식 */}
       <div
