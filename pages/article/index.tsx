@@ -66,7 +66,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
         <div className="relative px-4 pt-10 pb-16 mx-auto max-w-5xl tablet:px-6 desktop:px-8">
           {accessToken && menu === 'list' && (
             <div className="hidden absolute top-0 right-full h-full desktop:block">
-              <aside className="sticky top-32 z-30 w-64">
+              <aside className="sticky top-[8.5rem] z-30 w-64 pl-16">
                 <SideView />
               </aside>
             </div>
