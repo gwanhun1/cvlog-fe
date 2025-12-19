@@ -11,7 +11,11 @@ import {
   useGetMyDetail,
   usePatchDetail,
 } from 'service/hooks/Detail';
-import { Content, Profile } from '../../../../components/pages/article/content';
+import {
+  Content,
+  Profile,
+  PostNavigation,
+} from '../../../../components/pages/article/content';
 import { Badge } from 'flowbite-react';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
@@ -172,7 +176,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       )}
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
         {getMyDetail.isLoading ? (
-          <div className="mb-3 w-28 h-14 bg-gray-200 rounded-lg" />
+          <div className="mb-3 w-3/4 h-10 bg-gray-200 rounded-lg tablet:h-14" />
         ) : (
           <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-6xl">
             {getMyDetail?.data?.post.title}
@@ -183,9 +187,9 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
         <div className="flex flex-wrap justify-start mb-1 w-full text-ftBlack">
           {getMyDetail.isLoading ? (
             <>
-              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
-              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
-              <div className="mt-2 ml-2 w-16 h-6 bg-gray-200 rounded-lg" />
+              <div className="mt-1 mr-1 w-20 h-7 bg-gray-200 rounded-full" />
+              <div className="mt-1 mr-1 w-16 h-7 bg-gray-200 rounded-full" />
+              <div className="mt-1 mr-1 w-24 h-7 bg-gray-200 rounded-full" />
             </>
           ) : (
             getMyDetail.data?.post.tags.map((tag: TagType) => (
@@ -258,73 +262,13 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
           </div>
         </section>
       </main>
-      <section className="mt-10 w-full">
-        <div className="w-full rounded-2xl border border-gray-200 backdrop-blur-sm bg-white/70">
-          <div className="px-2 pt-4">
-            <Profile getDetailData={getMyDetail?.data?.post.user_id} />
-          </div>
-          <div className="grid grid-cols-2 gap-3 p-4 tablet:gap-4">
-            <div>
-              {getMyDetail.data?.prevPostInfo ? (
-                <Link
-                  href={`/article/content/${getMyDetail.data.prevPostInfo.id}`}
-                  prefetch
-                >
-                  <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
-                    <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
-                      <span className="text-gray-600">←</span>
-                    </div>
-                    <div className="flex flex-col flex-1 min-w-0">
-                      <span className="mb-1 text-xs text-gray-500">
-                        이전 포스트
-                      </span>
-                      <span className="text-sm font-semibold text-gray-800 truncate">
-                        {getMyDetail.data.prevPostInfo.title}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ) : (
-                <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full" />
-                  <span className="text-sm text-gray-400">
-                    이전 포스트 없음
-                  </span>
-                </div>
-              )}
-            </div>
-            <div>
-              {getMyDetail.data?.nextPostInfo ? (
-                <Link
-                  href={`/article/content/${getMyDetail.data.nextPostInfo.id}`}
-                  prefetch
-                >
-                  <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
-                    <div className="flex flex-col flex-1 min-w-0 text-right">
-                      <span className="mb-1 text-xs text-gray-500">
-                        다음 포스트
-                      </span>
-                      <span className="text-sm font-semibold text-gray-800 truncate">
-                        {getMyDetail.data.nextPostInfo.title}
-                      </span>
-                    </div>
-                    <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
-                      <span className="text-gray-600">→</span>
-                    </div>
-                  </div>
-                </Link>
-              ) : (
-                <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
-                  <span className="text-sm text-gray-400">
-                    다음 포스트 없음
-                  </span>
-                  <div className="w-8 h-8 bg-gray-200 rounded-full" />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
+      <PostNavigation
+        prevPostInfo={getMyDetail.data?.prevPostInfo}
+        nextPostInfo={getMyDetail.data?.nextPostInfo}
+        basePath="/article/content"
+        userInfo={getMyDetail?.data?.post?.user_id}
+        ProfileComponent={Profile}
+      />
       <CommentBox pid={pid} />
     </div>
   );

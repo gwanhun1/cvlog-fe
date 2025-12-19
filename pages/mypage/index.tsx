@@ -35,7 +35,7 @@ const Mypage: NextPage = () => {
 
   return (
     <section className="w-full min-h-screen bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
-      <div className="px-4 py-10 mx-auto space-y-8 w-full max-w-6xl tablet:px-6 desktop:px-10">
+      <div className="px-4 py-10 mx-auto space-y-8 w-full max-w-6xl tablet:px-6 desktop:px-8">
         <ProfileHeader
           profileImage={userInfo?.profile_image}
           githubId={userInfo?.github_id}

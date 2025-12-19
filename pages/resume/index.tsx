@@ -3,12 +3,12 @@ import type { NextPage } from 'next';
 
 const Resume: NextPage = () => {
   return (
-    <section className="w-full min-h-[90vh] px-4 tablet:px-8 desktop:px-12 py-16 bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
-      <div className="mx-auto max-w-2xl">
+    <section className="w-full min-h-[90vh] px-4 tablet:px-6 desktop:px-8 py-16 bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+      <div className="mx-auto max-w-6xl">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8">
           {/* 아이콘 */}
           <div className="relative">
-            <div className="flex justify-center items-center w-32 h-32 bg-gradient-to-br rounded-full from-ftBlue/20 ">
+            <div className="flex justify-center items-center w-32 h-32 bg-gradient-to-br rounded-full from-ftBlue/20">
               <svg
                 className="w-16 h-16 text-ftBlue"
                 fill="none"

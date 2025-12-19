@@ -29,7 +29,7 @@ const Github: NextPage = () => {
 
   return (
     <div className="min-h-[90vh] bg-gradient-to-br from-bgWhite via-white to-[#e7edf5]">
-      <div className="px-4 py-10 mx-auto space-y-8 max-w-5xl sm:px-6">
+      <div className="px-4 py-10 mx-auto space-y-8 max-w-6xl tablet:px-6 desktop:px-8">
         <section className="overflow-hidden relative p-6 rounded-3xl border backdrop-blur border-ftBlue/20 bg-white/90 sm:p-8">
           <div className="absolute inset-0 bg-gradient-to-r via-white to-transparent pointer-events-none from-ftBlue/5" />
           <div className="flex relative flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">

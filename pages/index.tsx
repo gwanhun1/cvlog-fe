@@ -58,7 +58,7 @@ const Home = () => {
         <link rel="canonical" href="https://logme.shop" />
       </Head>
 
-      <main className="px-4 py-10 mx-auto space-y-8 max-w-5xl tablet:px-6 desktop:px-8">
+      <main className="px-4 py-10 mx-auto space-y-8 max-w-6xl tablet:px-6 desktop:px-8">
         <Header />
 
         <section className="space-y-8">
