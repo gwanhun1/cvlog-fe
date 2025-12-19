@@ -1,5 +1,4 @@
 import React from 'react';
-import * as Shared from 'components/Shared';
 
 const Header = () => {
   return (
@@ -32,12 +31,23 @@ const Header = () => {
             </span>
           </div>
         </div>
-        <div className="flex justify-center tablet:justify-end">
-          <Shared.LogmeIcon.SymbolLogoIcon
-            alt="logo"
-            width={220}
-            height={140}
-          />
+        <div className="flex justify-center tablet:justify-end w-full tablet:w-[420px]">
+          <div className="overflow-hidden relative w-full rounded-2xl border-2 shadow-xl border-ftBlue/20 shadow-ftBlue/15">
+            <div className="absolute inset-0 z-10 bg-gradient-to-t via-transparent to-transparent pointer-events-none from-ftBlue/20" />
+            <video
+              src="/videos/1st.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-[260px] tablet:h-[300px] object-cover"
+            />
+            <div className="absolute left-4 bottom-4 z-20 flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-white rounded-full bg-gradient-to-r from-ftBlue to-[#1c3f7a] shadow-md">
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              Preview Demo
+            </div>
+          </div>
         </div>
       </div>
     </section>

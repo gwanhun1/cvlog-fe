@@ -62,38 +62,6 @@ const Home = () => {
         <Header />
 
         <section className="space-y-8">
-          <div className="overflow-hidden relative p-8 bg-gradient-to-br from-white via-white rounded-3xl border shadow-lg backdrop-blur border-ftBlue/20 shadow-ftBlue/10 tablet:p-10">
-            {/* 배경 장식 */}
-            <div className="absolute -top-16 -right-16 w-40 h-40 bg-gradient-to-br to-transparent rounded-full blur-3xl from-ftBlue/20" />
-            <div className="absolute -bottom-10 left-1/4 w-32 h-32 bg-gradient-to-tr to-transparent rounded-full blur-2xl from-ftBlue/10" />
-
-            <div className="flex relative flex-col gap-4 tablet:flex-row tablet:items-center tablet:justify-between">
-              <div className="space-y-3">
-                <div className="flex gap-3 items-center">
-                  <h2 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-ftBlue via-[#2a5298] to-[#1c3f7a] tablet:text-3xl">
-                    주요 기능
-                  </h2>
-                  <span className="px-4 py-1.5 text-xs font-bold text-white rounded-full bg-gradient-to-r from-ftBlue to-[#1c3f7a] shadow-md shadow-ftBlue/30">
-                    {HomeData?.data.length}개 기능
-                  </span>
-                </div>
-                <p className="max-w-xl text-base leading-relaxed text-ftGray tablet:text-lg">
-                  LOGME는 개발자의 글쓰기 경험을 혁신합니다.
-                  <br className="hidden tablet:block" />
-                  아래에서 핵심 기능들을 확인해보세요.
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full border-2 text-ftBlue bg-white/80 border-ftBlue/30">
-                  📝 Markdown
-                </span>
-                <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full border-2 text-ftBlue bg-white/80 border-ftBlue/30">
-                  🎨 Preview
-                </span>
-              </div>
-            </div>
-          </div>
-
           {HomeData?.data.map((element: IntroduceData) => (
             <Introduce key={element.id} Element={element} />
           ))}

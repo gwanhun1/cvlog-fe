@@ -1,12 +1,15 @@
-import Image from 'next/image';
 import { SkeletonLayout } from '../../components/pages/github/Skeleton';
 import ContributionChart from '../../components/pages/github/ContributionChart';
-import StatsSection from '../../components/pages/github/StatsSection';
+import {
+  GithubLanguagesCard,
+  GithubStatsCard,
+} from '../../components/pages/github/StatsSection';
 import {
   StreakStats,
   TrophyStats,
 } from '../../components/pages/github/ActivityStats';
 import RepoHighlights from '../../components/pages/github/RepoHighlights';
+import ProfileOverview from '../../components/pages/github/ProfileOverview';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { NextPage } from 'next';
@@ -28,56 +31,31 @@ const Github: NextPage = () => {
   }
 
   return (
-    <div className="min-h-[90vh] bg-gradient-to-br from-bgWhite via-white to-[#e7edf5]">
-      <div className="px-4 py-10 mx-auto space-y-8 max-w-6xl tablet:px-6 desktop:px-8">
-        <section className="overflow-hidden relative p-6 rounded-3xl border backdrop-blur border-ftBlue/20 bg-white/90 sm:p-8">
-          <div className="absolute inset-0 bg-gradient-to-r via-white to-transparent pointer-events-none from-ftBlue/5" />
-          <div className="flex relative flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.25em] text-ftGray">
-                GitHub Profile
-              </p>
-              <h1 className="text-3xl font-bold text-ftBlack">
-                {userInfo.name || userInfo.github_id}
-              </h1>
-              <p className="text-sm leading-relaxed text-ftGray">
-                활동 히스토리와 주요 저장소를 한눈에 확인하세요.
-              </p>
-              <div className="inline-flex gap-2 items-center px-3 py-1 text-xs rounded-full border text-ftBlue bg-ftBlue/10 border-ftBlue/20">
-                GitHub ID
-                <span className="font-semibold">{userInfo.github_id}</span>
+    <div className="min-h-[90vh] bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+      <div className="px-4 py-10 mx-auto space-y-5 max-w-6xl tablet:px-6 desktop:px-8">
+        <ProfileOverview
+          githubId={userInfo.github_id}
+          fallbackName={userInfo.name}
+          fallbackAvatar={userInfo.profile_image}
+        />
+
+        <div className="grid grid-cols-1 gap-4 tablet:grid-cols-3">
+          <div className="space-y-4 tablet:col-span-2">
+            <ContributionChart githubId={userInfo.github_id} />
+            <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2">
+              <div className="min-h-[320px]">
+                <GithubStatsCard githubId={userInfo.github_id} />
+              </div>
+              <div className="min-h-[320px]">
+                <StreakStats githubId={userInfo.github_id} />
               </div>
             </div>
-            <div className="flex gap-4 items-center">
-              {userInfo.profile_image && (
-                <div className="overflow-hidden relative w-16 h-16 rounded-full border border-ftBlue/20">
-                  <Image
-                    src={userInfo.profile_image}
-                    alt={`${userInfo.name || userInfo.github_id} avatar`}
-                    fill
-                    sizes="64px"
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <a
-                href={`https://github.com/${userInfo.github_id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm text-ftBlue underline hover:text-[#1f4a8c]"
-              >
-                GitHub 프로필 열기
-              </a>
-            </div>
+            <TrophyStats githubId={userInfo.github_id} />
           </div>
-        </section>
-
-        <ContributionChart githubId={userInfo.github_id} />
-        <RepoHighlights githubId={userInfo.github_id} />
-        <StatsSection githubId={userInfo.github_id} />
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <StreakStats githubId={userInfo.github_id} />
-          <TrophyStats githubId={userInfo.github_id} />
+          <div className="space-y-4">
+            <RepoHighlights githubId={userInfo.github_id} />
+            <GithubLanguagesCard githubId={userInfo.github_id} />
+          </div>
         </div>
       </div>
     </div>

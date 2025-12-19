@@ -3,14 +3,13 @@ import type { NextPage } from 'next';
 
 const Resume: NextPage = () => {
   return (
-    <section className="w-full min-h-[90vh] px-4 tablet:px-6 desktop:px-8 py-16 bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+    <section className="w-full min-h-[90vh] px-4 tablet:px-6 desktop:px-8 py-12 bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8">
-          {/* 아이콘 */}
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
           <div className="relative">
-            <div className="flex justify-center items-center w-32 h-32 bg-gradient-to-br rounded-full from-ftBlue/20">
+            <div className="flex justify-center items-center w-24 h-24 bg-gradient-to-br rounded-full from-ftBlue/20">
               <svg
-                className="w-16 h-16 text-ftBlue"
+                className="w-12 h-12 text-ftBlue"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -23,68 +22,36 @@ const Resume: NextPage = () => {
                 />
               </svg>
             </div>
-            <div className="absolute -top-2 -right-2 px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-amber-500 to-orange-500 rounded-full shadow-md animate-pulse">
+            <div className="absolute -top-2 -right-2 px-4 py-1.5 text-sm font-extrabold text-white bg-gradient-to-r from-amber-500 to-orange-500 rounded-full shadow-md animate-pulse">
               개발 중
             </div>
           </div>
 
-          {/* 메인 텍스트 */}
           <div className="space-y-4">
             <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-ftBlue via-[#2a5298] to-[#1c3f7a] tablet:text-4xl">
-              Resume 페이지 준비 중
+              Resume 페이지는 준비 중입니다
             </h1>
-            <p className="mx-auto max-w-md text-base leading-relaxed text-ftGray tablet:text-lg">
-              프로젝트, 경력, 스킬을 한눈에 보여줄
-              <br />
-              리줌 페이지를 열심히 개발하고 있어요.
+            <p className="mx-auto max-w-xl text-sm leading-relaxed text-ftGray tablet:text-base">
+              아직 구체적인 일정이 없어, 완성도 있게 준비되면 공개할게요.
             </p>
           </div>
 
-          {/* 예정 기능 카드 */}
-          <div className="p-6 w-full rounded-3xl border shadow-lg backdrop-blur border-ftBlue/20 bg-white/90 shadow-ftBlue/10 tablet:p-8">
-            <h2 className="mb-4 text-lg font-semibold text-ftBlue">
-              🚀 예정된 기능
-            </h2>
-            <div className="grid gap-3 tablet:grid-cols-2">
-              <div className="flex gap-3 items-center p-3 rounded-xl border bg-bgWhite border-ftBlue/10">
-                <span className="text-lg">📋</span>
-                <span className="text-sm text-ftGray">타임라인 경력 정리</span>
-              </div>
-              <div className="flex gap-3 items-center p-3 rounded-xl border bg-bgWhite border-ftBlue/10">
-                <span className="text-lg">💼</span>
-                <span className="text-sm text-ftGray">프로젝트 카드</span>
-              </div>
-              <div className="flex gap-3 items-center p-3 rounded-xl border bg-bgWhite border-ftBlue/10">
-                <span className="text-lg">📄</span>
-                <span className="text-sm text-ftGray">PDF 내보내기</span>
-              </div>
-              <div className="flex gap-3 items-center p-3 rounded-xl border bg-bgWhite border-ftBlue/10">
-                <span className="text-lg">🔗</span>
-                <span className="text-sm text-ftGray">공유 링크 생성</span>
-              </div>
-            </div>
-          </div>
-
-          {/* 돌아가기 버튼 */}
-          <a
-            href="/"
-            className="inline-flex gap-2 items-center px-6 py-3 text-sm font-semibold bg-white rounded-xl border-2 transition-all duration-300 text-ftBlue border-ftBlue/30 hover:bg-ftBlue hover:text-white"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex flex-col gap-3 w-full max-w-md tablet:flex-row tablet:justify-center">
+            <a
+              href="/"
+              className="inline-flex justify-center gap-2 items-center px-5 py-2.5 text-sm font-semibold bg-white rounded-xl border-2 transition-all duration-300 text-ftBlue border-ftBlue/30 hover:bg-ftBlue hover:text-white"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            홈으로 돌아가기
-          </a>
+              홈으로
+              <span aria-hidden>→</span>
+            </a>
+            <a
+              href="/article"
+              className="inline-flex justify-center gap-2 items-center px-5 py-2.5 text-sm font-semibold rounded-xl bg-gradient-to-r from-ftBlue to-[#1c3f7a] text-white shadow-lg shadow-ftBlue/20 transition-all duration-300 hover:scale-[1.02]"
+            >
+              게시물 보러가기
+              <span aria-hidden>→</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>

@@ -10,11 +10,12 @@ const cardBase =
 
 const primarySrc = (githubId: string) =>
   `https://ghchart.rshah.org/2657A6/${githubId}`;
+
 const fallbackSrc = (githubId: string) =>
   `https://github-readme-activity-graph.vercel.app/graph?username=${githubId}&theme=github-compact&hide_border=true&bg_color=ffffff00&color=0f172a&line=2563eb&point=2563eb`;
 
 const githubContributionSrc = (githubId: string) =>
-  `https://github.com/users/${githubId}/contributions`;
+  `https://github.com/users/${encodeURIComponent(githubId)}/contributions`;
 
 const ContributionChart = ({ githubId }: ContributionChartProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -61,7 +62,7 @@ const ContributionChart = ({ githubId }: ContributionChartProps) => {
   return (
     <section className={cardBase}>
       <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
-      <div className="relative p-6 space-y-3">
+      <div className="relative p-5 space-y-3">
         <div className="flex justify-between items-center">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
@@ -79,7 +80,11 @@ const ContributionChart = ({ githubId }: ContributionChartProps) => {
           </span>
         </div>
 
-        <div className="relative rounded-xl border border-slate-100 bg-slate-50/60">
+        <div
+          className={`relative rounded-xl border border-slate-100 bg-slate-50/60 ${
+            !isLoaded || isError ? 'min-h-[180px]' : ''
+          }`}
+        >
           {!isLoaded && !isError && (
             <div className="absolute inset-0 bg-gradient-to-r via-white rounded-xl animate-pulse from-slate-100 to-slate-100" />
           )}
@@ -108,7 +113,7 @@ const ContributionChart = ({ githubId }: ContributionChartProps) => {
               />
             )
           ) : (
-            <div className="p-6 text-center text-slate-600">
+            <div className="p-6 text-center text-slate-600 min-h-[180px] flex flex-col items-center justify-center">
               <p className="text-sm font-medium">
                 기여 그래프를 불러오지 못했습니다.
               </p>

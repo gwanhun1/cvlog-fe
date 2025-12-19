@@ -120,7 +120,7 @@ const LanguageList = ({ githubId }: { githubId: string }) => {
   if (loading) {
     return (
       <div className="min-h-[220px] rounded-xl border border-slate-200 bg-slate-900 relative overflow-hidden">
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800" />
+        <div className="absolute inset-0 bg-gradient-to-r animate-pulse from-slate-800 via-slate-700 to-slate-800" />
       </div>
     );
   }
@@ -142,16 +142,16 @@ const LanguageList = ({ githubId }: { githubId: string }) => {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-900 p-4 space-y-3">
+    <div className="p-4 space-y-3 rounded-xl border border-slate-200 bg-slate-900">
       {languages.map(lang => (
         <div key={lang.name}>
           <div className="flex justify-between text-xs text-slate-200">
             <span className="font-medium">{lang.name}</span>
             <span>{lang.count}</span>
           </div>
-          <div className="w-full h-2 mt-1 rounded-full bg-slate-800 overflow-hidden">
+          <div className="overflow-hidden mt-1 w-full h-2 rounded-full bg-slate-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-blue-400 to-cyan-300"
+              className="h-full bg-gradient-to-r from-blue-400 to-cyan-300 rounded-full"
               style={{
                 width: maxCount ? `${(lang.count / maxCount) * 100}%` : '0%',
               }}
@@ -163,56 +163,61 @@ const LanguageList = ({ githubId }: { githubId: string }) => {
   );
 };
 
+export const GithubStatsCard = ({ githubId }: StatsSectionProps) => (
+  <div className={cardBase}>
+    <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
+    <div className="relative p-4 space-y-3">
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+            Overview
+          </p>
+          <h2 className="text-xl font-semibold text-slate-900">GitHub 통계</h2>
+          <p className="text-sm text-slate-600">
+            커밋, PR, 이슈 등 활동 지표를 살펴보세요.
+          </p>
+        </div>
+        <span className="text-[10px] px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+          stats
+        </span>
+      </div>
+      <StatImage
+        src={`https://github-readme-stats.vercel.app/api?username=${githubId}&show_icons=true&theme=default&hide_border=true&bg_color=ffffff`}
+        alt={`${githubId}의 GitHub 통계`}
+      />
+    </div>
+  </div>
+);
+
+export const GithubLanguagesCard = ({ githubId }: StatsSectionProps) => (
+  <div className={cardBase}>
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-slate-50" />
+    <div className="relative p-4 space-y-3">
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
+            Languages
+          </p>
+          <h2 className="text-xl font-semibold text-slate-900">
+            주요 사용 언어
+          </h2>
+          <p className="text-sm text-slate-600">
+            프로젝트에서 가장 많이 사용된 언어 분포입니다.
+          </p>
+        </div>
+        <span className="text-[10px] px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100 whitespace-nowrap shrink-0 leading-none">
+          top-langs
+        </span>
+      </div>
+      <LanguageList githubId={githubId} />
+    </div>
+  </div>
+);
+
 const StatsSection = ({ githubId }: StatsSectionProps) => (
   <section className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
-    <div className={cardBase}>
-      <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
-      <div className="relative p-5 space-y-3">
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-              Overview
-            </p>
-            <h2 className="text-xl font-semibold text-slate-900">
-              GitHub 통계
-            </h2>
-            <p className="text-sm text-slate-600">
-              커밋, PR, 이슈 등 활동 지표를 살펴보세요.
-            </p>
-          </div>
-          <span className="text-[10px] px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-            stats
-          </span>
-        </div>
-        <StatImage
-          src={`https://github-readme-stats.vercel.app/api?username=${githubId}&show_icons=true&theme=default&hide_border=true&bg_color=ffffff`}
-          alt={`${githubId}의 GitHub 통계`}
-        />
-      </div>
-    </div>
-
-    <div className={cardBase}>
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-slate-50" />
-      <div className="relative p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-              Languages
-            </p>
-            <h2 className="text-xl font-semibold text-slate-900">
-              주요 사용 언어
-            </h2>
-            <p className="text-sm text-slate-600">
-              프로젝트에서 가장 많이 사용된 언어 분포입니다.
-            </p>
-          </div>
-          <span className="text-[10px] px-2 py-1 rounded-full bg-slate-900 text-white border border-slate-900/60">
-            top-langs
-          </span>
-        </div>
-        <LanguageList githubId={githubId} />
-      </div>
-    </div>
+    <GithubStatsCard githubId={githubId} />
+    <GithubLanguagesCard githubId={githubId} />
   </section>
 );
 

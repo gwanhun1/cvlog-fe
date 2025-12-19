@@ -6,7 +6,7 @@ interface ActivityStatsProps {
 }
 
 const cardBase =
-  'relative overflow-hidden rounded-2xl border border-slate-100 bg-white/85 shadow-lg backdrop-blur transition-transform duration-200 hover:-translate-y-0.5';
+  'relative overflow-hidden rounded-2xl border border-slate-100 bg-white/85 shadow-lg backdrop-blur transition-transform duration-200 hover:-translate-y-0.5 min-h-[320px]';
 
 const ActivityCard = ({
   title,
@@ -37,11 +37,11 @@ const ActivityCard = ({
         className={`absolute inset-0 ${
           dark
             ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
-            : 'bg-gradient-to-br from-slate-50 via-white to-blue-50'
+            : 'bg-gradient-to-br via-white to-blue-50 from-slate-50'
         }`}
       />
-      <div className="relative p-5 space-y-3">
-        <div className="flex items-center justify-between">
+      <div className="relative p-4 space-y-3">
+        <div className="flex justify-between items-center">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
               {badge}
@@ -65,7 +65,7 @@ const ActivityCard = ({
             className={`text-[10px] px-2 py-1 rounded-full border ${
               dark
                 ? 'bg-white/10 text-slate-100 border-white/20'
-                : 'bg-blue-50 text-blue-700 border-blue-100'
+                : 'text-blue-700 bg-blue-50 border-blue-100'
             }`}
           >
             live
@@ -74,15 +74,15 @@ const ActivityCard = ({
 
         <div
           className={`relative rounded-xl border ${
-            dark ? 'border-white/10 bg-slate-900' : 'border-slate-200 bg-white'
-          }`}
+            dark ? 'border-white/10 bg-slate-900' : 'bg-white border-slate-200'
+          } min-h-[220px] flex items-center justify-center overflow-hidden`}
         >
           {loading && !error && (
             <div
               className={`absolute inset-0 animate-pulse ${
                 dark
                   ? 'bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800'
-                  : 'bg-gradient-to-r from-slate-100 via-white to-slate-100'
+                  : 'bg-gradient-to-r via-white from-slate-100 to-slate-100'
               } rounded-xl`}
             />
           )}
@@ -106,7 +106,7 @@ const ActivityCard = ({
               <p className="text-sm font-medium">
                 이미지를 불러오지 못했습니다.
               </p>
-              <p className="text-xs mt-2">
+              <p className="mt-2 text-xs">
                 잠시 후 다시 시도하거나 GitHub ID를 확인해주세요.
               </p>
             </div>
@@ -159,7 +159,7 @@ const ActivityList = ({ githubId }: { githubId: string }) => {
   if (loading) {
     return (
       <div className="min-h-[180px] rounded-xl border border-white/10 bg-slate-900 relative overflow-hidden">
-        <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800" />
+        <div className="absolute inset-0 bg-gradient-to-r animate-pulse from-slate-800 via-slate-700 to-slate-800" />
       </div>
     );
   }
@@ -181,10 +181,10 @@ const ActivityList = ({ githubId }: { githubId: string }) => {
   }
 
   return (
-    <div className="rounded-xl border border-white/10 bg-slate-900 text-slate-100 divide-y divide-white/10">
+    <div className="rounded-xl border divide-y border-white/10 bg-slate-900 text-slate-100 divide-white/10">
       {events.map(ev => (
         <div key={ev.id} className="px-4 py-3 text-sm">
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between items-center">
             <span className="font-semibold">
               {ev.type.replace('Event', '')}
             </span>
@@ -192,7 +192,7 @@ const ActivityList = ({ githubId }: { githubId: string }) => {
               {new Date(ev.created_at).toLocaleDateString()}
             </span>
           </div>
-          <p className="text-xs text-slate-300 mt-1">{ev.repo.name}</p>
+          <p className="mt-1 text-xs text-slate-300">{ev.repo.name}</p>
         </div>
       ))}
     </div>
@@ -217,8 +217,8 @@ export const TrophyStats = ({ githubId }: ActivityStatsProps) => {
   return (
     <div className={cardBase}>
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-      <div className="relative p-5 space-y-3">
-        <div className="flex items-center justify-between">
+      <div className="relative p-4 space-y-3">
+        <div className="flex justify-between items-center">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
               Activity

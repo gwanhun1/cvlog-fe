@@ -30,8 +30,9 @@ const RepoHighlights = ({ githubId }: RepoHighlightsProps) => {
       setLoading(true);
       setError(null);
       try {
+        const encodedGithubId = encodeURIComponent(githubId);
         const res = await fetch(
-          `https://api.github.com/users/${githubId}/repos?sort=updated&per_page=8&type=owner`,
+          `https://api.github.com/users/${encodedGithubId}/repos?sort=updated&per_page=8&type=owner`,
           {
             headers: {
               Accept: 'application/vnd.github+json',
@@ -40,6 +41,10 @@ const RepoHighlights = ({ githubId }: RepoHighlightsProps) => {
         );
 
         if (!res.ok) {
+          const remaining = res.headers.get('x-ratelimit-remaining');
+          if (res.status === 403 && remaining === '0') {
+            throw new Error('rate_limit');
+          }
           throw new Error('failed');
         }
 
@@ -51,10 +56,15 @@ const RepoHighlights = ({ githubId }: RepoHighlightsProps) => {
           .slice(0, 4);
 
         setRepos(sorted);
-      } catch {
-        if (!isCancelled) {
-          setError('레포지토리를 불러오지 못했습니다.');
+      } catch (e) {
+        if (isCancelled) return;
+        if (e instanceof Error && e.message === 'rate_limit') {
+          setError(
+            'GitHub API 호출 제한에 걸렸습니다. 잠시 후 다시 시도해주세요.'
+          );
+          return;
         }
+        setError('레포지토리를 불러오지 못했습니다.');
       } finally {
         if (!isCancelled) {
           setLoading(false);
@@ -72,9 +82,9 @@ const RepoHighlights = ({ githubId }: RepoHighlightsProps) => {
   const hasData = !loading && !error && repos.length > 0;
 
   return (
-    <section className={cardBase}>
+    <section className={`${cardBase} min-h-[420px]`}>
       <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
-      <div className="relative p-6 space-y-4">
+      <div className="relative p-5 space-y-4">
         <div className="flex justify-between items-center">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
@@ -101,7 +111,7 @@ const RepoHighlights = ({ githubId }: RepoHighlightsProps) => {
         )}
 
         {!loading && !error && !hasData && (
-          <div className="flex flex-col gap-2 justify-center items-center p-6 rounded-xl border border-slate-100 bg-slate-50/80 text-slate-500">
+          <div className="flex flex-col gap-2 justify-center items-center p-6 rounded-xl border border-slate-100 bg-slate-50/80 text-slate-500 min-h-[280px]">
             <p className="text-sm font-medium">표시할 저장소가 없습니다.</p>
             <p className="text-xs">
               별이 있거나 최근 수정된 저장소가 나타납니다. 활동 후 다시 확인해
@@ -111,7 +121,7 @@ const RepoHighlights = ({ githubId }: RepoHighlightsProps) => {
         )}
 
         {!loading && error && (
-          <div className="px-3 py-2 text-sm text-red-500 bg-red-50 rounded-lg border border-red-100">
+          <div className="px-3 py-2 text-sm text-red-500 bg-red-50 rounded-lg border border-red-100 min-h-[280px] flex items-center justify-center text-center">
             {error}
           </div>
         )}

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import type React from 'react';
 
 interface PostInfo {
   id: number;
@@ -15,7 +16,7 @@ interface PostNavigationProps {
     github_id?: string;
     profile_image?: string;
   };
-  ProfileComponent: React.ComponentType<{ getDetailData: any }>;
+  ProfileComponent: React.ComponentType<{ getDetailData: unknown }>;
 }
 
 const PostNavigation = ({
