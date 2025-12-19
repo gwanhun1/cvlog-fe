@@ -82,52 +82,21 @@ export const getServerSideProps: GetServerSideProps = async context => {
       };
     }
 
-    const maxRetries = 3;
-    let retryCount = 0;
-    let response;
-    let lastError;
+    console.log('GitHub OAuth 요청:', code);
 
-    while (retryCount < maxRetries) {
-      try {
-        console.log(
-          `GitHub OAuth 요청 시도 ${retryCount + 1}/${maxRetries}:`,
-          code
-        );
+    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login?code=${code}`;
+    console.log('요청 URL:', url);
 
-        const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login?code=${code}`;
-        console.log('요청 URL:', url);
+    const response = await axios.get(url, {
+      withCredentials: true,
+      timeout: 30000,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    });
 
-        response = await axios.get(url, {
-          withCredentials: true,
-          timeout: 30000,
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        });
-
-        console.log('GitHub OAuth 응답 상태:', response.status);
-        break;
-      } catch (error: any) {
-        lastError = error;
-        console.error(
-          `GitHub OAuth 요청 실패 (시도 ${retryCount + 1}/${maxRetries}):`,
-          error.response?.status,
-          error.response?.data || error.message
-        );
-
-        retryCount++;
-        if (retryCount >= maxRetries) {
-          throw error;
-        }
-        await new Promise(resolve => setTimeout(resolve, 3000 * retryCount));
-      }
-    }
-
-    if (!response) {
-      console.error('GitHub OAuth 응답이 없습니다:', lastError);
-      throw new Error('Failed to get response after retries');
-    }
+    console.log('GitHub OAuth 응답 상태:', response.status);
 
     const info = response.data;
     const setLocalCookie: string[] = response.headers['set-cookie'] as string[];
