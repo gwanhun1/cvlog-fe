@@ -9,11 +9,10 @@ const TagHighlight = () => {
 
   // 태그 선택 처리 함수
   const handleTagSelect = (tag: TagType) => {
-    if (selectTagList.includes(tag)) {
-      setSelectTagList(selectTagList.filter(item => item !== tag));
-    } else {
-      setSelectTagList([...selectTagList, tag]);
-    }
+    setSelectTagList(prev => {
+      const exists = prev.some(item => item.id === tag.id);
+      return exists ? prev.filter(item => item.id !== tag.id) : [...prev, tag];
+    });
   };
 
   return (
@@ -22,7 +21,7 @@ const TagHighlight = () => {
         {tagList.map(tag => (
           <Badge
             className={`duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 py-1 rounded-full border-2 ${
-              selectTagList.includes(tag)
+              selectTagList.some(item => item.id === tag.id)
                 ? 'bg-blue-500 text-white border-blue-600'
                 : 'bg-blue-100 text-blue-800 border-blue-300'
             } hover:bg-blue-200 hover:border-blue-400 transition-all`}

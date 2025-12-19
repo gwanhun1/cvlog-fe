@@ -8,7 +8,7 @@ import { ErrorResponse } from 'service/api/login/type';
 const IMAGE_OPTIONS = EDITOR_CONSTANTS.IMAGE_COMPRESSION;
 
 export const useImageUpload = () => {
-  const uploadImage = async (file: File) => {
+  const uploadImage = async (file: File, signal?: AbortSignal) => {
     try {
       const resizedImage = await imageCompression(file, IMAGE_OPTIONS);
       const formData = new FormData();
@@ -19,6 +19,7 @@ export const useImageUpload = () => {
           'content-type': 'multipart/form-data',
           Authorization: `Bearer ${LocalStorage.getItem('LogmeToken')}`,
         },
+        signal,
       };
 
       const { data } = await axios.post(
@@ -32,9 +33,14 @@ export const useImageUpload = () => {
         name: data.data.name,
       };
     } catch (errorRe) {
-      const error = errorRe as ErrorResponse;
-      if (error.response?.status === 401) {
-        handleMutateErrors(error);
+      const error = errorRe as any;
+      if (error?.name === 'CanceledError' || error?.code === 'ERR_CANCELED') {
+        throw new Error('IMAGE_UPLOAD_CANCELED');
+      }
+
+      const apiError = errorRe as ErrorResponse;
+      if (apiError.response?.status === 401) {
+        handleMutateErrors(apiError);
       }
       throw new Error(ERROR_MESSAGES.IMAGE_UPLOAD_FAILED);
     }

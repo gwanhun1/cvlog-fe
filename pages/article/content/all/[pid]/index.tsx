@@ -99,11 +99,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const [selectTagList, setSelectTagList] = useRecoilState(selectedTagListAtom);
 
   const handleTagSelect = (tag: TagType) => {
-    if (selectTagList.includes(tag)) {
-      setSelectTagList(selectTagList.filter(item => item !== tag));
-    } else {
-      setSelectTagList([...selectTagList, tag]);
-    }
+    setSelectTagList(prev => {
+      const exists = prev.some(item => item.id === tag.id);
+      return exists ? prev.filter(item => item.id !== tag.id) : [...prev, tag];
+    });
   };
 
   const resolvedDetailData = initialData || detailData;
@@ -200,7 +199,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
             resolvedDetailData?.post?.tags?.map((tag: TagType) => (
               <Badge
                 className={`mr-1 duration-300 hover:scale-105 hover:cursor-pointer relative flex items-center px-3 py-1 rounded-full border-2 ${
-                  selectTagList.includes(tag)
+                  selectTagList.some(item => item.id === tag.id)
                     ? 'bg-blue-500 text-white border-blue-600'
                     : 'bg-blue-100 text-blue-800 border-blue-300'
                 } hover:bg-blue-200 hover:border-blue-400 transition-all`}
@@ -268,69 +267,75 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
           </div>
         </section>
       </main>
-      <section className="pb-6 mt-10 w-full border-b border-gray-200">
-        <Profile getDetailData={resolvedDetailData?.post?.user_id} />
-      </section>
-
-      <nav className="mt-8 mb-4 w-full">
-        <div className="grid grid-cols-2 gap-3 tablet:gap-4">
-          <div>
-            {resolvedDetailData?.prevPostInfo ? (
-              <Link
-                href={`/article/content/all/${resolvedDetailData.prevPostInfo.id}`}
-                prefetch
-              >
-                <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
-                  <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
-                    <span className="text-gray-600">←</span>
-                  </div>
-                  <div className="flex flex-col flex-1 min-w-0">
-                    <span className="mb-1 text-xs text-gray-500">
-                      이전 포스트
-                    </span>
-                    <span className="text-sm font-semibold text-gray-800 truncate">
-                      {resolvedDetailData.prevPostInfo.title}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ) : (
-              <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
-                <div className="w-8 h-8 bg-gray-200 rounded-full" />
-                <span className="text-sm text-gray-400">이전 포스트 없음</span>
-              </div>
-            )}
+      <section className="mt-10 w-full">
+        <div className="w-full rounded-2xl border border-gray-200 backdrop-blur-sm bg-white/70">
+          <div className="px-2 pt-4">
+            <Profile getDetailData={resolvedDetailData?.post?.user_id} />
           </div>
 
-          <div>
-            {resolvedDetailData?.nextPostInfo ? (
-              <Link
-                href={`/article/content/all/${resolvedDetailData.nextPostInfo.id}`}
-                prefetch
-              >
-                <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
-                  <div className="flex flex-col flex-1 min-w-0 text-right">
-                    <span className="mb-1 text-xs text-gray-500">
-                      다음 포스트
-                    </span>
-                    <span className="text-sm font-semibold text-gray-800 truncate">
-                      {resolvedDetailData.nextPostInfo.title}
-                    </span>
+          <div className="grid grid-cols-2 gap-3 p-4 tablet:gap-4">
+            <div>
+              {resolvedDetailData?.prevPostInfo ? (
+                <Link
+                  href={`/article/content/all/${resolvedDetailData.prevPostInfo.id}`}
+                  prefetch
+                >
+                  <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
+                    <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
+                      <span className="text-gray-600">←</span>
+                    </div>
+                    <div className="flex flex-col flex-1 min-w-0">
+                      <span className="mb-1 text-xs text-gray-500">
+                        이전 포스트
+                      </span>
+                      <span className="text-sm font-semibold text-gray-800 truncate">
+                        {resolvedDetailData.prevPostInfo.title}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
-                    <span className="text-gray-600">→</span>
-                  </div>
+                </Link>
+              ) : (
+                <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
+                  <div className="w-8 h-8 bg-gray-200 rounded-full" />
+                  <span className="text-sm text-gray-400">
+                    이전 포스트 없음
+                  </span>
                 </div>
-              </Link>
-            ) : (
-              <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
-                <span className="text-sm text-gray-400">다음 포스트 없음</span>
-                <div className="w-8 h-8 bg-gray-200 rounded-full" />
-              </div>
-            )}
+              )}
+            </div>
+
+            <div>
+              {resolvedDetailData?.nextPostInfo ? (
+                <Link
+                  href={`/article/content/all/${resolvedDetailData.nextPostInfo.id}`}
+                  prefetch
+                >
+                  <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
+                    <div className="flex flex-col flex-1 min-w-0 text-right">
+                      <span className="mb-1 text-xs text-gray-500">
+                        다음 포스트
+                      </span>
+                      <span className="text-sm font-semibold text-gray-800 truncate">
+                        {resolvedDetailData.nextPostInfo.title}
+                      </span>
+                    </div>
+                    <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
+                      <span className="text-gray-600">→</span>
+                    </div>
+                  </div>
+                </Link>
+              ) : (
+                <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
+                  <span className="text-sm text-gray-400">
+                    다음 포스트 없음
+                  </span>
+                  <div className="w-8 h-8 bg-gray-200 rounded-full" />
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </nav>
+      </section>
       <CommentBox pid={pid} />
     </div>
   );
