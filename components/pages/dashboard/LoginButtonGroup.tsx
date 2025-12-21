@@ -17,12 +17,6 @@ const LoginButtonGroup = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
 
-    if (!sessionStorage.getItem('cleared')) {
-      localStorage.clear();
-      sessionStorage.clear();
-      sessionStorage.setItem('cleared', 'true');
-    }
-
     const errorMessages: Record<string, string> = {
       auth_failed: '로그인에 실패했습니다. 잠시 후 다시 시도해주세요.',
       gateway_timeout:
@@ -41,6 +35,10 @@ const LoginButtonGroup = () => {
     if (error && errorMessages[error]) {
       showToast(errorMessages[error], 'error');
       console.error('GitHub OAuth 인증 실패:', error);
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete('error');
+      window.history.replaceState({}, '', url.toString());
     }
   }, [showToast]);
 

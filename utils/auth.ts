@@ -14,7 +14,6 @@ export const handleSignOut = async (
     } catch (error) {
       console.error('로그아웃 API 호출 실패:', error);
     } finally {
-
       // 로컬 스토리지 초기화
       LocalStorage.removeItem('LogmeToken');
       LocalStorage.removeItem('user_info');
@@ -41,6 +40,8 @@ export const handleSignOut = async (
       }
 
       // 로그인 페이지로 리다이렉트
+      window.dispatchEvent(new Event('storage'));
+
       window.location.href = '/login';
     }
   }

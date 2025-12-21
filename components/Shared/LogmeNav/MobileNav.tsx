@@ -1,5 +1,5 @@
 import { GiHamburgerMenu } from 'react-icons/gi';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -8,13 +8,10 @@ import {
   DropdownHeader,
   DropdownItem,
 } from 'components/Shared';
-import {
-  authorityState,
-  userIdAtom,
-  accessTokenAtom,
-} from 'service/atoms/atoms';
+import { authorityState, userIdAtom } from 'service/atoms/atoms';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
+import LocalStorage from 'public/utils/Localstorage';
 
 const menu = ['Home', 'Article', 'Resume', 'Github'];
 
@@ -24,10 +21,25 @@ interface MobileNavProps {
 
 const MobileNav = ({ isLoading }: MobileNavProps) => {
   const [page, setPage] = useState(menu[0]);
-  const token = useRecoilValue(accessTokenAtom);
+  const [token, setToken] = useState<string | null>(null);
   const [, setAuthority] = useRecoilState(authorityState);
   const userInfo = useRecoilValue(userIdAtom);
   const { showToast } = useToast();
+
+  useEffect(() => {
+    const checkToken = () => {
+      const accessToken = LocalStorage.getItem('LogmeToken');
+      setToken(accessToken);
+    };
+
+    checkToken();
+
+    window.addEventListener('storage', checkToken);
+
+    return () => {
+      window.removeEventListener('storage', checkToken);
+    };
+  }, [isLoading]);
 
   const onClickLogout = async () => {
     await handleSignOut((value: string | null) => setAuthority(!!value));
@@ -41,7 +53,7 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
     <nav>
       <LogmeDropdown
         trigger={
-          <GiHamburgerMenu className="ml-2 mb-1 stroke-gray-800 w-5 h-5" />
+          <GiHamburgerMenu className="mb-1 ml-2 w-5 h-5 stroke-gray-800" />
         }
         align="right"
       >
@@ -51,7 +63,7 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
               <img
                 src={userInfo?.profile_image || '/images/github.png'}
                 alt="User"
-                className="w-10 h-10 rounded-full object-cover"
+                className="object-cover w-10 h-10 rounded-full"
               />
               <div className="text-sm font-semibold text-gray-900">
                 {userInfo?.github_id || '아이디가 없어요'}
@@ -99,10 +111,10 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
         )}
 
         <DropdownItem>
-          <span className="flex items-center gap-2">
+          <span className="flex gap-2 items-center">
             Alarm
             {token && (
-              <span className="w-2 h-2 bg-ftBlue rounded-full animate-ping" />
+              <span className="w-2 h-2 rounded-full animate-ping bg-ftBlue" />
             )}
           </span>
         </DropdownItem>

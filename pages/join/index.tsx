@@ -35,12 +35,11 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
   );
 
   useEffect(() => {
-    LocalStorage.setItem('LogmeToken', info.data.accessToken);
-    // 1주일 동안 유효한 refreshToken (7일)
-    Cookie.setItem('refreshToken', cookies.refreshToken, 7);
-
-    const fetchUserInfo = async () => {
+    const initializeAuth = async () => {
       try {
+        LocalStorage.setItem('LogmeToken', info.data.accessToken);
+        Cookie.setItem('refreshToken', cookies.refreshToken, 7);
+
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/info`,
           {
@@ -49,19 +48,28 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
             },
           }
         );
-        setUserInfo(response.data.data);
+
+        const userData = response.data.data;
+        setUserInfo(userData);
         setAccessToken(info.data.accessToken);
         setRefreshToken(cookies.refreshToken);
-        router.push('/');
+
+        LocalStorage.setItem('user_info', JSON.stringify(userData));
+
+        window.dispatchEvent(new Event('storage'));
+
+        await router.push('/');
       } catch (error) {
         console.error('Error fetching user info:', error);
-        router.push('/?error=user_info_failed');
+        LocalStorage.removeItem('LogmeToken');
+        Cookie.removeItem('refreshToken');
+        router.push('/login?error=user_info_failed');
       }
     };
 
-    fetchUserInfo();
+    initializeAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cookies.refreshToken, info.data.accessToken, setUserInfo]);
+  }, []);
 
   return <LoaderAnimation />;
 };
@@ -76,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
       console.error('GitHub OAuth 코드가 없습니다:', query);
       return {
         redirect: {
-          destination: '/?error=missing_code',
+          destination: '/login?error=missing_code',
           permanent: false,
         },
       };
@@ -136,7 +144,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
     return {
       redirect: {
-        destination: `/?error=${errorParam}`,
+        destination: `/login?error=${errorParam}`,
         permanent: false,
       },
     };

@@ -45,17 +45,17 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   });
 
   const checkAuthStatus = useCallback(async () => {
+    if (isPublicRoute) {
+      setIsAuthenticated(true);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
 
     try {
       const accessToken = LocalStorage.getItem('LogmeToken');
       const refreshToken = Cookie.getItem('refreshToken');
-
-      if (isPublicRoute) {
-        setIsAuthenticated(true);
-        setIsLoading(false);
-        return;
-      }
 
       if (!accessToken) {
         if (refreshToken) {
@@ -99,12 +99,14 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   }, [isPublicRoute, router]);
 
   useEffect(() => {
-    if (router.pathname === '/login' || router.pathname === '/join') {
+    if (isPublicRoute) {
+      setIsAuthenticated(true);
       setIsLoading(false);
       return;
     }
 
-    if (isPublicRoute) {
+    const accessToken = LocalStorage.getItem('LogmeToken');
+    if (accessToken) {
       setIsAuthenticated(true);
       setIsLoading(false);
       return;
