@@ -21,7 +21,18 @@ const AccountManagement = () => {
       setError(null);
 
       await deleteAccount();
+
+      // 모든 인증 정보 정리
       localStorage.removeItem('token');
+      localStorage.removeItem('LogmeToken');
+      localStorage.clear();
+
+      // 쿠키 정리
+      document.cookie.split(';').forEach(c => {
+        document.cookie = c
+          .replace(/^ +/, '')
+          .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+      });
 
       router.push('/');
     } catch (err) {
@@ -37,12 +48,12 @@ const AccountManagement = () => {
       <button
         onClick={handleDeleteAccount}
         disabled={isDeleting}
-        className="w-full px-4 py-3 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 py-3 w-full text-sm font-medium text-red-600 bg-red-50 rounded-lg transition-colors hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isDeleting ? '처리 중...' : '회원 탈퇴'}
       </button>
-      {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
-      <p className="text-xs text-gray-500 leading-relaxed">
+      {error && <p className="text-xs font-medium text-red-500">{error}</p>}
+      <p className="text-xs leading-relaxed text-gray-500">
         탈퇴 시 작성하신 포스트가 모두 삭제되며 복구되지 않습니다. 다른 사용자의
         게시물에 작성한 댓글은 유지됩니다.
       </p>
