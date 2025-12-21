@@ -4,6 +4,7 @@ import { styled } from 'styled-components';
 interface BaseButtonProps {
   size: 'big' | 'medium' | 'small';
   variant: 'classic' | 'ghost' | 'error' | 'success' | 'disabled';
+  fullWidth?: boolean;
 }
 
 const getColor = (variant: string) => {
@@ -39,9 +40,17 @@ const getColor = (variant: string) => {
   }
 };
 
-const BaseButton = styled.button<BaseButtonProps>`
-  width: ${({ size }) =>
-    size === 'big' ? '144px' : size === 'medium' ? '114px' : '80px'};
+const BaseButton = styled.button.withConfig({
+  shouldForwardProp: prop => !['size', 'variant', 'fullWidth'].includes(prop),
+})<BaseButtonProps>`
+  width: ${({ size, fullWidth }) =>
+    fullWidth
+      ? '100%'
+      : size === 'big'
+      ? '144px'
+      : size === 'medium'
+      ? '114px'
+      : '80px'};
   height: ${({ size }) =>
     size === 'big' ? '54px' : size === 'medium' ? '44px' : '36px'};
   border-radius: ${({ size }) =>
@@ -88,6 +97,7 @@ export interface LogmeButtonProps {
   className?: string;
   style?: React.CSSProperties;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  fullWidth?: boolean;
 }
 
 const LogmeButton = ({
@@ -98,6 +108,7 @@ const LogmeButton = ({
   className,
   style,
   onClick,
+  fullWidth = false,
 }: LogmeButtonProps) => {
   const buttonProps = {
     size,
@@ -106,6 +117,7 @@ const LogmeButton = ({
     style,
     onClick,
     disabled: disabled || variant === 'disabled',
+    fullWidth,
   };
 
   return variant === 'ghost' ? (

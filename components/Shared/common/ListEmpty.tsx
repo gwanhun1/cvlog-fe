@@ -1,8 +1,8 @@
 const ListEmpty = () => {
   return (
-    <div className="flex flex-col gap-6 w-full justify-center items-center h-20 tablet:h-[23.5rem] bg-gradient-to-r from-gray-50 to-white rounded-xl shadow-lg p-8">
+    <div className="flex flex-col gap-6 w-full justify-center items-center h-80 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
       <div className="relative">
-        <div className="w-24 h-24 bg-purple-50 rounded-full flex items-center justify-center">
+        <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center">
           <svg
             className="w-12 h-12 text-blue-500"
             fill="none"
@@ -18,7 +18,7 @@ const ListEmpty = () => {
             ></path>
           </svg>
         </div>
-        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
           <svg
             className="w-4 h-4 text-blue-600"
             fill="none"
@@ -35,7 +35,7 @@ const ListEmpty = () => {
           </svg>
         </div>
       </div>
-      <div className="col-span-full flex flex-col gap-6 justify-center items-center min-h-[320px] text-xl bg-gradient-to-br from-gray-50 to-white rounded-xl shadow-lg p-8">
+      <div className="flex flex-col gap-2 items-center text-center">
         <h3 className="text-xl font-semibold text-gray-700">
           아직 작성된 글이 없어요
         </h3>

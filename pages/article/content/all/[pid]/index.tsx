@@ -97,7 +97,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   useEffect(() => {
     detailRefetch();
     commentRefetch();
-  }, [pid]);
+  }, [pid, detailRefetch, commentRefetch]);
 
   const [selectTagList, setSelectTagList] = useRecoilState(selectedTagListAtom);
 
@@ -110,7 +110,6 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
 
   const resolvedDetailData = initialData || detailData;
   const shouldShowSkeleton = isLoading && !initialData;
-
   const postData = resolvedDetailData?.post;
 
   const postTitle = postData?.title || 'LogMe 게시물';
@@ -125,6 +124,25 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       ? plainText.substring(0, 155) + '...'
       : plainText;
   }, [postData?.content]);
+
+  // 에러 처리 또는 데이터 없음 처리 (비공개 게시물 등)
+  if (!shouldShowSkeleton && !resolvedDetailData?.post) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <h2 className="mb-4 text-2xl font-bold text-gray-700">
+          게시물을 찾을 수 없습니다.
+        </h2>
+        <p className="mb-8 text-gray-500">
+          삭제되었거나 비공개된 게시물일 수 있습니다.
+        </p>
+        <Link href="/article">
+          <a className="px-6 py-2 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600">
+            목록으로 돌아가기
+          </a>
+        </Link>
+      </div>
+    );
+  }
   const postImage = 'https://logme.shop/assets/NavLogo.svg';
   const canonicalUrl = `https://logme.shop/article/content/all/${pid}`;
 
@@ -383,10 +401,14 @@ export const getStaticProps = async ({ params }: any) => {
     // API 응답: { success: true, data: { post: {...} } }
     const postData = responseData?.data || responseData;
 
-    // 게시물이 공개 상태가 아니면 404 페이지 반환
+    // 게시물이 공개 상태가 아니면 404 페이지 반환 -> 수정: 본인은 볼 수 있어야 하므로 null 반환 후 클라이언트에서 처리
     if (postData?.post && !postData.post.public_status) {
       return {
-        notFound: true,
+        props: {
+          pid,
+          initialData: null,
+        },
+        revalidate: 30,
       };
     }
 

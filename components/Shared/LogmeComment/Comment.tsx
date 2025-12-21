@@ -54,15 +54,21 @@ const CommentItem = ({
     }
   };
 
+  const isDeletedUser = !user_id;
+  const profileImage = isDeletedUser
+    ? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+    : user_id.profile_image;
+  const githubId = isDeletedUser ? '탈퇴한 사용자' : user_id.github_id;
+
   return (
     <article className="mt-2 border-b border-gray-300 mobile:mt-5">
       <div className="flex flex-col">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <Avatar img={user_id.profile_image} rounded>
+            <Avatar img={profileImage} rounded>
               <div className="flex flex-col space-y-1 font-medium dark:text-white">
                 <div className="text-[11px] tablet:text-base text-ftBlack">
-                  {user_id.github_id}
+                  {githubId}
                 </div>
                 <time className="text-[5px] tablet:text-xs text-gray-500 dark:text-gray-400 w-28 tablet:w-40 desktop:w-80">
                   {created_at.slice(0, 10)}
@@ -70,7 +76,7 @@ const CommentItem = ({
               </div>
             </Avatar>
           </div>
-          {userInfo?.github_id === user_id.github_id && (
+          {user_id && userInfo?.github_id === user_id.github_id && (
             <div className="flex">
               <button
                 className="m-1 text-[10px] tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"

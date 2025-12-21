@@ -134,11 +134,7 @@ const PostListView = ({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div
-          className={`${
-            posts.length === 0 ? emptyContainerClass : 'masonry-grid'
-          }`}
-        >
+        <div className={`${posts.length === 0 ? 'w-full' : 'masonry-grid'}`}>
           {posts.length > 0 ? (
             <>
               {posts.map(({ id, title, content, tags, updated_at }, index) => (

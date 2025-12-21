@@ -13,7 +13,7 @@ export interface CommentProps {
   id: number;
   content: string;
   created_at: string;
-  user_id: User_id;
+  user_id: User_id | null;
   refetch?: () => void;
 }
 
