@@ -14,7 +14,8 @@ import { ErrorResponse } from 'service/api/login/type';
 
 export const useGetDetail = (
   params: number,
-  onSuccess?: (data: any) => void
+  onSuccess?: (data: any) => void,
+  initialData?: any
 ) => {
   return useQuery({
     queryKey: ['detail', params],
@@ -25,6 +26,7 @@ export const useGetDetail = (
     onError: handleGetErrors,
     onSuccess: onSuccess ? data => onSuccess(data) : undefined,
     enabled: !isNaN(params),
+    initialData,
     useErrorBoundary: false,
     // 성능 최적화: 2분간 캐시 유지
     staleTime: 1000 * 60 * 2,

@@ -27,7 +27,7 @@ export default function App({ Component, pageProps }: AppProps) {
             refetchOnWindowFocus: false,
             staleTime: 1000 * 60 * 5,
             cacheTime: 1000 * 60 * 30,
-            useErrorBoundary: true,
+            useErrorBoundary: false,
           },
         },
       })

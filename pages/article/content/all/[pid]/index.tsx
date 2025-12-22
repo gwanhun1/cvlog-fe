@@ -1,5 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
+import { GetServerSideProps, NextPage } from 'next';
+import axios from 'axios';
 import { useToast } from 'components/Shared';
 import { useQueryClient } from 'react-query';
 import Link from 'next/link';
@@ -13,7 +15,7 @@ import {
   usePatchDetail,
 } from 'service/hooks/Detail';
 import {
-  Content,
+  Content as ContentLayout,
   Profile,
   PostNavigation,
 } from '../../../../../components/pages/article/content';
@@ -24,13 +26,56 @@ import {
   tagListAtom,
   userIdAtom,
 } from 'service/atoms/atoms';
-import { TagType } from 'service/api/detail/type';
-import { NextPage } from 'next';
+import type {
+  ContentData,
+  TagType,
+  Content as ContentResponse,
+} from 'service/api/detail/type';
 
 interface DetailProps {
   pid: string;
-  initialData?: any;
+  initialData?: {
+    post: ContentData;
+    prevPostInfo: { id: number; title: string } | null;
+    nextPostInfo: { id: number; title: string } | null;
+  };
 }
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  const pid = context.params?.pid;
+
+  if (!pid || Array.isArray(pid)) {
+    return { notFound: true };
+  }
+
+  const API_URL =
+    process.env.NODE_ENV === 'production'
+      ? 'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app'
+      : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
+  try {
+    const { data } = await axios.get<ContentResponse>(
+      `${API_URL}/posts/${pid}`,
+      {
+        headers: { 'Cache-Control': 'no-cache' },
+      }
+    );
+
+    if (!data?.data?.post?.public_status) {
+      return { notFound: true };
+    }
+
+    return {
+      props: {
+        pid,
+        initialData: data.data,
+      },
+    };
+  } catch (error) {
+    console.error('[SSR] post detail fetch error', error);
+    return { notFound: true };
+  }
+};
 
 const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const router = useRouter();
@@ -44,12 +89,16 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     data: detailData,
     isLoading,
     refetch: detailRefetch,
-  } = useGetDetail(parseInt(pid), data => {
-    if (data?.post) {
-      setPatchMessage(data.post.public_status);
-      setTagList(data.post.tags);
-    }
-  });
+  } = useGetDetail(
+    parseInt(pid),
+    data => {
+      if (data?.post) {
+        setPatchMessage(data.post.public_status);
+        setTagList(data.post.tags);
+      }
+    },
+    initialData
+  );
 
   const { data: commentData, refetch: commentRefetch } = useGetCommentList(
     parseInt(pid)
@@ -279,7 +328,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
           </div>
 
           <div className="flex justify-center">
-            <Content
+            <ContentLayout
               data={resolvedDetailData?.post?.content}
               isLoading={shouldShowSkeleton}
               writer={resolvedDetailData?.post?.user_id?.github_id}
@@ -301,134 +350,3 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
 };
 
 export default Detail;
-
-// 게시물 타입 정의
-interface PostType {
-  id: number;
-  public_status: boolean;
-  title?: string;
-  created_at?: string;
-  updated_at?: string;
-  content?: string;
-  summary?: string;
-  image_url?: string;
-  thumbnail_image_url?: string;
-  is_featured?: boolean;
-  tags?: any[];
-}
-
-export const getStaticPaths = async () => {
-  try {
-    const API_URL =
-      process.env.NEXT_PUBLIC_API_URL ||
-      'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
-
-    const allPosts: PostType[] = [];
-
-    for (let page = 1; page <= 10; page++) {
-      try {
-        const response = await fetch(`${API_URL}/posts/public/page/${page}`, {
-          headers: { 'Cache-Control': 'no-cache' },
-        });
-
-        if (!response.ok) break;
-
-        const responseData = await response.json();
-        const posts = responseData?.data?.posts || responseData?.posts || [];
-
-        if (!Array.isArray(posts) || posts.length === 0) break;
-
-        allPosts.push(...posts);
-
-        const maxPage = responseData?.data?.maxPage || 10;
-        if (page >= maxPage) break;
-      } catch {
-        break;
-      }
-    }
-
-    const paths = allPosts
-      .filter((post: PostType) => post.public_status && post.id)
-      .map((post: PostType) => ({
-        params: { pid: post.id.toString() },
-      }));
-
-    console.log(`Pre-generating ${paths.length} public article pages`);
-
-    return {
-      paths,
-      fallback: 'blocking',
-    };
-  } catch (error) {
-    console.error('Error fetching public posts for static paths:', error);
-    return {
-      paths: [],
-      fallback: 'blocking',
-    };
-  }
-};
-
-export const getStaticProps = async ({ params }: any) => {
-  const pid = params?.pid;
-
-  if (!pid) {
-    return {
-      notFound: true,
-    };
-  }
-
-  try {
-    // 백엔드 API URL 설정
-    const API_URL =
-      process.env.NEXT_PUBLIC_API_URL ||
-      'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
-
-    // 게시물 데이터 미리 가져오기
-    const response = await fetch(`${API_URL}/posts/${pid}`);
-
-    if (!response.ok) {
-      console.error(`Failed to fetch post data: ${response.status}`);
-      return {
-        props: {
-          pid,
-          initialData: null,
-        },
-        revalidate: 10, // Reduced revalidation time for error cases
-      };
-    }
-
-    const responseData = await response.json();
-    // API 응답: { success: true, data: { post: {...} } }
-    const postData = responseData?.data || responseData;
-
-    // 게시물이 공개 상태가 아니면 404 페이지 반환 -> 수정: 본인은 볼 수 있어야 하므로 null 반환 후 클라이언트에서 처리
-    if (postData?.post && !postData.post.public_status) {
-      return {
-        props: {
-          pid,
-          initialData: null,
-        },
-        revalidate: 30,
-      };
-    }
-
-    return {
-      props: {
-        pid,
-        initialData: postData || null,
-      },
-      // ISR(Incremental Static Regeneration) - 30초마다 페이지 재생성 가능
-      revalidate: 30,
-    };
-  } catch (error) {
-    console.error(`Error getting static props for post ${pid}:`, error);
-    // Instead of returning notFound, return valid props with null initialData
-    return {
-      props: {
-        pid,
-        initialData: null,
-      },
-      revalidate: 10,
-    };
-  }
-};
