@@ -1,8 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useMemo, useCallback, CSSProperties } from 'react';
-import { useRecoilState } from 'recoil';
-import { tagAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { Tag } from 'service/api/tag/type';
 
 export interface TagItemProps {
@@ -39,7 +38,8 @@ const TagItem = ({
     },
   });
 
-  const [keyword, setKeyword] = useRecoilState(tagAtom);
+  const keyword = useStore((state) => state.tagAtom);
+  const setKeyword = useStore((state) => state.setTagAtom);
 
   const handleTagClick = useCallback(() => {
     setKeyword(tag.name);

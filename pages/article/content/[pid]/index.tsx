@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useToast } from 'components/Shared';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import Head from 'next/head';
 import CommentBox from 'components/Shared/LogmeComment';
 import { useGetCommentList } from 'service/hooks/Comment';
 import {
-  DeleteDetail,
+  useDeleteDetail,
   useGetMyDetail,
   usePatchDetail,
 } from 'service/hooks/Detail';
@@ -17,8 +17,7 @@ import {
   PostNavigation,
 } from '../../../../components/pages/article/content';
 import { Badge } from 'flowbite-react';
-import { useRecoilValue } from 'recoil';
-import { userIdAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { TagType } from 'service/api/detail/type';
 import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
 import AuthGuard from 'components/Shared/common/AuthGuard';
@@ -34,7 +33,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   const [patchMessage, setPatchMessage] = useState(false);
   const { showToast, showConfirm } = useToast();
 
-  const userInfo = useRecoilValue(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
 
   // 데이터 받기
   const getMyDetail = useGetMyDetail(parseInt(pid));
@@ -68,10 +67,10 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'publicList',
+          predicate: (query) => query.queryKey[0] === 'publicList',
         }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'list',
+          predicate: (query) => query.queryKey[0] === 'list',
         }),
       ]);
 
@@ -87,19 +86,19 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   };
 
   // 삭제 창
-  const deleteContent = DeleteDetail(parseInt(pid));
+  const deleteContent = useDeleteDetail(parseInt(pid));
   const deleteCheck = () => {
     showConfirm('삭제하시겠습니까?', async () => {
       await deleteContent.mutate();
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'list',
+          predicate: (query) => query.queryKey[0] === 'list',
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           // @ts-ignore
         }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'publicList',
+          predicate: (query) => query.queryKey[0] === 'publicList',
         }),
       ]);
       showToast('삭제되었습니다.', 'success');

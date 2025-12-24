@@ -1,5 +1,5 @@
 import { useCallback, useState, useRef, useMemo } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   DragEndEvent,
   DragStartEvent,
@@ -227,7 +227,7 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
             folder_id: overId,
           });
           // refetchQueries는 실제로 데이터를 다시 가져올 때까지 대기
-          await queryClient.refetchQueries(['tagsFolder'], { active: true });
+          await queryClient.refetchQueries({ queryKey: ['tagsFolder'], type: 'active' });
         } catch (error) {
           console.error('Error updating folder:', error);
         } finally {

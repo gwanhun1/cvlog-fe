@@ -6,8 +6,7 @@ import SideView from '../../components/pages/article/sideView/SideView';
 import LocalStorage from 'public/utils/Localstorage';
 import MenuTab from 'components/pages/article/sideView/MenuTab';
 import FilterBox from 'components/Shared/LogmeFilterBox.tsx/FilterBox';
-import { useRecoilState } from 'recoil';
-import { tagAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { BlogType } from 'service/api/tag/type';
 
 type ArticleProps = {
@@ -19,8 +18,17 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
   const [isClient, setIsClient] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [menu, setMenu] = useState<'list' | 'all'>('all');
-  const [keyword, setKeyword] = useRecoilState(tagAtom);
+  const keyword = useStore((state) => state.tagAtom);
+  const setTagAtom = useStore((state) => state.setTagAtom);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const setKeyword = (value: React.SetStateAction<string>) => {
+    if (typeof value === 'function') {
+      setTagAtom(value(keyword));
+    } else {
+      setTagAtom(value);
+    }
+  };
 
   useEffect(() => {
     setIsClient(true);

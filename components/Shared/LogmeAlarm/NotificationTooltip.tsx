@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import React from 'react';
 import axios from 'axios';
-import styled from 'styled-components';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { cn } from 'styles/utils';
 
 interface Notification {
   id: number;
@@ -21,27 +21,8 @@ interface Notification {
   };
 }
 
-const TooltipContainer = styled.div`
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 300px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  max-height: 400px;
-  overflow-y: auto;
-`;
-
-const EmptyState = styled.div`
-  padding: 20px;
-  text-align: center;
-  color: #666;
-`;
-
 const NotificationTooltip = () => {
-  const { data: notifications, refetch } = useQuery<Notification[]>({
+  const { data: notifications } = useQuery<Notification[]>({
     queryKey: ['notifications'],
     queryFn: async () => {
       const response = await axios.get('/api/notifications');
@@ -65,7 +46,7 @@ const NotificationTooltip = () => {
   };
 
   return (
-    <TooltipContainer>
+    <div className="absolute top-full right-0 w-[300px] bg-white rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.1)] z-[1000] max-h-[400px] overflow-y-auto">
       {notifications && notifications?.length ? (
         notifications.map(notification => (
           <Link
@@ -99,9 +80,9 @@ const NotificationTooltip = () => {
           </Link>
         ))
       ) : (
-        <EmptyState>새로운 알림이 없습니다</EmptyState>
+        <div className="p-5 text-center text-[#666]">새로운 알림이 없습니다</div>
       )}
-    </TooltipContainer>
+    </div>
   );
 };
 

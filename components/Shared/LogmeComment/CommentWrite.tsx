@@ -1,8 +1,7 @@
 import * as Shared from 'components/Shared';
 import { useToast } from 'components/Shared';
 import React, { ChangeEvent, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { userIdAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { useGetCommentList, usePostNewComment } from 'service/hooks/Comment';
 
 const CommentWrite = ({
@@ -15,7 +14,7 @@ const CommentWrite = ({
   const [comment, setComment] = useState('');
   const { refetch } = useGetCommentList(parseInt(pid));
   const postNewComment = usePostNewComment();
-  const userInfo = useRecoilValue(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
   const { showToast, showConfirm } = useToast();
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) =>

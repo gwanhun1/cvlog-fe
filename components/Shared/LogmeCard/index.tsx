@@ -3,8 +3,7 @@ import markdownToText from 'markdown-to-text';
 import Image from 'next/image';
 import TagList from './TagList';
 import { formatTimeAgo } from 'styles/utils/timeCheck';
-import { useRecoilValue } from 'recoil';
-import { tagAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 
 export interface TagItem {
   id: number;
@@ -32,7 +31,7 @@ const removeImageFromContent = (content: string): string => {
 const Card = ({ title, updated_at, content, tags }: CardProps) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
-  const keyword = useRecoilValue(tagAtom);
+  const keyword = useStore((state) => state.tagAtom);
   const isMatched = tags.some(tag => tag.name.toLocaleLowerCase() === keyword);
 
   const plainTextContent = markdownToText(cleanContent);

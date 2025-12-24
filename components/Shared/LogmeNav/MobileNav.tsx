@@ -1,17 +1,16 @@
 import { GiHamburgerMenu } from 'react-icons/gi';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   useToast,
   LogmeDropdown,
   DropdownHeader,
   DropdownItem,
 } from 'components/Shared';
-import { authorityState, userIdAtom } from 'service/atoms/atoms';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
 import LocalStorage from 'public/utils/Localstorage';
+import { useStore } from 'service/store/useStore';
 
 const menu = ['Home', 'Article', 'Resume', 'Github'];
 
@@ -22,8 +21,8 @@ interface MobileNavProps {
 const MobileNav = ({ isLoading }: MobileNavProps) => {
   const [page, setPage] = useState(menu[0]);
   const [token, setToken] = useState<string | null>(null);
-  const [, setAuthority] = useRecoilState(authorityState);
-  const userInfo = useRecoilValue(userIdAtom);
+  const setAuthority = useStore((state) => state.setAuthorityState);
+  const userInfo = useStore((state) => state.userIdAtom);
   const { showToast } = useToast();
 
   useEffect(() => {

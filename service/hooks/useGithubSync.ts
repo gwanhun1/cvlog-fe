@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getGithubSyncSettings,
   createGithubRepo,
@@ -8,7 +8,9 @@ import {
 
 // 동기화 설정 조회
 export const useGithubSyncSettings = () => {
-  return useQuery(['githubSyncSettings'], getGithubSyncSettings, {
+  return useQuery({
+    queryKey: ['githubSyncSettings'],
+    queryFn: getGithubSyncSettings,
     staleTime: 1000 * 60 * 5, // 5분
     retry: 1,
   });
@@ -18,16 +20,19 @@ export const useGithubSyncSettings = () => {
 export const useCreateGithubRepo = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((repoName: string) => createGithubRepo(repoName), {
+  return useMutation({
+    mutationFn: (repoName: string) => createGithubRepo(repoName),
     onSuccess: () => {
-      queryClient.invalidateQueries(['githubSyncSettings']);
+      queryClient.invalidateQueries({ queryKey: ['githubSyncSettings'] });
     },
   });
 };
 
 // 저장소 상태 확인
 export const useCheckGithubRepoStatus = () => {
-  return useQuery(['githubRepoStatus'], checkGithubRepoStatus, {
+  return useQuery({
+    queryKey: ['githubRepoStatus'],
+    queryFn: checkGithubRepoStatus,
     enabled: false, // 수동으로 호출
     retry: 1,
   });
@@ -37,9 +42,10 @@ export const useCheckGithubRepoStatus = () => {
 export const useDisconnectGithubSync = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(disconnectGithubSync, {
+  return useMutation({
+    mutationFn: disconnectGithubSync,
     onSuccess: () => {
-      queryClient.invalidateQueries(['githubSyncSettings']);
+      queryClient.invalidateQueries({ queryKey: ['githubSyncSettings'] });
     },
   });
 };

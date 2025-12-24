@@ -3,12 +3,7 @@ import { GetServerSideProps, NextPage } from 'next';
 import axios from 'axios';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
-import { useSetRecoilState } from 'recoil';
-import {
-  accessTokenAtom,
-  refreshTokenAtom,
-  userIdAtom,
-} from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { useRouter } from 'next/router';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 
@@ -24,9 +19,9 @@ interface JoinProps {
 }
 
 const Join: NextPage<JoinProps> = ({ info, cookie }) => {
-  const setUserInfo = useSetRecoilState(userIdAtom);
-  const setAccessToken = useSetRecoilState(accessTokenAtom);
-  const setRefreshToken = useSetRecoilState(refreshTokenAtom);
+  const setUserInfo = useStore((state) => state.setUserIdAtom);
+  const setAccessToken = useStore((state) => state.setAccessTokenAtom);
+  const setRefreshToken = useStore((state) => state.setRefreshTokenAtom);
 
   const router = useRouter();
 

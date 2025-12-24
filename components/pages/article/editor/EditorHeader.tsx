@@ -7,8 +7,7 @@ import { EDITOR_CONSTANTS, ERROR_MESSAGES, KeyMap } from 'lib/constants';
 import LocalStorage from 'public/utils/Localstorage';
 import { useCreatePost } from 'service/hooks/New';
 import { useModifyPost } from 'service/hooks/Detail';
-import { useRecoilValue } from 'recoil';
-import { userIdAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { IoIosCloseCircle } from 'react-icons/io';
 import Tooltip from 'components/Shared/common/Tooltip';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
@@ -32,7 +31,7 @@ const EditorHeader = ({
   const [tag, setTag] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const userInfo = useRecoilValue(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
   const { showToast } = useToast();
 
   const accessToken = LocalStorage.getItem('LogmeToken') as string;

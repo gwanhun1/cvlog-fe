@@ -29,9 +29,10 @@ const AccountManagement = () => {
       LocalStorage.removeItem('LogmeToken');
       LocalStorage.removeItem('user_info');
       LocalStorage.removeItem('token');
+      localStorage.removeItem('logme-storage'); // Zustand persist
 
       // SessionStorage 정리
-      Sessionstorage.removeItem('recoil-persist');
+      // Sessionstorage.removeItem('recoil-persist');
       Sessionstorage.removeItem('github_oauth_state');
 
       // Cookie 정리

@@ -5,8 +5,7 @@ import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 import { useRef, useMemo, memo } from 'react';
 import { cn } from 'styles/utils';
-import { useRecoilValue } from 'recoil';
-import { userIdAtom, selectedTagListAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import styles from '../../../styles/markdown.module.scss';
 import TocItemsContainer from './TocItemsContainer';
 
@@ -32,8 +31,8 @@ const MarkdownContentComponent = ({
   id,
 }: MarkdownContentProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const userInfo = useRecoilValue(userIdAtom);
-  const selectedTags = useRecoilValue(selectedTagListAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
+  const selectedTags = useStore((state) => state.selectedTagListAtom);
 
   const selectedWords = useMemo(
     () => selectedTags.map(tag => tag.name),

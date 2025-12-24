@@ -10,8 +10,8 @@
   ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=flat-square&logo=react)
   ![TypeScript](https://img.shields.io/badge/TypeScript-5.8.2-3178C6?style=flat-square&logo=typescript)
   ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.3.3-06B6D4?style=flat-square&logo=tailwindcss)
-  ![Recoil](https://img.shields.io/badge/Recoil-0.7.7-3578E5?style=flat-square&logo=recoil)
-  ![React Query](https://img.shields.io/badge/React_Query-3.39.3-FF4154?style=flat-square&logo=reactquery)
+  ![Zustand](https://img.shields.io/badge/Zustand-5.0.3-443E38?style=flat-square&logo=react)
+  ![TanStack Query](https://img.shields.io/badge/TanStack_Query-5.0.0-FF4154?style=flat-square&logo=reactquery)
 
 </div>
 
@@ -80,11 +80,11 @@
 
 ### 상태 관리
 
-`Recoil 0.7.7` • `React Query 3.39.3` • `Recoil-persist`
+`Zustand` • `TanStack Query v5`
 
 ### 스타일링
 
-`TailwindCSS 3.3.3` • `SCSS` • `Styled Components` • `Flowbite React`
+`TailwindCSS 3.3.3` • `SCSS` • `Flowbite React`
 
 ### 마크다운 처리
 

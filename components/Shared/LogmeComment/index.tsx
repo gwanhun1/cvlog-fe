@@ -1,7 +1,7 @@
 import React from 'react';
 import { GetServerSideProps } from 'next';
 import { useGetCommentList } from 'service/hooks/Comment';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import CommentItem from './Comment';
 import CommentWrite from './CommentWrite';
 import CommentLayout from './CommentLayout';
@@ -13,7 +13,7 @@ const CommentBox = ({ pid }: { pid: string }) => {
 
   const forceRefresh = React.useCallback(async () => {
     await queryClient.invalidateQueries({
-      predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+      predicate: (query) => query.queryKey[0] === 'commentList',
     });
     await refetch();
     try {

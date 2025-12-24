@@ -155,7 +155,7 @@ const GithubSyncSettings = () => {
               setRepoName={setRepoName}
               error={error}
               clearError={() => setError(null)}
-              isCreating={createRepoMutation.isLoading}
+              isCreating={createRepoMutation.isPending}
               onCreateRepo={handleCreateRepo}
             />
           )}

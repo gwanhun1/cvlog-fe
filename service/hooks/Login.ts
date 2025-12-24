@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getUserInfo,
   handleGetErrors,
@@ -8,35 +8,29 @@ import {
 import { GetNewTokenApi } from 'service/api/login/type';
 
 export const useRefreshToken = (params: GetNewTokenApi) => {
-  return useMutation(() => {
-    return postRefreshToken(params);
+  return useMutation({
+    mutationFn: () => postRefreshToken(params)
   });
 };
 
 export const useUpdateUserDescription = () => {
   const queryClient = useQueryClient();
 
-  return useMutation(
-    (description: string) => updateUserDescription(description),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['userInfo']);
-      },
-    }
-  );
+  return useMutation({
+    mutationFn: (description: string) => updateUserDescription(description),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userInfo'] });
+    },
+  });
 };
 
-export const useGetUserInfo = (onSuccess?: (data: any) => void) => {
+export const useGetUserInfo = () => {
   return useQuery({
     queryKey: ['userInfo'],
-    queryFn: () => {
-      return getUserInfo();
-    },
+    queryFn: () => getUserInfo(),
     retry: 0,
-    onError: handleGetErrors,
-    onSuccess: onSuccess ? data => onSuccess(data) : undefined,
-    // 성능 최적화: 5분간 캐시 유지, 30분간 stale 데이터 사용
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 30,
+    // Note: handleGetErrors should probably be handled where the query is used or in global meta
+    // staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
 };

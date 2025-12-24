@@ -1,11 +1,10 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useGetPublicList, useGetList } from 'service/hooks/List';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import CardSkeleton from './Skeleton';
 import { useRouter } from 'next/router';
 import { BlogType } from 'service/api/tag/type';
-import { useRecoilState } from 'recoil';
-import { listIndexAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import Link from 'next/link';
 import Card from 'components/Shared/LogmeCard';
 import ListEmpty from '../../../Shared/common/ListEmpty';
@@ -66,7 +65,13 @@ const PostListView = ({
         setPosts(List.posts);
         setIsInitialLoading(false);
       } else {
-        setPosts(prev => [...prev, ...List.posts]);
+        setPosts(prev => {
+          const newPosts = List.posts.filter(
+            (newPost: BlogType) => !prev.some((prevPost: BlogType) => prevPost.id === newPost.id)
+          );
+          if (newPosts.length === 0) return prev;
+          return [...prev, ...newPosts];
+        });
         setIsLoadingMore(false);
       }
 
@@ -102,7 +107,7 @@ const PostListView = ({
     };
   }, [hasMore, isLoadingMore, isInitialLoading, loadMorePosts]);
 
-  const [, setListIndex] = useRecoilState(listIndexAtom);
+  const setListIndex = useStore((state) => state.setListIndexAtom);
   const saveListIndex = (params: number) => {
     setListIndex(params);
   };
@@ -124,9 +129,10 @@ const PostListView = ({
 
   const handlePrefetch = (id: number) => {
     if (mode === 'public') {
-      queryClient.prefetchQuery(['detail', id], () =>
-        import('service/api/detail').then(api => api.getDetail(id))
-      );
+      queryClient.prefetchQuery({
+        queryKey: ['detail', id],
+        queryFn: () => import('service/api/detail').then(api => api.getDetail(id))
+      });
     }
   };
 

@@ -19,7 +19,7 @@ const HomeSection = ({ description }: HomeSectionProps) => {
   }, [description]);
 
   const updateDescriptionMutation = useUpdateUserDescription();
-  const isSaving = updateDescriptionMutation.isLoading;
+  const isSaving = updateDescriptionMutation.isPending;
 
   const initialDescription = useMemo(() => description || '', [description]);
 

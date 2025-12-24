@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from 'flowbite-react';
 import { Folder } from 'service/api/tag/type';
 import { useGetFolders, useRemoveFolders } from 'service/hooks/List';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface TagRemoveModalProps {
   showModal: boolean;
@@ -32,7 +32,7 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({
     try {
       await removeTagsFolders.mutateAsync(undefined, {
         onSuccess: () => {
-          queryClient.invalidateQueries(['tagsFolder']);
+          queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
           setSelectFolder(0);
           setShowModal(false);
         },

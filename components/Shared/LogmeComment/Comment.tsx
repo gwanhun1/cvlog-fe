@@ -2,9 +2,8 @@ import React, { ChangeEvent, useState } from 'react';
 import { Avatar } from 'flowbite-react';
 import { CommentProps } from 'service/api/comment/type';
 import { useDeleteComment, useModifyComment } from 'service/hooks/Comment';
-import { useQueryClient } from 'react-query';
-import { useRecoilValue } from 'recoil';
-import { userIdAtom } from 'service/atoms/atoms';
+import { useQueryClient } from '@tanstack/react-query';
+import { useStore } from 'service/store/useStore';
 
 const CommentItem = ({
   id,
@@ -16,7 +15,7 @@ const CommentItem = ({
   const modifyMutate = useModifyComment(id);
   const removeMutate = useDeleteComment(id);
   const queryClient = useQueryClient();
-  const userInfo = useRecoilValue(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
 
   const [isEditing, setIsEditing] = useState(false);
   const [modifiedComment, setModifiedComment] = useState(content);
@@ -33,7 +32,7 @@ const CommentItem = ({
         modifyMutate.mutate(modifiedComment, {
           onSuccess: () => {
             queryClient.invalidateQueries({
-              predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+              predicate: (query) => query.queryKey[0] === 'commentList',
             });
             if (refetch) refetch();
             setIsEditing(false);
@@ -50,7 +49,7 @@ const CommentItem = ({
       removeMutate.mutate(undefined, {
         onSuccess: () => {
           queryClient.invalidateQueries({
-            predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+            predicate: (query) => query.queryKey[0] === 'commentList',
           });
           if (refetch) refetch();
         },

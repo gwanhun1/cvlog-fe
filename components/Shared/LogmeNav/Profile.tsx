@@ -2,12 +2,11 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { LogmeDropdown, DropdownHeader, DropdownItem } from 'components/Shared';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
-import { userIdAtom } from 'service/atoms/atoms';
-import { useRecoilValue } from 'recoil';
+import { useStore } from 'service/store/useStore';
 import { cn } from 'styles/utils';
 
 const NavProfile = ({ setAuthority, shrink = false }: Props) => {
-  const userInfo = useRecoilValue(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

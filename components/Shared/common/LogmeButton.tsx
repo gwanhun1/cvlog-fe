@@ -1,102 +1,9 @@
 import React from 'react';
-import { styled } from 'styled-components';
+import { cn } from 'styles/utils';
 
-interface BaseButtonProps {
-  size: 'big' | 'medium' | 'small';
-  variant: 'classic' | 'ghost' | 'error' | 'success' | 'disabled';
-  fullWidth?: boolean;
-}
-
-const getColor = (variant: string) => {
-  switch (variant) {
-    case 'error':
-      return {
-        bg: '#f05252',
-        border: '#d32f2f',
-        text: '#ffffff',
-        shadow: 'rgba(208, 2, 27, 0.5)',
-      };
-    case 'success':
-      return {
-        bg: '#0e9f6e',
-        border: '#0b7d56',
-        text: '#ffffff',
-        shadow: 'rgba(11, 125, 86, 0.5)',
-      };
-    case 'disabled':
-      return {
-        bg: '#d4d7dd',
-        border: '#c1c5cc',
-        text: '#788699',
-        shadow: 'rgba(120, 134, 153, 0.25)',
-      };
-    default:
-      return {
-        bg: '#2657A6',
-        border: '#1f4a8c',
-        text: '#ffffff',
-        shadow: 'rgba(38, 87, 166, 0.3)',
-      };
-  }
-};
-
-const BaseButton = styled.button.withConfig({
-  shouldForwardProp: prop => !['size', 'variant', 'fullWidth'].includes(prop),
-})<BaseButtonProps>`
-  width: ${({ size, fullWidth }) =>
-    fullWidth
-      ? '100%'
-      : size === 'big'
-      ? '144px'
-      : size === 'medium'
-      ? '114px'
-      : '80px'};
-  height: ${({ size }) =>
-    size === 'big' ? '54px' : size === 'medium' ? '44px' : '36px'};
-  border-radius: ${({ size }) =>
-    size === 'big' ? '16px' : size === 'medium' ? '12px' : '8px'};
-  font-size: ${({ size }) => (size === 'big' ? '18px' : '16px')};
-  font-weight: 600;
-  cursor: ${({ variant }) =>
-    variant === 'disabled' ? 'not-allowed' : 'pointer'};
-  transition: all 0.3s ease-in-out;
-  opacity: ${({ variant }) => (variant === 'disabled' ? '0.6' : '1')};
-  box-shadow: 0px 1px 2px ${({ variant }) => getColor(variant).shadow};
-  transform: translateY(0);
-  &:active {
-    box-shadow: 0px 1px 3px ${({ variant }) => getColor(variant).shadow};
-    transform: translateY(2px);
-  }
-`;
-
-const ClassicButton = styled(BaseButton)`
-  background-color: ${({ variant }) => getColor(variant).bg};
-  color: ${({ variant }) => getColor(variant).text};
-  border: none;
-  &:hover {
-    background-color: ${({ variant }) => getColor(variant).border};
-    box-shadow: 0px 2px 6px ${({ variant }) => getColor(variant).shadow};
-  }
-`;
-
-const GhostButton = styled(BaseButton)`
-  background-color: transparent;
-  color: ${({ variant }) => getColor(variant).border};
-  border: 1px solid ${({ variant }) => getColor(variant).border};
-  &:hover {
-    background-color: ${({ variant }) => getColor(variant).border};
-    color: ${({ variant }) => getColor(variant).text};
-  }
-`;
-
-export interface LogmeButtonProps {
+export interface LogmeButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size: 'big' | 'medium' | 'small';
   variant?: 'classic' | 'ghost' | 'error' | 'success' | 'disabled';
-  disabled?: boolean;
-  children: React.ReactNode;
-  className?: string;
-  style?: React.CSSProperties;
-  onClick?: React.MouseEventHandler<HTMLElement>;
   fullWidth?: boolean;
 }
 
@@ -109,21 +16,63 @@ const LogmeButton = ({
   style,
   onClick,
   fullWidth = false,
+  ...props
 }: LogmeButtonProps) => {
-  const buttonProps = {
-    size,
-    variant,
-    className,
-    style,
-    onClick,
-    disabled: disabled || variant === 'disabled',
-    fullWidth,
+  const isGhost = variant === 'ghost';
+  const isDisabled = disabled || variant === 'disabled';
+
+  const baseStyles = 'font-semibold transition-all duration-300 ease-in-out transform translate-y-0 active:translate-y-[2px] flex items-center justify-center';
+  
+  const sizeStyles = {
+    big: 'h-[54px] rounded-2xl text-[18px]',
+    medium: 'h-[44px] rounded-xl text-base',
+    small: 'h-[36px] rounded-lg text-base',
   };
 
-  return variant === 'ghost' ? (
-    <GhostButton {...buttonProps}>{children}</GhostButton>
-  ) : (
-    <ClassicButton {...buttonProps}>{children}</ClassicButton>
+  const widthStyles = fullWidth
+    ? 'w-full'
+    : size === 'big'
+    ? 'w-[144px]'
+    : size === 'medium'
+    ? 'w-[114px]'
+    : 'w-[80px]';
+
+  const getVariantClasses = () => {
+    if (isDisabled) {
+      return 'bg-[#d4d7dd] text-[#788699] cursor-not-allowed opacity-60 shadow-[0_1px_2px_rgba(120,134,153,0.25)] active:shadow-none active:translate-y-0';
+    }
+
+    if (isGhost) {
+      return 'bg-transparent text-[#1f4a8c] border border-[#1f4a8c] hover:bg-[#1f4a8c] hover:text-white shadow-[0_1px_2px_rgba(38,87,166,0.3)] active:shadow-[0_1px_3px_rgba(38,87,166,0.3)]';
+    }
+
+    switch (variant) {
+      case 'error':
+        return 'bg-[#f05252] text-white hover:bg-[#d32f2f] shadow-[0_1px_2px_rgba(208,2,27,0.5)] active:shadow-[0_1px_3px_rgba(208,2,27,0.5)] hover:shadow-[0_2px_6px_rgba(208,2,27,0.5)]';
+      case 'success':
+        return 'bg-[#0e9f6e] text-white hover:bg-[#0b7d56] shadow-[0_1px_2px_rgba(11,125,86,0.5)] active:shadow-[0_1px_3px_rgba(11,125,86,0.5)] hover:shadow-[0_2px_6px_rgba(11,125,86,0.5)]';
+      default:
+        return 'bg-[#2657A6] text-white hover:bg-[#1f4a8c] shadow-[0_1px_2px_rgba(38,87,166,0.3)] active:shadow-[0_1px_3px_rgba(38,87,166,0.3)] hover:shadow-[0_2px_6px_rgba(38,87,166,0.3)]';
+    }
+  };
+
+  return (
+    <button
+      className={cn(
+        baseStyles,
+        sizeStyles[size],
+        widthStyles,
+        getVariantClasses(),
+        className
+      )}
+      style={style}
+      onClick={onClick}
+      disabled={isDisabled}
+      type="button"
+      {...props}
+    >
+      {children}
+    </button>
   );
 };
 

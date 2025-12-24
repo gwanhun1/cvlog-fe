@@ -1,11 +1,11 @@
-import { useRecoilState } from 'recoil';
-import { userIdAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import LocalStorage from 'public/utils/Localstorage';
 import { useGetUserInfo } from 'service/hooks/Login';
 import { useEffect, useState, useRef } from 'react';
 
 const useIsLogin = () => {
-  const [userInfo, setUserInfo] = useRecoilState(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
+  const setUserInfo = useStore((state) => state.setUserIdAtom);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const hasFetched = useRef(false);

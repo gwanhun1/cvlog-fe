@@ -1,18 +1,19 @@
 import { Badge } from 'flowbite-react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { selectedTagListAtom, tagListAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { TagType } from 'service/api/detail/type';
 
 const TagHighlight = () => {
-  const tagList = useRecoilValue(tagListAtom);
-  const [selectTagList, setSelectTagList] = useRecoilState(selectedTagListAtom);
+  const tagList = useStore((state) => state.tagListAtom);
+  const selectTagList = useStore((state) => state.selectedTagListAtom);
+  const setSelectTagList = useStore((state) => state.setSelectedTagListAtom);
 
   // 태그 선택 처리 함수
   const handleTagSelect = (tag: TagType) => {
-    setSelectTagList(prev => {
-      const exists = prev.some(item => item.id === tag.id);
-      return exists ? prev.filter(item => item.id !== tag.id) : [...prev, tag];
-    });
+    const exists = selectTagList.some(item => item.id === tag.id);
+    const newList = exists
+      ? selectTagList.filter(item => item.id !== tag.id)
+      : [...selectTagList, tag];
+    setSelectTagList(newList);
   };
 
   return (

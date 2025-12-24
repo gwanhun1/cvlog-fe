@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import { Avatar } from 'flowbite-react';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CommentLayout from 'components/Shared/LogmeComment/CommentLayout';
 import LocalStorage from 'public/utils/Localstorage';
 import { useToast } from 'components/Shared';
@@ -26,38 +26,34 @@ const ReComment = ({ reComment }: ReCommentProps) => {
   const { showToast } = useToast();
 
   //삭제 기능
-  const deleteComment = useMutation(
-    (id: number) => {
+  const deleteComment = useMutation({
+    mutationFn: (id: number) => {
       return axios.delete(`api/${id}`, {
         data: { Authorization: accessToken },
       });
     },
-    {
-      onSuccess: () => {
-        showToast('삭제되었습니다.', 'success');
-      },
-      onError: ({ message }) => {
-        console.log(message);
-        showToast('삭제에 실패했습니다.', 'error');
-      },
-    }
-  );
+    onSuccess: () => {
+      showToast('삭제되었습니다.', 'success');
+    },
+    onError: ({ message }: any) => {
+      console.log(message);
+      showToast('삭제에 실패했습니다.', 'error');
+    },
+  });
 
   //수정 기능
-  const updateComment = useMutation(
-    (id: number) => {
+  const updateComment = useMutation({
+    mutationFn: (id: number) => {
       return axios.put(`api/${id}`, { data: { Authorization: accessToken } });
     },
-    {
-      onSuccess: () => {
-        showToast('수정되었습니다.', 'success');
-      },
-      onError: ({ message }) => {
-        console.log(message);
-        showToast('수정에 실패했습니다.', 'error');
-      },
-    }
-  );
+    onSuccess: () => {
+      showToast('수정되었습니다.', 'success');
+    },
+    onError: ({ message }: any) => {
+      console.log(message);
+      showToast('수정에 실패했습니다.', 'error');
+    },
+  });
 
   return (
     <>
@@ -95,7 +91,9 @@ const ReComment = ({ reComment }: ReCommentProps) => {
                       className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"
                       onClick={() => {
                         deleteComment.mutate(id);
-                        queryClient.invalidateQueries('commentList');
+                        queryClient.invalidateQueries({
+                          predicate: (query) => query.queryKey[0] === 'commentList',
+                        });
                       }}
                     >
                       삭제
@@ -116,7 +114,7 @@ const ReComment = ({ reComment }: ReCommentProps) => {
 
 export default ReComment;
 
-//FIXME 백엔드 통신 시 삭제 될 목 데이터입니다.
+
 
 const formatDate = (date: Date) =>
   Intl.DateTimeFormat('ko-KR', {

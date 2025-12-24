@@ -1,6 +1,6 @@
 import React, { useState, KeyboardEvent, useRef } from 'react';
 import { Button, Label, Modal } from 'flowbite-react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCreateFolders } from 'service/hooks/List';
 import { useToast } from 'components/Shared';
 
@@ -32,7 +32,7 @@ const TagAddModal = ({ showModal, setShowModal }: TagAddModalProps) => {
         { name: folderName },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries(['tagsFolder']);
+            queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
             inputRef.current!.value = '';
             setShowModal(false);
           },

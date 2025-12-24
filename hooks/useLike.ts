@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 
 interface LikeStatus {
@@ -21,38 +21,34 @@ export const useLike = (postId: number) => {
     data: likeStatus,
     isLoading: isQueryLoading,
     isError,
-  } = useQuery<LikeStatus>(
-    ['likes', postId],
-    async () => {
+  } = useQuery<LikeStatus>({
+    queryKey: ['likes', postId],
+    queryFn: async () => {
       if (!postId) {
         throw new Error('postId is required');
       }
       const response = await axios.get<LikeResponse>(`/likes/${postId}`);
       return response.data;
     },
-    {
-      enabled: !!postId,
-    }
-  );
+    enabled: !!postId,
+  });
 
-  const { mutate: toggleLike, isLoading: isMutationLoading } = useMutation<
+  const { mutate: toggleLike, isPending: isMutationLoading } = useMutation<
     LikeResponse,
     Error,
     LikeType
-  >(
-    type =>
+  >({
+    mutationFn: (type) =>
       axios
         .post<LikeResponse>(`/likes/${postId}`, { type })
         .then(res => res.data),
-    {
-      onSuccess: data => {
-        queryClient.setQueryData(['likes', postId], data);
-      },
-      onError: () => {
-        toast.error('좋아요 처리 중 오류가 발생했습니다.');
-      },
-    }
-  );
+    onSuccess: (data) => {
+      queryClient.setQueryData(['likes', postId], data);
+    },
+    onError: () => {
+      toast.error('좋아요 처리 중 오류가 발생했습니다.');
+    },
+  });
 
   const isLoading = isQueryLoading || isMutationLoading;
 

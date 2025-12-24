@@ -1,43 +1,9 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { BsBell } from 'react-icons/bs';
 import axios from 'axios';
 import NotificationTooltip from './NotificationTooltip';
 import { Notification } from './types';
-import { useQuery } from 'react-query';
-
-const AlarmContainer = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
-const AlarmButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  position: relative;
-  padding: 8px;
-
-  &:hover {
-    opacity: 0.7;
-  }
-`;
-
-const NotificationBadge = styled.span`
-  position: absolute;
-  top: 0;
-  right: 0;
-  background-color: #ff4757;
-  color: white;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 12px;
-  min-width: 8px;
-  height: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+import { useQuery } from '@tanstack/react-query';
 
 const LogmeAlarm = () => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -54,15 +20,20 @@ const LogmeAlarm = () => {
   const unreadCount = notifications?.filter(n => !n.read).length || 0;
 
   return (
-    <AlarmContainer>
-      <AlarmButton onClick={() => setShowTooltip(!showTooltip)}>
+    <div className="relative inline-block">
+      <button
+        className="bg-none border-none cursor-pointer relative p-2 hover:opacity-70"
+        onClick={() => setShowTooltip(!showTooltip)}
+      >
         <BsBell size={24} />
         {unreadCount > 0 && (
-          <NotificationBadge>{unreadCount}</NotificationBadge>
+          <span className="absolute top-0 right-0 bg-[#ff4757] text-white rounded-full px-[6px] py-[2px] text-xs min-w-[8px] h-[8px] flex items-center justify-center">
+            {unreadCount}
+          </span>
         )}
-      </AlarmButton>
+      </button>
       {showTooltip && <NotificationTooltip />}
-    </AlarmContainer>
+    </div>
   );
 };
 

@@ -10,14 +10,13 @@ import {
 } from '../../components/pages/github/ActivityStats';
 import RepoHighlights from '../../components/pages/github/RepoHighlights';
 import ProfileOverview from '../../components/pages/github/ProfileOverview';
-import { useRecoilValue } from 'recoil';
-import { userIdAtom } from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import { NextPage } from 'next';
 
 import AuthGuard from 'components/Shared/common/AuthGuard';
 
 const Github: NextPage = () => {
-  const userInfo = useRecoilValue(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
 
   if (!userInfo) {
     return (

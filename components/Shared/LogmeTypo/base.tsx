@@ -1,10 +1,11 @@
-import styled from 'styled-components';
+import { HTMLAttributes } from 'react';
+import { cn } from 'styles/utils';
 
 export const Typography = {
-  Title: styled.h1`
-    letter-spacing: -0.01;
-  `,
-  Text: styled.span`
-    letter-spacing: -0.01;
-  `,
+  Title: ({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) => (
+    <h1 className={cn('tracking-[-0.01em]', className)} {...props} />
+  ),
+  Text: ({ className, ...props }: HTMLAttributes<HTMLSpanElement>) => (
+    <span className={cn('tracking-[-0.01em]', className)} {...props} />
+  ),
 };

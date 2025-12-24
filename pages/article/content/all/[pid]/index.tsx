@@ -3,14 +3,14 @@ import { useRouter } from 'next/router';
 import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import axios from 'axios';
 import { useToast } from 'components/Shared';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import Head from 'next/head';
 import removeMarkdown from 'markdown-to-text';
 import CommentBox from 'components/Shared/LogmeComment';
 import { useGetCommentList } from 'service/hooks/Comment';
 import {
-  DeleteDetail,
+  useDeleteDetail,
   useGetDetail,
   usePatchDetail,
 } from 'service/hooks/Detail';
@@ -20,12 +20,7 @@ import {
   PostNavigation,
 } from '../../../../../components/pages/article/content';
 import { Badge } from 'flowbite-react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  selectedTagListAtom,
-  tagListAtom,
-  userIdAtom,
-} from 'service/atoms/atoms';
+import { useStore } from 'service/store/useStore';
 import type {
   ContentData,
   TagType,
@@ -90,23 +85,24 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const pid = propsPid || (router.query.pid as string);
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
-  const userInfo = useRecoilValue(userIdAtom);
+  const userInfo = useStore((state) => state.userIdAtom);
   const { showToast, showConfirm } = useToast();
-  const [_, setTagList] = useRecoilState(tagListAtom);
+  const setTagList = useStore((state) => state.setTagListAtom);
+  const selectTagList = useStore((state) => state.selectedTagListAtom);
+  const setSelectTagList = useStore((state) => state.setSelectedTagListAtom);
+
   const {
     data: detailData,
     isLoading,
     refetch: detailRefetch,
-  } = useGetDetail(
-    parseInt(pid),
-    data => {
-      if (data?.post) {
-        setPatchMessage(data.post.public_status);
-        setTagList(data.post.tags);
-      }
-    },
-    initialData
-  );
+  } = useGetDetail(parseInt(pid), initialData);
+
+  useEffect(() => {
+    if (detailData?.post) {
+      setPatchMessage(detailData.post.public_status);
+      setTagList(detailData.post.tags);
+    }
+  }, [detailData, setTagList]);
 
   const { data: commentData, refetch: commentRefetch } = useGetCommentList(
     parseInt(pid)
@@ -125,10 +121,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'publicList',
+          predicate: (query) => query.queryKey[0] === 'publicList',
         }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'list',
+          predicate: (query) => query.queryKey[0] === 'list',
         }),
       ]);
 
@@ -143,17 +139,17 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     }
   };
 
-  const deleteContent = DeleteDetail(parseInt(pid));
+  const deleteContent = useDeleteDetail(parseInt(pid));
   const deleteCheck = () => {
     showConfirm('삭제하시겠습니까?', async () => {
       await deleteContent.mutate();
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'list',
+          predicate: (query) => query.queryKey[0] === 'list',
         }),
         queryClient.invalidateQueries({
-          predicate: ({ queryKey }) => queryKey[0] === 'publicList',
+          predicate: (query) => query.queryKey[0] === 'publicList',
         }),
       ]);
       showToast('삭제되었습니다.', 'success');
@@ -170,13 +166,12 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     // 컴포넌트가 마운트될 때 react-query의 staleTime/cacheTime 전략에 따라 필요 시 자동으로 최신화됩니다.
   }, [pid]);
 
-  const [selectTagList, setSelectTagList] = useRecoilState(selectedTagListAtom);
-
   const handleTagSelect = (tag: TagType) => {
-    setSelectTagList(prev => {
-      const exists = prev.some(item => item.id === tag.id);
-      return exists ? prev.filter(item => item.id !== tag.id) : [...prev, tag];
-    });
+    const exists = selectTagList.some(item => item.id === tag.id);
+    const newList = exists
+      ? selectTagList.filter(item => item.id !== tag.id)
+      : [...selectTagList, tag];
+    setSelectTagList(newList);
   };
 
   const resolvedDetailData = initialData || detailData;
