@@ -3,6 +3,7 @@ import { useGetList } from 'service/hooks/List';
 import MypageTaskSkeleton from './Skeleton';
 import { formatRelativeTime } from 'utils/timer';
 import ActivityRow from './ActivityRow';
+import { BlogType } from 'service/api/tag/type';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -25,7 +26,7 @@ const RecentActivity: React.FC = () => {
     <section className="p-8 bg-white rounded-xl border border-blue-100 shadow-sm">
       <h2 className="mb-6 text-xl font-semibold text-gray-900">최근 활동</h2>
       <div className="space-y-4">
-        {displayedActivities.map(activity => (
+        {displayedActivities.map((activity: BlogType) => (
           <ActivityRow
             key={activity.id}
             title={activity.title}
