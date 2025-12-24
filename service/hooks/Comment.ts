@@ -17,7 +17,9 @@ export const usePostNewComment = () => {
     },
     {
       onSuccess: () => {
-        return queryClient.invalidateQueries();
+        return queryClient.invalidateQueries({
+          predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+        });
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
@@ -34,7 +36,9 @@ export const useModifyComment = (params: number) => {
     },
     {
       onSuccess: () => {
-        return queryClient.invalidateQueries(['commentList']);
+        return queryClient.invalidateQueries({
+          predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+        });
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
@@ -51,7 +55,9 @@ export const useDeleteComment = (params: number) => {
     },
     {
       onSuccess: () => {
-        return queryClient.invalidateQueries(['commentList']);
+        return queryClient.invalidateQueries({
+          predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+        });
       },
       onError: (error: ErrorResponse) => {
         handleMutateErrors(error);
@@ -62,7 +68,7 @@ export const useDeleteComment = (params: number) => {
 
 export const useGetCommentList = (params: number) => {
   return useQuery({
-    queryKey: ['commentList'],
+    queryKey: ['commentList', params],
     queryFn: () => {
       return getCommentList(params);
     },

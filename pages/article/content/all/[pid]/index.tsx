@@ -114,8 +114,15 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       });
       setPatchMessage(newPublicStatus);
 
-      await queryClient.invalidateQueries(['detail', pid]);
-      await queryClient.invalidateQueries('publicPosts');
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
+        queryClient.invalidateQueries({
+          predicate: ({ queryKey }) => queryKey[0] === 'publicList',
+        }),
+        queryClient.invalidateQueries({
+          predicate: ({ queryKey }) => queryKey[0] === 'list',
+        }),
+      ]);
 
       if (!newPublicStatus) {
         showToast('이 게시물은 "나만보기"가 설정 되었습니다.', 'success');
@@ -132,8 +139,15 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const deleteCheck = () => {
     showConfirm('삭제하시겠습니까?', async () => {
       await deleteContent.mutate();
-      await queryClient.invalidateQueries(['tagsFolder']);
-      await queryClient.invalidateQueries('list');
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
+        queryClient.invalidateQueries({
+          predicate: ({ queryKey }) => queryKey[0] === 'list',
+        }),
+        queryClient.invalidateQueries({
+          predicate: ({ queryKey }) => queryKey[0] === 'publicList',
+        }),
+      ]);
       showToast('삭제되었습니다.', 'success');
       router.push('/article');
     });

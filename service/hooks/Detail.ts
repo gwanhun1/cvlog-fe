@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import {
   deleteDetail,
   fetchCreateModifyPost,
@@ -76,12 +76,18 @@ export const usePatchDetail = () => {
 
 export const useModifyPost = (pid: number) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   return useMutation<CreateNewPostReq, ErrorResponse, CreateNewPostReq>(
     (params: CreateNewPostReq) => {
       return fetchCreateModifyPost(params, pid);
     },
     {
       onSuccess: async () => {
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['list'] }),
+          queryClient.invalidateQueries({ queryKey: ['publicList'] }),
+          queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
+        ]);
         await router.push('/article');
       },
       retry: 0,

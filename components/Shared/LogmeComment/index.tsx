@@ -12,7 +12,9 @@ const CommentBox = ({ pid }: { pid: string }) => {
   const queryClient = useQueryClient();
 
   const forceRefresh = React.useCallback(async () => {
-    await queryClient.invalidateQueries(['commentList']);
+    await queryClient.invalidateQueries({
+      predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+    });
     await refetch();
     try {
       const response = await fetch(`/api/comments/${pid}`);

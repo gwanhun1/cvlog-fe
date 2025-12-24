@@ -32,7 +32,9 @@ const CommentItem = ({
       if (window.confirm('정말 수정합니까?')) {
         modifyMutate.mutate(modifiedComment, {
           onSuccess: () => {
-            queryClient.invalidateQueries(['commentList']);
+            queryClient.invalidateQueries({
+              predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+            });
             if (refetch) refetch();
             setIsEditing(false);
           },
@@ -47,7 +49,9 @@ const CommentItem = ({
     if (window.confirm('정말 삭제합니까?')) {
       removeMutate.mutate(undefined, {
         onSuccess: () => {
-          queryClient.invalidateQueries(['commentList']);
+          queryClient.invalidateQueries({
+            predicate: ({ queryKey }) => queryKey[0] === 'commentList',
+          });
           if (refetch) refetch();
         },
       });
