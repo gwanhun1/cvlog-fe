@@ -27,19 +27,18 @@ module.exports = {
         process.env.NEXT_PUBLIC_API_URL ||
         'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
-      // 여러 페이지의 공개 게시물 수집 (최대 10페이지)
+      // 여러 페이지의 공개 게시물 수집 (최대 50페이지)
       const allPosts = [];
-      for (let page = 1; page <= 10; page++) {
+      for (let page = 1; page <= 50; page++) {
         try {
           const response = await axios.get(
             `${API_URL}/posts/public/page/${page}`,
             {
               headers: { 'Cache-Control': 'no-cache' },
-              timeout: 10000,
+              timeout: 15000, // 타임아웃 약간 증가
             }
           );
 
-          // API 응답: { success: true, data: { posts: [...], maxPage: N } }
           const responseData = response.data;
           const posts =
             responseData?.data?.posts ||
@@ -53,13 +52,14 @@ module.exports = {
           }
 
           allPosts.push(...posts);
-          console.log(`[Sitemap] Page ${page}: ${posts.length} posts`);
+          console.log(`[Sitemap] Page ${page}: ${posts.length} posts collected`);
 
           // maxPage 확인하여 불필요한 요청 방지
-          const maxPage = responseData?.data?.maxPage || 10;
+          const maxPage = responseData?.data?.maxPage || 1;
           if (page >= maxPage) break;
         } catch (pageError) {
           console.log(`[Sitemap] Page ${page} error:`, pageError.message);
+          // 백엔드가 잠시 다운된 경우를 대비해 한 번은 더 시도하거나 종료
           break;
         }
       }

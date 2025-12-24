@@ -25,8 +25,11 @@ export default function Document() {
         />
         <meta property="og:locale" content="ko_KR" />
 
-        {/* Google Search Console 인증용 - 등록 후 실제 코드로 교체 필요 */}
-        {/* <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" /> */}
+        {/* Google Search Console 인증용 */}
+        <meta
+          name="google-site-verification"
+          content="ZOHJ3gbgRZgnkzpT6EYDWaCe1oY7ExTZyvtzpr4S2-E"
+        />
       </Head>
       <body>
         <Main />
