@@ -2,7 +2,7 @@ const axios = require('axios');
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://logme.shop',
+  siteUrl: 'https://www.logme.shop',
   generateRobotsTxt: false, // public/robots.txt 직접 관리
   exclude: [
     '/api/*',
@@ -14,7 +14,6 @@ module.exports = {
     '/article/new/*',
     '/github',
     '/github/*',
-    '/SafeHydrate',
   ],
   generateIndexSitemap: false,
   changefreq: 'daily',

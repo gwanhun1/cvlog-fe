@@ -11,7 +11,7 @@ import 'styles/globals.css';
 import 'styles/markdown.module.scss';
 import dynamic from 'next/dynamic';
 import ErrorBoundary from 'components/Shared/common/ErrorPage';
-import { SafeHydrate } from './SafeHydrate';
+import { SafeHydrate } from 'components/Shared/common/SafeHydrate';
 import AuthGuard from 'components/Shared/common/AuthGuard';
 import Head from 'next/head';
 
