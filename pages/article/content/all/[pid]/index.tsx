@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { GetServerSideProps, NextPage } from 'next';
+import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import axios from 'axios';
 import { useToast } from 'components/Shared';
 import { useQueryClient } from 'react-query';
@@ -41,7 +41,14 @@ interface DetailProps {
   };
 }
 
-export const getServerSideProps: GetServerSideProps = async context => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [], // 빌드 시간을 줄이기 위해 빈 배열로 설정
+    fallback: 'blocking', // 새로운 페이지는 요청 시점에 실시간 생성 (ISR)
+  };
+};
+
+export const getStaticProps: GetStaticProps = async context => {
   const pid = context.params?.pid;
 
   if (!pid || Array.isArray(pid)) {
@@ -70,9 +77,10 @@ export const getServerSideProps: GetServerSideProps = async context => {
         pid,
         initialData: data.data,
       },
+      revalidate: 60, // 60초마다 데이터 갱신 여부 확인 (ISR)
     };
   } catch (error) {
-    console.error('[SSR] post detail fetch error', error);
+    console.error('[ISR] post detail fetch error', error);
     return { notFound: true };
   }
 };
@@ -158,9 +166,9 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   };
 
   useEffect(() => {
-    detailRefetch();
-    commentRefetch();
-  }, [pid, detailRefetch, commentRefetch]);
+    // getStaticProps를 통해 이미 데이터를 받았으므로, 마운트 시점의 강제 리페칭을 제거하여 속도 개선
+    // 컴포넌트가 마운트될 때 react-query의 staleTime/cacheTime 전략에 따라 필요 시 자동으로 최신화됩니다.
+  }, [pid]);
 
   const [selectTagList, setSelectTagList] = useRecoilState(selectedTagListAtom);
 

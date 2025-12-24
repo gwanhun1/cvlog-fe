@@ -15,9 +15,12 @@ import {
   UpdateForm,
   PutTagsFolderRes,
   Folder,
-} from 'service/api/tag/type';
-
-export const useGetList = (page: number, userId?: number, enabled = true) => {
+} from 'service/api/tag/type';export const useGetList = (
+  page: number,
+  userId?: number,
+  enabled = true,
+  initialData?: any
+) => {
   return useQuery({
     queryKey: ['list', page, userId],
     queryFn: () => {
@@ -26,18 +29,24 @@ export const useGetList = (page: number, userId?: number, enabled = true) => {
     onError: handleGetErrors,
     retry: 0,
     enabled,
+    initialData,
     staleTime: 1000 * 60 * 2,
     cacheTime: 1000 * 60 * 10,
   });
 };
 
-export const useGetPublicList = (page: number, enabled = true) => {
+export const useGetPublicList = (
+  page: number,
+  enabled = true,
+  initialData?: any
+) => {
   return useQuery({
     queryKey: ['publicList', page],
     queryFn: () => getPublicList(page),
     onError: handleGetErrors,
     retry: 0,
     enabled,
+    initialData,
     staleTime: 1000 * 60 * 2,
     cacheTime: 1000 * 60 * 10,
   });

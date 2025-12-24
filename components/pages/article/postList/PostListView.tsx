@@ -31,10 +31,12 @@ const PostListView = ({
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadingRef = useRef<HTMLDivElement>(null);
-
-  // mode에 따라 필요한 훅만 호출 (성능 최적화)
-  const publicList = useGetPublicList(page, mode === 'public');
+  const loadingRef = useRef<HTMLDivElement>(null);  // mode에 따라 필요한 훅만 호출하며, 서버에서 받은 initialPosts를 초기값으로 활용
+  const publicList = useGetPublicList(
+    page,
+    mode === 'public',
+    mode === 'public' ? { posts: initialPosts, maxPage: 1 } : undefined
+  );
   const myList = useGetList(page, undefined, mode === 'my');
   const List = mode === 'public' ? publicList.data : myList.data;
 

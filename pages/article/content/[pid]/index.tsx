@@ -20,7 +20,7 @@ import { Badge } from 'flowbite-react';
 import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { TagType } from 'service/api/detail/type';
-import { NextPage } from 'next';
+import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
 
 interface DetailProps {
   pid: string;
@@ -110,9 +110,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   };
 
   useEffect(() => {
-    getMyDetail.refetch();
-    commentList.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // getStaticProps를 통해 이미 데이터를 받았으므로 마운트 시점의 강제 리페칭 제거
   }, [pid]);
 
   return (
@@ -288,65 +286,44 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   );
 };
 
-export default Detail;
-
-export const getStaticPaths = async () => {
-  try {
-    // API에서 모든 공개 게시물 가져오기 시도
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
-    const response = await fetch(`${API_URL}/post/posts/public`);
-    const posts = await response.json();
-
-    // 공개 게시물의 경로 생성
-    const paths = posts.map((post: any) => ({
-      params: { pid: post.id.toString() },
-    }));
-
-    return {
-      paths,
-      fallback: 'blocking', // 경로가 없으면 서버에서 생성 시도
-    };
-  } catch (error) {
-    console.error('Error fetching paths:', error);
-    return {
-      paths: [],
-      fallback: 'blocking',
-    };
-  }
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
 };
 
-export const getStaticProps = async ({ params }: any) => {
+export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   const pid = params?.pid;
 
   if (!pid) {
-    return {
-      notFound: true,
-    };
+    return { notFound: true };
   }
 
   try {
-    // 게시물 데이터 미리 가져오기 시도
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.logme.shop';
-    const response = await fetch(`${API_URL}/post/post/${pid}`);
-    const postData = await response.json();
+    const API_URL =
+      process.env.NODE_ENV === 'production'
+        ? 'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app'
+        : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
-    // 미리 가져온 데이터를 함께 전달 (페이지 초기 로딩 시 사용)
+    const response = await fetch(`${API_URL}/posts/${pid}`);
+    const responseData = await response.json();
+
+    if (!responseData?.data) {
+      return { notFound: true };
+    }
+
     return {
       props: {
         pid,
-        initialData: postData,
+        initialData: responseData.data,
       },
-      // 1시간마다 재생성 (백엔드가 오프라인일 때도 캐시된 버전 제공)
-      revalidate: 3600,
+      revalidate: 60,
     };
   } catch (error) {
     console.error(`Error fetching post ${pid}:`, error);
-    return {
-      props: {
-        pid,
-        initialData: null,
-      },
-      revalidate: 3600,
-    };
+    return { notFound: true };
   }
 };
+
+export default Detail;
