@@ -4,8 +4,9 @@ import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
 import { userIdAtom } from 'service/atoms/atoms';
 import { useRecoilValue } from 'recoil';
+import { cn } from 'styles/utils';
 
-const NavProfile = ({ setAuthority }: Props) => {
+const NavProfile = ({ setAuthority, shrink = false }: Props) => {
   const userInfo = useRecoilValue(userIdAtom);
   const [mounted, setMounted] = useState(false);
 
@@ -32,7 +33,10 @@ const NavProfile = ({ setAuthority }: Props) => {
           <img
             src={userInfo.profile_image || '/images/github.png'}
             alt="User"
-            className="w-10 h-10 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-ftBlue/30 transition-all"
+            className={cn(
+              'rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-ftBlue/30 transition-all duration-300',
+              shrink ? 'w-8 h-8' : 'w-10 h-10'
+            )}
           />
         }
         align="right"
@@ -61,4 +65,5 @@ export default NavProfile;
 
 interface Props {
   setAuthority: Dispatch<SetStateAction<boolean>>;
+  shrink?: boolean;
 }

@@ -13,6 +13,8 @@ interface TOCItem {
   level: number;
 }
 
+import { CiCircleChevUp, CiCircleChevDown } from 'react-icons/ci';
+
 const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   const [tocItems, setTocItems] = useState<TOCItem[]>([]);
   const [activeId, setActiveId] = useState<string>('');
@@ -72,14 +74,22 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
       element: document.getElementById(item.id),
     }));
 
-    const adjustedScrollPosition = scrollPosition + 150;
+    // 현재 스크롤 위치에 따른 헤더 높이 반영
+    const headerHeight = window.scrollY > 50 ? 48 : 96;
+    const gap = 15; 
+    const adjustedScrollPosition = scrollPosition + headerHeight + gap + 10; // 인지 범위를 고려한 보정치
     let currentId = headingElements[0]?.id || '';
 
     for (const { id, element } of headingElements) {
-      if (element && element.offsetTop <= adjustedScrollPosition) {
-        currentId = id;
-      } else {
-        break;
+      if (element) {
+        // offsetTop 대신 절대 좌표 사용
+        const elementAbsoluteTop =
+          element.getBoundingClientRect().top + window.scrollY;
+        if (elementAbsoluteTop <= adjustedScrollPosition) {
+          currentId = id;
+        } else {
+          break;
+        }
       }
     }
 
@@ -104,11 +114,18 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
     setActiveId(headingId);
     activeIdRef.current = headingId;
 
-    const headerOffset = -220;
-    const elementPosition = element.offsetTop;
+    // 문서 전체에서의 요소 절대 위치 계산
+    const elementAbsoluteTop =
+      element.getBoundingClientRect().top + window.scrollY;
+
+    // 이동할 지점이 최상단 부근이면 큰 헤더(96px), 아니면 작은 헤더(48px) 기준
+    const isTopContent = elementAbsoluteTop < 200;
+    const headerHeight = isTopContent ? 96 : 48;
+    const gap = 15; // 40px에서 15px 줄여서 더 밀착되게 조정
+    const offset = headerHeight + gap;
 
     window.scrollTo({
-      top: elementPosition - headerOffset,
+      top: elementAbsoluteTop - offset,
       behavior: 'smooth',
     });
 
@@ -117,38 +134,69 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
     }, 700);
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'smooth',
+    });
+  };
+
   return (
     <div className="">
       <div className="tablet:fixed tablet:left-1/2 tablet:translate-x-[480px] tablet:w-52 tablet:top-40">
-        {tocItems.length > 0 && (
-          <nav className="hidden desktop:block tablet:h-fit tablet:border-l tablet:border-gray-200 max-h-[80vh] overflow-y-auto">
-            <ul className="space-y-2 pl-4">
-              {tocItems.map(item => (
-                <li
-                  key={item.id}
-                  style={{ paddingLeft: `${(item.level - 1) * 1}rem` }}
-                  className={cn(
-                    'cursor-pointer hover:text-blue-500 transition-colors duration-200 py-1 text-sm truncate whitespace-nowrap',
-                    activeId === item.id
-                      ? 'text-blue-700 font-bold border-l-2 border-blue-500'
-                      : 'text-gray-600'
-                  )}
-                  onClick={() => scrollToHeading(item.id)}
-                >
-                  {item.text}
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
-        <div
-          className={cn(
-            'pl-4 transition-opacity duration-300',
-            tocItems.length > 0 ? 'mt-4' : '',
-            showTagHighlight ? 'opacity-100' : 'opacity-0 hidden'
+        <div className="hidden desktop:flex flex-col gap-5">
+          {/* 맨 위로 버튼 */}
+          <button
+            onClick={scrollToTop}
+            className="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition-all duration-200 text-xs font-bold group ml-4"
+          >
+            <CiCircleChevUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform duration-300" />
+            <span className="tracking-tighter">맨 위로</span>
+          </button>
+
+          {tocItems.length > 0 && (
+            <nav className="tablet:h-fit tablet:border-l tablet:border-gray-200 max-h-[60vh] overflow-y-auto scrollbar-hide">
+              <ul className="space-y-2 pl-4">
+                {tocItems.map(item => (
+                  <li
+                    key={item.id}
+                    style={{ paddingLeft: `${(item.level - 1) * 1}rem` }}
+                    className={cn(
+                      'cursor-pointer hover:text-blue-500 transition-colors duration-200 py-1 text-sm truncate whitespace-nowrap',
+                      activeId === item.id
+                        ? 'text-blue-700 font-bold border-l-2 border-blue-500'
+                        : 'text-gray-600'
+                    )}
+                    onClick={() => scrollToHeading(item.id)}
+                  >
+                    {item.text}
+                  </li>
+                ))}
+              </ul>
+            </nav>
           )}
-        >
-          <TagHighlight />
+
+          {/* 맨 아래로 버튼 */}
+          <button
+            onClick={scrollToBottom}
+            className="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition-all duration-200 text-xs font-bold group ml-4"
+          >
+            <CiCircleChevDown className="w-6 h-6 group-hover:translate-y-1 transition-transform duration-300" />
+            <span className="tracking-tighter">맨 아래로</span>
+          </button>
+
+          <div
+            className={cn(
+              'pl-4 transition-opacity duration-300',
+              showTagHighlight ? 'opacity-100' : 'opacity-0 hidden'
+            )}
+          >
+            <TagHighlight />
+          </div>
         </div>
       </div>
     </div>

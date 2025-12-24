@@ -6,17 +6,20 @@ import Link from 'next/link';
 import NavPriofile from './Profile';
 import { useRouter } from 'next/router';
 import Loader from '../common/Loader';
+import { cn } from 'styles/utils';
 
 interface DesktopNavActionsProps {
   isAuthenticated: boolean;
   isLoading: boolean;
   setAuthority: Dispatch<SetStateAction<boolean>>;
+  shrink?: boolean;
 }
 
 const DesktopNavActions = ({
   isAuthenticated,
   isLoading,
   setAuthority,
+  shrink = false,
 }: DesktopNavActionsProps) => {
   const router = useRouter();
   const { showToast } = useToast();
@@ -29,20 +32,32 @@ const DesktopNavActions = ({
     return (
       <div className="hidden gap-4 items-center tablet:flex">
         <button
-          className="transition-all duration-200 ease-in-out hover:-translate-y-0.5 rounded-full p-2 bg-bgWhite hover:bg-ftBlue/10"
+          className={cn(
+            'transition-all duration-300 ease-in-out hover:-translate-y-0.5 rounded-full bg-bgWhite hover:bg-ftBlue/10',
+            shrink ? 'p-1.5' : 'p-2'
+          )}
           onClick={() => router.push('/mypage')}
         >
-          <CiSettings className="w-7 h-7" color="#2657A6" />
+          <CiSettings
+            className={cn('transition-all duration-300', shrink ? 'w-5 h-5' : 'w-7 h-7')}
+            color="#2657A6"
+          />
         </button>
 
         <button
-          className="transition-all duration-200 ease-in-out hover:-translate-y-0.5 rounded-full p-2 bg-bgWhite hover:bg-ftBlue/10"
+          className={cn(
+            'transition-all duration-300 ease-in-out hover:-translate-y-0.5 rounded-full bg-bgWhite hover:bg-ftBlue/10',
+            shrink ? 'p-1.5' : 'p-2'
+          )}
           onClick={() => showToast('v1.1에서 만나요 🥰', 'info')}
         >
-          <CiBellOn className="w-7 h-7" color="#2657A6" />
+          <CiBellOn
+            className={cn('transition-all duration-300', shrink ? 'w-5 h-5' : 'w-7 h-7')}
+            color="#2657A6"
+          />
         </button>
 
-        <NavPriofile setAuthority={setAuthority} />
+        <NavPriofile setAuthority={setAuthority} shrink={shrink} />
       </div>
     );
   }
@@ -52,11 +67,12 @@ const DesktopNavActions = ({
       <Link href="/login" prefetch={true}>
         <Shared.LogmeButton
           variant="classic"
-          size="small"
+          size={shrink ? 'small' : 'small'} // Already small, maybe custom size needed if it's too big
+          className={shrink ? 'px-3 py-1' : ''}
           onClick={() => setAuthority(true)}
         >
           <Shared.LogmeHeadline
-            type="medium"
+            type={shrink ? 'small' : 'medium'}
             fontStyle="semibold"
             className="text-white"
           >
