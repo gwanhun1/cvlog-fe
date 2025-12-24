@@ -26,16 +26,16 @@ const PostListView = ({
   const [posts, setPosts] = useState<BlogType[]>(initialPosts || []);
   const [hasMore, setHasMore] = useState<boolean>(true);
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(
-    mode === 'public' ? !(initialPosts && initialPosts.length > 0) : true
+    mode === 'public' ? !(initialPosts && initialPosts.length > 0) : true,
   );
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadingRef = useRef<HTMLDivElement>(null);  // mode에 따라 필요한 훅만 호출하며, 서버에서 받은 initialPosts를 초기값으로 활용
+  const loadingRef = useRef<HTMLDivElement>(null); // mode에 따라 필요한 훅만 호출하며, 서버에서 받은 initialPosts를 초기값으로 활용
   const publicList = useGetPublicList(
     page,
     mode === 'public',
-    mode === 'public' ? { posts: initialPosts, maxPage: 1 } : undefined
+    mode === 'public' ? { posts: initialPosts, maxPage: 1 } : undefined,
   );
   const myList = useGetList(page, undefined, mode === 'my');
   const List = mode === 'public' ? publicList.data : myList.data;
@@ -67,7 +67,8 @@ const PostListView = ({
       } else {
         setPosts(prev => {
           const newPosts = List.posts.filter(
-            (newPost: BlogType) => !prev.some((prevPost: BlogType) => prevPost.id === newPost.id)
+            (newPost: BlogType) =>
+              !prev.some((prevPost: BlogType) => prevPost.id === newPost.id),
           );
           if (newPosts.length === 0) return prev;
           return [...prev, ...newPosts];
@@ -90,7 +91,7 @@ const PostListView = ({
           loadMorePosts();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     observerRef.current = observer;
@@ -107,7 +108,7 @@ const PostListView = ({
     };
   }, [hasMore, isLoadingMore, isInitialLoading, loadMorePosts]);
 
-  const setListIndex = useStore((state) => state.setListIndexAtom);
+  const setListIndex = useStore(state => state.setListIndexAtom);
   const saveListIndex = (params: number) => {
     setListIndex(params);
   };
@@ -131,16 +132,34 @@ const PostListView = ({
     if (mode === 'public') {
       queryClient.prefetchQuery({
         queryKey: ['detail', id],
-        queryFn: () => import('service/api/detail').then(api => api.getDetail(id))
+        queryFn: () =>
+          import('service/api/detail').then(api => api.getDetail(id)),
       });
     }
   };
+
+  const initialSkeleton = (
+    <div className="w-full masonry-grid">
+      {[...Array(6)].map((_, index) => (
+        <div
+          key={`initial-skeleton-${index}`}
+          className="masonry-item break-inside-avoid"
+        >
+          <div className="block h-full">
+            <CardSkeleton />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <>
       <div className="flex flex-col gap-4">
         <div className={`${posts.length === 0 ? 'w-full' : 'masonry-grid'}`}>
-          {posts.length > 0 ? (
+          {isInitialLoading ? (
+            initialSkeleton
+          ) : posts.length > 0 ? (
             <>
               {posts.map(({ id, title, content, tags, updated_at }, index) => (
                 <div key={id} className="masonry-item break-inside-avoid">
