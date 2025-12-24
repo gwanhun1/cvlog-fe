@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useGetPublicList, useGetList } from 'service/hooks/List';
+import { useQueryClient } from 'react-query';
 import CardSkeleton from './Skeleton';
 import { useRouter } from 'next/router';
 import { BlogType } from 'service/api/tag/type';
@@ -119,19 +120,15 @@ const PostListView = ({
   // mode에 따른 끝 메시지 색상
   const endMessageClass = mode === 'public' ? 'text-gray-300' : 'text-ftGray';
 
-  if (isInitialLoading) {
-    return (
-      <div className="masonry-grid">
-        {[...Array(6)].map((_, index) => (
-          <div key={index} className="masonry-item break-inside-avoid">
-            <div className="block h-full">
-              <CardSkeleton />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
+  const queryClient = useQueryClient();
+
+  const handlePrefetch = (id: number) => {
+    if (mode === 'public') {
+      queryClient.prefetchQuery(['detail', id], () =>
+        import('service/api/detail').then(api => api.getDetail(id))
+      );
+    }
+  };
 
   return (
     <>
@@ -144,6 +141,7 @@ const PostListView = ({
                   <Link
                     href={getPostLink(id)}
                     onClick={() => saveListIndex(index)}
+                    onMouseEnter={() => handlePrefetch(id)}
                     className="block h-full"
                     {...(mode === 'public' && {
                       title: title,

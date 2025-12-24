@@ -115,22 +115,15 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     checkAuthStatus();
   }, [router.pathname, isPublicRoute, checkAuthStatus]);
 
-  if (isLoading) {
+  if (isLoading && !isPublicRoute) {
     return <LoaderAnimation />;
   }
 
-  if (
-    !isAuthenticated &&
-    !publicRoutes.some(route =>
-      typeof route === 'string'
-        ? route === router.pathname
-        : route.test(router.pathname)
-    )
-  ) {
-    return null;
-  }
-
-  return <>{children}</>;
+  return (
+    <div style={{ opacity: isLoading ? 0.7 : 1, transition: 'opacity 0.2s' }}>
+      {children}
+    </div>
+  );
 };
 
 export default AuthGuard;

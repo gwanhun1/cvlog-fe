@@ -1,38 +1,48 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
 import Layout from 'components/Layout/layout';
-import Nav from 'components/Shared/LogmeNav';
-import { ToastProvider } from 'components/Shared';
+import { ToastProvider, ErrorBoundary, SafeHydrate } from 'components/Shared';
 import 'styles/globals.css';
 import type { AppProps } from 'next/app';
-import 'styles/globals.css';
 import 'styles/markdown.module.scss';
 import dynamic from 'next/dynamic';
-import ErrorBoundary from 'components/Shared/common/ErrorPage';
-import { SafeHydrate } from 'components/Shared/common/SafeHydrate';
 import AuthGuard from 'components/Shared/common/AuthGuard';
 import Head from 'next/head';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
 
-const ClientNav = dynamic(() => Promise.resolve(Nav), { ssr: false });
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, 
+    },
+  },
+});
+
+const ClientNav = dynamic(() => import('components/Shared/LogmeNav'), {
+  ssr: true, 
+});
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: false,
-            refetchOnWindowFocus: false,
-            staleTime: 1000 * 60 * 5,
-            cacheTime: 1000 * 60 * 30,
-            useErrorBoundary: false,
-          },
-        },
-      })
-  );
   const router = useRouter();
+
+  useEffect(() => {
+    const handleStart = () => NProgress.start();
+    const handleComplete = () => NProgress.done();
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
 
   return (
     <RecoilRoot>

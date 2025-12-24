@@ -15,6 +15,8 @@ import {
   DropdownItem,
   DropdownDivider,
 } from './LogmeDropdown';
+import ErrorBoundary from './common/ErrorPage';
+import { SafeHydrate } from './common/SafeHydrate';
 
 export {
   LogmeCard,
@@ -34,4 +36,6 @@ export {
   DropdownHeader,
   DropdownItem,
   DropdownDivider,
+  ErrorBoundary,
+  SafeHydrate,
 };
