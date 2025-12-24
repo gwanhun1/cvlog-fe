@@ -14,51 +14,61 @@ import { useRecoilValue } from 'recoil';
 import { userIdAtom } from 'service/atoms/atoms';
 import { NextPage } from 'next';
 
+import AuthGuard from 'components/Shared/common/AuthGuard';
+
 const Github: NextPage = () => {
   const userInfo = useRecoilValue(userIdAtom);
 
   if (!userInfo) {
-    return <SkeletonLayout />;
+    return (
+      <AuthGuard>
+        <SkeletonLayout />
+      </AuthGuard>
+    );
   }
 
   if (!userInfo?.github_id) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] text-center text-gray-400">
-        <p className="mb-2 text-2xl font-semibold">GitHub 연동 정보 없음 😢</p>
-        <p className="text-lg">GitHub 계정과 연결된 정보가 없습니다.</p>
-      </div>
+      <AuthGuard>
+        <div className="flex flex-col items-center justify-center min-h-[90vh] text-center text-gray-400">
+          <p className="mb-2 text-2xl font-semibold">GitHub 연동 정보 없음 😢</p>
+          <p className="text-lg">GitHub 계정과 연결된 정보가 없습니다.</p>
+        </div>
+      </AuthGuard>
     );
   }
 
   return (
-    <div className="min-h-[90vh] bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
-      <div className="px-4 py-10 mx-auto space-y-5 max-w-6xl tablet:px-6 desktop:px-8">
-        <ProfileOverview
-          githubId={userInfo.github_id}
-          fallbackName={userInfo.name}
-          fallbackAvatar={userInfo.profile_image}
-        />
+    <AuthGuard>
+      <div className="min-h-[90vh] bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+        <div className="px-4 py-10 mx-auto space-y-5 max-w-6xl tablet:px-6 desktop:px-8">
+          <ProfileOverview
+            githubId={userInfo.github_id}
+            fallbackName={userInfo.name}
+            fallbackAvatar={userInfo.profile_image}
+          />
 
-        <div className="grid grid-cols-1 gap-4 tablet:grid-cols-3">
-          <div className="space-y-4 tablet:col-span-2">
-            <ContributionChart githubId={userInfo.github_id} />
-            <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2">
-              <div className="min-h-[320px]">
-                <GithubStatsCard githubId={userInfo.github_id} />
+          <div className="grid grid-cols-1 gap-4 tablet:grid-cols-3">
+            <div className="space-y-4 tablet:col-span-2">
+              <ContributionChart githubId={userInfo.github_id} />
+              <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2">
+                <div className="min-h-[320px]">
+                  <GithubStatsCard githubId={userInfo.github_id} />
+                </div>
+                <div className="min-h-[320px]">
+                  <StreakStats githubId={userInfo.github_id} />
+                </div>
               </div>
-              <div className="min-h-[320px]">
-                <StreakStats githubId={userInfo.github_id} />
-              </div>
+              <TrophyStats githubId={userInfo.github_id} />
             </div>
-            <TrophyStats githubId={userInfo.github_id} />
-          </div>
-          <div className="space-y-4">
-            <RepoHighlights githubId={userInfo.github_id} />
-            <GithubLanguagesCard githubId={userInfo.github_id} />
+            <div className="space-y-4">
+              <RepoHighlights githubId={userInfo.github_id} />
+              <GithubLanguagesCard githubId={userInfo.github_id} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </AuthGuard>
   );
 };
 

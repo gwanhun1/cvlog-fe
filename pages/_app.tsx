@@ -8,7 +8,6 @@ import 'styles/globals.css';
 import type { AppProps } from 'next/app';
 import 'styles/markdown.module.scss';
 import dynamic from 'next/dynamic';
-import AuthGuard from 'components/Shared/common/AuthGuard';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
@@ -62,9 +61,7 @@ export default function App({ Component, pageProps }: AppProps) {
             )}
             <Layout>
               <ErrorBoundary>
-                <AuthGuard>
-                  <Component {...pageProps} />
-                </AuthGuard>
+                <Component {...pageProps} />
               </ErrorBoundary>
             </Layout>
           </SafeHydrate>

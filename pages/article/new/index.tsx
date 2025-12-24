@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
 import 'easymde/dist/easymde.min.css';
+import AuthGuard from 'components/Shared/common/AuthGuard';
 
 import {
   EditorHeader,
@@ -47,28 +48,30 @@ const NewPost: NextPage = () => {
   }, []);
 
   return (
-    <main className="h-screen min-h-screen px-2 tablet:px-10">
-      <div className="flex flex-col h-full">
-        <header className="flex-none">
-          <EditorHeader
-            doc={doc}
-            setDoc={setDoc}
-            imageArr={imageArr}
-            mode="create"
-          />
-        </header>
-        <main className="flex flex-col flex-1 w-full tablet:flex-row">
-          <EditorContents
-            doc={doc}
-            setDoc={setDoc}
-            setImageArr={setImageArr}
-            isVisiblePreview={isVisiblePreview}
-            containerTopRef={containerTopRef}
-            isMobile={isMobile}
-          />
-        </main>
-      </div>
-    </main>
+    <AuthGuard>
+      <main className="h-screen min-h-screen px-2 tablet:px-10">
+        <div className="flex flex-col h-full">
+          <header className="flex-none">
+            <EditorHeader
+              doc={doc}
+              setDoc={setDoc}
+              imageArr={imageArr}
+              mode="create"
+            />
+          </header>
+          <main className="flex flex-col flex-1 w-full tablet:flex-row">
+            <EditorContents
+              doc={doc}
+              setDoc={setDoc}
+              setImageArr={setImageArr}
+              isVisiblePreview={isVisiblePreview}
+              containerTopRef={containerTopRef}
+              isMobile={isMobile}
+            />
+          </main>
+        </div>
+      </main>
+    </AuthGuard>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import 'easymde/dist/easymde.min.css';
+import AuthGuard from 'components/Shared/common/AuthGuard';
 
 import {
   EditorHeader,
@@ -68,9 +69,8 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   }, []);
 
   return (
-    <>
+    <AuthGuard>
       {isLoading && <LoaderAnimation />}
-
       <main className="h-screen min-h-screen mx-2 tablet:px-10">
         <div className="flex flex-col h-full">
           <header className="flex-none">
@@ -95,7 +95,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
           </main>
         </div>
       </main>
-    </>
+    </AuthGuard>
   );
 };
 
