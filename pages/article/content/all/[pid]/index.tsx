@@ -44,35 +44,48 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async context => {
-  const pid = context.params?.pid;
+  const pidParam = context.params?.pid;
+  const pid = Array.isArray(pidParam) ? pidParam[0] : pidParam;
 
-  if (!pid || Array.isArray(pid)) {
+  if (!pid) {
     return { notFound: true };
   }
 
   const API_URL =
-    process.env.NODE_ENV === 'production'
-      ? 'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app'
-      : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
   try {
-    const { data } = await axios.get<ContentResponse>(
-      `${API_URL}/posts/${pid}`,
-      {
-        headers: { 'Cache-Control': 'no-cache' },
-      }
-    );
+    const response = await fetch(`${API_URL}/posts/${pid}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-    if (!data?.data?.post?.public_status) {
+    if (!response.ok) {
+      console.error(`[ISR] fetch failed with status: ${response.status}`);
+      return { notFound: true };
+    }
+
+    const responseData = await response.json();
+
+    if (!responseData?.data?.post) {
+      return { notFound: true };
+    }
+
+    // 비공개 게시물인 경우 public 세부페이지에서는 404 처리
+    if (!responseData.data.post.public_status) {
       return { notFound: true };
     }
 
     return {
       props: {
         pid,
-        initialData: data.data,
+        initialData: responseData.data,
       },
-      revalidate: 60, // 60초마다 데이터 갱신 여부 확인 (ISR)
+      revalidate: 60,
     };
   } catch (error) {
     console.error('[ISR] post detail fetch error', error);

@@ -298,19 +298,31 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }: any) => {
-  const pid = params?.pid;
+  const pidParam = params?.pid;
+  const pid = Array.isArray(pidParam) ? pidParam[0] : pidParam;
 
   if (!pid) {
     return { notFound: true };
   }
 
-  try {
-    const API_URL =
-      process.env.NODE_ENV === 'production'
-        ? 'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app'
-        : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
-    const response = await fetch(`${API_URL}/posts/${pid}`);
+  try {
+    const response = await fetch(`${API_URL}/posts/${pid}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.error(`[ISR] fetch failed with status: ${response.status}`);
+      return { notFound: true };
+    }
+
     const responseData = await response.json();
 
     if (!responseData?.data) {
