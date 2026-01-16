@@ -29,7 +29,7 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  async redirects() {
+  /* async redirects() {
     return [
       {
         source: '/:path*',
@@ -43,7 +43,7 @@ const nextConfig = {
         permanent: true,
       },
     ];
-  },
+  }, */
 };
 
 module.exports = nextConfig;
