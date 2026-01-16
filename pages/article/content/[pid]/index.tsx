@@ -33,7 +33,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   const [patchMessage, setPatchMessage] = useState(false);
   const { showToast, showConfirm } = useToast();
 
-  const userInfo = useStore((state) => state.userIdAtom);
+  const userInfo = useStore(state => state.userIdAtom);
 
   // 데이터 받기
   const getMyDetail = useGetMyDetail(parseInt(pid));
@@ -67,10 +67,10 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'publicList',
+          predicate: query => query.queryKey[0] === 'publicList',
         }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'list',
+          predicate: query => query.queryKey[0] === 'list',
         }),
       ]);
 
@@ -93,12 +93,12 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'list',
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          predicate: query => query.queryKey[0] === 'list',
+          // eslint-disable-next-line no-unused-vars
           // @ts-ignore
         }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'publicList',
+          predicate: query => query.queryKey[0] === 'publicList',
         }),
       ]);
       showToast('삭제되었습니다.', 'success');

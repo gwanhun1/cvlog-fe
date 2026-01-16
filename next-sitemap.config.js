@@ -2,7 +2,7 @@ const axios = require('axios');
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://www.logme.shop',
+  siteUrl: 'https://logme.shop',
   generateRobotsTxt: false, // public/robots.txt 직접 관리
   exclude: [
     '/api/*',
@@ -35,7 +35,7 @@ module.exports = {
             {
               headers: { 'Cache-Control': 'no-cache' },
               timeout: 15000, // 타임아웃 약간 증가
-            }
+            },
           );
 
           const responseData = response.data;
@@ -51,7 +51,9 @@ module.exports = {
           }
 
           allPosts.push(...posts);
-          console.log(`[Sitemap] Page ${page}: ${posts.length} posts collected`);
+          console.log(
+            `[Sitemap] Page ${page}: ${posts.length} posts collected`,
+          );
 
           // maxPage 확인하여 불필요한 요청 방지
           const maxPage = responseData?.data?.maxPage || 1;
@@ -64,7 +66,7 @@ module.exports = {
       }
 
       console.log(
-        `[Sitemap] Total ${allPosts.length} public posts for sitemap`
+        `[Sitemap] Total ${allPosts.length} public posts for sitemap`,
       );
 
       return allPosts
@@ -74,7 +76,7 @@ module.exports = {
           changefreq: 'weekly',
           priority: 0.8,
           lastmod: new Date(
-            post.updated_at || post.created_at || Date.now()
+            post.updated_at || post.created_at || Date.now(),
           ).toISOString(),
         }));
     } catch (error) {
