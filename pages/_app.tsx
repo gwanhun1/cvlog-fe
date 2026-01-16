@@ -11,21 +11,27 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import { GoogleTagManager } from '@next/third-parties/google';
 
 const ClientNav = dynamic(() => import('components/Shared/LogmeNav'), {
-  ssr: true, 
+  ssr: true,
 });
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: false,
-        staleTime: 1000 * 60 * 5, 
-      },
-    },
-  }));
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+            staleTime: 1000 * 60 * 5,
+          },
+        },
+      }),
+  );
+
+  const gtmId = process.env.NEXT_PUBLIC_GTM_ID || '';
 
   useEffect(() => {
     const handleStart = () => NProgress.start();
@@ -52,6 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
               content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
             />
           </Head>
+          {gtmId && <GoogleTagManager gtmId={gtmId} />}
           {router.pathname === '/login' ||
           router.pathname === '/article/new' ||
           router.pathname.startsWith('/article/modify/') ? null : (

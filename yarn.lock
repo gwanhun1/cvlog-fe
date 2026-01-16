@@ -1137,6 +1137,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@next/third-parties@npm:^16.1.2":
+  version: 16.1.2
+  resolution: "@next/third-parties@npm:16.1.2"
+  dependencies:
+    third-party-capital: "npm:1.0.20"
+  peerDependencies:
+    next: ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0-beta.0
+    react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
+  checksum: 10c0/a2665b85d7fb9230db92db21ff17c686112a1c441772586f7c59ffa86b34ba8c01e5ff3dc41caf62968eca317b8d4f07e002989047531d0a501eabd9ccf8463f
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -5001,6 +5013,7 @@ __metadata:
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@dnd-kit/utilities": "npm:^3.2.2"
+    "@next/third-parties": "npm:^16.1.2"
     "@tailwindcss/aspect-ratio": "npm:^0.4.2"
     "@tanstack/react-query": "npm:^5.90.12"
     "@tanstack/react-query-devtools": "npm:^5.91.1"
@@ -7870,6 +7883,13 @@ __metadata:
   dependencies:
     any-promise: "npm:^1.0.0"
   checksum: 10c0/f375aeb2b05c100a456a30bc3ed07ef03a39cbdefe02e0403fb714b8c7e57eeaad1a2f5c4ecfb9ce554ce3db9c2b024eba144843cd9e344566d9fcee73b04767
+  languageName: node
+  linkType: hard
+
+"third-party-capital@npm:1.0.20":
+  version: 1.0.20
+  resolution: "third-party-capital@npm:1.0.20"
+  checksum: 10c0/7f45ff156ec9d7e2957a5b39061be22b780ffbd2d93c127252d908e2bff6cdd09f827a95909d457c8096e036f155006a38e355a06ee11cb6d63c7f4b150bbfb0
   languageName: node
   linkType: hard
 
