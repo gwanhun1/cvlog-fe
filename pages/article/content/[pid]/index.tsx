@@ -115,6 +115,27 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
     // getStaticProps를 통해 이미 데이터를 받았으므로 마운트 시점의 강제 리페칭 제거
   }, [pid]);
 
+  // 에러 처리 또는 데이터 없음 처리 (로딩이 끝났는데 데이터가 없는 경우)
+  if (!getMyDetail.isLoading && !getMyDetail.data?.post) {
+    return (
+      <AuthGuard>
+        <div className="flex flex-col items-center justify-center min-h-[60vh]">
+          <h2 className="mb-4 text-2xl font-bold text-gray-700">
+            게시물을 찾을 수 없습니다.
+          </h2>
+          <p className="mb-8 text-gray-500">
+            삭제되었거나 접근 권한이 없는 게시물일 수 있습니다.
+          </p>
+          <Link href="/article">
+            <a className="px-6 py-2 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600">
+              목록으로 돌아가기
+            </a>
+          </Link>
+        </div>
+      </AuthGuard>
+    );
+  }
+
   return (
     <AuthGuard>
       <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
@@ -320,13 +341,27 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
 
     if (!response.ok) {
       console.error(`[ISR] fetch failed with status: ${response.status}`);
-      return { notFound: true };
+      // 실패해도 클라이언트 사이드에서 재시도할 수 있도록 페이지는 렌더링
+      return {
+        props: {
+          pid,
+          initialData: null,
+        },
+        revalidate: 60,
+      };
     }
 
     const responseData = await response.json();
 
     if (!responseData?.data) {
-      return { notFound: true };
+      // 데이터가 없어도(비공개 등) 클라이언트 사이드 로딩 시도
+      return {
+        props: {
+          pid,
+          initialData: null,
+        },
+        revalidate: 60,
+      };
     }
 
     return {
@@ -338,7 +373,14 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
     };
   } catch (error) {
     console.error(`Error fetching post ${pid}:`, error);
-    return { notFound: true };
+    // 에러 발생 시에도 클라이언트 위임
+    return {
+      props: {
+        pid,
+        initialData: null,
+      },
+      revalidate: 60,
+    };
   }
 };
 
