@@ -153,10 +153,10 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
                 .join(', ')}
             />
 
-            {/* Canonical URL - 중요 */}
+            {/* Canonical URL - 중요: 모든 상세 페이지는 SEO용 경로를 대표 주소로 설정 */}
             <link
               rel="canonical"
-              href={`https://logme.shop/article/content/${pid}`}
+              href={`https://logme.shop/article/content/all/${pid}`}
             />
 
             {/* Open Graph / Facebook */}

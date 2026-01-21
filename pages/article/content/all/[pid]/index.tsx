@@ -98,11 +98,11 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const pid = propsPid || (router.query.pid as string);
   const queryClient = useQueryClient();
   const [patchMessage, setPatchMessage] = useState(false);
-  const userInfo = useStore((state) => state.userIdAtom);
+  const userInfo = useStore(state => state.userIdAtom);
   const { showToast, showConfirm } = useToast();
-  const setTagList = useStore((state) => state.setTagListAtom);
-  const selectTagList = useStore((state) => state.selectedTagListAtom);
-  const setSelectTagList = useStore((state) => state.setSelectedTagListAtom);
+  const setTagList = useStore(state => state.setTagListAtom);
+  const selectTagList = useStore(state => state.selectedTagListAtom);
+  const setSelectTagList = useStore(state => state.setSelectedTagListAtom);
 
   const {
     data: detailData,
@@ -118,7 +118,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   }, [detailData, setTagList]);
 
   const { data: commentData, refetch: commentRefetch } = useGetCommentList(
-    parseInt(pid)
+    parseInt(pid),
   );
   const patchDetailMutation = usePatchDetail();
 
@@ -134,10 +134,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'publicList',
+          predicate: query => query.queryKey[0] === 'publicList',
         }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'list',
+          predicate: query => query.queryKey[0] === 'list',
         }),
       ]);
 
@@ -159,10 +159,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'list',
+          predicate: query => query.queryKey[0] === 'list',
         }),
         queryClient.invalidateQueries({
-          predicate: (query) => query.queryKey[0] === 'publicList',
+          predicate: query => query.queryKey[0] === 'publicList',
         }),
       ]);
       showToast('삭제되었습니다.', 'success');
@@ -244,6 +244,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         <meta property="og:url" content={canonicalUrl} />
         <meta property="og:image" content={postImage} />
         <meta property="og:site_name" content="LogMe" />
+
+        {/* 구글 검색 색인 허용 설정 */}
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={postTitle} />
