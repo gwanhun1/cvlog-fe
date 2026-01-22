@@ -179,33 +179,62 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
             <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{
-                __html: JSON.stringify({
-                  '@context': 'https://schema.org',
-                  '@type': 'BlogPosting',
-                  headline: getMyDetail.data.post.title,
-                  description: getMyDetail.data.post.content.substring(0, 160),
-                  keywords: getMyDetail.data.post.tags
-                    .map((tag: TagType) => tag.name)
-                    .join(', '),
-                  author: {
-                    '@type': 'Person',
-                    name: 'LogMe 사용자',
-                  },
-                  datePublished: getMyDetail.data.post.created_at,
-                  dateModified: getMyDetail.data.post.updated_at,
-                  mainEntityOfPage: {
-                    '@type': 'WebPage',
-                    '@id': `https://logme.shop/article/content/${pid}`,
-                  },
-                  publisher: {
-                    '@type': 'Organization',
-                    name: 'LogMe',
-                    logo: {
-                      '@type': 'ImageObject',
-                      url: 'https://logme.shop/favicon.svg',
+                __html: JSON.stringify([
+                  {
+                    '@context': 'https://schema.org',
+                    '@type': 'BlogPosting',
+                    headline: getMyDetail.data.post.title,
+                    description: getMyDetail.data.post.content.substring(
+                      0,
+                      160,
+                    ),
+                    keywords: getMyDetail.data.post.tags
+                      .map((tag: TagType) => tag.name)
+                      .join(', '),
+                    author: {
+                      '@type': 'Person',
+                      name: 'LogMe 사용자',
+                    },
+                    datePublished: getMyDetail.data.post.created_at,
+                    dateModified: getMyDetail.data.post.updated_at,
+                    mainEntityOfPage: {
+                      '@type': 'WebPage',
+                      '@id': `https://logme.shop/article/content/all/${pid}`,
+                    },
+                    publisher: {
+                      '@type': 'Organization',
+                      name: 'LogMe',
+                      logo: {
+                        '@type': 'ImageObject',
+                        url: 'https://logme.shop/favicon.svg',
+                      },
                     },
                   },
-                }),
+                  {
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                      {
+                        '@type': 'ListItem',
+                        position: 1,
+                        name: '홈',
+                        item: 'https://logme.shop',
+                      },
+                      {
+                        '@type': 'ListItem',
+                        position: 2,
+                        name: '게시물',
+                        item: 'https://logme.shop/article',
+                      },
+                      {
+                        '@type': 'ListItem',
+                        position: 3,
+                        name: getMyDetail.data.post.title,
+                        item: `https://logme.shop/article/content/all/${pid}`,
+                      },
+                    ],
+                  },
+                ]),
               }}
             />
           </Head>

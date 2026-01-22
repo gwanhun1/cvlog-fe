@@ -257,29 +257,55 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         <link rel="canonical" href={canonicalUrl} />
 
         <script type="application/ld+json">
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
-            headline: postTitle,
-            description: postDescription,
-            image: postImage,
-            url: canonicalUrl,
-            datePublished: postData?.created_at,
-            dateModified: postData?.updated_at || postData?.created_at,
-            author: {
-              '@type': 'Person',
-              name: postData?.user_id?.name || 'LogMe 사용자',
-            },
-            publisher: {
-              '@type': 'Organization',
-              name: 'LogMe',
-              logo: {
-                '@type': 'ImageObject',
-                url: 'https://logme.shop/assets/NavLogo.svg',
+          {JSON.stringify([
+            {
+              '@context': 'https://schema.org',
+              '@type': 'BlogPosting',
+              headline: postTitle,
+              description: postDescription,
+              image: postImage,
+              url: canonicalUrl,
+              datePublished: postData?.created_at,
+              dateModified: postData?.updated_at || postData?.created_at,
+              author: {
+                '@type': 'Person',
+                name: postData?.user_id?.name || 'LogMe 사용자',
               },
+              publisher: {
+                '@type': 'Organization',
+                name: 'LogMe',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://logme.shop/assets/NavLogo.svg',
+                },
+              },
+              mainEntityOfPage: canonicalUrl,
             },
-            mainEntityOfPage: canonicalUrl,
-          })}
+            {
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: '홈',
+                  item: 'https://logme.shop',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: '게시물',
+                  item: 'https://logme.shop/article',
+                },
+                {
+                  '@type': 'ListItem',
+                  position: 3,
+                  name: postTitle,
+                  item: canonicalUrl,
+                },
+              ],
+            },
+          ])}
         </script>
       </Head>
       <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
