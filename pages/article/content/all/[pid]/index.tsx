@@ -312,7 +312,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         {shouldShowSkeleton ? (
           <div className="mb-3 w-3/4 h-10 bg-gray-200 rounded-lg tablet:h-14" />
         ) : (
-          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-6xl">
+          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-5xl">
             {resolvedDetailData?.post?.title}
           </h1>
         )}

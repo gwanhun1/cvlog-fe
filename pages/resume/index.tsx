@@ -38,17 +38,19 @@ const Resume: NextPage = () => {
           </div>
 
           <div className="flex flex-col gap-3 w-full max-w-md tablet:flex-row tablet:justify-center">
-            <Link href="/">
-              <a className="inline-flex justify-center gap-2 items-center px-5 py-2.5 text-sm font-semibold bg-white rounded-xl border-2 transition-all duration-300 text-ftBlue border-ftBlue/30 hover:bg-ftBlue hover:text-white">
-                홈으로
-                <span aria-hidden>→</span>
-              </a>
+            <Link
+              href="/"
+              className="inline-flex justify-center gap-2 items-center px-5 py-2.5 text-sm font-semibold bg-white rounded-xl border-2 transition-all duration-300 text-ftBlue border-ftBlue/30 hover:bg-ftBlue hover:text-white"
+            >
+              홈으로
+              <span aria-hidden>→</span>
             </Link>
-            <Link href="/article">
-              <a className="inline-flex justify-center gap-2 items-center px-5 py-2.5 text-sm font-semibold rounded-xl bg-gradient-to-r from-ftBlue to-[#1c3f7a] text-white shadow-lg shadow-ftBlue/20 transition-all duration-300 hover:scale-[1.02]">
-                게시물 보러가기
-                <span aria-hidden>→</span>
-              </a>
+            <Link
+              href="/article"
+              className="inline-flex justify-center gap-2 items-center px-5 py-2.5 text-sm font-semibold rounded-xl bg-gradient-to-r from-ftBlue to-[#1c3f7a] text-white shadow-lg shadow-ftBlue/20 transition-all duration-300 hover:scale-[1.02]"
+            >
+              게시물 보러가기
+              <span aria-hidden>→</span>
             </Link>
           </div>
         </div>

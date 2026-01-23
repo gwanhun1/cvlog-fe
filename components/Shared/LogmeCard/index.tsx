@@ -4,6 +4,7 @@ import Image from 'next/image';
 import TagList from './TagList';
 import { formatTimeAgo } from 'styles/utils/timeCheck';
 import { useStore } from 'service/store/useStore';
+import { UserIdType } from 'service/api/detail/type';
 
 export interface TagItem {
   id: number;
@@ -15,6 +16,7 @@ export interface CardProps {
   content: string;
   updated_at?: string;
   tags: TagItem[];
+  user_id?: UserIdType;
 }
 
 const extractImageUrl = (content: string): string | undefined => {
@@ -28,10 +30,10 @@ const removeImageFromContent = (content: string): string => {
   return cleanContent.replace(/\n\s*\n/g, '\n');
 };
 
-const Card = ({ title, updated_at, content, tags }: CardProps) => {
+const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
-  const keyword = useStore((state) => state.tagAtom);
+  const keyword = useStore(state => state.tagAtom);
   const isMatched = tags.some(tag => tag.name.toLocaleLowerCase() === keyword);
 
   const plainTextContent = markdownToText(cleanContent);
@@ -42,7 +44,7 @@ const Card = ({ title, updated_at, content, tags }: CardProps) => {
 
   return (
     <article
-      className={`group block w-full overflow-hidden transition-all duration-300 bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/20 hover:border-ftBlue/40 hover:-translate-y-1 ${
+      className={`relative group block w-full overflow-hidden transition-all duration-300 bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/20 hover:border-ftBlue/40 hover:-translate-y-1 ${
         isMatched ? 'border-ftBlue/50 ring-2 ring-ftBlue/40' : ''
       }`}
       itemScope
@@ -105,6 +107,25 @@ const Card = ({ title, updated_at, content, tags }: CardProps) => {
           </div>
           {updated_at && <meta itemProp="datePublished" content={updated_at} />}
         </div>
+
+        {/* 작성자 정보 (호버 시 아래에서 위로 슬라이드) */}
+        {user_id && (
+          <div className="overflow-hidden absolute right-0 bottom-0 pointer-events-none">
+            <div className="flex items-center gap-2 py-1.5 px-3 mb-2 mr-2 bg-white/80 backdrop-blur-md rounded-full border shadow-sm transition-all duration-300 translate-y-full opacity-0 border-ftBlue/20 group-hover:translate-y-0 group-hover:opacity-100">
+              <div className="relative w-5 h-5 overflow-hidden rounded-full ring-1 ring-ftBlue/10">
+                <Image
+                  src={user_id.profile_image}
+                  alt={user_id.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <span className="text-xs font-medium text-slate-600">
+                {user_id.name}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </article>
   );

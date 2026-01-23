@@ -1,3 +1,5 @@
+import { UserIdType } from '../detail/type';
+
 export interface Tag {
   id: number;
   name: string;
@@ -93,7 +95,7 @@ export interface BlogType {
   id: number;
   title: string;
   content: string;
-  user_id: number;
+  user_id: UserIdType;
   public_status: boolean;
   created_at: string;
   updated_at: string;

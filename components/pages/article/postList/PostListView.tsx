@@ -161,49 +161,53 @@ const PostListView = ({
             initialSkeleton
           ) : posts.length > 0 ? (
             <>
-              {posts.map(({ id, title, content, tags, updated_at }, index) => (
-                <div key={id} className="masonry-item break-inside-avoid">
-                  <Link
-                    href={getPostLink(id)}
-                    onClick={() => saveListIndex(index)}
-                    onMouseEnter={() => handlePrefetch(id)}
-                    className="block h-full"
-                    {...(mode === 'public' && {
-                      title: title,
-                      'aria-label': `게시물 보기: ${title}`,
-                      'data-seo-important': 'true',
-                    })}
-                  >
-                    {mode === 'public' ? (
-                      <div
-                        itemScope
-                        itemType="https://schema.org/BlogPosting"
-                        className="w-full"
-                      >
-                        <meta
-                          itemProp="mainEntityOfPage"
-                          content={`https://logme.shop/article/content/all/${id}`}
-                        />
-                        <meta itemProp="headline" content={title} />
-                        <meta itemProp="dateModified" content={updated_at} />
+              {posts.map(
+                ({ id, title, content, tags, updated_at, user_id }, index) => (
+                  <div key={id} className="masonry-item break-inside-avoid">
+                    <Link
+                      href={getPostLink(id)}
+                      onClick={() => saveListIndex(index)}
+                      onMouseEnter={() => handlePrefetch(id)}
+                      className="block h-full"
+                      {...(mode === 'public' && {
+                        title: title,
+                        'aria-label': `게시물 보기: ${title}`,
+                        'data-seo-important': 'true',
+                      })}
+                    >
+                      {mode === 'public' ? (
+                        <div
+                          itemScope
+                          itemType="https://schema.org/BlogPosting"
+                          className="w-full"
+                        >
+                          <meta
+                            itemProp="mainEntityOfPage"
+                            content={`https://logme.shop/article/content/all/${id}`}
+                          />
+                          <meta itemProp="headline" content={title} />
+                          <meta itemProp="dateModified" content={updated_at} />
+                          <Card
+                            title={title}
+                            content={content}
+                            tags={tags}
+                            updated_at={updated_at}
+                            user_id={user_id}
+                          />
+                        </div>
+                      ) : (
                         <Card
                           title={title}
                           content={content}
                           tags={tags}
                           updated_at={updated_at}
+                          user_id={user_id}
                         />
-                      </div>
-                    ) : (
-                      <Card
-                        title={title}
-                        content={content}
-                        tags={tags}
-                        updated_at={updated_at}
-                      />
-                    )}
-                  </Link>
-                </div>
-              ))}
+                      )}
+                    </Link>
+                  </div>
+                ),
+              )}
 
               <div
                 ref={loadingRef}
