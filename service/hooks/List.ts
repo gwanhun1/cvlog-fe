@@ -19,11 +19,12 @@ export const useGetList = (
   page: number,
   userId?: number,
   enabled = true,
-  initialData?: any
+  initialData?: any,
+  keyword?: string,
 ) => {
   return useQuery({
-    queryKey: ['list', page, userId],
-    queryFn: () => getList(page, userId),
+    queryKey: ['list', page, userId, keyword],
+    queryFn: () => getList(page, userId, keyword),
     retry: 0,
     enabled,
     initialData,
@@ -35,11 +36,12 @@ export const useGetList = (
 export const useGetPublicList = (
   page: number,
   enabled = true,
-  initialData?: any
+  initialData?: any,
+  keyword?: string,
 ) => {
   return useQuery({
-    queryKey: ['publicList', page],
-    queryFn: () => getPublicList(page),
+    queryKey: ['publicList', page, keyword],
+    queryFn: () => getPublicList(page, keyword),
     retry: 0,
     enabled,
     initialData,

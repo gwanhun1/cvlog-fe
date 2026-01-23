@@ -32,25 +32,42 @@ const PostListView = ({
   const router = useRouter();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null); // mode에 따라 필요한 훅만 호출하며, 서버에서 받은 initialPosts를 초기값으로 활용
+  const keyword = useStore(state => state.tagAtom);
   const publicList = useGetPublicList(
     page,
     mode === 'public',
-    mode === 'public' ? { posts: initialPosts, maxPage: 1 } : undefined,
+    page === 1 && mode === 'public' && !keyword // 검색어가 없을 때만 초기 데이터 사용
+      ? { posts: initialPosts, maxPage: 1 }
+      : undefined,
+    keyword,
   );
-  const myList = useGetList(page, undefined, mode === 'my');
+  const myList = useGetList(page, undefined, mode === 'my', undefined, keyword);
   const List = mode === 'public' ? publicList.data : myList.data;
 
   const { tagKeyword } = router.query;
+  const isFirstRender = useRef(true);
 
+  // 키워드가 변경되면 페이지와 포스트 초기화 및 로딩 상태 시작
   useEffect(() => {
-    const normalizedKeyword = tagKeyword
-      ? String(tagKeyword).trim().toLowerCase()
-      : '';
-    setKeyword(normalizedKeyword);
-    if (inputRef.current) {
-      inputRef.current.focus();
+    setPage(1);
+    setPosts([]);
+    setHasMore(true);
+    if (keyword) {
+      setIsInitialLoading(true);
     }
-  }, [inputRef, setKeyword, tagKeyword]);
+  }, [keyword]);
+
+  // URL의 태그 키워드와 전역 상태 동기화 (초기 진입 시)
+  useEffect(() => {
+    if (tagKeyword) {
+      const normalizedKeyword = String(tagKeyword).trim().toLowerCase();
+      setKeyword(normalizedKeyword);
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }
+    isFirstRender.current = false;
+  }, [tagKeyword, setKeyword, inputRef]);
 
   const loadMorePosts = useCallback(() => {
     if (hasMore && !isLoadingMore) {
@@ -78,10 +95,12 @@ const PostListView = ({
 
       if (page >= List.maxPage) {
         setHasMore(false);
+      } else {
+        setHasMore(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [List]);
+  }, [List, page]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -139,15 +158,13 @@ const PostListView = ({
   };
 
   const initialSkeleton = (
-    <div className="w-full masonry-grid">
+    <div className="gap-6 w-full columns-1 tablet:columns-2 desktop:columns-3">
       {[...Array(6)].map((_, index) => (
         <div
           key={`initial-skeleton-${index}`}
-          className="masonry-item break-inside-avoid"
+          className="mb-6 break-inside-avoid"
         >
-          <div className="block h-full">
-            <CardSkeleton />
-          </div>
+          <CardSkeleton />
         </div>
       ))}
     </div>
@@ -156,14 +173,14 @@ const PostListView = ({
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className={`${posts.length === 0 ? 'w-full' : 'masonry-grid'}`}>
+        <div className="w-full">
           {isInitialLoading ? (
             initialSkeleton
           ) : posts.length > 0 ? (
-            <>
+            <div className="gap-6 w-full columns-1 tablet:columns-2 desktop:columns-3">
               {posts.map(
                 ({ id, title, content, tags, updated_at, user_id }, index) => (
-                  <div key={id} className="masonry-item break-inside-avoid">
+                  <div key={id} className="mb-6 break-inside-avoid">
                     <Link
                       href={getPostLink(id)}
                       onClick={() => saveListIndex(index)}
@@ -179,7 +196,7 @@ const PostListView = ({
                         <div
                           itemScope
                           itemType="https://schema.org/BlogPosting"
-                          className="w-full"
+                          className="h-full"
                         >
                           <meta
                             itemProp="mainEntityOfPage"
@@ -208,38 +225,35 @@ const PostListView = ({
                   </div>
                 ),
               )}
-
-              <div
-                ref={loadingRef}
-                className="flex flex-col items-center my-4 w-full"
-              >
-                {!hasMore && !isInitialLoading && (
-                  <div className={`py-4 text-sm ${endMessageClass}`}>
-                    모든 게시물을 불러왔습니다
-                  </div>
-                )}
-              </div>
-            </>
+              {hasMore && isLoadingMore && (
+                <>
+                  {[...Array(3)].map((_, index) => (
+                    <div
+                      key={`skeleton-${index}`}
+                      className="mb-6 break-inside-avoid"
+                    >
+                      <CardSkeleton />
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
           ) : (
             <ListEmpty />
           )}
         </div>
-      </div>
 
-      {hasMore && isLoadingMore && (
-        <div className="w-full masonry-grid">
-          {[...Array(3)].map((_, index) => (
-            <div
-              key={`skeleton-${index}`}
-              className="masonry-item break-inside-avoid"
-            >
-              <div className="block h-full">
-                <CardSkeleton />
-              </div>
+        <div
+          ref={loadingRef}
+          className="flex flex-col items-center mt-8 mb-4 w-full"
+        >
+          {!hasMore && !isInitialLoading && posts.length > 0 && (
+            <div className={`py-4 text-sm ${endMessageClass}`}>
+              모든 게시물을 불러왔습니다
             </div>
-          ))}
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 };

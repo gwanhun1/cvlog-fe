@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { PostListView } from '../../components/pages/article/postList';
 import SideView from '../../components/pages/article/sideView/SideView';
@@ -15,11 +16,27 @@ type ArticleProps = {
 
 const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
   // SSR/CSR 불일치 방지: 클라이언트에서만 토큰 확인
+  const router = useRouter();
+  const { view } = router.query;
   const [isClient, setIsClient] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [menu, setMenu] = useState<'list' | 'all'>('all');
-  const keyword = useStore((state) => state.tagAtom);
-  const setTagAtom = useStore((state) => state.setTagAtom);
+
+  // URL query 파라미터와 state 동기화
+  const menu = view === 'my' ? 'list' : 'all';
+  const setMenu = (value: React.SetStateAction<'list' | 'all'>) => {
+    const newMenu = typeof value === 'function' ? value(menu) : value;
+    setKeyword(''); // 탭 전환 시 검색어 초기화
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, view: newMenu === 'list' ? 'my' : 'all' },
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+  const keyword = useStore(state => state.tagAtom);
+  const setTagAtom = useStore(state => state.setTagAtom);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const setKeyword = (value: React.SetStateAction<string>) => {
@@ -34,10 +51,19 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
     setIsClient(true);
     const token = LocalStorage.getItem('LogmeToken');
     setAccessToken(token);
-    if (token) {
-      setMenu('list');
+
+    // 초기 로드 시 토큰이 있고 파라미터가 없으면 'my'로 설정
+    if (token && !router.query.view) {
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: { ...router.query, view: 'my' },
+        },
+        undefined,
+        { shallow: true },
+      );
     }
-  }, []);
+  }, [router]); // useEffect의 의존성 배열에 router 추가
 
   return (
     <div className="w-full min-h-screen">
@@ -76,7 +102,10 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
           content="https://logme.shop/assets/NavLogo.svg"
         />
 
-        <link rel="canonical" href="https://logme.shop/article" />
+        <link
+          rel="canonical"
+          href={`https://logme.shop/article${menu === 'all' ? '' : '?view=my'}`}
+        />
       </Head>
 
       <main className="w-full">

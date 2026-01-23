@@ -8,20 +8,30 @@ import {
   GetListType,
 } from './type';
 
-export const getList = async (page: number, userId?: number) => {
-  const url = userId
+export const getList = async (
+  page: number,
+  userId?: number,
+  keyword?: string,
+) => {
+  let url = userId
     ? `/posts/page/${page}?userId=${userId}`
     : `/posts/page/${page}`;
+
+  if (keyword) {
+    url += userId ? `&keyword=${keyword}` : `?keyword=${keyword}`;
+  }
+
   const { data } = await axiosInstance.get<GetListType>(url);
 
   return data.data;
 };
 
-export const getPublicList = async (page: number) => {
+export const getPublicList = async (page: number, keyword?: string) => {
   try {
-    const { data } = await axiosInstance.get<GetListType>(
-      `/posts/public/page/${page}`
-    );
+    const url = keyword
+      ? `/posts/public/page/${page}?keyword=${keyword}`
+      : `/posts/public/page/${page}`;
+    const { data } = await axiosInstance.get<GetListType>(url);
     return data.data;
   } catch (error) {
     console.error('Network Error in getPublicList:', error);
@@ -34,11 +44,11 @@ export const fetchGetTagsFolders = async () => {
 };
 
 export const fetchCreateTagsFolders = async (
-  params: CreateTagsFolderReq
+  params: CreateTagsFolderReq,
 ): Promise<CreateTagsFolderRes> => {
   const { data } = await axiosInstance.post<CreateTagsFolderRes>(
     '/tag_folders',
-    params
+    params,
   );
   return data;
 };
@@ -59,7 +69,7 @@ export const putTagsFolders = async (params: UpdateForm) => {
 
   try {
     const { data } = await axiosInstance.put<PutTagsFolderRes>(
-      `/tags/${tagId}/${folderId}`
+      `/tags/${tagId}/${folderId}`,
     );
     return data;
   } catch (error) {

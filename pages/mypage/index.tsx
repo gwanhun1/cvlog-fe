@@ -20,7 +20,7 @@ const RecentActivity = dynamic(
       <div className="p-8 h-48 rounded-lg animate-pulse bg-white/5" />
     ),
     ssr: false,
-  }
+  },
 );
 
 const Mypage: NextPage = () => {
@@ -41,7 +41,7 @@ const Mypage: NextPage = () => {
 
   return (
     <AuthGuard>
-      <section className="w-full min-h-screen bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+      <section className="w-full min-h-screen">
         <div className="px-4 py-6 mx-auto space-y-4 w-full max-w-6xl tablet:px-6 desktop:px-8">
           <section className={cardBase}>
             <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />

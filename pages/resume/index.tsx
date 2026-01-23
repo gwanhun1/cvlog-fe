@@ -4,7 +4,7 @@ import type { NextPage } from 'next';
 
 const Resume: NextPage = () => {
   return (
-    <section className="w-full min-h-[90vh] px-4 tablet:px-6 desktop:px-8 py-12 bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+    <section className="w-full min-h-[90vh] px-4 tablet:px-6 desktop:px-8 py-12">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-6">
           <div className="relative">

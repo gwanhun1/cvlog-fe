@@ -16,7 +16,7 @@ import { NextPage } from 'next';
 import AuthGuard from 'components/Shared/common/AuthGuard';
 
 const Github: NextPage = () => {
-  const userInfo = useStore((state) => state.userIdAtom);
+  const userInfo = useStore(state => state.userIdAtom);
 
   if (!userInfo) {
     return (
@@ -30,7 +30,9 @@ const Github: NextPage = () => {
     return (
       <AuthGuard>
         <div className="flex flex-col items-center justify-center min-h-[90vh] text-center text-gray-400">
-          <p className="mb-2 text-2xl font-semibold">GitHub 연동 정보 없음 😢</p>
+          <p className="mb-2 text-2xl font-semibold">
+            GitHub 연동 정보 없음 😢
+          </p>
           <p className="text-lg">GitHub 계정과 연결된 정보가 없습니다.</p>
         </div>
       </AuthGuard>
@@ -39,7 +41,7 @@ const Github: NextPage = () => {
 
   return (
     <AuthGuard>
-      <div className="min-h-[90vh] bg-gradient-to-b from-bgWhite via-white to-[#e7edf5]">
+      <div className="min-h-[90vh]">
         <div className="px-4 py-10 mx-auto space-y-5 max-w-6xl tablet:px-6 desktop:px-8">
           <ProfileOverview
             githubId={userInfo.github_id}
