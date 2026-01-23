@@ -45,8 +45,7 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
   return (
     <article
       className={`relative group block w-full overflow-hidden transition-all duration-300 bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/20 hover:border-ftBlue/40 hover:-translate-y-1 ${
-        isMatched ? 'border-ftBlue/50 ring-2 ring-ftBlue/40' : ''
-      }`}
+        isMatched ? 'ring-2 border-ftBlue/50 ring-ftBlue/40' : ''}`}
       itemScope
       itemType="http://schema.org/BlogPosting"
     >
@@ -112,7 +111,7 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
         {user_id && (
           <div className="overflow-hidden absolute right-0 bottom-0 pointer-events-none">
             <div className="flex items-center gap-2 py-1.5 px-3 mb-2 mr-2 bg-white/80 backdrop-blur-md rounded-full border shadow-sm transition-all duration-300 translate-y-full opacity-0 border-ftBlue/20 group-hover:translate-y-0 group-hover:opacity-100">
-              <div className="relative w-5 h-5 overflow-hidden rounded-full ring-1 ring-ftBlue/10">
+              <div className="overflow-hidden relative w-5 h-5 rounded-full ring-1 ring-ftBlue/10">
                 <Image
                   src={user_id.profile_image}
                   alt={user_id.name}

@@ -14,6 +14,7 @@ export const useCreatePost = () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['list'] }),
         queryClient.invalidateQueries({ queryKey: ['publicList'] }),
+        queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
       ]);
       await router.push('/article');
     },

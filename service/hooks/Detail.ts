@@ -12,10 +12,7 @@ import { CreateNewPostReq } from 'service/api/detail/type';
 import { handleGetErrors, handleMutateErrors } from 'service/api/login';
 import { ErrorResponse } from 'service/api/login/type';
 
-export const useGetDetail = (
-  params: number,
-  initialData?: any
-) => {
+export const useGetDetail = (params: number, initialData?: any) => {
   return useQuery({
     queryKey: ['detail', params],
     queryFn: () => getDetail(params),
@@ -40,9 +37,13 @@ export const useGetMyDetail = (params: number) => {
 };
 
 export const useDeleteDetail = (params: number) => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => deleteDetail(params),
     retry: 0,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
+    },
     onError: (error: ErrorResponse) => {
       handleMutateErrors(error);
     },
@@ -50,10 +51,19 @@ export const useDeleteDetail = (params: number) => {
 };
 
 export const usePatchDetail = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, public_status }: { id: number; public_status: boolean }) =>
-      patchDetail(id, public_status),
+    mutationFn: ({
+      id,
+      public_status,
+    }: {
+      id: number;
+      public_status: boolean;
+    }) => patchDetail(id, public_status),
     retry: 0,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
+    },
     onError: (error: ErrorResponse) => {
       handleMutateErrors(error);
     },
@@ -64,12 +74,14 @@ export const useModifyPost = (pid: number) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (params: CreateNewPostReq) => fetchCreateModifyPost(params, pid),
+    mutationFn: (params: CreateNewPostReq) =>
+      fetchCreateModifyPost(params, pid),
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['list'] }),
         queryClient.invalidateQueries({ queryKey: ['publicList'] }),
         queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
+        queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
       ]);
       await router.push('/article');
     },
@@ -91,8 +103,13 @@ export const useGetLikePost = (params: number) => {
 
 export const usePostLike = ({ options }: any) => {
   return useMutation({
-    mutationFn: ({ id, public_status }: { id: number; public_status: boolean }) =>
-      patchDetail(id, public_status),
+    mutationFn: ({
+      id,
+      public_status,
+    }: {
+      id: number;
+      public_status: boolean;
+    }) => patchDetail(id, public_status),
     ...options,
     onError: (error: ErrorResponse) => {
       handleMutateErrors(error);
