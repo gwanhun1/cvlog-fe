@@ -10,6 +10,26 @@ const nextConfig = {
         port: '',
         pathname: '/**/**',
       },
+      {
+        protocol: 'https',
+        hostname: '**.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: '**.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'googleusercontent.com',
+        pathname: '/**',
+      },
     ],
     domains: [
       'github.com',
@@ -19,6 +39,7 @@ const nextConfig = {
       'logme-bucket.s3.amazonaws.com',
       'res.cloudinary.com',
       'cdn.pixabay.com',
+      'googleusercontent.com',
     ],
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
