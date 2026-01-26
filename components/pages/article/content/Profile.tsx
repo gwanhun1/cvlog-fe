@@ -27,6 +27,7 @@ const Profile = ({ getDetailData }: ProfileProps) => {
             alt="프로필 이미지"
             width={130}
             height={130}
+            unoptimized={profileImage?.includes('googleusercontent.com')}
             className="object-cover w-full h-full"
           />
         )}

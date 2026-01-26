@@ -45,7 +45,8 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
   return (
     <article
       className={`relative group block w-full overflow-hidden transition-all duration-300 bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/20 hover:border-ftBlue/40 hover:-translate-y-1 ${
-        isMatched ? 'ring-2 border-ftBlue/50 ring-ftBlue/40' : ''}`}
+        isMatched ? 'ring-2 border-ftBlue/50 ring-ftBlue/40' : ''
+      }`}
       itemScope
       itemType="http://schema.org/BlogPosting"
     >
@@ -60,6 +61,7 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
               style={{ objectFit: 'cover' }}
               fill
               sizes="100vw"
+              unoptimized={imageUrl.includes('googleusercontent.com')}
               onError={e => {
                 const imgElement = e.target as HTMLImageElement;
                 imgElement.style.display = 'none';
@@ -117,6 +119,9 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
                   alt={user_id.name}
                   fill
                   className="object-cover"
+                  unoptimized={user_id.profile_image.includes(
+                    'googleusercontent.com',
+                  )}
                 />
               </div>
               <span className="text-xs font-medium text-slate-600">
