@@ -16,7 +16,7 @@ const Profile = ({ getDetailData }: ProfileProps) => {
     : getDetailData.profile_image;
   const displayName = isDeletedUser
     ? '탈퇴한 사용자'
-    : getDetailData.name ?? getDetailData.github_id;
+    : (getDetailData.name ?? getDetailData.github_id);
 
   return (
     <article className="flex items-center gap-x-4 p-2 mobile:mb-2">

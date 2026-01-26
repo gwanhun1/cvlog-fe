@@ -15,7 +15,7 @@ const CommentItem = ({
   const modifyMutate = useModifyComment(id);
   const removeMutate = useDeleteComment(id);
   const queryClient = useQueryClient();
-  const userInfo = useStore((state) => state.userIdAtom);
+  const userInfo = useStore(state => state.userIdAtom);
 
   const [isEditing, setIsEditing] = useState(false);
   const [modifiedComment, setModifiedComment] = useState(content);
@@ -32,7 +32,7 @@ const CommentItem = ({
         modifyMutate.mutate(modifiedComment, {
           onSuccess: () => {
             queryClient.invalidateQueries({
-              predicate: (query) => query.queryKey[0] === 'commentList',
+              predicate: query => query.queryKey[0] === 'commentList',
             });
             if (refetch) refetch();
             setIsEditing(false);
@@ -49,7 +49,7 @@ const CommentItem = ({
       removeMutate.mutate(undefined, {
         onSuccess: () => {
           queryClient.invalidateQueries({
-            predicate: (query) => query.queryKey[0] === 'commentList',
+            predicate: query => query.queryKey[0] === 'commentList',
           });
           if (refetch) refetch();
         },
@@ -66,7 +66,7 @@ const CommentItem = ({
   return (
     <article className="mt-2 border-b border-gray-300 mobile:mt-5">
       <div className="flex flex-col">
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Avatar img={profileImage} rounded>
               <div className="flex flex-col space-y-1 font-medium dark:text-white">
@@ -97,11 +97,11 @@ const CommentItem = ({
           )}
         </div>
       </div>
-      <div className="w-full p-2 pl-6 text-sm desktop:py-5 tablet:text-base mobile:text-md text-ftBlack">
+      <div className="p-2 pl-6 w-full text-sm desktop:py-5 tablet:text-base mobile:text-md text-ftBlack">
         {isEditing ? (
           <textarea
             style={{ border: '1px solid gray' }}
-            className="w-full text-gray-600 rounded-md p-2 border border-gray-400"
+            className="p-2 w-full text-gray-600 rounded-md border border-gray-400"
             value={modifiedComment}
             onChange={handleCommentChange}
           />

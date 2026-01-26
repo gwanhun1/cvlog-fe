@@ -402,6 +402,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         nextPostInfo={resolvedDetailData?.nextPostInfo}
         basePath="/article/content/all"
         userInfo={resolvedDetailData?.post?.user_id}
+        isLoading={shouldShowSkeleton}
         ProfileComponent={Profile}
       />
       <CommentBox pid={pid} />

@@ -19,21 +19,29 @@ interface PostNavigationProps {
   nextPostInfo?: PostInfo | null;
   basePath: string;
   userInfo?: ProfileDetailData;
+  isLoading?: boolean;
   ProfileComponent: React.ComponentType<{ getDetailData?: ProfileDetailData }>;
 }
+
+import { ProfileSkeleton } from './Skeleton';
 
 const PostNavigation = ({
   prevPostInfo,
   nextPostInfo,
   basePath,
   userInfo,
+  isLoading,
   ProfileComponent,
 }: PostNavigationProps) => {
   return (
     <section className="mt-10 w-full">
       <div className="w-full rounded-2xl border border-gray-200 backdrop-blur-sm bg-white/70">
         <div className="px-2 pt-4">
-          <ProfileComponent getDetailData={userInfo} />
+          {isLoading ? (
+            <ProfileSkeleton />
+          ) : (
+            <ProfileComponent getDetailData={userInfo} />
+          )}
         </div>
 
         <div className="grid grid-cols-2 gap-3 p-4 tablet:gap-4">
