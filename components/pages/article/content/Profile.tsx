@@ -21,16 +21,25 @@ const Profile = ({ getDetailData }: ProfileProps) => {
   return (
     <article className="flex items-center gap-x-4 p-2 mobile:mb-2">
       <figure className="w-[70px] h-[70px] tablet:w-[80px] tablet:h-[80px] desktop:w-[100px] desktop:h-[100px] rounded-full overflow-hidden">
-        {profileImage && (
-          <Image
-            src={profileImage}
-            alt="프로필 이미지"
-            width={130}
-            height={130}
-            unoptimized={profileImage?.includes('googleusercontent.com')}
-            className="object-cover w-full h-full"
-          />
-        )}
+        {profileImage &&
+          (profileImage.includes('googleusercontent.com') ? (
+            <img
+              src={profileImage}
+              alt="프로필 이미지"
+              className="object-cover w-full h-full"
+              onError={e => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          ) : (
+            <Image
+              src={profileImage}
+              alt="프로필 이미지"
+              width={130}
+              height={130}
+              className="object-cover w-full h-full"
+            />
+          ))}
       </figure>
 
       <div className="flex flex-col w-full max-w-[250px]">

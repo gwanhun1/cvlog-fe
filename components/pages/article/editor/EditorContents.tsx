@@ -77,20 +77,8 @@ const EditorContents = ({
         return prev;
       });
     },
-    [setDoc]
+    [setDoc],
   );
-
-  const getMdeInstance = useCallback((instance: any) => {
-    editorInstanceRef.current = instance;
-
-    const cm = instance?.codemirror;
-    if (!cm) return;
-
-    cm.off('cursorActivity');
-    cm.on('cursorActivity', () => {
-      lastCursorRef.current = cm.getCursor();
-    });
-  }, []);
 
   const insertImageAtCursor = useCallback(
     (imageMarkdown: string, targetPos?: any) => {
@@ -110,31 +98,26 @@ const EditorContents = ({
       cm.replaceRange(imageMarkdown, pos);
       lastCursorRef.current = cm.getCursor();
     },
-    [setDoc]
+    [setDoc],
   );
 
-  const handleImageUpload = useCallback(
-    async (e: React.DragEvent<HTMLDivElement>) => {
-      try {
-        const mde = editorInstanceRef.current;
-        const cm = mde?.codemirror;
-        const dropPos = cm
-          ? cm.coordsChar({ left: e.clientX, top: e.clientY }, 'window')
-          : null;
+  const processFileAndUpload = useCallback(
+    async (file: File, dropPos?: any) => {
+      if (!file || !file.type.startsWith('image/')) return;
 
+      try {
         abortRef.current?.abort();
         const controller = new AbortController();
         abortRef.current = controller;
         setIsUploadingImage(true);
 
-        const file = e.dataTransfer.files[0];
         const { url: imageUrl, name: imageName } = await uploadImage(
           file,
-          controller.signal
+          controller.signal,
         );
 
         const imageMarkdown = `![${imageName}](${imageUrl})`;
-        insertImageAtCursor(imageMarkdown, dropPos || undefined);
+        insertImageAtCursor(imageMarkdown, dropPos);
 
         setImageArr(prev => [...prev, imageUrl]);
       } catch (error) {
@@ -150,44 +133,82 @@ const EditorContents = ({
         abortRef.current = null;
       }
     },
-    [insertImageAtCursor, setImageArr, uploadImage]
+    [insertImageAtCursor, setImageArr, uploadImage],
+  );
+
+  const handlePaste = useCallback(
+    async (cm: any, e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf('image') !== -1) {
+          e.preventDefault();
+          const file = items[i].getAsFile();
+          if (file) {
+            processFileAndUpload(file);
+          }
+          break;
+        }
+      }
+    },
+    [processFileAndUpload],
+  );
+
+  const handleDrop = useCallback(
+    async (cm: any, e: DragEvent) => {
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const dropPos = cm.coordsChar(
+          { left: e.clientX, top: e.clientY },
+          'window',
+        );
+        processFileAndUpload(files[0], dropPos);
+      }
+    },
+    [processFileAndUpload],
+  );
+
+  const getMdeInstance = useCallback(
+    (instance: any) => {
+      editorInstanceRef.current = instance;
+
+      const cm = instance?.codemirror;
+      if (!cm) return;
+
+      cm.off('cursorActivity');
+      cm.on('cursorActivity', () => {
+        lastCursorRef.current = cm.getCursor();
+      });
+
+      // 핵심 로직: 에디터 엔진(CodeMirror)에 직접 이벤트 바인딩
+      cm.off('paste');
+      cm.on('paste', (cmInstance: any, e: ClipboardEvent) => {
+        handlePaste(cmInstance, e);
+      });
+
+      cm.off('drop');
+      cm.on('drop', (cmInstance: any, e: DragEvent) => {
+        handleDrop(cmInstance, e);
+      });
+    },
+    [handlePaste, handleDrop],
   );
 
   const handleFileSelectUpload = useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
-      try {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        abortRef.current?.abort();
-        const controller = new AbortController();
-        abortRef.current = controller;
-        setIsUploadingImage(true);
-
-        const { url: imageUrl, name: imageName } = await uploadImage(
-          file,
-          controller.signal
-        );
-        const imageMarkdown = `![${imageName}](${imageUrl})`;
-        insertImageAtCursor(imageMarkdown);
-        setImageArr(prev => [...prev, imageUrl]);
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          error.message === 'IMAGE_UPLOAD_CANCELED'
-        ) {
-          return;
-        }
-        console.error('이미지 업로드 실패:', error);
-      } finally {
-        setIsUploadingImage(false);
-        abortRef.current = null;
+      const file = e.target.files?.[0];
+      if (file) {
+        await processFileAndUpload(file);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
       }
     },
-    [insertImageAtCursor, setImageArr, uploadImage]
+    [processFileAndUpload],
   );
 
   const handleCancelUpload = useCallback(() => {
@@ -219,7 +240,7 @@ const EditorContents = ({
       source: HTMLElement,
       target: HTMLElement,
       isSourceScrolling: boolean,
-      setSourceScrolling: (value: boolean) => void
+      setSourceScrolling: (value: boolean) => void,
     ) => {
       if (isSourceScrolling) return;
 
@@ -245,7 +266,7 @@ const EditorContents = ({
         editor,
         preview,
         isEditorScrolling,
-        value => (isEditorScrolling = value)
+        value => (isEditorScrolling = value),
       );
     };
 
@@ -288,7 +309,7 @@ const EditorContents = ({
         className={cn(
           css.mde,
           `${isVisiblePreview ? 'tablet:w-1/2' : 'tablet:w-full'}`,
-          'w-full overflow-hidden relative'
+          'w-full overflow-hidden relative',
         )}
         style={{ height: 'calc(100vh - 180px)' }}
       >
@@ -315,10 +336,6 @@ const EditorContents = ({
           value={doc.content || ''}
           onChange={handleContentChange}
           getMdeInstance={getMdeInstance}
-          onDrop={e => {
-            e.preventDefault();
-            handleImageUpload(e);
-          }}
         />
       </div>
 

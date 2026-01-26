@@ -52,22 +52,33 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
     >
       <div className="flex flex-col w-full h-full">
         {imageUrl && (
-          <div className="relative w-full h-0 pb-[56%] overflow-hidden">
-            <Image
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              src={imageUrl}
-              alt={title}
-              priority
-              style={{ objectFit: 'cover' }}
-              fill
-              sizes="100vw"
-              unoptimized={imageUrl.includes('googleusercontent.com')}
-              onError={e => {
-                const imgElement = e.target as HTMLImageElement;
-                imgElement.style.display = 'none';
-              }}
-              itemProp="image"
-            />
+          <div className="relative w-full h-0 pb-[56%] overflow-hidden bg-gray-50">
+            {imageUrl.includes('googleusercontent.com') ||
+            imageUrl.startsWith('http') ? (
+              <img
+                src={imageUrl}
+                alt={title}
+                className="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
+                onError={e => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              <Image
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                src={imageUrl}
+                alt={title}
+                priority
+                style={{ objectFit: 'cover' }}
+                fill
+                sizes="100vw"
+                onError={e => {
+                  const imgElement = e.target as HTMLImageElement;
+                  imgElement.style.display = 'none';
+                }}
+                itemProp="image"
+              />
+            )}
             <meta itemProp="thumbnailUrl" content={imageUrl} />
           </div>
         )}
@@ -114,15 +125,20 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
           <div className="overflow-hidden absolute right-0 bottom-0 pointer-events-none">
             <div className="flex items-center gap-2 py-1.5 px-3 mb-2 mr-2 bg-white/80 backdrop-blur-md rounded-full border shadow-sm transition-all duration-300 translate-y-full opacity-0 border-ftBlue/20 group-hover:translate-y-0 group-hover:opacity-100">
               <div className="overflow-hidden relative w-5 h-5 rounded-full ring-1 ring-ftBlue/10">
-                <Image
-                  src={user_id.profile_image}
-                  alt={user_id.name}
-                  fill
-                  className="object-cover"
-                  unoptimized={user_id.profile_image.includes(
-                    'googleusercontent.com',
-                  )}
-                />
+                {user_id.profile_image.includes('googleusercontent.com') ? (
+                  <img
+                    src={user_id.profile_image}
+                    alt={user_id.name}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <Image
+                    src={user_id.profile_image}
+                    alt={user_id.name}
+                    fill
+                    className="object-cover"
+                  />
+                )}
               </div>
               <span className="text-xs font-medium text-slate-600">
                 {user_id.name}
