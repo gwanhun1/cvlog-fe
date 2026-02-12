@@ -25,7 +25,7 @@ export interface CreateTagsFolderRes {
   success: boolean;
   data: {
     name: string;
-    user_id: {
+    user: {
       github_id: string;
       name: string;
       refresh_token: string;
@@ -95,7 +95,7 @@ export interface BlogType {
   id: number;
   title: string;
   content: string;
-  user_id: UserIdType;
+  user: UserIdType;
   public_status: boolean;
   created_at: string;
   updated_at: string;

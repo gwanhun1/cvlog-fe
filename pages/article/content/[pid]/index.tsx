@@ -5,7 +5,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import Head from 'next/head';
 import CommentBox from 'components/Shared/LogmeComment';
-import { useGetCommentList } from 'service/hooks/Comment';
 import {
   useDeleteDetail,
   useGetMyDetail,
@@ -37,7 +36,6 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
 
   // 데이터 받기
   const getMyDetail = useGetMyDetail(parseInt(pid));
-  const commentList = useGetCommentList(parseInt(pid));
 
   // 초기 데이터가 있으면 QueryClient의 캐시에 저장
   useEffect(() => {
@@ -54,7 +52,10 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   }, [getMyDetail.data]);
 
   // 나만보기 메세지 창
+  const [isToggling, setIsToggling] = useState(false);
   const handlePrivateToggle = async () => {
+    if (isToggling) return;
+    setIsToggling(true);
     const newPublicStatus = !patchMessage;
     try {
       await patchDetailMutation.mutateAsync({
@@ -82,27 +83,36 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
     } catch (error) {
       console.error('Error toggling private status:', error);
       showToast('상태 변경 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setIsToggling(false);
     }
   };
 
   // 삭제 창
   const deleteContent = useDeleteDetail(parseInt(pid));
+  const [isDeleting, setIsDeleting] = useState(false);
   const deleteCheck = () => {
+    if (isDeleting) return;
     showConfirm('삭제하시겠습니까?', async () => {
-      await deleteContent.mutate();
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
-        queryClient.invalidateQueries({
-          predicate: query => query.queryKey[0] === 'list',
-          // eslint-disable-next-line no-unused-vars
-          // @ts-ignore
-        }),
-        queryClient.invalidateQueries({
-          predicate: query => query.queryKey[0] === 'publicList',
-        }),
-      ]);
-      showToast('삭제되었습니다.', 'success');
-      router.push('/article');
+      setIsDeleting(true);
+      try {
+        await deleteContent.mutateAsync();
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
+          queryClient.invalidateQueries({
+            predicate: query => query.queryKey[0] === 'list',
+          }),
+          queryClient.invalidateQueries({
+            predicate: query => query.queryKey[0] === 'publicList',
+          }),
+        ]);
+        showToast('삭제되었습니다.', 'success');
+        router.push('/article');
+      } catch (error) {
+        console.error('삭제 중 오류:', error);
+        showToast('삭제 중 오류가 발생했습니다.', 'error');
+        setIsDeleting(false);
+      }
     });
   };
 
@@ -110,10 +120,6 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
   const updateCheck = () => {
     router.push(`/article/modify/${pid}`);
   };
-
-  useEffect(() => {
-    // getStaticProps를 통해 이미 데이터를 받았으므로 마운트 시점의 강제 리페칭 제거
-  }, [pid]);
 
   // 에러 처리 또는 데이터 없음 처리 (로딩이 끝났는데 데이터가 없는 경우)
   if (!getMyDetail.isLoading && !getMyDetail.data?.post) {
@@ -142,100 +148,14 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
         {getMyDetail.data?.post && (
           <Head>
             <title>{getMyDetail.data.post.title} | LogMe</title>
-            <meta
-              name="description"
-              content={getMyDetail.data.post.content.substring(0, 160)}
-            />
-            <meta
-              name="keywords"
-              content={getMyDetail.data.post.tags
-                .map((tag: TagType) => tag.name)
-                .join(', ')}
-            />
+            {/* #5: 로그인 사용자 전용 페이지는 noindex - 대표 URL은 /all/ 경로 */}
+            <meta name="robots" content="noindex, nofollow" />
+            <meta name="googlebot" content="noindex, nofollow" />
 
-            {/* Canonical URL - 중요: 모든 상세 페이지는 SEO용 경로를 대표 주소로 설정 */}
+            {/* Canonical URL - 공개 경로로 통일 */}
             <link
               rel="canonical"
               href={`https://logme.shop/article/content/all/${pid}`}
-            />
-
-            {/* Open Graph / Facebook */}
-            <meta property="og:type" content="article" />
-            <meta property="og:title" content={getMyDetail.data.post.title} />
-            <meta
-              property="og:description"
-              content={getMyDetail.data.post.content.substring(0, 160)}
-            />
-            <meta
-              property="og:url"
-              content={`https://logme.shop/article/content/${pid}`}
-            />
-            <meta property="og:site_name" content="LogMe" />
-
-            {/* 구글 검색 추가 옵션 */}
-            <meta name="robots" content="index, follow" />
-            <meta name="googlebot" content="index, follow" />
-
-            <script
-              type="application/ld+json"
-              dangerouslySetInnerHTML={{
-                __html: JSON.stringify([
-                  {
-                    '@context': 'https://schema.org',
-                    '@type': 'BlogPosting',
-                    headline: getMyDetail.data.post.title,
-                    description: getMyDetail.data.post.content.substring(
-                      0,
-                      160,
-                    ),
-                    keywords: getMyDetail.data.post.tags
-                      .map((tag: TagType) => tag.name)
-                      .join(', '),
-                    author: {
-                      '@type': 'Person',
-                      name: 'LogMe 사용자',
-                    },
-                    datePublished: getMyDetail.data.post.created_at,
-                    dateModified: getMyDetail.data.post.updated_at,
-                    mainEntityOfPage: {
-                      '@type': 'WebPage',
-                      '@id': `https://logme.shop/article/content/all/${pid}`,
-                    },
-                    publisher: {
-                      '@type': 'Organization',
-                      name: 'LogMe',
-                      logo: {
-                        '@type': 'ImageObject',
-                        url: 'https://logme.shop/favicon.svg',
-                      },
-                    },
-                  },
-                  {
-                    '@context': 'https://schema.org',
-                    '@type': 'BreadcrumbList',
-                    itemListElement: [
-                      {
-                        '@type': 'ListItem',
-                        position: 1,
-                        name: '홈',
-                        item: 'https://logme.shop',
-                      },
-                      {
-                        '@type': 'ListItem',
-                        position: 2,
-                        name: '게시물',
-                        item: 'https://logme.shop/article',
-                      },
-                      {
-                        '@type': 'ListItem',
-                        position: 3,
-                        name: getMyDetail.data.post.title,
-                        item: `https://logme.shop/article/content/all/${pid}`,
-                      },
-                    ],
-                  },
-                ]),
-              }}
             />
           </Head>
         )}
@@ -286,31 +206,34 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
           <section>
             <div className="flex justify-end w-full">
               <article className="flex flex-row mt-1 mr-1 h-10 tablet:mt-1 tablet:m-0">
-                {Number(userInfo?.id) === getMyDetail?.data?.post.user_id.id ||
+                {Number(userInfo?.id) === getMyDetail?.data?.post.user.id ||
                 userInfo?.github_id ===
-                  String(getMyDetail?.data?.post.user_id.id) ? (
+                  String(getMyDetail?.data?.post.user.id) ? (
                   <>
                     <button
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => {
                         handlePrivateToggle();
                       }}
+                      disabled={isToggling}
                     >
                       {patchMessage ? '나만보기' : '공개'}
                     </button>
                     <button
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack "
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => {
                         updateCheck();
                       }}
+                      disabled={isDeleting}
                     >
                       수정
                     </button>
                     <button
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack"
+                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
                       onClick={() => {
                         deleteCheck();
                       }}
+                      disabled={isDeleting}
                     >
                       삭제
                     </button>
@@ -331,7 +254,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
           prevPostInfo={getMyDetail.data?.prevPostInfo}
           nextPostInfo={getMyDetail.data?.nextPostInfo}
           basePath="/article/content"
-          userInfo={getMyDetail?.data?.post?.user_id}
+          userInfo={getMyDetail?.data?.post?.user}
           ProfileComponent={Profile}
         />
         <CommentBox pid={pid} />

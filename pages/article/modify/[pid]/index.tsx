@@ -68,6 +68,21 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // 수정 중 페이지 이탈 방지
+  useEffect(() => {
+    const hasUnsavedChanges = doc.title.trim() !== '' || doc.content.trim() !== '';
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [doc.title, doc.content]);
+
   return (
     <AuthGuard>
       {isLoading && <LoaderAnimation />}

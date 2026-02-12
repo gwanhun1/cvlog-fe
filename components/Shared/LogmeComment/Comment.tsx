@@ -8,7 +8,7 @@ import { useStore } from 'service/store/useStore';
 const CommentItem = ({
   id,
   content,
-  user_id,
+  user,
   created_at,
   refetch,
 }: CommentProps & { refetch?: () => void }) => {
@@ -28,7 +28,13 @@ const CommentItem = ({
     if (!isEditing) {
       setIsEditing(true);
     } else {
+      if (!modifiedComment.trim()) {
+        alert('댓글 내용을 입력해주세요.');
+        return;
+      }
+      if (isSubmitting) return;
       if (window.confirm('정말 수정합니까?')) {
+        setIsSubmitting(true);
         modifyMutate.mutate(modifiedComment, {
           onSuccess: () => {
             queryClient.invalidateQueries({
@@ -37,6 +43,9 @@ const CommentItem = ({
             if (refetch) refetch();
             setIsEditing(false);
           },
+          onSettled: () => {
+            setIsSubmitting(false);
+          },
         });
       } else {
         setIsEditing(false);
@@ -44,8 +53,12 @@ const CommentItem = ({
     }
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleDeleteComment = () => {
+    if (isSubmitting) return;
     if (window.confirm('정말 삭제합니까?')) {
+      setIsSubmitting(true);
       removeMutate.mutate(undefined, {
         onSuccess: () => {
           queryClient.invalidateQueries({
@@ -53,15 +66,18 @@ const CommentItem = ({
           });
           if (refetch) refetch();
         },
+        onSettled: () => {
+          setIsSubmitting(false);
+        },
       });
     }
   };
 
-  const isDeletedUser = !user_id;
+  const isDeletedUser = !user;
   const profileImage = isDeletedUser
     ? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
-    : user_id.profile_image;
-  const githubId = isDeletedUser ? '탈퇴한 사용자' : user_id.github_id;
+    : user.profile_image;
+  const githubId = isDeletedUser ? '탈퇴한 사용자' : user.github_id;
 
   return (
     <article className="mt-2 border-b border-gray-300 mobile:mt-5">
@@ -79,17 +95,19 @@ const CommentItem = ({
               </div>
             </Avatar>
           </div>
-          {user_id && userInfo?.github_id === user_id.github_id && (
+          {user && userInfo?.github_id === user.github_id && (
             <div className="flex">
               <button
-                className="m-1 text-[10px] tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack"
+                className="m-1 text-[10px] tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleModifyClick}
+                disabled={isSubmitting}
               >
                 {isEditing ? '저장' : '수정'}
               </button>
               <button
-                className="m-1 text-[10px] tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack"
+                className="m-1 text-[10px] tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleDeleteComment}
+                disabled={isSubmitting}
               >
                 삭제
               </button>

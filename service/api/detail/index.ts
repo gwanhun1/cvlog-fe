@@ -17,11 +17,7 @@ export const getMyDetail = async (params: number) => {
 };
 
 export const deleteDetail = async (params: number) => {
-  const { data } = await axios.delete<DeleteDetail>(`/posts/${params}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  });
+  const { data } = await axios.delete<DeleteDetail>(`/posts/${params}`);
   return data;
 };
 
@@ -37,16 +33,6 @@ export const fetchCreateModifyPost = async (
   pid: number
 ) => {
   const { data } = await axios.put<CreateNewPostReq>(`/posts/${pid}`, params);
-  return data;
-};
-
-export const getLikePost = async (params: number) => {
-  const { data } = await axios.get(`/likes/${params}`);
-  return data;
-};
-
-export const postLikePost = async (params: number, type: string) => {
-  const { data } = await axios.post(`/likes/${params}`, { type });
   return data;
 };
 

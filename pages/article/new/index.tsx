@@ -47,6 +47,23 @@ const NewPost: NextPage = () => {
     };
   }, []);
 
+  // 작성 중 페이지 이탈 방지
+  useEffect(() => {
+    const hasUnsavedChanges =
+      doc.title.trim() !== '' ||
+      (doc.content.trim() !== '' && doc.content.trim() !== '# Hello world');
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [doc.title, doc.content]);
+
   return (
     <AuthGuard>
       <main className="h-screen min-h-screen px-2 tablet:px-10">

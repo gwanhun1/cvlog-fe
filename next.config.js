@@ -46,7 +46,7 @@ const nextConfig = {
     formats: ['image/webp'],
   },
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',

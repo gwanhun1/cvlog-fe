@@ -35,6 +35,7 @@ export const getPublicList = async (page: number, keyword?: string) => {
     return data.data;
   } catch (error) {
     console.error('Network Error in getPublicList:', error);
+    return { posts: [], maxPage: 1 };
   }
 };
 

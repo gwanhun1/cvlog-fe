@@ -168,6 +168,7 @@ const EditorHeader = ({
                 ? handleSavePost()
                 : showToast(ERROR_MESSAGES.LOGIN_REQUIRED, 'warning')
             }
+            disabled={isLoading}
           >
             <Shared.LogmeHeadline
               type="medium"

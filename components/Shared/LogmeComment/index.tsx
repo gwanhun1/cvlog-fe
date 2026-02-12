@@ -22,20 +22,15 @@ const CommentBox = ({ pid }: { pid: string }) => {
       predicate: query => query.queryKey[0] === 'commentList',
     });
     await refetch();
-    try {
-      const response = await fetch(`/api/comments/${pid}`);
-      if (response.ok) {
-        const data = await response.json();
-        queryClient.setQueryData(['commentList'], data);
-      }
-    } catch (error) {
-      console.error('Failed to refresh comments:', error);
-    }
-  }, [pid, queryClient, refetch]);
+  }, [queryClient, refetch]);
 
   React.useEffect(() => {
     // @ts-ignore
     window.refetchComments = forceRefresh;
+    return () => {
+      // @ts-ignore
+      delete window.refetchComments;
+    };
   }, [forceRefresh]);
 
   const sortedComments = React.useMemo(() => {

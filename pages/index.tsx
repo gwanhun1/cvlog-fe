@@ -37,7 +37,7 @@ const Home = () => {
         <meta property="og:url" content="https://logme.shop" />
         <meta
           property="og:image"
-          content="https://logme.shop/assets/NavLogo.svg"
+          content="https://logme.shop/assets/logo.png"
         />
         <meta property="og:site_name" content="LOGME" />
 
@@ -52,7 +52,7 @@ const Home = () => {
         />
         <meta
           name="twitter:image"
-          content="https://logme.shop/assets/NavLogo.svg"
+          content="https://logme.shop/assets/logo.png"
         />
 
         <link rel="canonical" href="https://logme.shop" />

@@ -17,6 +17,8 @@ const CommentWrite = ({
   const userInfo = useStore((state) => state.userIdAtom);
   const { showToast, showConfirm } = useToast();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) =>
     setComment(e.target.value);
 
@@ -25,8 +27,10 @@ const CommentWrite = ({
       showToast('댓글을 작성해주세요.', 'warning');
       return;
     }
+    if (isSubmitting) return;
 
     showConfirm('정말 작성합니까?', () => {
+      setIsSubmitting(true);
       postNewComment.mutate(
         { post_id: parseInt(pid), content: comment },
         {
@@ -36,7 +40,10 @@ const CommentWrite = ({
             parentRefetch();
             showToast('작성되었습니다.', 'success');
           },
-        }
+          onSettled: () => {
+            setIsSubmitting(false);
+          },
+        },
       );
     });
   };
@@ -51,9 +58,10 @@ const CommentWrite = ({
       />
       <div className="flex justify-end mt-1 mobile:mt-2 mobile:mb-5">
         <Shared.LogmeButton
-          variant={userInfo.github_id === '' ? 'disabled' : 'classic'}
+          variant={userInfo.github_id === '' || isSubmitting ? 'disabled' : 'classic'}
           size="medium"
           onClick={handleSubmit}
+          disabled={isSubmitting}
         >
           <Shared.LogmeHeadline
             type="medium"

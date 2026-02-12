@@ -4,13 +4,10 @@ import {
   deleteDetail,
   fetchCreateModifyPost,
   getDetail,
-  getLikePost,
   getMyDetail,
   patchDetail,
 } from 'service/api/detail';
 import { CreateNewPostReq } from 'service/api/detail/type';
-import { handleGetErrors, handleMutateErrors } from 'service/api/login';
-import { ErrorResponse } from 'service/api/login/type';
 
 export const useGetDetail = (params: number, initialData?: any) => {
   return useQuery({
@@ -44,9 +41,6 @@ export const useDeleteDetail = (params: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
     },
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
-    },
   });
 };
 
@@ -63,9 +57,6 @@ export const usePatchDetail = () => {
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
-    },
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
     },
   });
 };
@@ -86,34 +77,5 @@ export const useModifyPost = (pid: number) => {
       await router.push('/article');
     },
     retry: 0,
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
-    },
-  });
-};
-
-export const useGetLikePost = (params: number) => {
-  return useQuery({
-    queryKey: ['getLikePost', params],
-    queryFn: () => getLikePost(params),
-    retry: 0,
-    enabled: !!params,
-  });
-};
-
-export const usePostLike = ({ options }: any) => {
-  return useMutation({
-    mutationFn: ({
-      id,
-      public_status,
-    }: {
-      id: number;
-      public_status: boolean;
-    }) => patchDetail(id, public_status),
-    ...options,
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
-      if (options?.onError) options.onError(error);
-    },
   });
 };

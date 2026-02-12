@@ -3,7 +3,7 @@ export interface NewPostComment {
   content: string;
 }
 
-export interface User_id {
+export interface CommentUser {
   profile_image: string;
   github_id: string;
   id: number;
@@ -13,7 +13,7 @@ export interface CommentProps {
   id: number;
   content: string;
   created_at: string;
-  user_id: User_id | null;
+  user: CommentUser | null;
   refetch?: () => void;
 }
 

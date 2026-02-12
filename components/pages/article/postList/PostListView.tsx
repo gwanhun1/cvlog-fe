@@ -179,7 +179,7 @@ const PostListView = ({
           ) : posts.length > 0 ? (
             <div className="gap-6 w-full columns-1 tablet:columns-2 desktop:columns-3">
               {posts.map(
-                ({ id, title, content, tags, updated_at, user_id }, index) => (
+                ({ id, title, content, tags, updated_at, user }, index) => (
                   <div key={id} className="mb-6 break-inside-avoid">
                     <Link
                       href={getPostLink(id)}
@@ -209,7 +209,7 @@ const PostListView = ({
                             content={content}
                             tags={tags}
                             updated_at={updated_at}
-                            user_id={user_id}
+                            user={user}
                           />
                         </div>
                       ) : (
@@ -218,7 +218,7 @@ const PostListView = ({
                           content={content}
                           tags={tags}
                           updated_at={updated_at}
-                          user_id={user_id}
+                          user={user}
                         />
                       )}
                     </Link>

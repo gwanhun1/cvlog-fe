@@ -47,7 +47,7 @@ export interface ContentData {
   id: number;
   title: string;
   content: string;
-  user_id: UserIdType;
+  user: UserIdType;
   public_status: boolean;
   created_at: string;
   updated_at: string;

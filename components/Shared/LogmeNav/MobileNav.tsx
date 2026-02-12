@@ -12,7 +12,7 @@ import Loader from '../common/Loader';
 import LocalStorage from 'public/utils/Localstorage';
 import { useStore } from 'service/store/useStore';
 
-const menu = ['Home', 'Article', 'Resume', 'Github'];
+const menu = ['Article', 'Resume', 'Github'];
 
 interface MobileNavProps {
   isLoading: boolean;
@@ -76,6 +76,14 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
           </DropdownHeader>
         )}
 
+        <Link key="Home" href="/" prefetch={true}>
+          <DropdownItem
+            onClick={() => setPage('Home')}
+            className={page === 'Home' ? 'text-ftBlue font-bold' : ''}
+          >
+            Home
+          </DropdownItem>
+        </Link>
         {menu.map(list => (
           <Link key={list} href={`/${list.toLowerCase()}`} prefetch={true}>
             <DropdownItem

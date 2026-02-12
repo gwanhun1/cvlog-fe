@@ -16,7 +16,7 @@ export interface CardProps {
   content: string;
   updated_at?: string;
   tags: TagItem[];
-  user_id?: UserIdType;
+  user?: UserIdType;
 }
 
 const extractImageUrl = (content: string): string | undefined => {
@@ -30,7 +30,7 @@ const removeImageFromContent = (content: string): string => {
   return cleanContent.replace(/\n\s*\n/g, '\n');
 };
 
-const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
+const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
   const keyword = useStore(state => state.tagAtom);
@@ -121,27 +121,27 @@ const Card = ({ title, updated_at, content, tags, user_id }: CardProps) => {
         </div>
 
         {/* 작성자 정보 (호버 시 아래에서 위로 슬라이드) */}
-        {user_id && (
+        {user && (
           <div className="overflow-hidden absolute right-0 bottom-0 pointer-events-none">
             <div className="flex items-center gap-2 py-1.5 px-3 mb-2 mr-2 bg-white/80 backdrop-blur-md rounded-full border shadow-sm transition-all duration-300 translate-y-full opacity-0 border-ftBlue/20 group-hover:translate-y-0 group-hover:opacity-100">
               <div className="overflow-hidden relative w-5 h-5 rounded-full ring-1 ring-ftBlue/10">
-                {user_id.profile_image.includes('googleusercontent.com') ? (
+                {user.profile_image.includes('googleusercontent.com') ? (
                   <img
-                    src={user_id.profile_image}
-                    alt={user_id.name}
+                    src={user.profile_image}
+                    alt={user.name}
                     className="object-cover w-full h-full"
                   />
                 ) : (
                   <Image
-                    src={user_id.profile_image}
-                    alt={user_id.name}
+                    src={user.profile_image}
+                    alt={user.name}
                     fill
                     className="object-cover"
                   />
                 )}
               </div>
               <span className="text-xs font-medium text-slate-600">
-                {user_id.name}
+                {user.name}
               </span>
             </div>
           </div>

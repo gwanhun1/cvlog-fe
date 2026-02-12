@@ -47,7 +47,12 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
     }
   };
 
+  const hasInitialized = useRef(false);
+
   useEffect(() => {
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+
     setIsClient(true);
     const token = LocalStorage.getItem('LogmeToken');
     setAccessToken(token);
@@ -63,7 +68,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
         { shallow: true },
       );
     }
-  }, [router]); // useEffect의 의존성 배열에 router 추가
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="w-full min-h-screen">
@@ -77,6 +82,8 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
           name="keywords"
           content="게시물, 블로그, 프로그래밍, 개발, 기술, 글목록"
         />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
 
         <meta property="og:title" content="LOGME - 모든 게시물 목록" />
         <meta
@@ -87,7 +94,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
         <meta property="og:url" content="https://logme.shop/article" />
         <meta
           property="og:image"
-          content="https://logme.shop/assets/NavLogo.svg"
+          content="https://logme.shop/assets/logo.png"
         />
         <meta property="og:site_name" content="LOGME" />
 
@@ -99,12 +106,12 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
         />
         <meta
           name="twitter:image"
-          content="https://logme.shop/assets/NavLogo.svg"
+          content="https://logme.shop/assets/logo.png"
         />
 
         <link
           rel="canonical"
-          href={`https://logme.shop/article${menu === 'all' ? '' : '?view=my'}`}
+          href="https://logme.shop/article"
         />
       </Head>
 

@@ -24,13 +24,6 @@ interface StoreState {
   resetStore: () => void;
 }
 
-const getClientItem = (key: string) => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(key) ?? '';
-  }
-  return '';
-};
-
 const initialUserId: UserInfoType = {
   id: 0,
   github_id: '',
@@ -48,7 +41,7 @@ export const useStore = create<StoreState>()(
     (set) => ({
       authorityState: false,
       refreshTokenAtom: '',
-      accessTokenAtom: getClientItem('LogmeToken'),
+      accessTokenAtom: '',
       listIndexAtom: 999999,
       userIdAtom: initialUserId,
       tagAtom: '',

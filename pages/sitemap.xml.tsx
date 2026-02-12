@@ -51,27 +51,27 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
       process.env.NEXT_PUBLIC_API_URL ||
       'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
-    // 모든 공개 게시물 가져오기 (필요시 여러 페이지를 순회하도록 확장 가능)
-    // 여기서는 최신글 위주로 가져오거나 전체를 가져오도록 구성합니다.
+    // 모든 공개 게시물 가져오기 - 전체 페이지를 순회
     const allPosts: any[] = [];
+    let currentPage = 1;
+    let maxPage = 1;
 
-    // 단순화를 위해 1~5페이지 정도를 수집 (약 40~50개 게시물)
-    for (let page = 1; page <= 5; page++) {
+    do {
       try {
         const response = await axios.get(
-          `${API_URL}/posts/public/page/${page}`,
+          `${API_URL}/posts/public/page/${currentPage}`,
           { timeout: 5000 },
         );
         const posts = response.data?.data?.posts || response.data?.data || [];
         if (!Array.isArray(posts) || posts.length === 0) break;
         allPosts.push(...posts);
-        const maxPage = response.data?.data?.maxPage || 1;
-        if (page >= maxPage) break;
+        maxPage = response.data?.data?.maxPage || 1;
+        currentPage++;
       } catch (e) {
-        console.error(`Error fetching sitemap page ${page}:`, e);
+        console.error(`Error fetching sitemap page ${currentPage}:`, e);
         break;
       }
-    }
+    } while (currentPage <= maxPage);
 
     // XML 생성
     const sitemap = generateSiteMap(allPosts.filter(p => p && p.id));

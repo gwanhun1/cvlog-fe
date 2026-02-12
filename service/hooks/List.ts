@@ -1,6 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { handleGetErrors, handleMutateErrors } from 'service/api/login';
-import { ErrorResponse } from 'service/api/login/type';
 import {
   fetchCreateTagsFolders,
   fetchGetTagsFolders,
@@ -65,9 +63,6 @@ export const useCreateFolders = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
     },
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
-    },
   });
 };
 
@@ -78,9 +73,6 @@ export const useRemoveFolders = (params: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
     },
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
-    },
   });
 };
 
@@ -88,8 +80,7 @@ export const usePutTagsFolder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: UpdateForm) => putTagsFolders(params),
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
+    onError: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
     },
   });

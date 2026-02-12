@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import axios from 'axios';
@@ -123,6 +123,8 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const patchDetailMutation = usePatchDetail();
 
   const handlePrivateToggle = async () => {
+    if (isToggling) return;
+    setIsToggling(true);
     const newPublicStatus = !patchMessage;
     try {
       await patchDetailMutation.mutateAsync({
@@ -149,24 +151,36 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     } catch (error) {
       console.error('Error toggling private status:', error);
       showToast('상태 변경 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setIsToggling(false);
     }
   };
 
   const deleteContent = useDeleteDetail(parseInt(pid));
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
   const deleteCheck = () => {
+    if (isDeleting) return;
     showConfirm('삭제하시겠습니까?', async () => {
-      await deleteContent.mutate();
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
-        queryClient.invalidateQueries({
-          predicate: query => query.queryKey[0] === 'list',
-        }),
-        queryClient.invalidateQueries({
-          predicate: query => query.queryKey[0] === 'publicList',
-        }),
-      ]);
-      showToast('삭제되었습니다.', 'success');
-      router.push('/article');
+      setIsDeleting(true);
+      try {
+        await deleteContent.mutateAsync();
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
+          queryClient.invalidateQueries({
+            predicate: query => query.queryKey[0] === 'list',
+          }),
+          queryClient.invalidateQueries({
+            predicate: query => query.queryKey[0] === 'publicList',
+          }),
+        ]);
+        showToast('삭제되었습니다.', 'success');
+        router.push('/article');
+      } catch (error) {
+        console.error('삭제 중 오류:', error);
+        showToast('삭제 중 오류가 발생했습니다.', 'error');
+        setIsDeleting(false);
+      }
     });
   };
 
@@ -204,6 +218,17 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       : plainText;
   }, [postData?.content]);
 
+  // #4: 게시물 본문에서 첫 번째 이미지를 추출하여 OG 이미지로 사용
+  const postImage = useMemo(() => {
+    const content = postData?.content;
+    if (!content) return 'https://logme.shop/assets/logo.png';
+    const imageMatch = content.match(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/);
+    if (imageMatch) return imageMatch[1];
+    const htmlImgMatch = content.match(/<img[^>]+src=["'](https?:\/\/[^\s"']+)["']/);
+    if (htmlImgMatch) return htmlImgMatch[1];
+    return 'https://logme.shop/assets/logo.png';
+  }, [postData?.content]);
+
   // 에러 처리 또는 데이터 없음 처리 (비공개 게시물 등)
   if (!shouldShowSkeleton && !resolvedDetailData?.post) {
     return (
@@ -222,7 +247,6 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       </div>
     );
   }
-  const postImage = 'https://logme.shop/assets/NavLogo.svg';
   const canonicalUrl = `https://logme.shop/article/content/all/${pid}`;
 
   return (
@@ -269,14 +293,14 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
               dateModified: postData?.updated_at || postData?.created_at,
               author: {
                 '@type': 'Person',
-                name: postData?.user_id?.name || 'LogMe 사용자',
+                name: postData?.user?.name || 'LogMe 사용자',
               },
               publisher: {
                 '@type': 'Organization',
                 name: 'LogMe',
                 logo: {
                   '@type': 'ImageObject',
-                  url: 'https://logme.shop/assets/NavLogo.svg',
+                  url: 'https://logme.shop/assets/logo.png',
                 },
               },
               mainEntityOfPage: canonicalUrl,
@@ -353,32 +377,35 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         <section>
           <div className="flex justify-end w-full">
             <article className="flex flex-row mt-1 mr-1 tablet:mt-1 tablet:m-0">
-              {Number(userInfo?.id) === resolvedDetailData?.post?.user_id?.id ||
+              {Number(userInfo?.id) === resolvedDetailData?.post?.user?.id ||
               userInfo?.github_id ===
-                String(resolvedDetailData?.post?.user_id?.github_id) ? (
+                String(resolvedDetailData?.post?.user?.github_id) ? (
                 <>
                   <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold"
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => {
                       handlePrivateToggle();
                     }}
+                    disabled={isToggling || isDeleting}
                   >
                     {patchMessage ? '나만보기' : '공개'}
                   </button>
 
                   <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack "
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => {
                       updateCheck();
                     }}
+                    disabled={isDeleting}
                   >
                     수정
                   </button>
                   <button
-                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack"
+                    className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={() => {
                       deleteCheck();
                     }}
+                    disabled={isDeleting}
                   >
                     삭제
                   </button>
@@ -391,7 +418,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
             <ContentLayout
               data={resolvedDetailData?.post?.content}
               isLoading={shouldShowSkeleton}
-              writer={resolvedDetailData?.post?.user_id?.github_id}
+              writer={resolvedDetailData?.post?.user?.github_id}
               id={resolvedDetailData?.post?.id}
             />
           </div>
@@ -401,7 +428,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         prevPostInfo={resolvedDetailData?.prevPostInfo}
         nextPostInfo={resolvedDetailData?.nextPostInfo}
         basePath="/article/content/all"
-        userInfo={resolvedDetailData?.post?.user_id}
+        userInfo={resolvedDetailData?.post?.user}
         isLoading={shouldShowSkeleton}
         ProfileComponent={Profile}
       />

@@ -15,13 +15,13 @@ export default function Document() {
         <meta name="application-name" content="LogMe" />
         <meta
           name="msapplication-TileImage"
-          content="https://logme.shop/assets/NavLogo.svg"
+          content="https://logme.shop/assets/logo.png"
         />
 
         {/* 기본 OG 이미지 - 각 페이지에서 개별 설정으로 덮어씀 */}
         <meta
           property="og:image"
-          content="https://logme.shop/assets/NavLogo.svg"
+          content="https://logme.shop/assets/logo.png"
         />
         <meta property="og:locale" content="ko_KR" />
 

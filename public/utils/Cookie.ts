@@ -18,7 +18,7 @@ class Cookie {
 
   static removeItem(key: string) {
     if (typeof document !== 'undefined') {
-      document.cookie = key + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
+      document.cookie = key + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT; path=/';
     }
   }
 }

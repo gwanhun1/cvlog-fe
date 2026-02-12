@@ -6,8 +6,6 @@ import {
   postNewComment,
 } from 'service/api/comment';
 import { NewPostComment } from 'service/api/comment/type';
-import { handleGetErrors, handleMutateErrors } from 'service/api/login';
-import { ErrorResponse } from 'service/api/login/type';
 
 export const usePostNewComment = () => {
   const queryClient = useQueryClient();
@@ -17,9 +15,6 @@ export const usePostNewComment = () => {
       return queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === 'commentList',
       });
-    },
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
     },
   });
 };
@@ -33,9 +28,6 @@ export const useModifyComment = (params: number) => {
         predicate: (query) => query.queryKey[0] === 'commentList',
       });
     },
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
-    },
   });
 };
 
@@ -47,9 +39,6 @@ export const useDeleteComment = (params: number) => {
       return queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === 'commentList',
       });
-    },
-    onError: (error: ErrorResponse) => {
-      handleMutateErrors(error);
     },
   });
 };

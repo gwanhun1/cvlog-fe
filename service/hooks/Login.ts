@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getUserInfo,
-  handleGetErrors,
   postRefreshToken,
   updateUserDescription,
 } from 'service/api/login';
