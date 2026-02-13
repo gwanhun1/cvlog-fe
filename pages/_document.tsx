@@ -15,17 +15,17 @@ export default function Document() {
         <meta name="application-name" content="LogMe" />
         <meta
           name="msapplication-TileImage"
-          content="https://logme.shop/assets/logo.png"
+          content="https://logme-io.vercel.app/assets/logo.png"
         />
 
         {/* 기본 OG 이미지 - 각 페이지에서 개별 설정으로 덮어씀 */}
         <meta
           property="og:image"
-          content="https://logme.shop/assets/logo.png"
+          content="https://logme-io.vercel.app/assets/logo.png"
         />
         <meta property="og:locale" content="ko_KR" />
 
-        {/* Google Search Console 인증용 */}
+        {/* Google Search Console 인증용 — 새 도메인 등록 후 새 인증 코드로 교체 필요 */}
         <meta
           name="google-site-verification"
           content="ZOHJ3gbgRZgnkzpT6EYDWaCe1oY7ExTZyvtzpr4S2-E"

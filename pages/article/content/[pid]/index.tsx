@@ -155,7 +155,7 @@ const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
             {/* Canonical URL - 공개 경로로 통일 */}
             <link
               rel="canonical"
-              href={`https://logme.shop/article/content/all/${pid}`}
+              href={`https://logme-io.vercel.app/article/content/all/${pid}`}
             />
           </Head>
         )}

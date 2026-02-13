@@ -2,7 +2,7 @@ const axios = require('axios');
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://logme.shop',
+  siteUrl: 'https://logme-io.vercel.app',
   generateRobotsTxt: false, // public/robots.txt 직접 관리
   exclude: [
     '/api/*',
@@ -26,9 +26,9 @@ module.exports = {
         process.env.NEXT_PUBLIC_API_URL ||
         'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
 
-      // 여러 페이지의 공개 게시물 수집 (최대 50페이지)
+      // 여러 페이지의 공개 게시물 수집 (최대 200페이지)
       const allPosts = [];
-      for (let page = 1; page <= 50; page++) {
+      for (let page = 1; page <= 200; page++) {
         try {
           const response = await axios.get(
             `${API_URL}/posts/public/page/${page}`,

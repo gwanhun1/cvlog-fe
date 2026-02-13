@@ -91,10 +91,10 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
           content="LOGME의 다양한 개발 관련 게시물을 확인하세요."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://logme.shop/article" />
+        <meta property="og:url" content="https://logme-io.vercel.app/article" />
         <meta
           property="og:image"
-          content="https://logme.shop/assets/logo.png"
+          content="https://logme-io.vercel.app/assets/logo.png"
         />
         <meta property="og:site_name" content="LOGME" />
 
@@ -106,12 +106,12 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
         />
         <meta
           name="twitter:image"
-          content="https://logme.shop/assets/logo.png"
+          content="https://logme-io.vercel.app/assets/logo.png"
         />
 
         <link
           rel="canonical"
-          href="https://logme.shop/article"
+          href="https://logme-io.vercel.app/article"
         />
       </Head>
 

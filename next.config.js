@@ -52,17 +52,50 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   async redirects() {
+    return [];
+  },
+  // 비공개/삭제된 게시물 접근 시 /article/content/[pid] (로그인 전용)에서
+  // 404가 아닌 리디렉션 오류가 발생하지 않도록 rewrites 없이 깔끔하게 처리
+  async headers() {
     return [
       {
+        // 모든 페이지에 X-Robots-Tag 헤더 추가 (기본: 색인 허용)
         source: '/:path*',
-        has: [
+        headers: [
           {
-            type: 'host',
-            value: 'www.logme.shop',
+            key: 'X-Robots-Tag',
+            value: 'index, follow',
           },
         ],
-        destination: 'https://logme.shop/:path*',
-        permanent: true,
+      },
+      {
+        // 로그인 전용 페이지는 색인 차단
+        source: '/article/content/:pid(\\d+)',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        // 수정/작성 페이지 색인 차단
+        source: '/article/modify/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      {
+        source: '/article/new/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
       },
     ];
   },

@@ -34,10 +34,10 @@ const Home = () => {
           content="개발자를 위한 궁극의 마크다운 블로그 플랫폼"
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://logme.shop" />
+        <meta property="og:url" content="https://logme-io.vercel.app" />
         <meta
           property="og:image"
-          content="https://logme.shop/assets/logo.png"
+          content="https://logme-io.vercel.app/assets/logo.png"
         />
         <meta property="og:site_name" content="LOGME" />
 
@@ -52,10 +52,10 @@ const Home = () => {
         />
         <meta
           name="twitter:image"
-          content="https://logme.shop/assets/logo.png"
+          content="https://logme-io.vercel.app/assets/logo.png"
         />
 
-        <link rel="canonical" href="https://logme.shop" />
+        <link rel="canonical" href="https://logme-io.vercel.app" />
       </Head>
 
       <main className="px-4 py-10 mx-auto space-y-8 max-w-6xl tablet:px-6 desktop:px-8">

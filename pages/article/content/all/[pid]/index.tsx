@@ -221,12 +221,12 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   // #4: 게시물 본문에서 첫 번째 이미지를 추출하여 OG 이미지로 사용
   const postImage = useMemo(() => {
     const content = postData?.content;
-    if (!content) return 'https://logme.shop/assets/logo.png';
+    if (!content) return 'https://logme-io.vercel.app/assets/logo.png';
     const imageMatch = content.match(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/);
     if (imageMatch) return imageMatch[1];
     const htmlImgMatch = content.match(/<img[^>]+src=["'](https?:\/\/[^\s"']+)["']/);
     if (htmlImgMatch) return htmlImgMatch[1];
-    return 'https://logme.shop/assets/logo.png';
+    return 'https://logme-io.vercel.app/assets/logo.png';
   }, [postData?.content]);
 
   // 에러 처리 또는 데이터 없음 처리 (비공개 게시물 등)
@@ -247,7 +247,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       </div>
     );
   }
-  const canonicalUrl = `https://logme.shop/article/content/all/${pid}`;
+  const canonicalUrl = `https://logme-io.vercel.app/article/content/all/${pid}`;
 
   return (
     <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
@@ -300,7 +300,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                 name: 'LogMe',
                 logo: {
                   '@type': 'ImageObject',
-                  url: 'https://logme.shop/assets/logo.png',
+                  url: 'https://logme-io.vercel.app/assets/logo.png',
                 },
               },
               mainEntityOfPage: canonicalUrl,
@@ -313,13 +313,13 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                   '@type': 'ListItem',
                   position: 1,
                   name: '홈',
-                  item: 'https://logme.shop',
+                  item: 'https://logme-io.vercel.app',
                 },
                 {
                   '@type': 'ListItem',
                   position: 2,
                   name: '게시물',
-                  item: 'https://logme.shop/article',
+                  item: 'https://logme-io.vercel.app/article',
                 },
                 {
                   '@type': 'ListItem',
