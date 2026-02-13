@@ -28,7 +28,7 @@ export default function Document() {
         {/* Google Search Console 인증용 — 새 도메인 등록 후 새 인증 코드로 교체 필요 */}
         <meta
           name="google-site-verification"
-          content="ZOHJ3gbgRZgnkzpT6EYDWaCe1oY7ExTZyvtzpr4S2-E"
+          content="9RyzXGNGu48a3d8tsTFbN84CZBolrrUlL1LBu2nLzG4"
         />
       </Head>
       <body>
