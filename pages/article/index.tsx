@@ -151,7 +151,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
                   inputRef={inputRef}
                   setKeyword={setKeyword}
                   mode="public"
-                  initialPosts={initialPosts}
+                  initialPosts={initialPosts && initialPosts.length > 0 ? initialPosts : undefined}
                 />
               </div>
             )}
@@ -164,36 +164,33 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
 
 export const getStaticProps = async () => {
   try {
+    // NEXT_PUBLIC_API_BASE_URL 과 동일한 이름을 사용 (.env.production 기준)
     const API_URL =
-      process.env.NEXT_PUBLIC_API_URL ||
-      'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
+      process.env.NEXT_PUBLIC_API_BASE_URL ||
+      'http://158.179.174.170:8000';
 
-    const response = await fetch(`${API_URL}/posts/public/page/1`);
+    const response = await fetch(`${API_URL}/posts/public/page/1`, {
+      next: { revalidate: 60 },
+    } as RequestInit);
+
     if (!response.ok) {
       return {
-        props: {
-          initialPosts: [],
-        },
+        props: { initialPosts: [] },
         revalidate: 60,
       };
     }
 
     const responseData = await response.json();
     const posts = (responseData?.data?.posts || []) as BlogType[];
-
     const initialPosts = posts.filter(post => post?.id && post?.public_status);
 
     return {
-      props: {
-        initialPosts,
-      },
+      props: { initialPosts },
       revalidate: 60,
     };
   } catch {
     return {
-      props: {
-        initialPosts: [],
-      },
+      props: { initialPosts: [] },
       revalidate: 60,
     };
   }

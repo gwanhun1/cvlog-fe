@@ -33,12 +33,16 @@ const PostListView = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null); // mode에 따라 필요한 훅만 호출하며, 서버에서 받은 initialPosts를 초기값으로 활용
   const keyword = useStore(state => state.tagAtom);
+  // initialPosts가 실제 데이터가 있을 때만 initialData로 사용
+  // 빈 배열이나 undefined이면 undefined → React Query가 실제 API 호출
+  const hasInitialData =
+    mode === 'public' && page === 1 && !keyword &&
+    Array.isArray(initialPosts) && initialPosts.length > 0;
+
   const publicList = useGetPublicList(
     page,
     mode === 'public',
-    page === 1 && mode === 'public' && !keyword // 검색어가 없을 때만 초기 데이터 사용
-      ? { posts: initialPosts, maxPage: 1 }
-      : undefined,
+    hasInitialData ? { posts: initialPosts, maxPage: 1 } : undefined,
     keyword,
   );
   const myList = useGetList(page, undefined, mode === 'my', undefined, keyword);
