@@ -8,9 +8,7 @@ import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
 
 const API_URL: string =
-  process.env.NODE_ENV === 'production'
-    ? 'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app'
-    : process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
