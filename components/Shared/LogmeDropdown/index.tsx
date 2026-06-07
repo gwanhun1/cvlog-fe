@@ -82,9 +82,7 @@ export const DropdownHeader = ({
   className = '',
 }: DropdownHeaderProps) => {
   return (
-    <div
-      className={`px-4 py-4 bg-gradient-to-b from-gray-50 to-white border-b border-gray-100 ${className}`}
-    >
+    <div className={`px-4 py-3 border-b border-gray-100 ${className}`}>
       {children}
     </div>
   );
@@ -98,10 +96,10 @@ export const DropdownItem = ({
   danger = false,
 }: DropdownItemProps) => {
   const baseClass =
-    'w-full px-4 py-3 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center';
+    'w-full px-4 py-2.5 text-sm font-medium transition-colors duration-150 cursor-pointer flex items-center gap-2.5';
   const colorClass = danger
-    ? 'text-red-600 hover:bg-red-50'
-    : 'text-gray-700 hover:bg-gray-50 hover:text-ftBlue';
+    ? 'text-red-500 hover:bg-red-50'
+    : 'text-gray-600 hover:bg-gray-50 hover:text-ftBlue';
 
   return (
     <div

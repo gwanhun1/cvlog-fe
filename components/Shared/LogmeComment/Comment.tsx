@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useState } from 'react';
-import { Avatar } from 'flowbite-react';
 import { CommentProps } from 'service/api/comment/type';
 import { useDeleteComment, useModifyComment } from 'service/hooks/Comment';
 import { useQueryClient } from '@tanstack/react-query';
 import { useStore } from 'service/store/useStore';
+import { useToast } from 'components/Shared';
 
 const CommentItem = ({
   id,
@@ -16,9 +16,11 @@ const CommentItem = ({
   const removeMutate = useDeleteComment(id);
   const queryClient = useQueryClient();
   const userInfo = useStore(state => state.userIdAtom);
+  const { showToast, showConfirm } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
   const [modifiedComment, setModifiedComment] = useState(content);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setModifiedComment(e.target.value);
@@ -27,50 +29,41 @@ const CommentItem = ({
   const handleModifyClick = () => {
     if (!isEditing) {
       setIsEditing(true);
-    } else {
-      if (!modifiedComment.trim()) {
-        alert('댓글 내용을 입력해주세요.');
-        return;
-      }
-      if (isSubmitting) return;
-      if (window.confirm('정말 수정합니까?')) {
-        setIsSubmitting(true);
-        modifyMutate.mutate(modifiedComment, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              predicate: query => query.queryKey[0] === 'commentList',
-            });
-            if (refetch) refetch();
-            setIsEditing(false);
-          },
-          onSettled: () => {
-            setIsSubmitting(false);
-          },
-        });
-      } else {
-        setIsEditing(false);
-      }
+      return;
     }
-  };
+    if (!modifiedComment.trim()) {
+      showToast('댓글 내용을 입력해주세요.', 'warning');
+      return;
+    }
+    if (isSubmitting) return;
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+    showConfirm('댓글을 수정하시겠습니까?', () => {
+      setIsSubmitting(true);
+      modifyMutate.mutate(modifiedComment, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'commentList' });
+          if (refetch) refetch();
+          setIsEditing(false);
+          showToast('댓글이 수정되었습니다.', 'success');
+        },
+        onSettled: () => setIsSubmitting(false),
+      });
+    });
+  };
 
   const handleDeleteComment = () => {
     if (isSubmitting) return;
-    if (window.confirm('정말 삭제합니까?')) {
+    showConfirm('댓글을 삭제하시겠습니까?', () => {
       setIsSubmitting(true);
       removeMutate.mutate(undefined, {
         onSuccess: () => {
-          queryClient.invalidateQueries({
-            predicate: query => query.queryKey[0] === 'commentList',
-          });
+          queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'commentList' });
           if (refetch) refetch();
+          showToast('댓글이 삭제되었습니다.', 'success');
         },
-        onSettled: () => {
-          setIsSubmitting(false);
-        },
+        onSettled: () => setIsSubmitting(false),
       });
-    }
+    });
   };
 
   const isDeletedUser = !user;
@@ -80,46 +73,58 @@ const CommentItem = ({
   const githubId = isDeletedUser ? '탈퇴한 사용자' : user.github_id;
 
   return (
-    <article className="mt-2 border-b border-gray-300 mobile:mt-5">
-      <div className="flex flex-col">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center">
-            <Avatar img={profileImage} rounded>
-              <div className="flex flex-col space-y-1 font-medium dark:text-white">
-                <div className="text-[11px] tablet:text-base text-ftBlack">
-                  {githubId}
-                </div>
-                <time className="text-[5px] tablet:text-xs text-gray-500 dark:text-gray-400 w-28 tablet:w-40 desktop:w-80">
-                  {created_at.slice(0, 10)}
-                </time>
-              </div>
-            </Avatar>
+    <article className="py-3 border-b border-gray-100 last:border-0">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3">
+          <img
+            src={profileImage}
+            alt={githubId}
+            className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
+            onError={e => {
+              (e.target as HTMLImageElement).src =
+                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
+            }}
+          />
+          <div>
+            <span className="text-sm font-semibold text-ftBlack">{githubId}</span>
+            <time className="block text-xs text-gray-400 mt-0.5">{created_at.slice(0, 10)}</time>
           </div>
-          {user && userInfo?.github_id === user.github_id && (
-            <div className="flex">
+        </div>
+
+        {user && userInfo?.github_id === user.github_id && (
+          <div className="flex items-center gap-1">
+            <button
+              className="px-2.5 py-1 text-xs font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-ftBlue transition-colors disabled:opacity-40"
+              onClick={handleModifyClick}
+              disabled={isSubmitting}
+            >
+              {isEditing ? '저장' : '수정'}
+            </button>
+            {isEditing ? (
               <button
-                className="m-1 text-[10px] tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleModifyClick}
-                disabled={isSubmitting}
+                className="px-2.5 py-1 text-xs font-medium text-gray-400 rounded-lg hover:bg-gray-100 transition-colors"
+                onClick={() => { setIsEditing(false); setModifiedComment(content); }}
               >
-                {isEditing ? '저장' : '수정'}
+                취소
               </button>
+            ) : (
               <button
-                className="m-1 text-[10px] tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-2.5 py-1 text-xs font-medium text-red-400 rounded-lg hover:bg-red-50 hover:text-red-500 transition-colors disabled:opacity-40"
                 onClick={handleDeleteComment}
                 disabled={isSubmitting}
               >
                 삭제
               </button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
-      <div className="p-2 pl-6 w-full text-sm desktop:py-5 tablet:text-base mobile:text-md text-ftBlack">
+
+      <div className="mt-2 pl-11 text-sm text-ftBlack leading-relaxed">
         {isEditing ? (
           <textarea
-            style={{ border: '1px solid gray' }}
-            className="p-2 w-full text-gray-600 rounded-md border border-gray-400"
+            className="w-full p-2 text-sm text-gray-700 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-ftBlue/30 focus:border-ftBlue/50 resize-none"
+            rows={3}
             value={modifiedComment}
             onChange={handleCommentChange}
           />

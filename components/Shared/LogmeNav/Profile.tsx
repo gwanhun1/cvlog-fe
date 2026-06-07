@@ -1,4 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import Link from 'next/link';
+import { HiOutlineCog6Tooth, HiArrowRightOnRectangle } from 'react-icons/hi2';
 import { LogmeDropdown, DropdownHeader, DropdownItem } from 'components/Shared';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
@@ -33,28 +35,33 @@ const NavProfile = ({ setAuthority, shrink = false }: Props) => {
             src={userInfo.profile_image || '/images/github.png'}
             alt="User"
             className={cn(
-              'rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-ftBlue/30 transition-all duration-300',
-              shrink ? 'w-8 h-8' : 'w-10 h-10'
+              'rounded-full object-cover cursor-pointer ring-2 ring-slate-200 hover:ring-ftBlue/40 transition-all duration-300',
+              shrink ? 'w-6 h-6' : 'w-9 h-9'
             )}
           />
         }
         align="right"
       >
         <DropdownHeader>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-sm font-semibold text-gray-900">
-              {userInfo.github_id || '아이디가 없어요'}
-            </span>
-            <span className="text-xs text-gray-500">
-              {userInfo.name
-                ? `${userInfo.name}님 환영합니다`
-                : '이름을 등록해주세요'}
-            </span>
+          <div className="text-[13px] font-semibold text-gray-900">
+            {userInfo.name || userInfo.github_id || '사용자'}
+          </div>
+          <div className="text-[11px] text-gray-400 mt-0.5">
+            @{userInfo.github_id || '아이디가 없어요'}
           </div>
         </DropdownHeader>
-        <DropdownItem onClick={onClickLogout} danger>
-          로그아웃
-        </DropdownItem>
+        <div className="py-1">
+          <Link href="/mypage" prefetch={true}>
+            <DropdownItem>
+              <HiOutlineCog6Tooth className="w-4 h-4 flex-shrink-0" />
+              설정
+            </DropdownItem>
+          </Link>
+          <DropdownItem onClick={onClickLogout} danger>
+            <HiArrowRightOnRectangle className="w-4 h-4 flex-shrink-0" />
+            로그아웃
+          </DropdownItem>
+        </div>
       </LogmeDropdown>
     </nav>
   );

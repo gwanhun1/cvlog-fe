@@ -50,7 +50,7 @@ const NotificationTooltip = () => {
       {notifications && notifications?.length ? (
         notifications.map(notification => (
           <Link
-            href={`/article/content/all/${notification.post.id}`}
+            href={`/article/content/${notification.post.id}`}
             key={notification.id}
             prefetch
           >

@@ -33,7 +33,7 @@ import SideViewEmpty from './Empty';
 import { useTagDragState } from 'hooks/useTagDragState';
 import UnassignedTagListContent from './UnassignedTagListContent';
 
-const SideMenu = () => {
+const SideMenu = ({ className }: { className?: string }) => {
   const queryGetTagsFolders = useGetFolders();
 
   const [closedIdx, setClosedIdx] = useState<number[]>([]);
@@ -220,43 +220,48 @@ const SideMenu = () => {
     };
   }, []);
 
-  if (queryGetTagsFolders.isLoading) {
-    return <SideViewSkeleton />;
-  }
-
-  if (queryGetTagsFolders.isError) {
-    return <SideViewEmpty queryGetTagsFolders={queryGetTagsFolders} />;
-  }
+  const isLoading = queryGetTagsFolders.isLoading;
+  const isError = queryGetTagsFolders.isError;
 
   const hasContent =
-    (namedFolder && namedFolder.length > 0) ||
-    (defaultFolder && defaultFolder.length > 0) ||
-    (unassignedFolder &&
-      unassignedFolder.tags &&
-      unassignedFolder.tags.length > 0);
+    !isLoading &&
+    !isError &&
+    ((namedFolder && namedFolder.length > 0) ||
+      (defaultFolder && defaultFolder.length > 0) ||
+      (unassignedFolder &&
+        unassignedFolder.tags &&
+        unassignedFolder.tags.length > 0));
+
+  const outerCls =
+    className ??
+    `sticky top-[var(--header-height,64px)] w-full max-w-[200px] max-h-[calc(100vh-var(--header-height,64px)-1rem)] flex flex-col overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 transition-[top,max-height] duration-300 ${
+      hasPendingOperations ? 'ring-2 ring-ftBlue/20' : ''
+    }`;
 
   return (
     <>
-      {selectModal === 'add' && (
+      {!isLoading && !isError && selectModal === 'add' && (
         <LogmeAddModal showModal={showModal} setShowModal={setShowModal} />
       )}
-      {selectModal === 'delete' && (
+      {!isLoading && !isError && selectModal === 'delete' && (
         <LogmeRemoveModal showModal={showModal} setShowModal={setShowModal} />
       )}
 
-      <div
-        className={`sticky mt-3 top-24 w-full max-w-[200px] bg-white/90 backdrop-blur rounded-xl border border-ftBlue/20 overflow-hidden transition-opacity duration-200 ${
-          hasPendingOperations ? 'border-ftBlue/40 ring-2 ring-ftBlue/30' : ''
-        }`}
-      >
-        <SideViewHeader
-          hasContent={hasContent}
-          onAddClick={() => tryOpenModal('add')}
-          onDeleteClick={() => tryOpenModal('delete')}
-        />
+      <div className={outerCls}>
+        <div className="flex-shrink-0">
+          <SideViewHeader
+            hasContent={hasContent}
+            onAddClick={() => tryOpenModal('add')}
+            onDeleteClick={() => tryOpenModal('delete')}
+          />
+        </div>
 
-        <div className="p-2">
-          {!hasContent ? (
+        <div className="flex-1 overflow-y-auto overscroll-contain p-2 [&::-webkit-scrollbar]:w-[3px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
+          {isLoading ? (
+            <SideViewSkeleton />
+          ) : isError ? (
+            <SideViewEmpty queryGetTagsFolders={queryGetTagsFolders} />
+          ) : !hasContent ? (
             <EmptyState onAddClick={() => tryOpenModal('add')} />
           ) : (
             <div className="dnd-container">

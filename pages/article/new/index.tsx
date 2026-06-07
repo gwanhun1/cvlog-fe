@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { NextPage } from 'next';
-import 'easymde/dist/easymde.min.css';
 import AuthGuard from 'components/Shared/common/AuthGuard';
 
 import {

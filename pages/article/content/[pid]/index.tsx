@@ -1,267 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/router';
-import { useToast } from 'components/Shared';
-import { useQueryClient } from '@tanstack/react-query';
-import Link from 'next/link';
+import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
+import removeMarkdown from 'markdown-to-text';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from 'components/Shared';
 import CommentBox from 'components/Shared/LogmeComment';
+import { useGetDetail, useDeleteDetail, usePatchDetail } from 'service/hooks/Detail';
 import {
-  useDeleteDetail,
-  useGetMyDetail,
-  usePatchDetail,
-} from 'service/hooks/Detail';
-import {
-  Content,
+  Content as ContentLayout,
   Profile,
   PostNavigation,
 } from '../../../../components/pages/article/content';
-import { Badge } from 'flowbite-react';
 import { useStore } from 'service/store/useStore';
-import { TagType } from 'service/api/detail/type';
-import { NextPage, GetStaticProps, GetStaticPaths } from 'next';
-import AuthGuard from 'components/Shared/common/AuthGuard';
+import type { ContentData, TagType, Content as ContentResponse } from 'service/api/detail/type';
 
 interface DetailProps {
   pid: string;
-  initialData?: any; // getStaticProps에서 가져온 초기 데이터
+  initialData?: {
+    post: ContentData;
+    prevPostInfo: { id: number; title: string } | null;
+    nextPostInfo: { id: number; title: string } | null;
+  } | null;
 }
-
-const Detail: NextPage<DetailProps> = ({ pid, initialData }) => {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const [patchMessage, setPatchMessage] = useState(false);
-  const { showToast, showConfirm } = useToast();
-
-  const userInfo = useStore(state => state.userIdAtom);
-
-  // 데이터 받기
-  const getMyDetail = useGetMyDetail(parseInt(pid));
-
-  // 초기 데이터가 있으면 QueryClient의 캐시에 저장
-  useEffect(() => {
-    if (initialData && queryClient) {
-      queryClient.setQueryData(['detail', pid], initialData);
-    }
-  }, [initialData, pid, queryClient]);
-  const patchDetailMutation = usePatchDetail();
-
-  useEffect(() => {
-    if (getMyDetail.data?.post) {
-      setPatchMessage(getMyDetail.data.post.public_status);
-    }
-  }, [getMyDetail.data]);
-
-  // 나만보기 메세지 창
-  const [isToggling, setIsToggling] = useState(false);
-  const handlePrivateToggle = async () => {
-    if (isToggling) return;
-    setIsToggling(true);
-    const newPublicStatus = !patchMessage;
-    try {
-      await patchDetailMutation.mutateAsync({
-        id: parseInt(pid),
-        public_status: newPublicStatus,
-      });
-      setPatchMessage(newPublicStatus);
-
-      // 캐시 업데이트
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
-        queryClient.invalidateQueries({
-          predicate: query => query.queryKey[0] === 'publicList',
-        }),
-        queryClient.invalidateQueries({
-          predicate: query => query.queryKey[0] === 'list',
-        }),
-      ]);
-
-      if (!newPublicStatus) {
-        showToast('이 게시물은 "나만보기"가 설정 되었습니다.', 'success');
-      } else {
-        showToast('이 게시물은 전체에게 보입니다.', 'success');
-      }
-    } catch (error) {
-      console.error('Error toggling private status:', error);
-      showToast('상태 변경 중 오류가 발생했습니다.', 'error');
-    } finally {
-      setIsToggling(false);
-    }
-  };
-
-  // 삭제 창
-  const deleteContent = useDeleteDetail(parseInt(pid));
-  const [isDeleting, setIsDeleting] = useState(false);
-  const deleteCheck = () => {
-    if (isDeleting) return;
-    showConfirm('삭제하시겠습니까?', async () => {
-      setIsDeleting(true);
-      try {
-        await deleteContent.mutateAsync();
-        await Promise.all([
-          queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
-          queryClient.invalidateQueries({
-            predicate: query => query.queryKey[0] === 'list',
-          }),
-          queryClient.invalidateQueries({
-            predicate: query => query.queryKey[0] === 'publicList',
-          }),
-        ]);
-        showToast('삭제되었습니다.', 'success');
-        router.push('/article');
-      } catch (error) {
-        console.error('삭제 중 오류:', error);
-        showToast('삭제 중 오류가 발생했습니다.', 'error');
-        setIsDeleting(false);
-      }
-    });
-  };
-
-  // 수정 창
-  const updateCheck = () => {
-    router.push(`/article/modify/${pid}`);
-  };
-
-  // 에러 처리 또는 데이터 없음 처리 (로딩이 끝났는데 데이터가 없는 경우)
-  if (!getMyDetail.isLoading && !getMyDetail.data?.post) {
-    return (
-      <AuthGuard>
-        <div className="flex flex-col items-center justify-center min-h-[60vh]">
-          <h2 className="mb-4 text-2xl font-bold text-gray-700">
-            게시물을 찾을 수 없습니다.
-          </h2>
-          <p className="mb-8 text-gray-500">
-            삭제되었거나 접근 권한이 없는 게시물일 수 있습니다.
-          </p>
-          <Link href="/article">
-            <a className="px-6 py-2 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600">
-              목록으로 돌아가기
-            </a>
-          </Link>
-        </div>
-      </AuthGuard>
-    );
-  }
-
-  return (
-    <AuthGuard>
-      <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
-        {getMyDetail.data?.post && (
-          <Head>
-            <title>{getMyDetail.data.post.title} | LogMe</title>
-            {/* #5: 로그인 사용자 전용 페이지는 noindex - 대표 URL은 /all/ 경로 */}
-            <meta name="robots" content="noindex, nofollow" />
-            <meta name="googlebot" content="noindex, nofollow" />
-
-            {/* Canonical URL - 공개 경로로 통일 */}
-            <link
-              rel="canonical"
-              href={`https://logme-io.vercel.app/article/content/all/${pid}`}
-            />
-          </Head>
-        )}
-        <header className="w-full pt-7  border-gray-200 min-[400px]:border-hidden">
-          {getMyDetail.isLoading ? (
-            <div className="mb-3 w-3/4 h-10 bg-gray-200 rounded-lg tablet:h-14" />
-          ) : (
-            <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-5xl">
-              {getMyDetail?.data?.post.title}
-            </h1>
-          )}
-        </header>
-        <section className="flex justify-between items-center w-full h-full border-b border-gray-400">
-          <div className="flex flex-wrap justify-start mb-1 w-full text-ftBlack">
-            {getMyDetail.isLoading ? (
-              <>
-                <div className="mt-1 mr-1 w-20 h-7 bg-gray-200 rounded-full" />
-                <div className="mt-1 mr-1 w-16 h-7 bg-gray-200 rounded-full" />
-                <div className="mt-1 mr-1 w-24 h-7 bg-gray-200 rounded-full" />
-              </>
-            ) : (
-              getMyDetail.data?.post.tags.map((tag: TagType) => (
-                <Badge
-                  className="flex relative items-center px-3 mt-1 mr-1 text-blue-800 bg-blue-200 rounded-full border-2 border-blue-300 transition-all duration-300 hover:scale-105 hover:cursor-pointer hover:bg-blue-200 hover:border-blue-400"
-                  color="default"
-                  size="sm"
-                  key={tag.id}
-                >
-                  <Link
-                    href={{
-                      pathname: '/article',
-                      query: { tagKeyword: tag.name },
-                    }}
-                  >
-                    <span className="cursor-pointer">{tag.name}</span>
-                  </Link>
-                </Badge>
-              ))
-            )}
-          </div>
-          <section className="flex items-end w-28">
-            <time className="mb-1 text-xs text-gray-600 tablet:text-sm">
-              {getMyDetail && getMyDetail.data?.post.created_at.slice(0, 10)}
-            </time>
-          </section>
-        </section>
-        <main className="w-full h-min-screen tablet:pb-12">
-          <section>
-            <div className="flex justify-end w-full">
-              <article className="flex flex-row mt-1 mr-1 h-10 tablet:mt-1 tablet:m-0">
-                {Number(userInfo?.id) === getMyDetail?.data?.post.user.id ||
-                userInfo?.github_id ===
-                  String(getMyDetail?.data?.post.user.id) ? (
-                  <>
-                    <button
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm text-gray-600  hover:font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => {
-                        handlePrivateToggle();
-                      }}
-                      disabled={isToggling}
-                    >
-                      {patchMessage ? '나만보기' : '공개'}
-                    </button>
-                    <button
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-blue-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => {
-                        updateCheck();
-                      }}
-                      disabled={isDeleting}
-                    >
-                      수정
-                    </button>
-                    <button
-                      className="m-1 text-[10px] cursor-pointer tablet:p-1 tablet:text-sm hover:text-red-400 text-ftBlack disabled:opacity-50 disabled:cursor-not-allowed"
-                      onClick={() => {
-                        deleteCheck();
-                      }}
-                      disabled={isDeleting}
-                    >
-                      삭제
-                    </button>
-                  </>
-                ) : null}
-              </article>
-            </div>
-            <div className="flex justify-center">
-              <Content
-                id={getMyDetail.data?.post.id}
-                data={getMyDetail.data?.post.content}
-                isLoading={getMyDetail.isLoading}
-              />
-            </div>
-          </section>
-        </main>
-        <PostNavigation
-          prevPostInfo={getMyDetail.data?.prevPostInfo}
-          nextPostInfo={getMyDetail.data?.nextPostInfo}
-          basePath="/article/content"
-          userInfo={getMyDetail?.data?.post?.user}
-          ProfileComponent={Profile}
-        />
-        <CommentBox pid={pid} />
-      </div>
-    </AuthGuard>
-  );
-};
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
@@ -270,13 +32,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async ({ params }: any) => {
-  const pidParam = params?.pid;
+export const getStaticProps: GetStaticProps = async context => {
+  const pidParam = context.params?.pid;
   const pid = Array.isArray(pidParam) ? pidParam[0] : pidParam;
 
-  if (!pid) {
-    return { notFound: true };
-  }
+  if (!pid) return { notFound: true };
 
   const API_URL =
     process.env.NEXT_PUBLIC_API_URL ||
@@ -286,54 +46,341 @@ export const getStaticProps: GetStaticProps = async ({ params }: any) => {
   try {
     const response = await fetch(`${API_URL}/posts/${pid}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     });
 
+    // 비공개 글(403)이면 initialData null로 내려보내 클라이언트가 인증 토큰으로 재시도
     if (!response.ok) {
-      console.error(`[ISR] fetch failed with status: ${response.status}`);
-      // 실패해도 클라이언트 사이드에서 재시도할 수 있도록 페이지는 렌더링
-      return {
-        props: {
-          pid,
-          initialData: null,
-        },
-        revalidate: 60,
-      };
+      return { props: { pid, initialData: null }, revalidate: 60 };
     }
 
     const responseData = await response.json();
 
-    if (!responseData?.data) {
-      // 데이터가 없어도(비공개 등) 클라이언트 사이드 로딩 시도
-      return {
-        props: {
-          pid,
-          initialData: null,
-        },
-        revalidate: 60,
-      };
+    if (!responseData?.data?.post) {
+      return { props: { pid, initialData: null }, revalidate: 60 };
     }
 
     return {
-      props: {
-        pid,
-        initialData: responseData.data,
-      },
+      props: { pid, initialData: responseData.data },
       revalidate: 60,
     };
-  } catch (error) {
-    console.error(`Error fetching post ${pid}:`, error);
-    // 에러 발생 시에도 클라이언트 위임
-    return {
-      props: {
-        pid,
-        initialData: null,
-      },
-      revalidate: 60,
-    };
+  } catch {
+    return { props: { pid, initialData: null }, revalidate: 60 };
   }
+};
+
+const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
+  const router = useRouter();
+  const pid = propsPid || (router.query.pid as string);
+  const queryClient = useQueryClient();
+  const { showToast, showConfirm } = useToast();
+
+  const userInfo = useStore(state => state.userIdAtom);
+  const setTagList = useStore(state => state.setTagListAtom);
+  const selectTagList = useStore(state => state.selectedTagListAtom);
+  const setSelectTagList = useStore(state => state.setSelectedTagListAtom);
+
+  const [patchMessage, setPatchMessage] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isToggling, setIsToggling] = useState(false);
+
+  const { data: detailData, isLoading } = useGetDetail(parseInt(pid), initialData ?? undefined);
+
+  useEffect(() => {
+    if (detailData?.post) {
+      setPatchMessage(detailData.post.public_status);
+      setTagList(detailData.post.tags);
+    }
+  }, [detailData, setTagList]);
+
+  const patchDetailMutation = usePatchDetail();
+
+  const handlePrivateToggle = useCallback(async () => {
+    if (isToggling) return;
+    setIsToggling(true);
+    const newPublicStatus = !patchMessage;
+    try {
+      await patchDetailMutation.mutateAsync({ id: parseInt(pid), public_status: newPublicStatus });
+      setPatchMessage(newPublicStatus);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
+        queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'publicList' }),
+        queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'list' }),
+      ]);
+      showToast(
+        newPublicStatus ? '이 게시물은 전체에게 보입니다.' : '이 게시물은 "나만보기"가 설정 되었습니다.',
+        'success',
+      );
+    } catch {
+      showToast('상태 변경 중 오류가 발생했습니다.', 'error');
+    } finally {
+      setIsToggling(false);
+    }
+  }, [isToggling, patchMessage, pid, patchDetailMutation, queryClient, showToast]);
+
+  const deleteContent = useDeleteDetail(parseInt(pid));
+
+  const deleteCheck = useCallback(() => {
+    if (isDeleting) return;
+    showConfirm('삭제하시겠습니까?', async () => {
+      setIsDeleting(true);
+      try {
+        await deleteContent.mutateAsync();
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),
+          queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'list' }),
+          queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'publicList' }),
+        ]);
+        showToast('삭제되었습니다.', 'success');
+        router.push('/article');
+      } catch {
+        showToast('삭제 중 오류가 발생했습니다.', 'error');
+        setIsDeleting(false);
+      }
+    });
+  }, [isDeleting, deleteContent, queryClient, showToast, showConfirm, router]);
+
+  const handleTagSelect = useCallback(
+    (tag: TagType) => {
+      const exists = selectTagList.some(item => item.id === tag.id);
+      setSelectTagList(
+        exists ? selectTagList.filter(item => item.id !== tag.id) : [...selectTagList, tag],
+      );
+    },
+    [selectTagList, setSelectTagList],
+  );
+
+  const resolvedData = initialData || detailData;
+  const shouldShowSkeleton = isLoading && !initialData;
+  const postData = resolvedData?.post;
+  const isOwner =
+    !!postData &&
+    (Number(userInfo?.id) === postData.user?.id ||
+      userInfo?.github_id === String(postData.user?.github_id));
+
+  const postTitle = postData?.title || 'LOGME 게시물';
+  const postDescription = useMemo(() => {
+    const content = postData?.content;
+    if (!content) return 'LOGME 블로그의 게시물입니다.';
+    const plain = removeMarkdown(content).replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+    return plain.length > 155 ? plain.substring(0, 155) + '...' : plain;
+  }, [postData?.content]);
+
+  const postImage = useMemo(() => {
+    const content = postData?.content;
+    if (!content) return 'https://logme-io.vercel.app/assets/logo.png';
+    const md = content.match(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/);
+    if (md) return md[1];
+    const html = content.match(/<img[^>]+src=["'](https?:\/\/[^\s"']+)["']/);
+    if (html) return html[1];
+    return 'https://logme-io.vercel.app/assets/logo.png';
+  }, [postData?.content]);
+
+  if (!shouldShowSkeleton && !resolvedData?.post) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <h2 className="mb-4 text-2xl font-bold text-gray-700">게시물을 찾을 수 없습니다.</h2>
+        <p className="mb-8 text-gray-500">삭제되었거나 비공개된 게시물일 수 있습니다.</p>
+        <Link href="/article">
+          <a className="px-6 py-2 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600">
+            목록으로 돌아가기
+          </a>
+        </Link>
+      </div>
+    );
+  }
+
+  const canonicalUrl = `https://logme-io.vercel.app/article/content/${pid}`;
+  const isPublic = postData?.public_status ?? false;
+
+  return (
+    <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
+      {/* 뒤로가기 + owner 버튼 상단 바 */}
+      <div className="flex justify-between items-center w-full pt-4 pb-2">
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-ftBlue transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          목록
+        </button>
+
+        {isOwner && (
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handlePrivateToggle}
+              disabled={isToggling || isDeleting}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                patchMessage
+                  ? 'text-gray-600 border-gray-200 hover:bg-gray-50'
+                  : 'text-ftBlue border-ftBlue/30 bg-ftBlue/5 hover:bg-ftBlue/10'
+              }`}
+            >
+              {patchMessage ? (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                  나만보기
+                </>
+              ) : (
+                <>
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  공개
+                </>
+              )}
+            </button>
+            <button
+              onClick={() => router.push(`/article/modify/${pid}`)}
+              disabled={isDeleting}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-ftBlue transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+              수정
+            </button>
+            <button
+              onClick={deleteCheck}
+              disabled={isDeleting}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-500 rounded-lg border border-red-100 hover:bg-red-50 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              삭제
+            </button>
+          </div>
+        )}
+      </div>
+
+      <Head>
+        <title>{postTitle} | LOGME</title>
+        <meta name="description" content={postDescription} />
+        <meta
+          name="keywords"
+          content={postData?.tags?.map((tag: TagType) => tag.name).join(', ') || '기술블로그,개발자,프로그래밍'}
+        />
+        {isPublic ? (
+          <>
+            <meta name="robots" content="index, follow" />
+            <meta name="googlebot" content="index, follow" />
+          </>
+        ) : (
+          <>
+            <meta name="robots" content="noindex, nofollow" />
+            <meta name="googlebot" content="noindex, nofollow" />
+          </>
+        )}
+        <link rel="canonical" href={canonicalUrl} />
+
+        <meta property="og:title" content={postTitle} />
+        <meta property="og:description" content={postDescription} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={postImage} />
+        <meta property="og:site_name" content="LOGME" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={postTitle} />
+        <meta name="twitter:description" content={postDescription} />
+        <meta name="twitter:image" content={postImage} />
+
+        {isPublic && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BlogPosting',
+              headline: postTitle,
+              description: postDescription,
+              image: postImage,
+              url: canonicalUrl,
+              datePublished: postData?.created_at,
+              dateModified: postData?.updated_at || postData?.created_at,
+              author: { '@type': 'Person', name: postData?.user?.name || 'LOGME 사용자' },
+              publisher: {
+                '@type': 'Organization',
+                name: 'LOGME',
+                logo: { '@type': 'ImageObject', url: 'https://logme-io.vercel.app/assets/logo.png' },
+              },
+              mainEntityOfPage: canonicalUrl,
+            })}
+          </script>
+        )}
+      </Head>
+
+      <header className="w-full pt-7 border-gray-200 min-[400px]:border-hidden">
+        {shouldShowSkeleton ? (
+          <div className="mb-3 w-3/4 h-10 bg-gray-200 rounded-lg tablet:h-14" />
+        ) : (
+          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-5xl">
+            {postData?.title}
+          </h1>
+        )}
+      </header>
+
+      <section className="flex justify-between items-center w-full h-full border-b border-gray-400">
+        <div className="flex flex-wrap justify-start mb-1 w-full text-ftBlack">
+          {shouldShowSkeleton ? (
+            <>
+              <div className="mt-1 mr-1 w-20 h-7 bg-gray-200 rounded-full" />
+              <div className="mt-1 mr-1 w-16 h-7 bg-gray-200 rounded-full" />
+              <div className="mt-1 mr-1 w-24 h-7 bg-gray-200 rounded-full" />
+            </>
+          ) : (
+            postData?.tags?.map((tag: TagType) => (
+              <button
+                type="button"
+                key={tag.id}
+                onClick={() => handleTagSelect(tag)}
+                className={`mr-1 mt-1 px-3 py-1 text-sm rounded-full border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
+                  selectTagList.some(item => item.id === tag.id)
+                    ? 'bg-blue-500 text-white border-blue-600'
+                    : 'bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-200 hover:border-blue-400'
+                }`}
+              >
+                {tag.name}
+              </button>
+            ))
+          )}
+        </div>
+        <section className="flex items-end w-28">
+          <time className="mb-1 text-xs text-gray-600 tablet:text-sm">
+            {postData?.created_at?.slice(0, 10)}
+          </time>
+        </section>
+      </section>
+
+      <main className="w-full h-full tablet:pb-12">
+        <section>
+          <div className="flex justify-center">
+            <ContentLayout
+              data={postData?.content}
+              isLoading={shouldShowSkeleton}
+              writer={postData?.user?.github_id}
+              id={postData?.id}
+            />
+          </div>
+        </section>
+      </main>
+
+      <PostNavigation
+        prevPostInfo={resolvedData?.prevPostInfo}
+        nextPostInfo={resolvedData?.nextPostInfo}
+        basePath="/article/content"
+        userInfo={postData?.user}
+        isLoading={shouldShowSkeleton}
+        ProfileComponent={Profile}
+      />
+
+      <CommentBox pid={pid} />
+    </div>
+  );
 };
 
 export default Detail;

@@ -97,12 +97,12 @@ const LoginButtonGroup = () => {
       <div
         key={loginMethodArr[0].id}
         onClick={event => handleLogin(loginMethodArr[0].method, event)}
-        className="w-full transition-all duration-300 transform cursor-pointer group hover:-translate-y-2"
+        className="w-full cursor-pointer"
       >
-        <div className="bg-[#27272a] flex items-center justify-center gap-3 p-4 rounded-3xl border border-gray-200 shadow-lg hover:shadow-2xl  transition-all">
-          <div className="z-20 p-2">{loginMethodArr[0].image}</div>
-          <span className="font-semibold text-white">
-            {loginMethodArr[0].method}으로 로그인
+        <div className="bg-[#24292e] flex items-center justify-center gap-2.5 h-11 px-4 rounded-xl shadow-sm hover:bg-[#1a1e22] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
+          <FaGithub className="w-5 h-5 text-white flex-shrink-0" />
+          <span className="font-semibold text-sm text-white">
+            GitHub으로 로그인
           </span>
         </div>
       </div>

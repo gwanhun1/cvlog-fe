@@ -2,11 +2,13 @@ import { useRef, useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { AnimatePresence, motion } from 'framer-motion';
 import { PostListView } from '../../components/pages/article/postList';
+import TagDrawer from '../../components/pages/article/sideView/TagDrawer';
 import SideView from '../../components/pages/article/sideView/SideView';
 import LocalStorage from 'public/utils/Localstorage';
 import MenuTab from 'components/pages/article/sideView/MenuTab';
-import FilterBox from 'components/Shared/LogmeFilterBox.tsx/FilterBox';
+import FilterBox from 'components/Shared/LogmeFilterBox/FilterBox';
 import { useStore } from 'service/store/useStore';
 import { BlogType } from 'service/api/tag/type';
 
@@ -20,6 +22,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
   const { view } = router.query;
   const [isClient, setIsClient] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // URL query 파라미터와 state 동기화
   const menu = view === 'my' ? 'list' : 'all';
@@ -52,6 +55,9 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
+
+    // SPA 네비게이션 간 검색어 잔존 방지
+    setTagAtom('');
 
     setIsClient(true);
     const token = LocalStorage.getItem('LogmeToken');
@@ -116,45 +122,79 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
       </Head>
 
       <main className="w-full">
-        <div className="relative px-4 pt-10 pb-16 mx-auto max-w-5xl tablet:px-6 desktop:px-8">
-          {isClient && accessToken && menu === 'list' && (
-            <div className="hidden absolute top-0 right-full h-full desktop:block">
-              <aside className="sticky top-[8.5rem] z-30 w-64 pl-16">
-                <SideView />
-              </aside>
-            </div>
-          )}
-          <div className="p-4 space-y-4 rounded-3xl border backdrop-blur border-ftBlue/25 bg-white/90 tablet:p-6">
-            <FilterBox
-              keyword={keyword}
-              setKeyword={setKeyword}
-              inputRef={inputRef}
-            />
+        {/* 모바일/태블릿: 드로어 + 플로팅 버튼 */}
+        {isClient && accessToken && menu === 'list' && (
+          <>
+            <TagDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="desktop:hidden fixed bottom-6 left-6 z-30 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-ftBlue rounded-full shadow-lg shadow-ftBlue/30 hover:bg-[#1f4a8c] transition-all duration-200 hover:scale-105 active:scale-95"
+              aria-label="태그 관리 열기"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              태그
+            </button>
+          </>
+        )}
 
-            <MenuTab setMenu={setMenu} activeMenu={menu} />
+        <div className="relative px-4 pt-4 pb-8 mx-auto max-w-6xl tablet:px-6 desktop:px-8">
+          {/* 데스크톱: 사이드바 + 메인 2컬럼 */}
+          <div className="flex items-start gap-4">
+            {/* 사이드바 (데스크톱 전용) */}
+            <AnimatePresence initial={false}>
+              {isClient && accessToken && menu === 'list' && (
+                <motion.aside
+                  key="sidebar"
+                  className="hidden desktop:block flex-shrink-0 self-stretch overflow-clip"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: 200, opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  transition={{ duration: 0.15, ease: 'easeInOut' }}
+                >
+                  <div className="w-[200px] h-full">
+                    <SideView />
+                  </div>
+                </motion.aside>
+              )}
+            </AnimatePresence>
 
-            {menu === 'list' ? (
-              <>
-                {isClient && accessToken && (
+            {/* 메인 콘텐츠 */}
+            <div className="flex-1 min-w-0">
+              <div className="p-4 space-y-3 rounded-2xl bg-white shadow-sm">
+                <FilterBox
+                  keyword={keyword}
+                  setKeyword={setKeyword}
+                  inputRef={inputRef}
+                />
+
+                <MenuTab setMenu={setMenu} activeMenu={menu} />
+
+                {menu === 'list' ? (
+                  <>
+                    {isClient && accessToken && (
+                      <div className="w-full">
+                        <PostListView
+                          inputRef={inputRef}
+                          setKeyword={setKeyword}
+                          mode="my"
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
                   <div className="w-full">
                     <PostListView
                       inputRef={inputRef}
                       setKeyword={setKeyword}
-                      mode="my"
+                      mode="public"
+                      initialPosts={initialPosts && initialPosts.length > 0 ? initialPosts : undefined}
                     />
                   </div>
                 )}
-              </>
-            ) : (
-              <div className="w-full">
-                <PostListView
-                  inputRef={inputRef}
-                  setKeyword={setKeyword}
-                  mode="public"
-                  initialPosts={initialPosts && initialPosts.length > 0 ? initialPosts : undefined}
-                />
               </div>
-            )}
+            </div>
           </div>
         </div>
       </main>

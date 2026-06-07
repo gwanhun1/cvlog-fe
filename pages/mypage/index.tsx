@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import dynamic from 'next/dynamic';
-import { FiCalendar } from 'react-icons/fi';
+import Link from 'next/link';
 import ProfileHeader from '../../components/pages/mypage/ProfileHeader';
 import HomeSection from '../../components/pages/mypage/HomeSection';
 import ContactInfo from '../../components/pages/mypage/ContactInfo';
@@ -124,6 +124,27 @@ const Mypage: NextPage = () => {
                   </div>
                 </div>
               </section>
+
+              <Link href="/github">
+                <section className={`${cardBase} cursor-pointer group hover:border-ftBlue/30`}>
+                  <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
+                  <div className="relative p-4">
+                    <div className="inline-flex gap-2 items-center px-2.5 py-1 mb-2 text-xs font-bold rounded-lg border border-ftBlue/30 bg-ftBlue/8 text-ftBlue">
+                      GitHub
+                    </div>
+                    <h2 className="text-sm font-bold text-ftBlack">GitHub 통계</h2>
+                    <p className="mt-1 mb-3 text-xs text-ftGray">
+                      기여 현황, 언어 분포, 레포지토리 하이라이트를 확인합니다.
+                    </p>
+                    <div className="flex items-center gap-1 text-xs font-semibold text-ftBlue group-hover:gap-2 transition-all">
+                      통계 보기
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                    </div>
+                  </div>
+                </section>
+              </Link>
             </div>
           </div>
         </div>

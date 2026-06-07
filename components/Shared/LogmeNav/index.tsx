@@ -11,7 +11,6 @@ import { cn } from 'styles/utils';
 const MENU_ITEMS = [
   { name: 'HOME', path: '/', requiresAuth: false },
   { name: 'ARTICLE', path: '/article', requiresAuth: false },
-  { name: 'RESUME', path: '/resume', requiresAuth: true },
   { name: 'GITHUB', path: '/github', requiresAuth: true },
 ] as const;
 
@@ -21,9 +20,12 @@ const Nav = () => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    document.documentElement.style.setProperty('--header-height', '64px');
+
     const handleScroll = () => {
-      // 50px만 내려가도 즉시 축소하여 화면 영역 확보
-      setIsScrolled(window.scrollY > 50);
+      const scrolled = window.scrollY > 50;
+      setIsScrolled(scrolled);
+      document.documentElement.style.setProperty('--header-height', scrolled ? '40px' : '64px');
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -51,7 +53,7 @@ const Nav = () => {
     <header
       className={cn(
         'fixed top-0 right-0 left-0 z-50 w-full transition-all duration-300 border-b shadow-sm backdrop-blur-lg border-slate-200/60 bg-white/70',
-        isScrolled ? 'h-12' : 'h-24'
+        isScrolled ? 'h-10' : 'h-16'
       )}
     >
       <div className="grid grid-cols-12 gap-4 px-4 mx-auto max-w-7xl h-full">
@@ -60,8 +62,8 @@ const Nav = () => {
             <div className="transition-all duration-300 transform group-hover:scale-105">
               <Shared.LogmeIcon.LogmeMarkIcon
                 alt="로고"
-                width={isScrolled ? 40 : 72}
-                height={isScrolled ? 40 : 72}
+                width={isScrolled ? 28 : 52}
+                height={isScrolled ? 28 : 52}
               />
             </div>
           </Link>

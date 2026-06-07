@@ -281,6 +281,31 @@ table {
   }
 }
 
+@keyframes btn-shimmer {
+  0% { transform: translateX(-150%) skewX(-12deg); }
+  70%, 100% { transform: translateX(250%) skewX(-12deg); }
+}
+
+@keyframes btn-glow {
+  0%, 100% { box-shadow: 0 2px 8px rgba(38, 87, 166, 0.2); }
+  50% { box-shadow: 0 2px 14px rgba(38, 87, 166, 0.4); }
+}
+
+.write-btn {
+  animation: btn-glow 3s ease-in-out infinite;
+}
+
+.write-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: btn-shimmer 4s ease-in-out infinite;
+}
+
 ::-webkit-scrollbar-thumb {
   background-color: gray;
 }

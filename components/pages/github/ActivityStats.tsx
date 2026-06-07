@@ -6,7 +6,7 @@ interface ActivityStatsProps {
 }
 
 const cardBase =
-  'relative overflow-hidden rounded-2xl border border-slate-100 bg-white/85 shadow-lg backdrop-blur transition-transform duration-200 hover:-translate-y-0.5 min-h-[320px]';
+  'relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-0.5 min-h-[320px]';
 
 const ActivityCard = ({
   title,
@@ -32,59 +32,22 @@ const ActivityCard = ({
   }, [imgSrc]);
 
   return (
-    <div className={cardBase}>
-      <div
-        className={`absolute inset-0 ${
-          dark
-            ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900'
-            : 'bg-gradient-to-br via-white to-blue-50 from-slate-50'
-        }`}
-      />
-      <div className="relative p-4 space-y-3">
-        <div className="flex justify-between items-center">
+    <div className={dark ? `${cardBase} !bg-slate-900 border-slate-800` : cardBase}>
+      <div className="p-4 space-y-3">
+        <div className="flex justify-between items-start">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
-              {badge}
-            </p>
-            <h2
-              className={`text-xl font-semibold ${
-                dark ? 'text-white' : 'text-slate-900'
-              }`}
-            >
-              {title}
-            </h2>
-            <p
-              className={`text-sm ${
-                dark ? 'text-slate-200' : 'text-slate-600'
-              }`}
-            >
-              {subtitle}
-            </p>
+            <div className={`text-[11px] uppercase tracking-widest mb-0.5 ${dark ? 'text-slate-400' : 'text-slate-400'}`}>{badge}</div>
+            <div className={`text-lg font-semibold ${dark ? 'text-white' : 'text-slate-900'}`}>{title}</div>
+            <div className={`text-sm mt-0.5 ${dark ? 'text-slate-300' : 'text-slate-500'}`}>{subtitle}</div>
           </div>
-          <span
-            className={`text-[10px] px-2 py-1 rounded-full border ${
-              dark
-                ? 'bg-white/10 text-slate-100 border-white/20'
-                : 'text-blue-700 bg-blue-50 border-blue-100'
-            }`}
-          >
+          <span className={`text-[10px] px-2 py-1 rounded-full border flex-shrink-0 ${dark ? 'bg-white/10 text-slate-200 border-white/20' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
             live
           </span>
         </div>
 
-        <div
-          className={`relative rounded-xl border ${
-            dark ? 'border-white/10 bg-slate-900' : 'bg-white border-slate-200'
-          } min-h-[220px] flex items-center justify-center overflow-hidden`}
-        >
+        <div className={`relative rounded-xl border ${dark ? 'border-slate-800 bg-slate-900' : 'bg-gray-50 border-gray-100'} min-h-[220px] flex items-center justify-center overflow-hidden`}>
           {loading && !error && (
-            <div
-              className={`absolute inset-0 animate-pulse ${
-                dark
-                  ? 'bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800'
-                  : 'bg-gradient-to-r via-white from-slate-100 to-slate-100'
-              } rounded-xl`}
-            />
+            <div className={`absolute inset-0 animate-pulse ${dark ? 'bg-slate-800' : 'bg-gray-100'} rounded-xl`} />
           )}
           {!error ? (
             <img
@@ -92,23 +55,12 @@ const ActivityCard = ({
               alt={alt}
               className="relative z-10 w-full rounded-xl"
               onLoad={() => setLoading(false)}
-              onError={() => {
-                setError(true);
-                setLoading(false);
-              }}
+              onError={() => { setError(true); setLoading(false); }}
             />
           ) : (
-            <div
-              className={`relative z-10 p-6 text-center ${
-                dark ? 'text-slate-200' : 'text-slate-600'
-              }`}
-            >
-              <p className="text-sm font-medium">
-                이미지를 불러오지 못했습니다.
-              </p>
-              <p className="mt-2 text-xs">
-                잠시 후 다시 시도하거나 GitHub ID를 확인해주세요.
-              </p>
+            <div className={`relative z-10 p-6 text-center ${dark ? 'text-slate-300' : 'text-slate-500'}`}>
+              <div className="text-sm font-medium">이미지를 불러오지 못했습니다.</div>
+              <div className="mt-1 text-xs">잠시 후 다시 시도하거나 GitHub ID를 확인해주세요.</div>
             </div>
           )}
         </div>
@@ -137,9 +89,7 @@ const ActivityList = ({ githubId }: { githubId: string }) => {
       try {
         const res = await fetch(
           `https://api.github.com/users/${githubId}/events/public?per_page=5`,
-          {
-            headers: { Accept: 'application/vnd.github+json' },
-          }
+          { headers: { Accept: 'application/vnd.github+json' } }
         );
         if (!res.ok) throw new Error('failed');
         const data: EventItem[] = await res.json();
@@ -151,22 +101,20 @@ const ActivityList = ({ githubId }: { githubId: string }) => {
       }
     };
     fetchEvents();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [githubId]);
 
   if (loading) {
     return (
-      <div className="min-h-[180px] rounded-xl border border-white/10 bg-slate-900 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r animate-pulse from-slate-800 via-slate-700 to-slate-800" />
+      <div className="min-h-[180px] rounded-xl border border-slate-800 bg-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 animate-pulse bg-slate-800" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-[180px] rounded-xl border border-white/10 bg-slate-900 text-slate-200 flex items-center justify-center px-4 text-sm">
+      <div className="min-h-[180px] rounded-xl border border-slate-800 bg-slate-900 text-slate-300 flex items-center justify-center px-4 text-sm">
         {error}
       </div>
     );
@@ -174,25 +122,21 @@ const ActivityList = ({ githubId }: { githubId: string }) => {
 
   if (!events.length) {
     return (
-      <div className="min-h-[180px] rounded-xl border border-white/10 bg-slate-900 text-slate-200 flex items-center justify-center px-4 text-sm">
+      <div className="min-h-[180px] rounded-xl border border-slate-800 bg-slate-900 text-slate-300 flex items-center justify-center px-4 text-sm">
         최근 공개 활동이 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border divide-y border-white/10 bg-slate-900 text-slate-100 divide-white/10">
+    <div className="rounded-xl border border-slate-800 divide-y bg-slate-900 text-slate-100 divide-slate-800">
       {events.map(ev => (
         <div key={ev.id} className="px-4 py-3 text-sm">
           <div className="flex justify-between items-center">
-            <span className="font-semibold">
-              {ev.type.replace('Event', '')}
-            </span>
-            <span className="text-xs text-slate-300">
-              {new Date(ev.created_at).toLocaleDateString()}
-            </span>
+            <span className="font-medium text-slate-100">{ev.type.replace('Event', '')}</span>
+            <span className="text-xs text-slate-400">{new Date(ev.created_at).toLocaleDateString()}</span>
           </div>
-          <p className="mt-1 text-xs text-slate-300">{ev.repo.name}</p>
+          <div className="mt-0.5 text-xs text-slate-400">{ev.repo.name}</div>
         </div>
       ))}
     </div>
@@ -215,20 +159,15 @@ export const StreakStats = ({ githubId }: ActivityStatsProps) => {
 export const TrophyStats = ({ githubId }: ActivityStatsProps) => {
   if (!githubId) return null;
   return (
-    <div className={cardBase}>
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" />
-      <div className="relative p-4 space-y-3">
-        <div className="flex justify-between items-center">
+    <div className={`${cardBase} !bg-slate-900 border-slate-800`}>
+      <div className="p-4 space-y-3">
+        <div className="flex justify-between items-start">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
-              Activity
-            </p>
-            <h2 className="text-xl font-semibold text-white">최근 활동</h2>
-            <p className="text-sm text-slate-200">
-              최근 공개 활동을 최대 5개까지 보여줍니다.
-            </p>
+            <div className="text-[11px] uppercase tracking-widest text-slate-400 mb-0.5">Activity</div>
+            <div className="text-lg font-semibold text-white">최근 활동</div>
+            <div className="text-sm text-slate-300 mt-0.5">최근 공개 활동을 최대 5개까지 보여줍니다.</div>
           </div>
-          <span className="text-[10px] px-2 py-1 rounded-full bg-white/10 text-slate-100 border border-white/20">
+          <span className="text-[10px] px-2 py-1 rounded-full bg-white/10 text-slate-200 border border-white/20 flex-shrink-0">
             live
           </span>
         </div>

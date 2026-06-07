@@ -42,7 +42,7 @@ const Github: NextPage = () => {
   return (
     <AuthGuard>
       <div className="min-h-[90vh]">
-        <div className="px-4 py-10 mx-auto space-y-5 max-w-6xl tablet:px-6 desktop:px-8">
+        <div className="px-4 pt-5 pb-10 mx-auto space-y-5 max-w-6xl tablet:px-6 desktop:px-8">
           <ProfileOverview
             githubId={userInfo.github_id}
             fallbackName={userInfo.name}

@@ -30,11 +30,35 @@ const removeImageFromContent = (content: string): string => {
   return cleanContent.replace(/\n\s*\n/g, '\n');
 };
 
+const HighlightText = ({ text, keyword }: { text: string; keyword: string }) => {
+  if (!keyword.trim()) return <>{text}</>;
+
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${escaped})`, 'gi'));
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === keyword.toLowerCase() ? (
+          <mark key={i} className="bg-yellow-200 text-slate-900 rounded-sm not-italic">
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+};
+
 const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
   const keyword = useStore(state => state.tagAtom);
-  const isMatched = tags.some(tag => tag.name.toLocaleLowerCase() === keyword);
+  const isMatched =
+    keyword.trim() !== '' &&
+    (title.toLowerCase().includes(keyword.toLowerCase()) ||
+      tags.some(tag => tag.name.toLowerCase().includes(keyword.toLowerCase())));
 
   const plainTextContent = markdownToText(cleanContent);
   const summary =
@@ -44,8 +68,8 @@ const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
 
   return (
     <article
-      className={`relative group block w-full overflow-hidden transition-all duration-300 bg-white/90 backdrop-blur rounded-2xl border border-ftBlue/20 hover:border-ftBlue/40 hover:-translate-y-1 ${
-        isMatched ? 'ring-2 border-ftBlue/50 ring-ftBlue/40' : ''
+      className={`relative group block w-full overflow-hidden transition-all duration-200 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:-translate-y-0.5 ${
+        isMatched ? 'ring-2 ring-ftBlue/40' : ''
       }`}
       itemScope
       itemType="http://schema.org/BlogPosting"
@@ -83,19 +107,19 @@ const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
           </div>
         )}
 
-        <div className="flex flex-col flex-grow justify-between p-5 w-full">
-          <div className="flex flex-col gap-3">
+        <div className="flex flex-col flex-grow justify-between p-4 w-full">
+          <div className="flex flex-col gap-2">
             <h3
-              className="text-lg font-bold leading-snug transition-colors text-slate-800 group-hover:text-ftBlue line-clamp-2"
+              className="text-[16px] font-bold leading-snug transition-colors text-gray-900 group-hover:text-ftBlue line-clamp-2"
               itemProp="headline"
             >
-              {title}
+              <HighlightText text={title} keyword={keyword} />
             </h3>
             <p
-              className="text-sm leading-relaxed text-ftGray line-clamp-2"
+              className="text-[13px] leading-relaxed text-gray-500 line-clamp-2"
               itemProp="description"
             >
-              {summary}
+              <HighlightText text={summary} keyword={keyword} />
             </p>
             <meta
               itemProp="keywords"
@@ -103,9 +127,9 @@ const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
             />
           </div>
 
-          <div className="flex justify-between items-center pt-3 mt-4 border-t border-slate-100">
+          <div className="flex justify-between items-center pt-2.5 mt-2.5 border-t border-gray-100">
             <div className="flex-1 min-w-0">
-              <TagList tags={tags} />
+              <TagList tags={tags} keyword={keyword} />
             </div>
             {updated_at && (
               <time

@@ -42,7 +42,7 @@ const NavMenuItem = ({
           fontStyle="semibold"
           className={cn(
             'rounded-2xl transition-all duration-300 hover:cursor-pointer whitespace-nowrap',
-            shrink ? 'px-3 py-1.5' : 'px-4 py-2',
+            shrink ? 'px-2 py-0.5' : 'px-4 py-2',
             isActive
               ? 'text-ftBlue bg-white/90 shadow-md border border-ftBlue/20 group-hover:text-ftBlue'
               : 'text-ftGray hover:text-ftBlue/90 hover:bg-bgWhite border border-transparent'

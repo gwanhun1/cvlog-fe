@@ -30,24 +30,16 @@ interface RepoItem {
 }
 
 const cardBase =
-  'relative overflow-hidden rounded-2xl border border-slate-100 bg-white/85 shadow-lg backdrop-blur transition-transform duration-200 hover:-translate-y-0.5';
+  'relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-0.5';
 
-const StatPill = ({ label, value }: { label: string; value: string }) => {
-  return (
-    <div className="flex flex-col gap-1 px-3 py-2.5 rounded-2xl border border-ftBlue/10 bg-bgWhite">
-      <span className="text-[11px] tracking-[0.18em] uppercase text-ftGray">
-        {label}
-      </span>
-      <span className="text-base font-extrabold text-ftBlack">{value}</span>
-    </div>
-  );
-};
+const StatPill = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex flex-col gap-1 px-3 py-2.5 rounded-xl border border-gray-100 bg-gray-50">
+    <span className="text-[11px] tracking-wide uppercase text-ftGray">{label}</span>
+    <span className="text-base font-bold text-ftBlack">{value}</span>
+  </div>
+);
 
-const ProfileOverview = ({
-  githubId,
-  fallbackName,
-  fallbackAvatar,
-}: ProfileOverviewProps) => {
+const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar }: ProfileOverviewProps) => {
   const [user, setUser] = useState<GithubUserResponse | null>(null);
   const [repoStats, setRepoStats] = useState<{
     stars: number;
@@ -68,26 +60,18 @@ const ProfileOverview = ({
       setRepoStats(null);
 
       try {
-        const headers = {
-          Accept: 'application/vnd.github+json',
-        };
-
+        const headers = { Accept: 'application/vnd.github+json' };
         const encodedGithubId = encodeURIComponent(githubId);
 
         const [userRes, reposRes] = await Promise.all([
           fetch(`https://api.github.com/users/${encodedGithubId}`, { headers }),
-          fetch(
-            `https://api.github.com/users/${encodedGithubId}/repos?per_page=100&type=owner&sort=updated`,
-            { headers }
-          ),
+          fetch(`https://api.github.com/users/${encodedGithubId}/repos?per_page=100&type=owner&sort=updated`, { headers }),
         ]);
 
         if (!userRes.ok || !reposRes.ok) {
           const res = !userRes.ok ? userRes : reposRes;
           const remaining = res.headers.get('x-ratelimit-remaining');
-          if (res.status === 403 && remaining === '0') {
-            throw new Error('rate_limit');
-          }
+          if (res.status === 403 && remaining === '0') throw new Error('rate_limit');
           throw new Error('failed');
         }
 
@@ -96,29 +80,14 @@ const ProfileOverview = ({
         if (cancelled) return;
 
         const activeRepos = reposData.filter(r => !r.archived && !r.fork);
+        const stars = activeRepos.reduce((acc, cur) => acc + (cur.stargazers_count || 0), 0);
+        const forks = activeRepos.reduce((acc, cur) => acc + (cur.forks_count || 0), 0);
+        const issues = activeRepos.reduce((acc, cur) => acc + (cur.open_issues_count || 0), 0);
 
-        const stars = activeRepos.reduce(
-          (acc, cur) => acc + (cur.stargazers_count || 0),
-          0
-        );
-        const forks = activeRepos.reduce(
-          (acc, cur) => acc + (cur.forks_count || 0),
-          0
-        );
-        const issues = activeRepos.reduce(
-          (acc, cur) => acc + (cur.open_issues_count || 0),
-          0
-        );
-
-        const langCounter = activeRepos.reduce<Record<string, number>>(
-          (acc, cur) => {
-            if (cur.language) {
-              acc[cur.language] = (acc[cur.language] || 0) + 1;
-            }
-            return acc;
-          },
-          {}
-        );
+        const langCounter = activeRepos.reduce<Record<string, number>>((acc, cur) => {
+          if (cur.language) acc[cur.language] = (acc[cur.language] || 0) + 1;
+          return acc;
+        }, {});
 
         const topLangs = Object.entries(langCounter)
           .map(([name, count]) => ({ name, count }))
@@ -130,9 +99,7 @@ const ProfileOverview = ({
       } catch (e) {
         if (cancelled) return;
         if (e instanceof Error && e.message === 'rate_limit') {
-          setError(
-            'GitHub API 호출 제한에 걸렸습니다. 잠시 후 다시 시도해주세요.'
-          );
+          setError('GitHub API 호출 제한에 걸렸습니다. 잠시 후 다시 시도해주세요.');
           return;
         }
         setError('GitHub 정보를 불러오지 못했습니다.');
@@ -142,10 +109,7 @@ const ProfileOverview = ({
     };
 
     fetchAll();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [githubId]);
 
   const displayName = useMemo(() => {
@@ -158,16 +122,12 @@ const ProfileOverview = ({
 
   if (loading) {
     return (
-      <section className={`${cardBase} min-h-[220px]`}>
-        <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
-        <div className="relative p-5">
-          <div className="h-20 rounded-2xl animate-pulse bg-gray-100" />
-          <div className="grid grid-cols-2 gap-3 mt-6 sm:grid-cols-4">
+      <section className={`${cardBase} min-h-[200px]`}>
+        <div className="p-5">
+          <div className="h-16 rounded-xl animate-pulse bg-gray-100" />
+          <div className="grid grid-cols-2 gap-3 mt-5 sm:grid-cols-4">
             {Array.from({ length: 4 }).map((_, idx) => (
-              <div
-                key={idx}
-                className="h-16 rounded-2xl animate-pulse bg-gray-100"
-              />
+              <div key={idx} className="h-14 rounded-xl animate-pulse bg-gray-100" />
             ))}
           </div>
         </div>
@@ -177,12 +137,9 @@ const ProfileOverview = ({
 
   if (error) {
     return (
-      <section className={`${cardBase} min-h-[220px]`}>
-        <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
-        <div className="relative p-5 min-h-[220px] flex items-center">
-          <div className="p-4 text-sm text-red-500 rounded-2xl border border-red-100 bg-red-50">
-            {error}
-          </div>
+      <section className={`${cardBase} min-h-[200px] flex items-center`}>
+        <div className="p-5 w-full">
+          <div className="p-4 text-sm text-red-500 rounded-xl border border-red-100 bg-red-50">{error}</div>
         </div>
       </section>
     );
@@ -191,78 +148,57 @@ const ProfileOverview = ({
   if (!user) return null;
 
   return (
-    <section className={`${cardBase} min-h-[220px]`}>
-      <div className="absolute inset-0 bg-gradient-to-br via-white to-blue-50 from-slate-50" />
-      <div className="relative p-5">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+    <section className={`${cardBase} min-h-[200px]`}>
+      <div className="p-5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex gap-3 items-center">
             {displayAvatar ? (
-              <div className="overflow-hidden relative w-14 h-14 rounded-full border border-ftBlue/20">
-                <Image
-                  src={displayAvatar}
-                  alt={`${displayName} avatar`}
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
+              <div className="overflow-hidden relative w-14 h-14 rounded-full border border-gray-200 flex-shrink-0">
+                <Image src={displayAvatar} alt={`${displayName} avatar`} fill sizes="64px" className="object-cover" />
               </div>
             ) : (
-              <div className="w-14 h-14 rounded-full bg-gray-100" />
+              <div className="w-14 h-14 rounded-full bg-gray-100 flex-shrink-0" />
             )}
 
-            <div className="space-y-1">
-              <p className="text-xs uppercase tracking-[0.25em] text-ftGray">
-                GitHub Dashboard
-              </p>
-              <h1 className="text-xl font-extrabold text-ftBlack">
-                {displayName}
-              </h1>
-              <p className="text-sm text-ftGray">
+            <div className="space-y-0.5">
+              <div className="text-[11px] uppercase tracking-widest text-ftGray">GitHub Dashboard</div>
+              <div className="text-xl font-bold text-ftBlack">{displayName}</div>
+              <div className="text-sm text-ftGray">
                 @{user.login}
-                <span className="mx-2 text-gray-300">|</span>
-                업데이트 {new Date(user.updated_at).toLocaleDateString()}
-              </p>
+                <span className="mx-2 text-gray-300">·</span>
+                <span className="text-xs">업데이트 {new Date(user.updated_at).toLocaleDateString()}</span>
+              </div>
             </div>
           </div>
 
-          <div className="flex gap-3 items-center">
-            <a
-              href={user.html_url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex gap-2 items-center px-3.5 py-2 text-sm font-semibold rounded-xl border-2 transition-all duration-300 text-ftBlue border-ftBlue/30 bg-white hover:bg-ftBlue hover:text-white"
-            >
-              GitHub 프로필
-              <span className="text-base">↗</span>
-            </a>
-          </div>
+          <a
+            href={user.html_url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex gap-2 items-center px-3.5 py-2 text-sm font-semibold rounded-xl border transition-all duration-200 text-ftBlue border-ftBlue/30 bg-white hover:bg-ftBlue hover:text-white self-start sm:self-auto"
+          >
+            GitHub 프로필
+            <span>↗</span>
+          </a>
         </div>
 
         {user.bio && (
-          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-ftGray">
-            {user.bio}
-          </p>
+          <div className="mt-3 max-w-3xl text-sm leading-relaxed text-ftGray">{user.bio}</div>
         )}
 
         <div className="grid grid-cols-2 gap-3 mt-4 sm:grid-cols-4">
           <StatPill label="Followers" value={String(user.followers)} />
           <StatPill label="Following" value={String(user.following)} />
           <StatPill label="Repos" value={String(user.public_repos)} />
-          <StatPill
-            label="Stars"
-            value={repoStats ? String(repoStats.stars) : '-'}
-          />
+          <StatPill label="Stars" value={repoStats ? String(repoStats.stars) : '-'} />
         </div>
 
         {repoStats?.topLangs?.length ? (
           <div className="flex flex-wrap gap-2 mt-4">
             {repoStats.topLangs.map(lang => (
-              <span
-                key={lang.name}
-                className="px-3 py-1 text-xs font-semibold rounded-full border bg-white/80 text-ftBlue border-ftBlue/20"
-              >
+              <span key={lang.name} className="px-2.5 py-1 text-xs font-medium rounded-full border bg-white text-ftBlue border-ftBlue/20">
                 {lang.name}
-                <span className="ml-2 text-ftGray">{lang.count}</span>
+                <span className="ml-1.5 text-ftGray">{lang.count}</span>
               </span>
             ))}
           </div>

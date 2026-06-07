@@ -12,7 +12,7 @@ import Loader from '../common/Loader';
 import LocalStorage from 'public/utils/Localstorage';
 import { useStore } from 'service/store/useStore';
 
-const menu = ['Article', 'Resume', 'Github'];
+const menu = ['Article'];
 
 interface MobileNavProps {
   isLoading: boolean;

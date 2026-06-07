@@ -1,4 +1,3 @@
-import { Badge } from 'flowbite-react';
 import { useRouter } from 'next/router';
 import { KeyboardEvent, useCallback, useState } from 'react';
 import * as Shared from 'components/Shared';
@@ -212,17 +211,15 @@ const EditorHeader = ({
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {doc.tags.map((tag, index) => (
-                <Badge
-                  className="inline-flex relative items-center px-3 mt-1 mr-1 text-blue-800 bg-blue-200 rounded-full border-2 border-blue-300 transition-all duration-300 hover:bg-blue-200 hover:border-blue-400"
-                  color="default"
-                  size="sm"
+                <span
                   key={`${tag}-${index}`}
+                  className="inline-flex relative items-center px-3 mt-1 mr-1 text-blue-800 bg-blue-200 rounded-full border-2 border-blue-300 transition-all duration-300 hover:bg-blue-200 hover:border-blue-400"
                 >
                   {tag}
                   <button onClick={() => handleRemoveTag(tag)}>
                     <IoIosCloseCircle className="absolute w-4 h-4 right-[-5px] top-[-5px] hover:block hover:cursor-pointer text-red-600 hover:text-red-700 transition-all duration-200 transform hover:scale-110" />
                   </button>
-                </Badge>
+                </span>
               ))}
             </div>
           </div>

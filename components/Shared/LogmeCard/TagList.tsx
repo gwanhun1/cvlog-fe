@@ -1,15 +1,36 @@
 import { TagItem } from '.';
 
-const TagList = ({ tags }: { tags: TagItem[] }) => {
+const HighlightTag = ({ name, keyword }: { name: string; keyword: string }) => {
+  if (!keyword.trim()) return <>{name}</>;
+
+  const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = name.split(new RegExp(`(${escaped})`, 'gi'));
+
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.toLowerCase() === keyword.toLowerCase() ? (
+          <mark key={i} className="bg-yellow-200 text-blue-900 rounded-sm not-italic">
+            {part}
+          </mark>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+};
+
+const TagList = ({ tags, keyword = '' }: { tags: TagItem[]; keyword?: string }) => {
   if (!tags || tags.length === 0) return null;
   return (
     <div className="flex flex-wrap gap-1.5">
       {tags.map(tag => (
         <span
           key={tag.id}
-          className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100 shadow-[0_4px_12px_-8px_rgba(37,99,235,0.6)]"
+          className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[11px] font-medium"
         >
-          {tag.name}
+          <HighlightTag name={tag.name} keyword={keyword} />
         </span>
       ))}
     </div>

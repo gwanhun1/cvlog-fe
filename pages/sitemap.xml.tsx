@@ -34,16 +34,11 @@ function generateSiteMap(posts: any[]) {
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
-  <url>
-    <loc>${BASE_URL}/resume</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
   ${posts
     .map(
       ({ id, updated_at, created_at }) => `
   <url>
-    <loc>${BASE_URL}/article/content/all/${id}</loc>
+    <loc>${BASE_URL}/article/content/${id}</loc>
     <lastmod>${new Date(updated_at || created_at).toISOString()}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

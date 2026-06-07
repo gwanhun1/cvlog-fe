@@ -3,19 +3,9 @@ import * as Shared from 'components/Shared';
 
 const GuestButton = () => {
   return (
-    <Link href="/" className="w-full " prefetch={true}>
-      <div className="p-4 bg-white/90 backdrop-blur-md border border-gray-200 rounded-3xl shadow-lg transition-all duration-300 hover:border-blue-200 hover:shadow-2xl hover:bg-blue-50/50 transform hover:-translate-y-2 text-center">
-        <Shared.LogmeText
-          type="caption"
-          fontStyle="bold"
-          className="text-gray-800 hover:text-blue-700 text-lg"
-        >
-          게스트 모드 시작하기
-          <br />
-          <span className="text-sm text-gray-500 hover:text-blue-600">
-            Start with Guest Mode
-          </span>
-        </Shared.LogmeText>
+    <Link href="/" className="w-full" prefetch={true}>
+      <div className="h-11 flex items-center justify-center rounded-xl border border-gray-200 bg-gray-50 hover:bg-gray-100 hover:border-gray-300 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 text-sm font-medium text-gray-600">
+        게스트로 둘러보기
       </div>
     </Link>
   );

@@ -29,8 +29,8 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
   };
 
   return (
-    <div className="my-2 w-full">
-      <div className="flex gap-2 items-center p-1 rounded-2xl border border-ftBlue/20 bg-bgWhite">
+    <div className="w-full">
+      <div className="flex gap-1 items-center p-1 rounded-xl bg-gray-100">
         <button
           onClick={
             isReady && showMyPostsTab ? () => handleSetMenu('list') : undefined
@@ -38,12 +38,12 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
           disabled={!isReady || !showMyPostsTab}
           tabIndex={isReady && showMyPostsTab ? 0 : -1}
           aria-hidden={!showMyPostsTab}
-          className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none border ${
+          className={`flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-150 focus:outline-none ${
             resolvedActiveMenu === 'list'
-              ? 'bg-ftBlue text-white border-ftBlue'
-              : 'bg-white text-ftGray border-transparent hover:border-ftBlue/40 hover:text-ftBlue'
+              ? 'bg-white text-ftBlue shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
           } ${
-            showMyPostsTab ? '' : 'invisible pointer-events-none select-none'
+            showMyPostsTab ? '' : 'hidden'
           }`}
           aria-current={resolvedActiveMenu === 'list' ? 'page' : undefined}
         >
@@ -68,10 +68,10 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
         <button
           onClick={isReady ? () => handleSetMenu('all') : undefined}
           disabled={!isReady}
-          className={`flex-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 focus:outline-none border ${
+          className={`flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-150 focus:outline-none ${
             resolvedActiveMenu === 'all'
-              ? 'bg-ftBlue text-white border-ftBlue'
-              : 'bg-white text-ftGray border-transparent hover:border-ftBlue/40 hover:text-ftBlue'
+              ? 'bg-white text-ftBlue shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
           }`}
           aria-current={resolvedActiveMenu === 'all' ? 'page' : undefined}
         >

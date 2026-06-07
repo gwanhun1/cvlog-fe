@@ -136,9 +136,7 @@ const PostListView = ({
     setListIndex(params);
   };
 
-  // mode에 따른 링크 경로
-  const getPostLink = (id: number) =>
-    mode === 'public' ? `/article/content/all/${id}` : `/article/content/${id}`;
+  const getPostLink = (id: number) => `/article/content/${id}`;
 
   // mode에 따른 빈 목록 스타일
   const emptyContainerClass =
@@ -162,11 +160,11 @@ const PostListView = ({
   };
 
   const initialSkeleton = (
-    <div className="gap-6 w-full columns-1 tablet:columns-2 desktop:columns-3">
+    <div className="gap-4 w-full columns-1 tablet:columns-2 desktop:columns-3">
       {[...Array(6)].map((_, index) => (
         <div
           key={`initial-skeleton-${index}`}
-          className="mb-6 break-inside-avoid"
+          className="mb-4 break-inside-avoid"
         >
           <CardSkeleton />
         </div>
@@ -181,10 +179,10 @@ const PostListView = ({
           {isInitialLoading ? (
             initialSkeleton
           ) : posts.length > 0 ? (
-            <div className="gap-6 w-full columns-1 tablet:columns-2 desktop:columns-3">
+            <div className="gap-4 w-full columns-1 tablet:columns-2 desktop:columns-3">
               {posts.map(
                 ({ id, title, content, tags, updated_at, user }, index) => (
-                  <div key={id} className="mb-6 break-inside-avoid">
+                  <div key={id} className="mb-4 break-inside-avoid">
                     <Link
                       href={getPostLink(id)}
                       onClick={() => saveListIndex(index)}
@@ -204,7 +202,7 @@ const PostListView = ({
                         >
                           <meta
                             itemProp="mainEntityOfPage"
-                            content={`https://logme-io.vercel.app/article/content/all/${id}`}
+                            content={`https://logme-io.vercel.app/article/content/${id}`}
                           />
                           <meta itemProp="headline" content={title} />
                           <meta itemProp="dateModified" content={updated_at} />
@@ -234,7 +232,7 @@ const PostListView = ({
                   {[...Array(3)].map((_, index) => (
                     <div
                       key={`skeleton-${index}`}
-                      className="mb-6 break-inside-avoid"
+                      className="mb-4 break-inside-avoid"
                     >
                       <CardSkeleton />
                     </div>

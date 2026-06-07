@@ -71,7 +71,7 @@ export default function App({ Component, pageProps }: AppProps) {
           </Layout>
         </SafeHydrate>
       </ToastProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 }

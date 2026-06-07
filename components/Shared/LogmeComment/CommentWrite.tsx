@@ -1,8 +1,8 @@
-import * as Shared from 'components/Shared';
-import { useToast } from 'components/Shared';
 import React, { ChangeEvent, useState } from 'react';
+import { useToast } from 'components/Shared';
 import { useStore } from 'service/store/useStore';
 import { useGetCommentList, usePostNewComment } from 'service/hooks/Comment';
+import Link from 'next/link';
 
 const CommentWrite = ({
   pid,
@@ -14,65 +14,90 @@ const CommentWrite = ({
   const [comment, setComment] = useState('');
   const { refetch } = useGetCommentList(parseInt(pid));
   const postNewComment = usePostNewComment();
-  const userInfo = useStore((state) => state.userIdAtom);
-  const { showToast, showConfirm } = useToast();
-
+  const userInfo = useStore(state => state.userIdAtom);
+  const { showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) =>
-    setComment(e.target.value);
+  const isLoggedIn = !!userInfo?.github_id;
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value);
 
   const handleSubmit = () => {
     if (!comment.trim()) {
-      showToast('댓글을 작성해주세요.', 'warning');
+      showToast('댓글 내용을 입력해주세요.', 'warning');
       return;
     }
     if (isSubmitting) return;
 
-    showConfirm('정말 작성합니까?', () => {
-      setIsSubmitting(true);
-      postNewComment.mutate(
-        { post_id: parseInt(pid), content: comment },
-        {
-          onSuccess: () => {
-            setComment('');
-            refetch();
-            parentRefetch();
-            showToast('작성되었습니다.', 'success');
-          },
-          onSettled: () => {
-            setIsSubmitting(false);
-          },
+    setIsSubmitting(true);
+    postNewComment.mutate(
+      { post_id: parseInt(pid), content: comment },
+      {
+        onSuccess: () => {
+          setComment('');
+          refetch();
+          parentRefetch();
+          showToast('댓글이 등록되었습니다.', 'success');
         },
-      );
-    });
+        onError: () => showToast('댓글 등록에 실패했습니다.', 'error'),
+        onSettled: () => setIsSubmitting(false),
+      },
+    );
   };
 
-  return (
-    <>
-      <textarea
-        spellCheck="false"
-        className="flex justify-center w-full px-2 py-2 mt-1 bg-gray-200 mobile:mt-2 mobile:py-5 text-ftBlack rounded-2xl border-2 border-blue-300 placeholder:text-gray-400 placeholder:font-light focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-400 transition-all duration-300 hover:border-blue-300"
-        onChange={handleChange}
-        value={comment}
-      />
-      <div className="flex justify-end mt-1 mobile:mt-2 mobile:mb-5">
-        <Shared.LogmeButton
-          variant={userInfo.github_id === '' || isSubmitting ? 'disabled' : 'classic'}
-          size="medium"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex items-center justify-center gap-3 py-6 mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50">
+        <span className="text-sm text-gray-400">댓글을 작성하려면</span>
+        <Link
+          href="/login"
+          className="px-4 py-1.5 text-sm font-semibold text-white bg-ftBlue rounded-lg hover:bg-[#1f4a8c] transition-colors"
         >
-          <Shared.LogmeHeadline
-            type="medium"
-            fontStyle="semibold"
-            style={{ color: '#fff' }}
-          >
-            댓글 작성
-          </Shared.LogmeHeadline>
-        </Shared.LogmeButton>
+          로그인
+        </Link>
+        <span className="text-sm text-gray-400">이 필요합니다.</span>
       </div>
-    </>
+    );
+  }
+
+  return (
+    <div className="mt-4 space-y-2">
+      <div className="flex items-start gap-3">
+        <img
+          src={userInfo.profile_image || '/images/github.png'}
+          alt={userInfo.github_id}
+          className="w-8 h-8 rounded-full flex-shrink-0 object-cover mt-1"
+        />
+        <div className="flex-1 space-y-2">
+          <textarea
+            spellCheck={false}
+            placeholder={`${userInfo.github_id}님, 댓글을 남겨보세요. (Ctrl+Enter로 제출)`}
+            className="w-full px-3 py-2.5 text-sm text-ftBlack bg-white rounded-xl border border-gray-200 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue/40 transition-all resize-none"
+            rows={3}
+            value={comment}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            disabled={isSubmitting}
+          />
+          <div className="flex justify-end">
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting || !comment.trim()}
+              className="px-4 py-2 text-sm font-semibold text-white bg-ftBlue rounded-lg hover:bg-[#1f4a8c] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? '등록 중...' : '댓글 등록'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
