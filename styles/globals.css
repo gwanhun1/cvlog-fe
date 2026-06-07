@@ -281,6 +281,24 @@ table {
   }
 }
 
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.drag-caret {
+  animation: cursor-blink 1s step-end infinite;
+}
+
+@keyframes indeterminate-bar {
+  0%   { left: -40%; width: 40%; }
+  100% { left: 110%; width: 40%; }
+}
+
+.indeterminate-bar {
+  animation: indeterminate-bar 1.2s linear infinite;
+}
+
 @keyframes btn-shimmer {
   0% { transform: translateX(-150%) skewX(-12deg); }
   70%, 100% { transform: translateX(250%) skewX(-12deg); }

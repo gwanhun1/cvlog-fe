@@ -43,14 +43,14 @@ const CommentBox = ({ pid }: { pid: string }) => {
   }, [commentListData]);
 
   return (
-    <section className="flex flex-col p-1 w-full tablet:mt-3">
-      <h2 className="flex justify-start my-2 ml-1 text-xs mobile:text-base text-ftBlack">
+    <section className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm px-6 py-5">
+      <div className="mb-4 text-sm font-semibold text-ftBlack">
         {isLoading ? (
-          <div className="w-20 h-5 bg-gray-100 rounded animate-pulse" />
+          <div className="w-20 h-4 bg-gray-100 rounded animate-pulse" />
         ) : (
-          `${commentListData ? commentListData.length : 0} 개의 댓글`
+          `댓글 ${commentListData ? commentListData.length : 0}개`
         )}
-      </h2>
+      </div>
       <article>
         {isLoading
           ? [1, 2, 3].map(i => (

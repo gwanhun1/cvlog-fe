@@ -65,7 +65,7 @@ const AccountManagement = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <button
         onClick={handleDeleteAccount}
         disabled={isDeleting}
@@ -73,11 +73,11 @@ const AccountManagement = () => {
       >
         {isDeleting ? '처리 중...' : '회원 탈퇴'}
       </button>
-      {error && <p className="text-xs font-medium text-red-500">{error}</p>}
-      <p className="text-xs leading-relaxed text-gray-500">
+      {error && <div className="text-xs font-medium text-red-500">{error}</div>}
+      <div className="text-xs leading-relaxed text-gray-400">
         탈퇴 시 작성하신 포스트가 모두 삭제되며 복구되지 않습니다. 다른 사용자의
         게시물에 작성한 댓글은 유지됩니다.
-      </p>
+      </div>
     </div>
   );
 };

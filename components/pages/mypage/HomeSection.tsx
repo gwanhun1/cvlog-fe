@@ -9,9 +9,7 @@ interface HomeSectionProps {
 
 const HomeSection = ({ description }: HomeSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [currentDescription, setCurrentDescription] = useState(
-    description || ''
-  );
+  const [currentDescription, setCurrentDescription] = useState(description || '');
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -20,23 +18,13 @@ const HomeSection = ({ description }: HomeSectionProps) => {
 
   const updateDescriptionMutation = useUpdateUserDescription();
   const isSaving = updateDescriptionMutation.isPending;
-
   const initialDescription = useMemo(() => description || '', [description]);
-
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentDescription(e.target.value);
-  };
 
   const handleSaveClick = () => {
     if (currentDescription.trim() === initialDescription.trim()) {
       setIsEditing(false);
       return;
     }
-
     updateDescriptionMutation.mutate(currentDescription, {
       onSuccess: () => {
         setIsEditing(false);
@@ -55,29 +43,29 @@ const HomeSection = ({ description }: HomeSectionProps) => {
   };
 
   return (
-    <section className="p-8 bg-white rounded-xl border border-blue-100 shadow-sm">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">자기소개</h2>
+    <div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="text-sm font-semibold text-gray-700">자기소개</div>
         {!isEditing ? (
           <button
-            onClick={handleEditClick}
-            className="p-2 text-gray-500 rounded-lg transition-colors hover:bg-gray-100"
+            onClick={() => setIsEditing(true)}
+            className="p-1.5 text-gray-400 rounded-lg transition-colors hover:bg-gray-100 hover:text-gray-600"
           >
-            <FiEdit3 className="w-5 h-5" />
+            <FiEdit3 className="w-4 h-4" />
           </button>
         ) : (
           <div className="flex gap-2">
             <button
               onClick={handleCancelClick}
               disabled={isSaving}
-              className="px-4 py-2 text-gray-600 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200 disabled:opacity-60"
+              className="px-3 py-1.5 text-sm text-gray-600 bg-gray-100 rounded-lg transition-colors hover:bg-gray-200 disabled:opacity-60"
             >
               취소
             </button>
             <button
               onClick={handleSaveClick}
               disabled={isSaving}
-              className="px-4 py-2 text-white bg-blue-600 rounded-lg transition-colors hover:bg-blue-700 disabled:opacity-60"
+              className="px-3 py-1.5 text-sm text-white bg-ftBlue rounded-lg transition-colors hover:bg-[#1f4a8c] disabled:opacity-60"
             >
               {isSaving ? '저장 중...' : '저장'}
             </button>
@@ -89,16 +77,16 @@ const HomeSection = ({ description }: HomeSectionProps) => {
         <textarea
           value={currentDescription}
           onChange={e => setCurrentDescription(e.target.value)}
-          className="w-full min-h-[120px] p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="w-full min-h-[100px] p-3 rounded-lg border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue/40 resize-none text-sm text-gray-700"
           placeholder="자기소개를 작성해주세요."
           maxLength={300}
         />
       ) : (
-        <p className="leading-relaxed text-gray-600 whitespace-pre-line">
-          {currentDescription || '자기소개를 작성해주세요.'}
-        </p>
+        <div className="text-sm leading-relaxed text-gray-500 whitespace-pre-line min-h-[60px]">
+          {currentDescription || <span className="text-gray-300">자기소개를 작성해주세요.</span>}
+        </div>
       )}
-    </section>
+    </div>
   );
 };
 

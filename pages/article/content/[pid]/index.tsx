@@ -179,10 +179,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   if (!shouldShowSkeleton && !resolvedData?.post) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <h2 className="mb-4 text-2xl font-bold text-gray-700">게시물을 찾을 수 없습니다.</h2>
-        <p className="mb-8 text-gray-500">삭제되었거나 비공개된 게시물일 수 있습니다.</p>
+        <div className="mb-4 text-2xl font-bold text-gray-700">게시물을 찾을 수 없습니다.</div>
+        <div className="mb-8 text-gray-500">삭제되었거나 비공개된 게시물일 수 있습니다.</div>
         <Link href="/article">
-          <a className="px-6 py-2 text-white bg-blue-500 rounded-lg transition-colors hover:bg-blue-600">
+          <a className="px-6 py-2 text-white bg-ftBlue rounded-lg transition-colors hover:bg-[#1f4a8c]">
             목록으로 돌아가기
           </a>
         </Link>
@@ -194,9 +194,9 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const isPublic = postData?.public_status ?? false;
 
   return (
-    <div className="flex flex-col justify-center items-center pb-7 w-full rounded-lg tablet:my-15">
+    <div className="flex flex-col items-center gap-6 pb-12 w-full">
       {/* 뒤로가기 + owner 버튼 상단 바 */}
-      <div className="flex justify-between items-center w-full pt-4 pb-2">
+      <div className="flex justify-between items-center w-full pt-2">
         <button
           onClick={() => router.back()}
           className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-ftBlue transition-colors"
@@ -314,59 +314,56 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         )}
       </Head>
 
-      <header className="w-full pt-7 border-gray-200 min-[400px]:border-hidden">
+      <header className="w-full">
+        {/* 제목 */}
         {shouldShowSkeleton ? (
-          <div className="mb-3 w-3/4 h-10 bg-gray-200 rounded-lg tablet:h-14" />
+          <div className="mb-4 w-3/4 h-8 bg-gray-200 rounded-lg tablet:h-12" />
         ) : (
-          <h1 className="mr-1 text-xl text-ftBlack mobile:text-3xl tablet:text-5xl">
+          <div className="mb-4 text-2xl font-bold text-ftBlack mobile:text-3xl tablet:text-4xl leading-snug tracking-tight">
             {postData?.title}
-          </h1>
+          </div>
         )}
-      </header>
 
-      <section className="flex justify-between items-center w-full h-full border-b border-gray-400">
-        <div className="flex flex-wrap justify-start mb-1 w-full text-ftBlack">
-          {shouldShowSkeleton ? (
-            <>
-              <div className="mt-1 mr-1 w-20 h-7 bg-gray-200 rounded-full" />
-              <div className="mt-1 mr-1 w-16 h-7 bg-gray-200 rounded-full" />
-              <div className="mt-1 mr-1 w-24 h-7 bg-gray-200 rounded-full" />
-            </>
-          ) : (
-            postData?.tags?.map((tag: TagType) => (
-              <button
-                type="button"
-                key={tag.id}
-                onClick={() => handleTagSelect(tag)}
-                className={`mr-1 mt-1 px-3 py-1 text-sm rounded-full border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
-                  selectTagList.some(item => item.id === tag.id)
-                    ? 'bg-blue-500 text-white border-blue-600'
-                    : 'bg-blue-100 text-blue-800 border-blue-300 hover:bg-blue-200 hover:border-blue-400'
-                }`}
-              >
-                {tag.name}
-              </button>
-            ))
-          )}
-        </div>
-        <section className="flex items-end w-28">
-          <time className="mb-1 text-xs text-gray-600 tablet:text-sm">
+        {/* 태그 + 날짜 */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-wrap gap-1.5">
+            {shouldShowSkeleton ? (
+              <>
+                <div className="w-20 h-6 bg-gray-200 rounded-full" />
+                <div className="w-16 h-6 bg-gray-200 rounded-full" />
+                <div className="w-24 h-6 bg-gray-200 rounded-full" />
+              </>
+            ) : (
+              postData?.tags?.map((tag: TagType) => (
+                <button
+                  type="button"
+                  key={tag.id}
+                  onClick={() => handleTagSelect(tag)}
+                  className={`px-3 py-0.5 text-xs font-medium rounded-full border transition-all duration-200 hover:scale-105 cursor-pointer ${
+                    selectTagList.some(item => item.id === tag.id)
+                      ? 'bg-ftBlue text-white border-ftBlue'
+                      : 'bg-ftBlue/5 text-ftBlue border-ftBlue/20 hover:bg-ftBlue/10 hover:border-ftBlue/40'
+                  }`}
+                >
+                  {tag.name}
+                </button>
+              ))
+            )}
+          </div>
+          <time className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
             {postData?.created_at?.slice(0, 10)}
           </time>
-        </section>
-      </section>
+        </div>
 
-      <main className="w-full h-full tablet:pb-12">
-        <section>
-          <div className="flex justify-center">
-            <ContentLayout
-              data={postData?.content}
-              isLoading={shouldShowSkeleton}
-              writer={postData?.user?.github_id}
-              id={postData?.id}
-            />
-          </div>
-        </section>
+      </header>
+
+      <main className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm px-6 py-8 tablet:px-10">
+        <ContentLayout
+          data={postData?.content}
+          isLoading={shouldShowSkeleton}
+          writer={postData?.user?.github_id}
+          id={postData?.id}
+        />
       </main>
 
       <PostNavigation

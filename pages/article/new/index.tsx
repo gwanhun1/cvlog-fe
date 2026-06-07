@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { NextPage } from 'next';
 import AuthGuard from 'components/Shared/common/AuthGuard';
 
@@ -8,6 +8,8 @@ import {
   DocType,
 } from '../../../components/pages/article/editor';
 import { EDITOR_CONSTANTS } from 'lib/constants';
+
+const DRAFT_KEY = 'logme_draft_new';
 
 const INIT_USER_INPUT: DocType = {
   title: '',
@@ -20,33 +22,51 @@ const NewPost: NextPage = () => {
   const [isVisiblePreview, setIsVisiblePreview] = useState(true);
   const [imageArr, setImageArr] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(false);
-
   const containerTopRef = useRef<HTMLDivElement>(null);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 저장된 임시글 불러오기
   useEffect(() => {
-    if (
-      containerTopRef.current &&
-      containerTopRef.current.scrollHeight >
-        containerTopRef.current.clientHeight
-    ) {
-      containerTopRef.current.scrollTop =
-        containerTopRef.current.scrollHeight -
-        containerTopRef.current.clientHeight;
-    }
+    const saved = localStorage.getItem(DRAFT_KEY);
+    if (!saved) return;
+    try {
+      const draft = JSON.parse(saved) as DocType;
+      if (draft.title || draft.content !== INIT_USER_INPUT.content || draft.tags.length > 0) {
+        setDoc(draft);
+      }
+    } catch {}
+  }, []);
+
+  // 1초 디바운스 자동저장
+  useEffect(() => {
+    const hasContent =
+      doc.title.trim() !== '' ||
+      (doc.content.trim() !== '' && doc.content.trim() !== '# Hello world') ||
+      doc.tags.length > 0;
+
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    autoSaveTimerRef.current = setTimeout(() => {
+      if (hasContent) localStorage.setItem(DRAFT_KEY, JSON.stringify(doc));
+    }, 1000);
+
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
   }, [doc]);
+
+  const handleSaveSuccess = useCallback(() => {
+    localStorage.removeItem(DRAFT_KEY);
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < EDITOR_CONSTANTS.MOBILE_BREAKPOINT);
     };
-
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 작성 중 페이지 이탈 방지
   useEffect(() => {
     const hasUnsavedChanges =
       doc.title.trim() !== '' ||
@@ -73,9 +93,12 @@ const NewPost: NextPage = () => {
               setDoc={setDoc}
               imageArr={imageArr}
               mode="create"
+              isVisiblePreview={isVisiblePreview}
+              onTogglePreview={() => setIsVisiblePreview(v => !v)}
+              onSaveSuccess={handleSaveSuccess}
             />
           </header>
-          <main className="flex flex-col flex-1 w-full tablet:flex-row">
+          <div className="flex flex-col flex-1 w-full tablet:flex-row">
             <EditorContents
               doc={doc}
               setDoc={setDoc}
@@ -84,7 +107,7 @@ const NewPost: NextPage = () => {
               containerTopRef={containerTopRef}
               isMobile={isMobile}
             />
-          </main>
+          </div>
         </div>
       </main>
     </AuthGuard>

@@ -34,8 +34,8 @@ const PostNavigation = ({
   ProfileComponent,
 }: PostNavigationProps) => {
   return (
-    <section className="mt-10 w-full">
-      <div className="w-full rounded-2xl border border-gray-200 backdrop-blur-sm bg-white/70">
+    <section className="w-full">
+      <div className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm">
         <div className="px-2 pt-4">
           {isLoading ? (
             <ProfileSkeleton />

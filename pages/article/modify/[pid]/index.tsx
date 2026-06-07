@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import AuthGuard from 'components/Shared/common/AuthGuard';
 
@@ -16,15 +16,15 @@ interface ModifyPostProps {
 }
 
 const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
-  const [doc, setDoc] = useState<DocType>({
-    title: '',
-    content: '',
-    tags: [],
-  });
+  const [doc, setDoc] = useState<DocType>({ title: '', content: '', tags: [] });
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isVisiblePreview, setIsVisiblePreview] = useState(true);
   const [imageArr, setImageArr] = useState<string[]>([]);
   const [isMobile, setIsMobile] = useState(false);
   const containerTopRef = useRef<HTMLDivElement>(null);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const draftKey = `logme_draft_edit_${pid}`;
 
   const {
     data: detailData,
@@ -35,39 +35,42 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   useEffect(() => {
     if (isDetailSuccess && detailData?.post) {
       const { title, content, tags } = detailData.post;
-      const tagNames = tags?.map(tag => tag.name) || [];
-
       setDoc({
         title: title || '',
         content: content || '',
-        tags: tagNames,
+        tags: tags?.map(tag => tag.name) || [],
       });
+      setIsInitialized(true);
     }
   }, [isDetailSuccess, detailData]);
 
+  // 초기 로드 이후만 자동저장 (서버 데이터로 덮어쓰기 방지)
   useEffect(() => {
-    if (
-      containerTopRef.current &&
-      containerTopRef.current.scrollHeight >
-        containerTopRef.current.clientHeight
-    ) {
-      containerTopRef.current.scrollTop =
-        containerTopRef.current.scrollHeight -
-        containerTopRef.current.clientHeight;
-    }
-  }, [doc]);
+    if (!isInitialized) return;
+
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    autoSaveTimerRef.current = setTimeout(() => {
+      localStorage.setItem(draftKey, JSON.stringify(doc));
+    }, 1000);
+
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    };
+  }, [doc, draftKey, isInitialized]);
+
+  const handleSaveSuccess = useCallback(() => {
+    localStorage.removeItem(draftKey);
+  }, [draftKey]);
 
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < EDITOR_CONSTANTS.MOBILE_BREAKPOINT);
     };
-
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 수정 중 페이지 이탈 방지
   useEffect(() => {
     const hasUnsavedChanges = doc.title.trim() !== '' || doc.content.trim() !== '';
 
@@ -85,7 +88,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   return (
     <AuthGuard>
       {isLoading && <LoaderAnimation />}
-      <main className="h-screen min-h-screen mx-2 tablet:px-10">
+      <main className="h-screen min-h-screen px-2 tablet:px-10">
         <div className="flex flex-col h-full">
           <header className="flex-none">
             <EditorHeader
@@ -94,10 +97,12 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
               imageArr={imageArr}
               mode="edit"
               pid={pid}
+              isVisiblePreview={isVisiblePreview}
+              onTogglePreview={() => setIsVisiblePreview(v => !v)}
+              onSaveSuccess={handleSaveSuccess}
             />
           </header>
-
-          <main className="relative flex flex-col justify-center flex-1 w-full tablet:flex-row">
+          <div className="flex flex-col flex-1 w-full tablet:flex-row">
             <EditorContents
               doc={doc}
               setDoc={setDoc}
@@ -106,7 +111,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
               containerTopRef={containerTopRef}
               isMobile={isMobile}
             />
-          </main>
+          </div>
         </div>
       </main>
     </AuthGuard>
