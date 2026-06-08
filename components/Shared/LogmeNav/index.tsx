@@ -7,6 +7,7 @@ import MobileNav from './MobileNav';
 import useIsLogin from 'hooks/useIsLogin';
 import LocalStorage from 'public/utils/Localstorage';
 import { cn } from 'styles/utils';
+import { usePushNotification } from 'hooks/usePushNotification';
 
 const MENU_ITEMS = [
   { name: 'HOME', path: '/', requiresAuth: false },
@@ -49,6 +50,8 @@ const Nav = () => {
 
   const isAuth = hasToken || isAuthenticated;
 
+  usePushNotification();
+
   return (
     <header
       className={cn(
@@ -86,6 +89,7 @@ const Nav = () => {
           <div className="tablet:hidden">
             <MobileNav isLoading={isLoading} />
           </div>
+          {isAuth && <Shared.LogmeNotification />}
           <DesktopNavActions
             isAuthenticated={isAuth}
             setAuthority={() => {}}

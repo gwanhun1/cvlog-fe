@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
 import { IoMdSearch, IoMdCreate } from 'react-icons/io';
 import { motion } from 'framer-motion';
 import useIsLogin from 'hooks/useIsLogin';
+import { useDraftResume } from 'hooks/useDraftResume';
+import DraftResumeModal from 'components/Shared/DraftResumeModal';
 
 interface FilterBoxProps {
   keyword: string;
@@ -15,7 +16,8 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const { isAuthenticated } = useIsLogin();
-  const router = useRouter();
+  const { handleNewArticle, showModal, draftInfo, handleResume, handleFresh, handleClose } =
+    useDraftResume();
 
   useEffect(() => {
     setIsMounted(true);
@@ -57,7 +59,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
           whileHover={{ scale: 1.03, backgroundColor: '#1f4a8c' }}
           whileTap={{ scale: 0.97 }}
           transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-          onClick={() => router.push('/article/new')}
+          onClick={handleNewArticle}
         >
           <span className="relative z-10 flex items-center gap-1.5">
             <IoMdCreate className="w-4 h-4" />
@@ -65,6 +67,14 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
           </span>
         </motion.button>
       )}
+
+      <DraftResumeModal
+        isOpen={showModal}
+        draftTitle={draftInfo?.title ?? ''}
+        onResume={handleResume}
+        onFresh={handleFresh}
+        onClose={handleClose}
+      />
     </div>
   );
 };

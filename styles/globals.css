@@ -324,6 +324,29 @@ table {
   animation: btn-shimmer 4s ease-in-out infinite;
 }
 
+@keyframes tab-progress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+.tab-progress-bar { animation: tab-progress 5s linear forwards; }
+
+@keyframes notification-in {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0deg); }
+  15%       { transform: rotate(14deg); }
+  30%       { transform: rotate(-10deg); }
+  45%       { transform: rotate(8deg); }
+  60%       { transform: rotate(-6deg); }
+  75%       { transform: rotate(4deg); }
+}
+
+.notification-in { animation: notification-in 0.15s ease-out; }
+.bell-ring        { animation: bell-ring 0.7s ease-out; }
+
 ::-webkit-scrollbar-thumb {
   background-color: gray;
 }

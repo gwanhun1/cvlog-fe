@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 export interface IntroduceProps {
   Element: IntroduceData;
@@ -13,74 +13,63 @@ export interface IntroduceData {
   messageBr: string;
 }
 
+const STEP_COLORS = [
+  'from-ftBlue to-[#1c3f7a]',
+  'from-[#1c3f7a] to-[#0f2654]',
+  'from-[#2a5298] to-ftBlue',
+  'from-[#1a3a6e] to-[#2657A6]',
+];
+
 const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start end', 'end start'],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.3, 0.6, 1],
-    [0.3, 1, 1, 0.8]
-  );
+  const isEven = Element.id % 2 === 0;
 
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-
-    return () => window.removeEventListener('resize', checkIfMobile);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
   }, []);
 
   useEffect(() => {
     const video = videoRef.current;
+    if (!video) return;
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
-          if (entry.isIntersecting && video) {
-            video.play();
-          } else if (video) {
-            video.pause();
-          }
+          if (entry.isIntersecting) video.play();
+          else video.pause();
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
-
-    if (video) {
-      observer.observe(video);
-    }
-
-    return () => {
-      if (video) observer.unobserve(video);
-    };
+    observer.observe(video);
+    return () => observer.unobserve(video);
   }, []);
-
-  const isEven = Element.id % 2 === 0;
 
   return (
     <motion.section
       ref={sectionRef}
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: 'easeOut' }}
-      viewport={{ once: true, margin: '-50px' }}
-      className="overflow-hidden relative p-6 bg-gradient-to-br from-white via-white rounded-3xl border shadow-lg backdrop-blur border-ftBlue/20  shadow-ftBlue/10 tablet:p-8"
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      viewport={{ once: true, margin: '-60px' }}
+      className={`overflow-hidden relative p-6 rounded-3xl border shadow-md backdrop-blur tablet:p-8 ${
+        isEven
+          ? 'bg-gradient-to-br from-white to-slate-50/60 border-ftBlue/15 shadow-ftBlue/8'
+          : 'bg-gradient-to-br from-slate-50/80 via-white to-white border-slate-200/80 shadow-slate-200/60'
+      }`}
     >
-      {/* 배경 장식 */}
+      {/* 배경 orb */}
       <div
-        className={`absolute ${
-          isEven ? '-top-16 -right-16' : '-top-16 -left-16'
-        } w-32 h-32 rounded-full bg-gradient-to-br from-ftBlue/15 to-transparent blur-2xl`}
+        className={`absolute w-36 h-36 rounded-full blur-3xl pointer-events-none ${
+          isEven
+            ? '-top-16 -right-16 bg-gradient-to-br from-ftBlue/12 to-transparent'
+            : '-bottom-16 -left-16 bg-gradient-to-tr from-ftBlue/10 to-transparent'
+        }`}
       />
 
       <div
@@ -88,13 +77,17 @@ const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
           isEven ? 'tablet:flex-row' : 'tablet:flex-row-reverse'
         } gap-6 tablet:gap-10 items-center`}
       >
+        {/* 비디오 */}
         <motion.div
-          style={{ y: isMobile ? 0 : y }}
           className="relative w-full tablet:w-3/5"
+          initial={{ opacity: 0, x: isEven ? -20 : 20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          viewport={{ once: true }}
         >
-          <div className="overflow-hidden relative rounded-2xl border-2 shadow-xl border-ftBlue/20 shadow-ftBlue/15 group">
-            <div className="absolute inset-0 z-10 bg-gradient-to-t via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none from-ftBlue/20 group-hover:opacity-100" />
-            <motion.video
+          <div className="overflow-hidden relative rounded-2xl border-2 shadow-xl border-ftBlue/20 shadow-ftBlue/10 group">
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 pointer-events-none group-hover:opacity-100" />
+            <video
               ref={videoRef}
               src={Element.src}
               autoPlay
@@ -102,39 +95,49 @@ const Introduce = memo(({ Element }: { Element: IntroduceData }) => {
               muted
               playsInline
               preload="none"
-              className="w-full h-auto min-h-[280px] tablet:min-h-[380px] object-cover transform transition-transform duration-700 group-hover:scale-105 scale-[1.2]"
+              className="w-full h-auto min-h-[240px] tablet:min-h-[340px] object-cover"
             />
           </div>
-          <div className="absolute -bottom-3 -right-3 px-3 py-1.5 text-xs font-bold text-white rounded-full bg-gradient-to-r from-ftBlue to-[#1c3f7a] shadow-md z-40">
+          {/* Step 뱃지 */}
+          <div
+            className={`absolute -bottom-3 ${isEven ? '-right-3' : '-left-3'} px-3 py-1.5 text-xs font-bold text-white rounded-full bg-gradient-to-r ${STEP_COLORS[Element.id]} shadow-md z-20`}
+          >
             Step {Element.id + 1}
           </div>
         </motion.div>
 
+        {/* 텍스트 */}
         <motion.div
-          className="space-y-5 w-full tablet:w-2/5"
-          style={{ opacity }}
-          initial={{ opacity: 0, x: isEven ? 30 : -30 }}
+          className="space-y-4 w-full tablet:w-2/5"
+          initial={{ opacity: 0, x: isEven ? 20 : -20 }}
           whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.15 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          <div className="flex gap-4 items-start">
-            <div className="flex-shrink-0 flex justify-center items-center w-12 h-12 text-lg font-bold text-white rounded-xl bg-gradient-to-br from-ftBlue to-[#1c3f7a] shadow-md shadow-ftBlue/30">
+          {/* 번호 + 제목 */}
+          <div className="flex gap-3 items-start">
+            <div
+              className={`flex-shrink-0 flex justify-center items-center w-10 h-10 text-sm font-bold text-white rounded-xl bg-gradient-to-br ${STEP_COLORS[Element.id]} shadow-sm`}
+            >
               {Element.id + 1}
             </div>
-            <h2 className="text-xl font-bold text-ftBlue tablet:text-2xl break-keep">
+            <h2 className="text-lg font-bold text-ftBlue tablet:text-xl leading-snug break-keep pt-1">
               {Element.title}
             </h2>
           </div>
 
-          <p className="pl-5 text-sm leading-relaxed border-l-4 tablet:text-base text-ftGray border-ftBlue break-keep">
+          {/* 본문 */}
+          <p className="pl-[52px] text-sm leading-relaxed tablet:text-base text-ftGray break-keep">
             {Element.message}
           </p>
 
-          <div className="hidden tablet:block">
-            <div className="p-5 text-sm leading-relaxed bg-gradient-to-br to-white rounded-2xl border-2 shadow-sm border-ftBlue/15 from-bgWhite text-ftGray">
-              <span className="font-semibold text-ftBlue">💡 Tip: </span>
-              {Element.messageBr}
+          {/* 팁 박스 */}
+          <div className="ml-[52px] hidden tablet:block">
+            <div className="flex gap-2.5 items-start p-4 rounded-xl border border-ftBlue/12 bg-ftBlue/[0.04]">
+              <span className="text-base leading-none mt-0.5 flex-shrink-0">💡</span>
+              <p className="text-xs leading-relaxed text-ftGray break-keep">
+                {Element.messageBr}
+              </p>
             </div>
           </div>
         </motion.div>
