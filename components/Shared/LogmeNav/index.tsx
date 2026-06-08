@@ -12,6 +12,7 @@ import { usePushNotification } from 'hooks/usePushNotification';
 const MENU_ITEMS = [
   { name: 'HOME', path: '/', requiresAuth: false },
   { name: 'ARTICLE', path: '/article', requiresAuth: false },
+  { name: 'RESUME', path: '/resume', requiresAuth: true },
   { name: 'GITHUB', path: '/github', requiresAuth: true },
 ] as const;
 
