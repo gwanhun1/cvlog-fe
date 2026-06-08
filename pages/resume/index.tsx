@@ -3,7 +3,9 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import AuthGuard from 'components/Shared/common/AuthGuard';
 import ResumePreview from 'components/pages/resume/ResumePreview';
+import ResumeListModal from 'components/pages/resume/ResumeListModal';
 import DraftResumeModal from 'components/Shared/DraftResumeModal';
+import { createResume, updateResume, getResume } from 'service/api/resume';
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
   useSensor, useSensors, DragEndEvent,
@@ -22,75 +24,210 @@ const STORAGE_KEY = 'logme_resume_v2';
 const PHOTO_KEY = 'logme_resume_photo';
 const genId = () => Math.random().toString(36).slice(2, 9);
 
-const inputCls = 'w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue transition-colors placeholder:text-gray-300';
-const labelCls = 'block text-xs font-medium text-gray-500 mb-1';
+const inputCls = 'w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue transition-all placeholder:text-gray-300';
+const labelCls = 'block text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5';
+
+// ── Drag handle icon ───────────────────────────────────────────
+const GripIcon = () => (
+  <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="currentColor">
+    <circle cx="5" cy="4" r="1.2" /><circle cx="11" cy="4" r="1.2" />
+    <circle cx="5" cy="8" r="1.2" /><circle cx="11" cy="8" r="1.2" />
+    <circle cx="5" cy="12" r="1.2" /><circle cx="11" cy="12" r="1.2" />
+  </svg>
+);
 
 // ── Sortable wrapper ───────────────────────────────────────────
 const SortableSection = ({ id, children }: { id: string; children: (p: { dragProps: React.HTMLAttributes<HTMLElement> }) => React.ReactNode }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   return (
-    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.4 : 1 }}>
+    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.3 : 1, zIndex: isDragging ? 50 : undefined }}>
       {children({ dragProps: { ...attributes, ...listeners } })}
     </div>
   );
 };
 
 // ── Section card ───────────────────────────────────────────────
-const SectionCard = ({ title, collapsed, onToggle, dragProps, children }: {
+const SectionCard = ({ title, collapsed, onToggle, dragProps, onMoveUp, onMoveDown, isFirst, isLast, children }: {
   title: string; collapsed: boolean; onToggle: () => void;
-  dragProps?: React.HTMLAttributes<HTMLElement>; children: React.ReactNode;
+  dragProps?: React.HTMLAttributes<HTMLElement>;
+  onMoveUp: () => void; onMoveDown: () => void;
+  isFirst: boolean; isLast: boolean;
+  children: React.ReactNode;
 }) => (
-  <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-    <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-100">
-      <span {...dragProps} className="cursor-grab text-gray-300 hover:text-gray-500 active:cursor-grabbing touch-none select-none" title="드래그로 순서 변경">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
-        </svg>
+  <div className={`rounded-2xl border bg-white overflow-hidden transition-all ${collapsed ? 'border-slate-200 shadow-sm' : 'border-ftBlue/20 shadow-md shadow-ftBlue/5'}`}>
+    <div className="flex items-center gap-2 px-4 py-3 cursor-pointer select-none" onClick={onToggle}>
+      {/* Drag grip */}
+      <span
+        {...dragProps}
+        onClick={e => e.stopPropagation()}
+        className="cursor-grab text-gray-300 hover:text-gray-400 active:cursor-grabbing touch-none p-1 -m-1 rounded flex-shrink-0"
+        title="드래그로 순서 변경"
+      >
+        <GripIcon />
       </span>
-      <span className="flex-1 text-sm font-semibold text-gray-700">{title}</span>
-      <button type="button" onClick={onToggle} className="text-gray-400 hover:text-gray-600 transition-colors">
-        <svg className={`w-4 h-4 transition-transform ${collapsed ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+
+      {/* Title */}
+      <span className="flex-1 text-sm font-bold text-gray-800">{title}</span>
+
+      {/* Order arrows — right side, inside header */}
+      <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+        <button
+          type="button"
+          onClick={onMoveUp}
+          disabled={isFirst}
+          className="w-7 h-7 flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-400 hover:bg-white hover:text-ftBlue hover:border-ftBlue/40 hover:shadow-sm disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+          title="위로 이동"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={onMoveDown}
+          disabled={isLast}
+          className="w-7 h-7 flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-400 hover:bg-white hover:text-ftBlue hover:border-ftBlue/40 hover:shadow-sm disabled:opacity-20 disabled:cursor-not-allowed transition-all"
+          title="아래로 이동"
+        >
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Editing badge */}
+      {!collapsed && <span className="text-[10px] font-medium text-ftBlue bg-ftBlue/8 px-2 py-0.5 rounded-full flex-shrink-0">편집 중</span>}
+
+      {/* Collapse chevron */}
+      <svg className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ${collapsed ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      </svg>
     </div>
-    {!collapsed && <div className="p-4">{children}</div>}
+    {!collapsed && <div className="px-5 pb-5 pt-1 border-t border-slate-100">{children}</div>}
   </div>
 );
 
+// ── Field group label ──────────────────────────────────────────
+const FieldGroup = ({ children }: { children: React.ReactNode }) => (
+  <div className="grid grid-cols-2 gap-x-3 gap-y-3">{children}</div>
+);
+
+const Field = ({ label, children, span2 }: { label: string; children: React.ReactNode; span2?: boolean }) => (
+  <div className={span2 ? 'col-span-2' : ''}>
+    <label className={labelCls}>{label}</label>
+    {children}
+  </div>
+);
+
+// ── Item card (경력, 프로젝트 각 항목) ─────────────────────────
+const ItemCard = ({ index, onRemove, children }: { index: number; onRemove: () => void; children: React.ReactNode }) => (
+  <div className={`relative rounded-xl border border-slate-100 bg-slate-50/60 p-4 ${index > 0 ? 'mt-3' : ''}`}>
+    <button
+      type="button"
+      onClick={onRemove}
+      className="absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all"
+      title="삭제"
+    >
+      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    {children}
+  </div>
+);
+
+// ── Add button ─────────────────────────────────────────────────
 const AddBtn = ({ label, onClick }: { label: string; onClick: () => void }) => (
-  <button type="button" onClick={onClick} className="flex items-center gap-1.5 mt-3 px-3 py-1.5 text-xs font-medium text-ftBlue border border-ftBlue/30 rounded-lg hover:bg-ftBlue/5 transition-colors">
+  <button
+    type="button"
+    onClick={onClick}
+    className="w-full mt-3 flex items-center justify-center gap-2 py-2.5 text-xs font-semibold text-ftBlue rounded-xl border-2 border-dashed border-ftBlue/25 hover:border-ftBlue/50 hover:bg-ftBlue/5 transition-all"
+  >
     <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
     </svg>
-    {label}
+    {label} 추가
   </button>
 );
 
-const RemoveBtn = ({ onClick }: { onClick: () => void }) => (
-  <button type="button" onClick={onClick} className="flex items-center gap-1 text-[11px] text-red-400 hover:text-red-600 transition-colors mt-1.5">
-    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-    </svg>
-    삭제
-  </button>
-);
+// ── Photo Upload ───────────────────────────────────────────────
+const PhotoUpload = ({ photo, onUpload, onRemove, inputRef }: {
+  photo: string; onUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: () => void; inputRef: React.RefObject<HTMLInputElement>;
+}) => (
+  <div className="flex flex-col items-center gap-3 py-5 border-b border-slate-100 mb-5">
+    <div className="relative group">
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
+        className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-dashed border-slate-300 hover:border-ftBlue transition-all bg-slate-50 flex flex-col items-center justify-center"
+      >
+        {photo ? (
+          <>
+            <img src={photo} alt="프로필" className="absolute inset-0 w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+          </>
+        ) : (
+          <>
+            <svg className="w-7 h-7 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <span className="text-[10px] text-slate-400 font-medium">사진 추가</span>
+          </>
+        )}
+      </button>
+      {/* 카메라 배지 */}
+      {!photo && (
+        <div className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-ftBlue flex items-center justify-center shadow-md border-2 border-white">
+          <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+      )}
+    </div>
 
-const Divider = () => <div className="mt-5 pt-5 border-t border-slate-100" />;
+    <div className="text-center">
+      <p className="text-xs font-medium text-gray-600 mb-0.5">프로필 사진 <span className="text-gray-400 font-normal">(선택)</span></p>
+      <p className="text-[11px] text-gray-400">이력서 우측 상단에 표시됩니다</p>
+    </div>
+
+    <div className="flex gap-2">
+      <button type="button" onClick={() => inputRef.current?.click()} className="px-3.5 py-1.5 text-xs font-semibold text-ftBlue bg-ftBlue/8 rounded-lg hover:bg-ftBlue/15 transition-colors">
+        {photo ? '사진 변경' : '업로드'}
+      </button>
+      {photo && (
+        <button type="button" onClick={onRemove} className="px-3.5 py-1.5 text-xs font-semibold text-red-400 bg-red-50 rounded-lg hover:bg-red-100 transition-colors">
+          삭제
+        </button>
+      )}
+    </div>
+    <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onUpload} />
+  </div>
+);
 
 // ── Main builder ───────────────────────────────────────────────
 const ResumeBuilder = () => {
   const [data, setData] = useState<ResumeData>(DEFAULT_RESUME);
   const [photo, setPhoto] = useState('');
-  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
-  const [showModal, setShowModal] = useState(false);
+  const [title, setTitle] = useState('제목 없는 이력서');
+  const [currentId, setCurrentId] = useState<number | null>(null);
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set(['certifications', 'education']));
+  const [showDraftModal, setShowDraftModal] = useState(false);
+  const [showListModal, setShowListModal] = useState(false);
   const [draftName, setDraftName] = useState('');
   const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
-  const [saved, setSaved] = useState(false);
+  const [autoSaved, setAutoSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState('');
+  const [titleError, setTitleError] = useState('');
   const photoInputRef = useRef<HTMLInputElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Load on mount
   useEffect(() => {
     const savedPhoto = localStorage.getItem(PHOTO_KEY);
     if (savedPhoto) setPhoto(savedPhoto);
@@ -98,25 +235,29 @@ const ResumeBuilder = () => {
     if (raw) {
       try {
         const parsed: ResumeData = JSON.parse(raw);
-        setDraftName(parsed.basicInfo?.name || '이름 없음');
-        setShowModal(true);
+        const hasContent =
+          parsed.basicInfo?.name?.trim() ||
+          parsed.experience?.length > 0 ||
+          parsed.projects?.length > 0 ||
+          parsed.skills?.length > 0 ||
+          parsed.education?.length > 0;
+        if (hasContent) {
+          setDraftName(parsed.basicInfo?.name || '이름 없음');
+          setShowDraftModal(true);
+        }
       } catch {}
     }
   }, []);
 
-  // Sync photo to parent data
-  useEffect(() => {
-    setData(prev => ({ ...prev, photo }));
-  }, [photo]);
+  useEffect(() => { setData(prev => ({ ...prev, photo })); }, [photo]);
 
-  // Auto-save
   useEffect(() => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       const { photo: _, ...rest } = data;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(rest));
-      setSaved(true);
-      setTimeout(() => setSaved(false), 1500);
+      setAutoSaved(true);
+      setTimeout(() => setAutoSaved(false), 2000);
     }, 600);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
   }, [data]);
@@ -131,13 +272,70 @@ const ResumeBuilder = () => {
     setData(prev => ({ ...prev, sectionOrder: arrayMove(prev.sectionOrder, oldIdx, newIdx) }));
   };
 
+  const moveSection = (key: SectionKey, dir: -1 | 1) => {
+    setData(prev => {
+      const idx = prev.sectionOrder.indexOf(key);
+      const next = idx + dir;
+      if (next < 0 || next >= prev.sectionOrder.length) return prev;
+      return { ...prev, sectionOrder: arrayMove(prev.sectionOrder, idx, next) };
+    });
+  };
+
   const toggleCollapse = (key: string) => setCollapsed(prev => {
-    const next = new Set(prev);
-    next.has(key) ? next.delete(key) : next.add(key);
-    return next;
+    const next = new Set(prev); next.has(key) ? next.delete(key) : next.add(key); return next;
   });
 
-  // Photo upload
+  const handleSave = async () => {
+    // 클라이언트 유효성 검사
+    if (!title.trim()) {
+      setTitleError('이력서 제목을 입력해주세요');
+      return;
+    }
+    setTitleError('');
+    setSaving(true);
+    try {
+      const payload = JSON.stringify({ ...data, photo });
+      if (currentId) {
+        await updateResume(currentId, title, payload);
+      } else {
+        const saved = await createResume(title, payload);
+        setCurrentId(saved.id);
+      }
+      setSaveMsg('저장됨');
+      setTimeout(() => setSaveMsg(''), 2500);
+    } catch (err: any) {
+      const status = err?.response?.status;
+      if (status === 401) setSaveMsg('로그인 필요');
+      else if (!navigator.onLine) setSaveMsg('네트워크 오류');
+      else if (status === 404) setSaveMsg('API 없음 — BE 실행 필요');
+      else if (status >= 500) setSaveMsg('서버 오류');
+      else setSaveMsg('저장 실패');
+      setTimeout(() => setSaveMsg(''), 4000);
+    }
+    setSaving(false);
+  };
+
+  const handleLoadResume = async (id: number) => {
+    try {
+      const resume = await getResume(id);
+      const parsed: ResumeData = JSON.parse(resume.data);
+      if (parsed.photo) { setPhoto(parsed.photo); }
+      setData({ ...parsed, photo: '' });
+      setTitle(resume.title);
+      setCurrentId(resume.id);
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {}
+  };
+
+  const handleNewResume = () => {
+    setData(DEFAULT_RESUME);
+    setPhoto('');
+    setTitle('제목 없는 이력서');
+    setCurrentId(null);
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(PHOTO_KEY);
+  };
+
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -145,18 +343,13 @@ const ResumeBuilder = () => {
     reader.onload = ev => {
       const result = ev.target?.result as string;
       setPhoto(result);
-      try { localStorage.setItem(PHOTO_KEY, result); } catch { console.warn('사진 저장 실패: localStorage 용량 초과'); }
+      try { localStorage.setItem(PHOTO_KEY, result); } catch {}
     };
     reader.readAsDataURL(file);
   };
 
-  const removePhoto = () => {
-    setPhoto('');
-    localStorage.removeItem(PHOTO_KEY);
-    if (photoInputRef.current) photoInputRef.current.value = '';
-  };
+  const removePhoto = () => { setPhoto(''); localStorage.removeItem(PHOTO_KEY); if (photoInputRef.current) photoInputRef.current.value = ''; };
 
-  // Helpers
   const setBasic = (field: keyof BasicInfo, value: string) =>
     setData(prev => ({ ...prev, basicInfo: { ...prev.basicInfo, [field]: value } }));
 
@@ -185,223 +378,139 @@ const ResumeBuilder = () => {
     setData(prev => ({ ...prev, certifications: prev.certifications.map(c => c.id === id ? { ...c, [field]: value } : c) }));
   const removeCert = (id: string) => setData(prev => ({ ...prev, certifications: prev.certifications.filter(c => c.id !== id) }));
 
-  // Modal
-  const handleResumeDraft = () => {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) { try { setData(JSON.parse(raw)); } catch {} }
-    setShowModal(false);
-  };
-  const handleFreshStart = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(PHOTO_KEY);
-    setData(DEFAULT_RESUME);
-    setPhoto('');
-    setShowModal(false);
-  };
+  const handleResumeDraft = () => { const raw = localStorage.getItem(STORAGE_KEY); if (raw) { try { setData(JSON.parse(raw)); } catch {} } setShowDraftModal(false); };
+  const handleFreshStart = () => { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(PHOTO_KEY); setData(DEFAULT_RESUME); setPhoto(''); setShowDraftModal(false); };
 
-  // Section form renderer
-  const renderSectionForm = useCallback((key: SectionKey, dragProps: React.HTMLAttributes<HTMLElement>) => {
+  const renderSectionForm = useCallback((key: SectionKey, dragProps: React.HTMLAttributes<HTMLElement>, idx: number, total: number) => {
     const isColl = collapsed.has(key);
+    const orderProps = {
+      onMoveUp: () => moveSection(key, -1),
+      onMoveDown: () => moveSection(key, 1),
+      isFirst: idx === 0,
+      isLast: idx === total - 1,
+    };
 
     switch (key) {
       case 'experience':
         return (
-          <SectionCard key="experience" title={SECTION_LABELS.experience} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps}>
+          <SectionCard key="exp" title={SECTION_LABELS.experience} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps} {...orderProps}>
             {data.experience.map((exp, i) => (
-              <div key={exp.id}>
-                {i > 0 && <Divider />}
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <div>
-                    <label className={labelCls}>회사명</label>
-                    <input className={inputCls} placeholder="주식회사OO" value={exp.company} onChange={e => setExp(exp.id, 'company', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>고용 형태</label>
-                    <input className={inputCls} placeholder="정규직 / 계약직" value={exp.employmentType} onChange={e => setExp(exp.id, 'employmentType', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>직책</label>
-                    <input className={inputCls} placeholder="프론트엔드 개발자" value={exp.role} onChange={e => setExp(exp.id, 'role', e.target.value)} />
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="flex-1">
-                      <label className={labelCls}>시작</label>
+              <ItemCard key={exp.id} index={i} onRemove={() => removeExp(exp.id)}>
+                <FieldGroup>
+                  <Field label="회사명"><input className={inputCls} placeholder="주식회사OO" value={exp.company} onChange={e => setExp(exp.id, 'company', e.target.value)} /></Field>
+                  <Field label="고용 형태"><input className={inputCls} placeholder="정규직" value={exp.employmentType} onChange={e => setExp(exp.id, 'employmentType', e.target.value)} /></Field>
+                  <Field label="직책"><input className={inputCls} placeholder="프론트엔드 개발자" value={exp.role} onChange={e => setExp(exp.id, 'role', e.target.value)} /></Field>
+                  <Field label="재직 기간">
+                    <div className="flex gap-1.5 items-center">
                       <input className={inputCls} placeholder="2023.04" value={exp.startDate} onChange={e => setExp(exp.id, 'startDate', e.target.value)} />
+                      <span className="text-gray-300 flex-shrink-0">~</span>
+                      <input className={`${inputCls} ${exp.isCurrent ? 'opacity-40' : ''}`} placeholder="2024.12" value={exp.endDate} onChange={e => setExp(exp.id, 'endDate', e.target.value)} disabled={exp.isCurrent} />
                     </div>
-                    <div className="flex-1">
-                      <label className={labelCls}>종료</label>
-                      <input className={inputCls} placeholder="2024.12" value={exp.endDate} onChange={e => setExp(exp.id, 'endDate', e.target.value)} disabled={exp.isCurrent} />
-                    </div>
-                  </div>
-                </div>
-                <label className="flex items-center gap-2 text-xs text-gray-500 mb-3 cursor-pointer">
-                  <input type="checkbox" checked={exp.isCurrent} onChange={e => setExp(exp.id, 'isCurrent', e.target.checked)} className="accent-ftBlue" />
-                  재직 중
-                </label>
-                <div className="mb-2">
-                  <label className={labelCls}>프로젝트명</label>
-                  <input className={inputCls} placeholder="FlowV" value={exp.projectName} onChange={e => setExp(exp.id, 'projectName', e.target.value)} />
-                </div>
-                <div className="mb-2">
-                  <label className={labelCls}>프로젝트 한 줄 설명</label>
-                  <input className={inputCls} placeholder="전력 입찰 및 관리 전력 중개 통합 서비스" value={exp.projectSubtitle} onChange={e => setExp(exp.id, 'projectSubtitle', e.target.value)} />
-                </div>
-                <div className="mb-2">
-                  <label className={labelCls}>업무 내용 (• 로 시작하는 줄 구분)</label>
-                  <textarea className={inputCls + ' resize-none'} rows={5} placeholder={'• 주요 업무 및 성과\n• 구체적 수치 포함'} value={exp.description} onChange={e => setExp(exp.id, 'description', e.target.value)} />
-                </div>
-                <div className="mb-1">
-                  <label className={labelCls}>사용 언어 및 툴</label>
-                  <input className={inputCls} placeholder="TypeScript, React, Vite, ..." value={exp.techStack} onChange={e => setExp(exp.id, 'techStack', e.target.value)} />
-                </div>
-                <RemoveBtn onClick={() => removeExp(exp.id)} />
-              </div>
+                  </Field>
+                  <Field label="" span2>
+                    <button
+                      type="button"
+                      onClick={() => setExp(exp.id, 'isCurrent', !exp.isCurrent)}
+                      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all select-none ${
+                        exp.isCurrent
+                          ? 'bg-ftBlue text-white border-ftBlue shadow-sm shadow-ftBlue/20'
+                          : 'bg-white text-gray-400 border-slate-200 hover:border-ftBlue/40 hover:text-ftBlue/70'
+                      }`}
+                    >
+                      <span className={`relative inline-flex w-7 h-4 rounded-full transition-colors flex-shrink-0 ${exp.isCurrent ? 'bg-white/30' : 'bg-slate-200'}`}>
+                        <span className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform ${exp.isCurrent ? 'translate-x-3' : 'translate-x-0'}`} />
+                      </span>
+                      현재 재직 중
+                    </button>
+                  </Field>
+                  <Field label="프로젝트명" span2><input className={inputCls} placeholder="FlowV" value={exp.projectName} onChange={e => setExp(exp.id, 'projectName', e.target.value)} /></Field>
+                  <Field label="프로젝트 설명" span2><input className={inputCls} placeholder="전력 입찰 및 관리 전력 중개 통합 서비스" value={exp.projectSubtitle} onChange={e => setExp(exp.id, 'projectSubtitle', e.target.value)} /></Field>
+                  <Field label="업무 내용" span2>
+                    <textarea className={inputCls + ' resize-none'} rows={5} placeholder={'• 주요 업무 및 성과\n• 구체적 수치 포함\n• 기여한 부분 명확히'} value={exp.description} onChange={e => setExp(exp.id, 'description', e.target.value)} />
+                  </Field>
+                  <Field label="사용 언어 및 툴" span2><input className={inputCls} placeholder="TypeScript, React, Vite, ..." value={exp.techStack} onChange={e => setExp(exp.id, 'techStack', e.target.value)} /></Field>
+                </FieldGroup>
+              </ItemCard>
             ))}
-            <AddBtn label="경력 추가" onClick={addExp} />
+            <AddBtn label="경력" onClick={addExp} />
           </SectionCard>
         );
 
       case 'projects':
         return (
-          <SectionCard key="projects" title={SECTION_LABELS.projects} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps}>
+          <SectionCard key="proj" title={SECTION_LABELS.projects} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps} {...orderProps}>
             {data.projects.map((proj, i) => (
-              <div key={proj.id}>
-                {i > 0 && <Divider />}
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <div>
-                    <label className={labelCls}>프로젝트명</label>
-                    <input className={inputCls} placeholder="LOGME" value={proj.name} onChange={e => setProj(proj.id, 'name', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>구분</label>
-                    <input className={inputCls} placeholder="개인 / 팀 / 기타" value={proj.category} onChange={e => setProj(proj.id, 'category', e.target.value)} />
-                  </div>
-                  <div className="col-span-2">
-                    <label className={labelCls}>기간</label>
-                    <input className={inputCls} placeholder="2025.01 ~ 2025.03" value={proj.period} onChange={e => setProj(proj.id, 'period', e.target.value)} />
-                  </div>
-                  <div className="col-span-2">
-                    <label className={labelCls}>한 줄 설명</label>
-                    <input className={inputCls} placeholder="이력서, GitHub, 블로그를 통합한 포트폴리오 서비스" value={proj.subtitle} onChange={e => setProj(proj.id, 'subtitle', e.target.value)} />
-                  </div>
-                </div>
-                <div className="mb-2">
-                  <label className={labelCls}>상세 내용 (• 로 시작하는 줄 구분)</label>
-                  <textarea className={inputCls + ' resize-none'} rows={4} placeholder={'• 주요 기능\n• 성과 및 기술적 도전'} value={proj.description} onChange={e => setProj(proj.id, 'description', e.target.value)} />
-                </div>
-                <div className="mb-2">
-                  <label className={labelCls}>사용 언어 및 툴</label>
-                  <input className={inputCls} placeholder="React, Next.js, TypeScript, ..." value={proj.techStack} onChange={e => setProj(proj.id, 'techStack', e.target.value)} />
-                </div>
-                <div className="grid grid-cols-2 gap-2 mb-1">
-                  <div>
-                    <label className={labelCls}>GitHub URL</label>
-                    <input className={inputCls} placeholder="github.com/..." value={proj.githubUrl} onChange={e => setProj(proj.id, 'githubUrl', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>배포 URL</label>
-                    <input className={inputCls} placeholder="https://..." value={proj.liveUrl} onChange={e => setProj(proj.id, 'liveUrl', e.target.value)} />
-                  </div>
-                </div>
-                <RemoveBtn onClick={() => removeProj(proj.id)} />
-              </div>
+              <ItemCard key={proj.id} index={i} onRemove={() => removeProj(proj.id)}>
+                <FieldGroup>
+                  <Field label="프로젝트명"><input className={inputCls} placeholder="LOGME" value={proj.name} onChange={e => setProj(proj.id, 'name', e.target.value)} /></Field>
+                  <Field label="구분"><input className={inputCls} placeholder="개인 / 팀" value={proj.category} onChange={e => setProj(proj.id, 'category', e.target.value)} /></Field>
+                  <Field label="기간" span2><input className={inputCls} placeholder="2025.01 ~ 2025.03" value={proj.period} onChange={e => setProj(proj.id, 'period', e.target.value)} /></Field>
+                  <Field label="한 줄 설명" span2><input className={inputCls} placeholder="이력서·GitHub·블로그를 통합한 포트폴리오 서비스" value={proj.subtitle} onChange={e => setProj(proj.id, 'subtitle', e.target.value)} /></Field>
+                  <Field label="상세 내용" span2>
+                    <textarea className={inputCls + ' resize-none'} rows={4} placeholder={'• 주요 기능\n• 성과 및 기술적 도전'} value={proj.description} onChange={e => setProj(proj.id, 'description', e.target.value)} />
+                  </Field>
+                  <Field label="사용 언어 및 툴" span2><input className={inputCls} placeholder="React, Next.js, TypeScript, ..." value={proj.techStack} onChange={e => setProj(proj.id, 'techStack', e.target.value)} /></Field>
+                  <Field label="GitHub"><input className={inputCls} placeholder="github.com/..." value={proj.githubUrl} onChange={e => setProj(proj.id, 'githubUrl', e.target.value)} /></Field>
+                  <Field label="배포 URL"><input className={inputCls} placeholder="https://..." value={proj.liveUrl} onChange={e => setProj(proj.id, 'liveUrl', e.target.value)} /></Field>
+                </FieldGroup>
+              </ItemCard>
             ))}
-            <AddBtn label="프로젝트 추가" onClick={addProj} />
+            <AddBtn label="프로젝트" onClick={addProj} />
           </SectionCard>
         );
 
       case 'skills':
         return (
-          <SectionCard key="skills" title={SECTION_LABELS.skills} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps}>
-            <p className="text-xs text-gray-400 mb-3">카테고리별로 기술을 묶어 입력하세요.</p>
+          <SectionCard key="skill" title={SECTION_LABELS.skills} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps} {...orderProps}>
+            <p className="text-xs text-gray-400 mb-3 leading-relaxed">카테고리별로 기술을 묶어 입력하세요. 예) Frontend | React, TypeScript, Next.js</p>
             {data.skills.map((sg, i) => (
-              <div key={sg.id}>
-                {i > 0 && <div className="mt-3 pt-3 border-t border-slate-100" />}
-                <div className="grid grid-cols-3 gap-2">
-                  <div>
-                    <label className={labelCls}>카테고리</label>
-                    <input className={inputCls} placeholder="Frontend" value={sg.category} onChange={e => setSkill(sg.id, 'category', e.target.value)} />
-                  </div>
-                  <div className="col-span-2">
-                    <label className={labelCls}>기술 목록</label>
-                    <input className={inputCls} placeholder="React, TypeScript, Next.js" value={sg.items} onChange={e => setSkill(sg.id, 'items', e.target.value)} />
-                  </div>
-                </div>
-                <RemoveBtn onClick={() => removeSkill(sg.id)} />
-              </div>
+              <ItemCard key={sg.id} index={i} onRemove={() => removeSkill(sg.id)}>
+                <FieldGroup>
+                  <Field label="카테고리"><input className={inputCls} placeholder="Frontend" value={sg.category} onChange={e => setSkill(sg.id, 'category', e.target.value)} /></Field>
+                  <Field label="기술 목록"><input className={inputCls} placeholder="React, TypeScript, Next.js" value={sg.items} onChange={e => setSkill(sg.id, 'items', e.target.value)} /></Field>
+                </FieldGroup>
+              </ItemCard>
             ))}
-            <AddBtn label="기술 그룹 추가" onClick={addSkill} />
+            <AddBtn label="기술 그룹" onClick={addSkill} />
           </SectionCard>
         );
 
       case 'education':
         return (
-          <SectionCard key="education" title={SECTION_LABELS.education} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps}>
+          <SectionCard key="edu" title={SECTION_LABELS.education} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps} {...orderProps}>
             {data.education.map((edu, i) => (
-              <div key={edu.id}>
-                {i > 0 && <Divider />}
-                <div className="grid grid-cols-2 gap-2 mb-1">
-                  <div className="col-span-2">
-                    <label className={labelCls}>학교명</label>
-                    <input className={inputCls} placeholder="조선대학교" value={edu.school} onChange={e => setEdu(edu.id, 'school', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>학위</label>
-                    <input className={inputCls} placeholder="학사 / 전문학사" value={edu.degree} onChange={e => setEdu(edu.id, 'degree', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>전공</label>
-                    <input className={inputCls} placeholder="전자공학과" value={edu.major} onChange={e => setEdu(edu.id, 'major', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>입학</label>
-                    <input className={inputCls} placeholder="2016.03" value={edu.startDate} onChange={e => setEdu(edu.id, 'startDate', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>졸업</label>
-                    <input className={inputCls} placeholder="2023.02" value={edu.endDate} onChange={e => setEdu(edu.id, 'endDate', e.target.value)} />
-                  </div>
-                </div>
-                <RemoveBtn onClick={() => removeEdu(edu.id)} />
-              </div>
+              <ItemCard key={edu.id} index={i} onRemove={() => removeEdu(edu.id)}>
+                <FieldGroup>
+                  <Field label="학교명" span2><input className={inputCls} placeholder="조선대학교" value={edu.school} onChange={e => setEdu(edu.id, 'school', e.target.value)} /></Field>
+                  <Field label="학위"><input className={inputCls} placeholder="학사 / 전문학사" value={edu.degree} onChange={e => setEdu(edu.id, 'degree', e.target.value)} /></Field>
+                  <Field label="전공"><input className={inputCls} placeholder="전자공학과" value={edu.major} onChange={e => setEdu(edu.id, 'major', e.target.value)} /></Field>
+                  <Field label="입학"><input className={inputCls} placeholder="2016.03" value={edu.startDate} onChange={e => setEdu(edu.id, 'startDate', e.target.value)} /></Field>
+                  <Field label="졸업"><input className={inputCls} placeholder="2023.02" value={edu.endDate} onChange={e => setEdu(edu.id, 'endDate', e.target.value)} /></Field>
+                </FieldGroup>
+              </ItemCard>
             ))}
-            <AddBtn label="학력 추가" onClick={addEdu} />
+            <AddBtn label="학력" onClick={addEdu} />
           </SectionCard>
         );
 
       case 'certifications':
         return (
-          <SectionCard key="certifications" title={SECTION_LABELS.certifications} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps}>
+          <SectionCard key="cert" title={SECTION_LABELS.certifications} collapsed={isColl} onToggle={() => toggleCollapse(key)} dragProps={dragProps} {...orderProps}>
             {data.certifications.map((cert, i) => (
-              <div key={cert.id}>
-                {i > 0 && <div className="mt-3 pt-3 border-t border-slate-100" />}
-                <div className="grid grid-cols-2 gap-2 mb-1">
-                  <div className="col-span-2">
-                    <label className={labelCls}>자격증명</label>
-                    <input className={inputCls} placeholder="전기기사" value={cert.name} onChange={e => setCert(cert.id, 'name', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>등급</label>
-                    <input className={inputCls} placeholder="기사" value={cert.grade} onChange={e => setCert(cert.id, 'grade', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>발급 기관</label>
-                    <input className={inputCls} placeholder="한국산업인력공단" value={cert.issuer} onChange={e => setCert(cert.id, 'issuer', e.target.value)} />
-                  </div>
-                  <div>
-                    <label className={labelCls}>취득일</label>
-                    <input className={inputCls} placeholder="2021.09" value={cert.date} onChange={e => setCert(cert.id, 'date', e.target.value)} />
-                  </div>
-                </div>
-                <RemoveBtn onClick={() => removeCert(cert.id)} />
-              </div>
+              <ItemCard key={cert.id} index={i} onRemove={() => removeCert(cert.id)}>
+                <FieldGroup>
+                  <Field label="자격증명" span2><input className={inputCls} placeholder="전기기사" value={cert.name} onChange={e => setCert(cert.id, 'name', e.target.value)} /></Field>
+                  <Field label="등급"><input className={inputCls} placeholder="기사" value={cert.grade} onChange={e => setCert(cert.id, 'grade', e.target.value)} /></Field>
+                  <Field label="발급 기관"><input className={inputCls} placeholder="한국산업인력공단" value={cert.issuer} onChange={e => setCert(cert.id, 'issuer', e.target.value)} /></Field>
+                  <Field label="취득일"><input className={inputCls} placeholder="2021.09" value={cert.date} onChange={e => setCert(cert.id, 'date', e.target.value)} /></Field>
+                </FieldGroup>
+              </ItemCard>
             ))}
-            <AddBtn label="자격증 추가" onClick={addCert} />
+            <AddBtn label="자격증" onClick={addCert} />
           </SectionCard>
         );
 
-      default:
-        return null;
+      default: return null;
     }
   }, [data, collapsed]);
 
@@ -411,127 +520,144 @@ const ResumeBuilder = () => {
         <title>이력서 | LOGME</title>
         <style>{`
           @media print {
-            body > * { display: none !important; }
-            #resume-print-root { display: block !important; }
+            header:not(#resume-print-root header) { display: none !important; }
+            #resume-editor-wrap { display: none !important; }
+            #resume-print-root {
+              display: block !important;
+              position: static !important;
+              width: 100% !important;
+              visibility: visible !important;
+            }
             #resume-print-root * { visibility: visible !important; }
             @page { size: A4; margin: 0; }
           }
         `}</style>
       </Head>
 
-      <div id="resume-print-root" style={{ display: 'none' }}>
+      <div
+        id="resume-print-root"
+        style={{ position: 'fixed', top: '-9999px', left: '-9999px', width: '210mm', pointerEvents: 'none' }}
+        aria-hidden="true"
+      >
         <ResumePreview data={{ ...data, photo }} />
       </div>
 
-      <DraftResumeModal isOpen={showModal} draftTitle={draftName} onResume={handleResumeDraft} onFresh={handleFreshStart} onClose={() => setShowModal(false)} />
-
-      <div className="w-full max-w-7xl mx-auto px-4 py-6">
+      <div id="resume-editor-wrap" className="w-full max-w-7xl mx-auto px-4 py-6">
+      <DraftResumeModal isOpen={showDraftModal} draftTitle={draftName} onResume={handleResumeDraft} onFresh={handleFreshStart} onClose={() => setShowDraftModal(false)} />
+      <ResumeListModal isOpen={showListModal} onClose={() => setShowListModal(false)} onSelect={handleLoadResume} onNewResume={() => { handleNewResume(); setShowListModal(false); }} currentId={currentId} />
         {/* Top bar */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">이력서 편집</h1>
-            <p className="text-xs text-gray-400 mt-0.5">섹션 헤더를 드래그해 순서를 변경하세요</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {saved && (
-              <span className="text-xs text-green-500 flex items-center gap-1">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                자동 저장됨
-              </span>
+        <div className="flex items-center gap-3 mb-6">
+          {/* 내 이력서 버튼 */}
+          <button
+            onClick={() => setShowListModal(true)}
+            className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-gray-600 bg-white border border-slate-200 rounded-xl hover:border-ftBlue/40 hover:text-ftBlue hover:bg-ftBlue/3 transition-all shadow-sm flex-shrink-0"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+            </svg>
+            <span className="hidden tablet:inline">내 이력서</span>
+          </button>
+
+          {/* 제목 인라인 편집 */}
+          <div className="flex-1 min-w-0 relative">
+            <input
+              type="text"
+              value={title}
+              onChange={e => { setTitle(e.target.value); if (e.target.value.trim()) setTitleError(''); }}
+              className={`w-full px-3 py-2 text-sm font-bold text-gray-800 bg-white border rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300
+                ${titleError ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-slate-200 focus:ring-ftBlue/20 focus:border-ftBlue'}`}
+              placeholder="이력서 제목 (필수)"
+            />
+            {titleError && (
+              <p className="absolute left-0 -bottom-5 text-[11px] text-red-400 font-medium whitespace-nowrap">{titleError}</p>
             )}
-            <div className="flex tablet:hidden rounded-lg border border-slate-200 overflow-hidden">
-              <button onClick={() => setActiveTab('form')} className={`px-3 py-1.5 text-xs font-medium transition-colors ${activeTab === 'form' ? 'bg-ftBlue text-white' : 'text-gray-500'}`}>편집</button>
-              <button onClick={() => setActiveTab('preview')} className={`px-3 py-1.5 text-xs font-medium transition-colors ${activeTab === 'preview' ? 'bg-ftBlue text-white' : 'text-gray-500'}`}>미리보기</button>
-            </div>
-            <button
-              onClick={() => window.print()}
-              className="flex items-center gap-1.5 px-4 py-2 text-sm font-semibold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 transition-colors shadow-sm shadow-ftBlue/20"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              PDF 저장
-            </button>
           </div>
+
+          {/* 상태 메시지 */}
+          <div className="flex-shrink-0 w-20 text-right">
+            {saveMsg ? (
+              <span className={`text-xs font-semibold ${saveMsg === '저장됨' ? 'text-emerald-500' : 'text-red-400'}`}>{saveMsg}</span>
+            ) : autoSaved ? (
+              <span className="text-xs text-gray-400">임시저장</span>
+            ) : null}
+          </div>
+
+          {/* 모바일 탭 */}
+          <div className="flex tablet:hidden rounded-xl border border-slate-200 overflow-hidden flex-shrink-0">
+            <button onClick={() => setActiveTab('form')} className={`px-3 py-2 text-xs font-bold transition-colors ${activeTab === 'form' ? 'bg-ftBlue text-white' : 'text-gray-400 hover:bg-slate-50'}`}>편집</button>
+            <button onClick={() => setActiveTab('preview')} className={`px-3 py-2 text-xs font-bold transition-colors ${activeTab === 'preview' ? 'bg-ftBlue text-white' : 'text-gray-400 hover:bg-slate-50'}`}>미리보기</button>
+          </div>
+
+          {/* 저장 버튼 */}
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 disabled:opacity-50 transition-all flex-shrink-0"
+          >
+            {saving ? (
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+            )}
+            저장
+          </button>
+
+          {/* PDF 버튼 */}
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 active:scale-95 transition-all shadow-lg shadow-ftBlue/25 flex-shrink-0"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            PDF
+          </button>
         </div>
 
         <div className="flex gap-6">
           {/* Left: Form */}
-          <div className={`flex-1 min-w-0 flex flex-col gap-4 ${activeTab === 'preview' ? 'hidden tablet:flex' : ''}`}>
+          <div className={`flex-1 min-w-0 flex flex-col gap-3 ${activeTab === 'preview' ? 'hidden tablet:flex' : ''}`}>
 
-            {/* Basic Info Card */}
-            <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-100">
-                <span className="flex-1 text-sm font-semibold text-gray-700">기본 정보</span>
-                <button type="button" onClick={() => toggleCollapse('basicInfo')} className="text-gray-400 hover:text-gray-600 transition-colors">
-                  <svg className={`w-4 h-4 transition-transform ${collapsed.has('basicInfo') ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+            {/* Basic Info */}
+            <div className={`rounded-2xl border bg-white overflow-hidden transition-all ${collapsed.has('basicInfo') ? 'border-slate-200 shadow-sm' : 'border-ftBlue/20 shadow-md shadow-ftBlue/5'}`}>
+              <div className="flex items-center gap-3 px-5 py-3.5 cursor-pointer select-none" onClick={() => toggleCollapse('basicInfo')}>
+                <span className="flex-1 text-sm font-bold text-gray-800">기본 정보</span>
+                {!collapsed.has('basicInfo') && <span className="text-[10px] font-medium text-ftBlue bg-ftBlue/8 px-2 py-0.5 rounded-full">편집 중</span>}
+                <svg className={`w-4 h-4 text-gray-400 transition-transform ${collapsed.has('basicInfo') ? '' : 'rotate-180'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               </div>
               {!collapsed.has('basicInfo') && (
-                <div className="p-4">
-                  {/* Photo upload */}
-                  <div className="mb-4 flex items-center gap-4">
-                    <div
-                      onClick={() => !photo && photoInputRef.current?.click()}
-                      className={`w-16 h-20 rounded-lg border-2 border-dashed flex flex-col items-center justify-center flex-shrink-0 overflow-hidden transition-colors ${photo ? 'border-transparent' : 'border-slate-200 hover:border-ftBlue/40 cursor-pointer'}`}
-                    >
-                      {photo ? (
-                        <img src={photo} alt="프로필" className="w-full h-full object-cover" />
-                      ) : (
-                        <>
-                          <svg className="w-6 h-6 text-gray-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          <span className="text-[9px] text-gray-300">사진</span>
-                        </>
-                      )}
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <span className="text-xs font-medium text-gray-600">프로필 사진 (선택)</span>
-                      <span className="text-[11px] text-gray-400">JPG, PNG · 이력서 우측 상단에 표시됩니다</span>
-                      <div className="flex gap-2 mt-1">
-                        <button type="button" onClick={() => photoInputRef.current?.click()} className="text-xs px-2.5 py-1 rounded-lg border border-ftBlue/30 text-ftBlue hover:bg-ftBlue/5 transition-colors">
-                          {photo ? '사진 변경' : '사진 업로드'}
-                        </button>
-                        {photo && (
-                          <button type="button" onClick={removePhoto} className="text-xs px-2.5 py-1 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 transition-colors">
-                            삭제
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <input ref={photoInputRef} type="file" accept="image/*" className="hidden" onChange={handlePhotoChange} />
-                  </div>
+                <div className="px-5 pb-5 pt-1 border-t border-slate-100">
+                  <PhotoUpload photo={photo} onUpload={handlePhotoChange} onRemove={removePhoto} inputRef={photoInputRef} />
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <FieldGroup>
                     {([
-                      ['name', '이름 *', '정관훈', 'col-span-1'],
-                      ['title', '직함', '4년차 프론트엔드 개발자', 'col-span-1'],
-                      ['email', '이메일', 'hello@example.com', ''],
-                      ['phone', '전화번호', '010-0000-0000', ''],
-                      ['location', '주소', '서울 동대문구 하정로 22', ''],
-                      ['github', 'GitHub', 'github.com/gwanhun1', ''],
-                      ['website', '웹사이트', 'https://logme.shop', ''],
-                      ['portfolio', '포트폴리오 링크', 'https://portfolio.link', 'col-span-2'],
-                    ] as [keyof BasicInfo, string, string, string][]).map(([field, label, placeholder, colSpan]) => (
-                      <div key={field} className={colSpan || ''}>
-                        <label className={labelCls}>{label}</label>
+                      ['name', '이름', '정관훈', false],
+                      ['title', '직함', '4년차 프론트엔드 개발자', false],
+                      ['email', '이메일', 'hello@example.com', false],
+                      ['phone', '전화번호', '010-0000-0000', false],
+                      ['location', '주소', '서울 동대문구', false],
+                      ['github', 'GitHub', 'github.com/username', false],
+                      ['website', '웹사이트', 'https://logme.shop', false],
+                      ['portfolio', '포트폴리오 링크', 'https://portfolio.link', true],
+                    ] as [keyof BasicInfo, string, string, boolean][]).map(([field, label, placeholder, span2]) => (
+                      <Field key={field} label={label} span2={span2}>
                         <input className={inputCls} placeholder={placeholder} value={data.basicInfo[field]} onChange={e => setBasic(field, e.target.value)} />
-                      </div>
+                      </Field>
                     ))}
-                    <div className="col-span-2">
-                      <label className={labelCls}>핵심 요약 (상단 소개 문구)</label>
-                      <textarea className={inputCls + ' resize-none'} rows={2} placeholder="명확한 아키텍처 표준 수립과 AI 파이프라인 통제를 통해..." value={data.basicInfo.summary} onChange={e => setBasic('summary', e.target.value)} />
-                    </div>
-                    <div className="col-span-2">
-                      <label className={labelCls}>자기소개 (상세)</label>
-                      <textarea className={inputCls + ' resize-none'} rows={5} placeholder="React · TypeScript 기반의 웹 서비스를 중심으로..." value={data.basicInfo.about} onChange={e => setBasic('about', e.target.value)} />
-                    </div>
-                  </div>
+                    <Field label="핵심 요약" span2>
+                      <textarea className={inputCls + ' resize-none'} rows={2} placeholder="명확한 아키텍처 표준 수립과 AI 파이프라인 통제를 통해 비즈니스 속도를 가속하는..." value={data.basicInfo.summary} onChange={e => setBasic('summary', e.target.value)} />
+                    </Field>
+                    <Field label="자기소개 (상세)" span2>
+                      <textarea className={inputCls + ' resize-none'} rows={5} placeholder="React · TypeScript 기반의 웹 서비스를 중심으로 실제 운영 환경에서 문제를 해결하는..." value={data.basicInfo.about} onChange={e => setBasic('about', e.target.value)} />
+                    </Field>
+                  </FieldGroup>
                 </div>
               )}
             </div>
@@ -539,10 +665,10 @@ const ResumeBuilder = () => {
             {/* Draggable sections */}
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={data.sectionOrder} strategy={verticalListSortingStrategy}>
-                <div className="flex flex-col gap-4">
-                  {data.sectionOrder.map(key => (
+                <div className="flex flex-col gap-3">
+                  {data.sectionOrder.map((key, idx) => (
                     <SortableSection key={key} id={key}>
-                      {({ dragProps }) => renderSectionForm(key, dragProps)}
+                      {({ dragProps }) => renderSectionForm(key, dragProps, idx, data.sectionOrder.length)}
                     </SortableSection>
                   ))}
                 </div>
@@ -551,17 +677,17 @@ const ResumeBuilder = () => {
           </div>
 
           {/* Right: Preview */}
-          <div className={`hidden tablet:block w-[52%] flex-shrink-0 ${activeTab === 'form' ? 'hidden tablet:block' : 'block'}`}>
+          <div className={`hidden tablet:block w-[50%] flex-shrink-0`}>
             <div className="sticky top-20">
-              <div className="rounded-xl border border-slate-200 shadow-sm overflow-auto max-h-[calc(100vh-120px)] bg-white">
+              <div className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2 px-1">미리보기</div>
+              <div className="rounded-2xl border border-slate-200 shadow-lg overflow-auto max-h-[calc(100vh-140px)] bg-white">
                 <ResumePreview data={{ ...data, photo }} />
               </div>
             </div>
           </div>
 
-          {/* Mobile preview tab */}
           {activeTab === 'preview' && (
-            <div className="flex-1 min-w-0 tablet:hidden overflow-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div className="flex-1 min-w-0 tablet:hidden overflow-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
               <ResumePreview data={{ ...data, photo }} />
             </div>
           )}
