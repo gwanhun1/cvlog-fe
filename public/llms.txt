@@ -1,0 +1,27 @@
+# LOGME
+
+> 개발자를 위한 마크다운 블로그 플랫폼 (A Markdown Blog Platform for Developers)
+
+LOGME is a Korean developer blog platform where developers write and share technical posts about programming, web development, software engineering, and related topics.
+All public posts are written in Korean by software developers.
+
+## Service
+
+- Homepage: https://logme-io.vercel.app
+- All Posts: https://logme-io.vercel.app/article
+- Sitemap: https://logme-io.vercel.app/sitemap.xml
+
+## Content
+
+Public blog posts cover topics including:
+- Web development (React, Next.js, TypeScript, Node.js, NestJS)
+- Software engineering practices
+- Database design and optimization
+- DevOps and cloud infrastructure
+- Programming languages and algorithms
+- Career and development culture
+
+## Usage
+
+This platform is indexed and publicly accessible. All posts at `/article/content/{id}` are individual blog posts.
+Posts marked as private are not publicly accessible.

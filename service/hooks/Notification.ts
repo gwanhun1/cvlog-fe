@@ -20,14 +20,14 @@ export const useGetNotifications = (enabled = false) => {
   });
 };
 
-// 뱃지용 — 항상 30초 폴링 (숫자 하나라 매우 가벼움)
-export const useGetUnreadCount = () => {
+// 뱃지용 — 드롭다운이 닫혀 있을 때만 30초 폴링 (숫자 하나라 매우 가벼움)
+export const useGetUnreadCount = (notificationsOpen = false) => {
   return useQuery({
     queryKey: ['notifications', 'unread-count'],
     queryFn: getUnreadCount,
     enabled: isLoggedIn(),
     staleTime: 1000 * 30,
-    refetchInterval: 1000 * 30,
+    refetchInterval: isLoggedIn() && !notificationsOpen ? 1000 * 30 : false,
   });
 };
 
@@ -36,7 +36,11 @@ export const useMarkAsRead = () => {
   return useMutation({
     mutationFn: markAsRead,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'], exact: true });
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'], exact: true });
+    },
+    onError: (error: Error) => {
+      console.error('Failed to mark notification as read:', error);
     },
   });
 };
@@ -46,7 +50,11 @@ export const useMarkAllAsRead = () => {
   return useMutation({
     mutationFn: markAllAsRead,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'], exact: true });
+      queryClient.invalidateQueries({ queryKey: ['notifications', 'unread-count'], exact: true });
+    },
+    onError: (error: Error) => {
+      console.error('Failed to mark all notifications as read:', error);
     },
   });
 };

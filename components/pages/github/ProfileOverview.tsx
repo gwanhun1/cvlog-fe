@@ -5,6 +5,7 @@ interface ProfileOverviewProps {
   githubId: string;
   fallbackName?: string;
   fallbackAvatar?: string | null;
+  onTopLanguagesLoaded?: (langs: string[]) => void;
 }
 
 interface GithubUserResponse {
@@ -39,7 +40,7 @@ const StatPill = ({ label, value }: { label: string; value: string }) => (
   </div>
 );
 
-const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar }: ProfileOverviewProps) => {
+const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar, onTopLanguagesLoaded }: ProfileOverviewProps) => {
   const [user, setUser] = useState<GithubUserResponse | null>(null);
   const [repoStats, setRepoStats] = useState<{
     stars: number;
@@ -96,6 +97,7 @@ const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar }: ProfileOver
 
         setUser(userData);
         setRepoStats({ stars, forks, issues, topLangs });
+        onTopLanguagesLoaded?.(topLangs.map(l => l.name));
       } catch (e) {
         if (cancelled) return;
         if (e instanceof Error && e.message === 'rate_limit') {

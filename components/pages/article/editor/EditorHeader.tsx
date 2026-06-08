@@ -61,7 +61,7 @@ const EditorHeader = ({
   const createTags = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
       if (!tag || e.key !== KeyMap.ENTER || e.nativeEvent.isComposing) return;
-      if (tag.length >= EDITOR_CONSTANTS.TAG_MAX_LENGTH) {
+      if (tag.length > EDITOR_CONSTANTS.TAG_MAX_LENGTH) {
         showToast(ERROR_MESSAGES.TAG_TOO_LONG, 'warning');
         setTag('');
         return;
@@ -238,7 +238,14 @@ const EditorHeader = ({
 
             <button
               type="button"
-              onClick={() => router.push(accessToken ? '/article' : '/')}
+              onClick={() => {
+                if (mode === 'create') {
+                  localStorage.removeItem('logme_draft_new');
+                } else if (pid) {
+                  localStorage.removeItem(`logme_draft_edit_${pid}`);
+                }
+                router.push(accessToken ? '/article' : '/');
+              }}
               className="px-3 py-1.5 text-xs font-semibold text-gray-600 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
             >
               취소

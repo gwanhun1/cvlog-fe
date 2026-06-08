@@ -5,6 +5,7 @@ import {
   updateUserDescription,
 } from 'service/api/login';
 import { GetNewTokenApi } from 'service/api/login/type';
+import LocalStorage from 'public/utils/Localstorage';
 
 export const useRefreshToken = (params: GetNewTokenApi) => {
   return useMutation({
@@ -28,8 +29,8 @@ export const useGetUserInfo = () => {
     queryKey: ['userInfo'],
     queryFn: () => getUserInfo(),
     retry: 0,
-    // Note: handleGetErrors should probably be handled where the query is used or in global meta
-    // staleTime: 1000 * 60 * 5,
+    enabled: !!LocalStorage.getItem('LogmeToken'),
+    staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 30,
   });
 };

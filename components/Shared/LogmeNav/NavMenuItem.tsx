@@ -1,3 +1,4 @@
+import React from 'react';
 import * as Shared from 'components/Shared';
 import { useToast } from 'components/Shared';
 import Link from 'next/link';
@@ -23,8 +24,9 @@ const NavMenuItem = ({
   const isActive =
     path === '/' ? router.pathname === '/' : router.pathname.includes(path);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (requiresAuth && !isAuthenticated) {
+      e.preventDefault();
       showToast('로그인이 필요합니다.', 'warning');
       return;
     }
@@ -32,7 +34,7 @@ const NavMenuItem = ({
 
   return (
     <Link
-      href={requiresAuth && !isAuthenticated ? '' : path}
+      href={requiresAuth && !isAuthenticated ? '#' : path}
       onClick={handleClick}
       prefetch={true}
     >

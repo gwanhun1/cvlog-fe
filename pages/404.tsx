@@ -14,7 +14,7 @@ const NotFoundPage = () => (
       title: '최근 글 보기',
       description: '방금 발행된 글 목록으로 이동합니다.',
       buttonLabel: '글 목록 가기',
-      onClick: () => window.location.assign('/posts'),
+      onClick: () => window.location.assign('/article'),
       variant: 'ghost',
     }}
   />

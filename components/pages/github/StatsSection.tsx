@@ -8,6 +8,132 @@ interface StatsSectionProps {
 const cardBase =
   'relative overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm transition-transform duration-200 hover:-translate-y-0.5';
 
+// ── 네이티브 GitHub 통계 카드 ─────────────────────────────────────────────
+
+interface GithubUser {
+  public_repos: number;
+  followers: number;
+  following: number;
+  public_gists: number;
+}
+
+interface RepoStat {
+  stargazers_count: number;
+  forks_count: number;
+  open_issues_count: number;
+  fork: boolean;
+  archived: boolean;
+}
+
+const STAT_ITEMS = [
+  { key: 'repos', label: 'Repositories', icon: '📁' },
+  { key: 'stars', label: 'Total Stars', icon: '⭐' },
+  { key: 'forks', label: 'Total Forks', icon: '⑂' },
+  { key: 'followers', label: 'Followers', icon: '👥' },
+  { key: 'following', label: 'Following', icon: '➜' },
+  { key: 'issues', label: 'Open Issues', icon: '🔴' },
+] as const;
+
+const NativeStatsCard = ({ githubId }: StatsSectionProps) => {
+  // h-full so it stretches to match sibling card height
+  const [stats, setStats] = useState<Record<string, number> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    const fetchStats = async () => {
+      try {
+        const headers = { Accept: 'application/vnd.github+json' };
+        const encoded = encodeURIComponent(githubId);
+        const [userRes, reposRes] = await Promise.all([
+          fetch(`https://api.github.com/users/${encoded}`, { headers }),
+          fetch(`https://api.github.com/users/${encoded}/repos?per_page=100&type=owner`, { headers }),
+        ]);
+
+        if (!userRes.ok || !reposRes.ok) {
+          const failing = !userRes.ok ? userRes : reposRes;
+          if (failing.status === 403 && failing.headers.get('x-ratelimit-remaining') === '0')
+            throw new Error('rate_limit');
+          throw new Error('failed');
+        }
+
+        const user: GithubUser = await userRes.json();
+        const repos: RepoStat[] = await reposRes.json();
+        if (cancelled) return;
+
+        const active = repos.filter(r => !r.fork && !r.archived);
+        setStats({
+          repos: user.public_repos,
+          stars: active.reduce((s, r) => s + r.stargazers_count, 0),
+          forks: active.reduce((s, r) => s + r.forks_count, 0),
+          followers: user.followers,
+          following: user.following,
+          issues: active.reduce((s, r) => s + r.open_issues_count, 0),
+        });
+      } catch (e) {
+        if (!cancelled)
+          setError(e instanceof Error && e.message === 'rate_limit'
+            ? 'API 호출 제한입니다. 잠시 후 다시 시도해주세요.'
+            : '통계를 불러오지 못했습니다.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchStats();
+    return () => { cancelled = true; };
+  }, [githubId]);
+
+  return (
+    <div className={`${cardBase} h-full flex flex-col`}>
+      <div className="p-4 space-y-3 flex flex-col flex-1">
+        <div className="flex justify-between items-start">
+          <div>
+            <div className="text-[11px] uppercase tracking-widest text-slate-400 mb-0.5">Overview</div>
+            <div className="text-lg font-semibold text-slate-900">GitHub 통계</div>
+            <div className="text-sm text-slate-500 mt-0.5">커밋, PR, 이슈 등 활동 지표를 살펴보세요.</div>
+          </div>
+          <span className="text-[10px] px-2 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100 flex-shrink-0">stats</span>
+        </div>
+
+        {loading && (
+          <div className="grid grid-cols-2 gap-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-16 rounded-xl animate-pulse bg-gray-100" />
+            ))}
+          </div>
+        )}
+
+        {!loading && error && (
+          <div className="flex items-center justify-center min-h-[160px] text-sm text-slate-400 text-center px-4">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && stats && (
+          <div className="grid grid-cols-2 gap-2">
+            {STAT_ITEMS.map(({ key, label, icon }) => (
+              <div key={key} className="flex flex-col gap-1 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <span className="text-base">{icon}</span>
+                <span className="text-xl font-bold text-ftBlack leading-none">
+                  {stats[key].toLocaleString()}
+                </span>
+                <span className="text-[10px] text-slate-400 uppercase tracking-wide">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ── 기존 StatImage (StreakStats 등 이미지 기반 카드에서 사용) ─────────────
+
 const StatImage = ({ src, alt, dark = false }: { src: string; alt: string; dark?: boolean }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -142,14 +268,8 @@ const CardHeader = ({ label, title, subtitle, badge }: { label: string; title: s
 );
 
 export const GithubStatsCard = ({ githubId }: StatsSectionProps) => (
-  <div className={cardBase}>
-    <div className="p-4 space-y-3">
-      <CardHeader label="Overview" title="GitHub 통계" subtitle="커밋, PR, 이슈 등 활동 지표를 살펴보세요." badge="stats" />
-      <StatImage
-        src={`https://github-readme-stats.vercel.app/api?username=${githubId}&show_icons=true&theme=default&hide_border=true&bg_color=f9fafb`}
-        alt={`${githubId}의 GitHub 통계`}
-      />
-    </div>
+  <div className="h-full">
+    <NativeStatsCard githubId={githubId} />
   </div>
 );
 

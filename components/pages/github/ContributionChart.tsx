@@ -14,50 +14,19 @@ const primarySrc = (githubId: string) =>
 const fallbackSrc = (githubId: string) =>
   `https://github-readme-activity-graph.vercel.app/graph?username=${githubId}&theme=github-compact&hide_border=true&bg_color=ffffff00&color=0f172a&line=2563eb&point=2563eb`;
 
-const githubContributionSrc = (githubId: string) =>
-  `https://github.com/users/${encodeURIComponent(githubId)}/contributions`;
-
 const ContributionChart = ({ githubId }: ContributionChartProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [source, setSource] = useState<'primary' | 'fallback'>('primary');
   const [isError, setIsError] = useState(false);
-  const [inlineSvg, setInlineSvg] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoaded(false);
     setIsError(false);
     setSource('primary');
-    setInlineSvg(null);
   }, [githubId]);
 
   const src =
     source === 'primary' ? primarySrc(githubId) : fallbackSrc(githubId);
-
-  // GitHub 공식 contributions 페이지에서 SVG를 가져와 인라인으로 표시
-  useEffect(() => {
-    let cancelled = false;
-    const fetchSvg = async () => {
-      try {
-        const res = await fetch(githubContributionSrc(githubId), {
-          headers: { Accept: 'text/html' },
-        });
-        if (!res.ok) return;
-        const html = await res.text();
-        if (cancelled) return;
-        const match = html.match(/(<svg[^>]*>[\s\S]*<\/svg>)/);
-        if (match && match[1]) {
-          setInlineSvg(match[1]);
-          setIsLoaded(true);
-        }
-      } catch {
-        // 무시하고 이미지 폴백
-      }
-    };
-    fetchSvg();
-    return () => {
-      cancelled = true;
-    };
-  }, [githubId]);
 
   return (
     <section className={cardBase}>
@@ -90,28 +59,21 @@ const ContributionChart = ({ githubId }: ContributionChartProps) => {
           )}
 
           {!isError ? (
-            inlineSvg ? (
-              <div
-                className="overflow-auto relative z-10 p-3 w-full rounded-xl"
-                dangerouslySetInnerHTML={{ __html: inlineSvg }}
-              />
-            ) : (
-              <img
-                src={src}
-                alt={`${githubId}의 GitHub 연간 기여 그래프`}
-                className="relative z-10 w-full rounded-xl"
-                onLoad={() => setIsLoaded(true)}
-                onError={() => {
-                  if (source === 'primary') {
-                    setSource('fallback');
-                    setIsLoaded(false);
-                  } else {
-                    setIsError(true);
-                    setIsLoaded(false);
-                  }
-                }}
-              />
-            )
+            <img
+              src={src}
+              alt={`${githubId}의 GitHub 연간 기여 그래프`}
+              className="relative z-10 w-full rounded-xl"
+              onLoad={() => setIsLoaded(true)}
+              onError={() => {
+                if (source === 'primary') {
+                  setSource('fallback');
+                  setIsLoaded(false);
+                } else {
+                  setIsError(true);
+                  setIsLoaded(false);
+                }
+              }}
+            />
           ) : (
             <div className="p-6 text-center text-slate-600 min-h-[180px] flex flex-col items-center justify-center">
               <p className="text-sm font-medium">

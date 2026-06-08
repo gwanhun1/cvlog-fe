@@ -119,6 +119,24 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
           rel="canonical"
           href="https://logme-io.vercel.app/article"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'CollectionPage',
+              name: 'LOGME - 모든 게시물 목록',
+              url: 'https://logme-io.vercel.app/article',
+              description: 'LOGME의 모든 개발 관련 게시물을 확인하세요.',
+              inLanguage: 'ko-KR',
+              isPartOf: {
+                '@type': 'WebSite',
+                name: 'LOGME',
+                url: 'https://logme-io.vercel.app',
+              },
+            }),
+          }}
+        />
       </Head>
 
       <main className="w-full">

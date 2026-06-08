@@ -9,6 +9,7 @@ import {
 } from 'service/api/detail';
 import { CreateNewPostReq } from 'service/api/detail/type';
 
+// Always pass parseInt(pid) — never a string. queryKey uses ['detail', number].
 export const useGetDetail = (params: number, initialData?: any) => {
   return useQuery({
     queryKey: ['detail', params],
@@ -28,6 +29,7 @@ export const useGetMyDetail = (params: number) => {
     queryKey: ['getMyDetail', params],
     queryFn: () => getMyDetail(params),
     retry: 0,
+    enabled: !isNaN(params),
     staleTime: 1000 * 60 * 2,
     gcTime: 1000 * 60 * 10,
   });
@@ -40,6 +42,9 @@ export const useDeleteDetail = (params: number) => {
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
+      queryClient.invalidateQueries({ queryKey: ['detail'] });
+      queryClient.invalidateQueries({ queryKey: ['list'] });
+      queryClient.invalidateQueries({ queryKey: ['publicList'] });
     },
   });
 };
@@ -57,6 +62,9 @@ export const usePatchDetail = () => {
     retry: 0,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
+      queryClient.invalidateQueries({ queryKey: ['detail'] });
+      queryClient.invalidateQueries({ queryKey: ['list'] });
+      queryClient.invalidateQueries({ queryKey: ['publicList'] });
     },
   });
 };

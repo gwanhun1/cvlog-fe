@@ -27,16 +27,11 @@ export const getList = async (
 };
 
 export const getPublicList = async (page: number, keyword?: string) => {
-  try {
-    const url = keyword
-      ? `/posts/public/page/${page}?keyword=${keyword}`
-      : `/posts/public/page/${page}`;
-    const { data } = await axiosInstance.get<GetListType>(url);
-    return data.data;
-  } catch (error) {
-    console.error('Network Error in getPublicList:', error);
-    return { posts: [], maxPage: 1 };
-  }
+  const url = keyword
+    ? `/posts/public/page/${page}?keyword=${keyword}`
+    : `/posts/public/page/${page}`;
+  const { data } = await axiosInstance.get<GetListType>(url);
+  return data.data;
 };
 
 export const fetchGetTagsFolders = async () => {

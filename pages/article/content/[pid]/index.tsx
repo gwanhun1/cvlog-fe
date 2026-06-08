@@ -292,25 +292,39 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         <meta name="twitter:image" content={postImage} />
 
         {isPublic && (
-          <script type="application/ld+json">
-            {JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'BlogPosting',
-              headline: postTitle,
-              description: postDescription,
-              image: postImage,
-              url: canonicalUrl,
-              datePublished: postData?.created_at,
-              dateModified: postData?.updated_at || postData?.created_at,
-              author: { '@type': 'Person', name: postData?.user?.name || 'LOGME 사용자' },
-              publisher: {
-                '@type': 'Organization',
-                name: 'LOGME',
-                logo: { '@type': 'ImageObject', url: 'https://logme-io.vercel.app/assets/logo.png' },
-              },
-              mainEntityOfPage: canonicalUrl,
-            })}
-          </script>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'BlogPosting',
+                headline: postTitle,
+                description: postDescription,
+                image: postImage,
+                url: canonicalUrl,
+                datePublished: postData?.created_at,
+                dateModified: postData?.updated_at || postData?.created_at,
+                author: {
+                  '@type': 'Person',
+                  name: postData?.user?.name || 'LOGME 사용자',
+                },
+                publisher: {
+                  '@type': 'Organization',
+                  name: 'LOGME',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://logme-io.vercel.app/assets/logo.png',
+                  },
+                },
+                mainEntityOfPage: {
+                  '@type': 'WebPage',
+                  '@id': canonicalUrl,
+                },
+                keywords: postData?.tags?.map((tag: TagType) => tag.name).join(', '),
+                inLanguage: 'ko-KR',
+              }),
+            }}
+          />
         )}
       </Head>
 

@@ -21,29 +21,52 @@ async function fetchWithRetry(url: string, retries = 2, timeout = 15000) {
   }
 }
 
+function escapeXml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 function generateSiteMap(posts: any[]) {
+  const today = new Date().toISOString();
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+>
   <url>
     <loc>${BASE_URL}</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>${BASE_URL}/article</loc>
+    <lastmod>${today}</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   ${posts
-    .map(
-      ({ id, updated_at, created_at }) => `
+    .map(({ id, updated_at, created_at, title, thumbnail }) => {
+      const lastmod = new Date(updated_at || created_at).toISOString();
+      const imageBlock = thumbnail
+        ? `
+    <image:image>
+      <image:loc>${escapeXml(thumbnail)}</image:loc>
+      <image:title>${escapeXml(title || '')}</image:title>
+    </image:image>`
+        : '';
+      return `
   <url>
     <loc>${BASE_URL}/article/content/${id}</loc>
-    <lastmod>${new Date(updated_at || created_at).toISOString()}</lastmod>
+    <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>`,
-    )
+    <priority>0.8</priority>${imageBlock}
+  </url>`;
+    })
     .join('')}
 </urlset>`;
 }
@@ -83,7 +106,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     console.log(`[Sitemap] Total ${allPosts.length} posts collected`);
 
     const sitemap = generateSiteMap(
-      allPosts.filter(p => p && p.id && p.public_status !== false),
+      allPosts.filter(p => p && p.id && p.public_status === true),
     );
 
     res.setHeader('Content-Type', 'text/xml; charset=utf-8');

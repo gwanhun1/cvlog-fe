@@ -26,7 +26,10 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
   const router = useRouter();
 
   const cookies = Object.fromEntries(
-    cookie.split(';').map((cookie: string) => cookie.trim().split('='))
+    cookie.split(';').map((c: string) => {
+      const [key, ...rest] = c.trim().split('=');
+      return [key, rest.join('=')];
+    })
   );
 
   useEffect(() => {
@@ -73,7 +76,7 @@ export default Join;
 export const getServerSideProps: GetServerSideProps = async context => {
   try {
     const { query } = context;
-    const { code, state } = query;
+    const { code } = query;
 
     if (!code) {
       console.error('GitHub OAuth 코드가 없습니다:', query);
@@ -103,7 +106,8 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
     const info = response.data;
     const setLocalCookie: string[] = response.headers['set-cookie'] as string[];
-    const cookie: string = setLocalCookie?.[0] || '';
+    const cookie: string =
+      setLocalCookie?.find(c => c.trimStart().startsWith('refreshToken')) || '';
 
     if (!info || !cookie) {
       console.error('GitHub OAuth 응답이 잘못되었습니다:', { info, cookie });

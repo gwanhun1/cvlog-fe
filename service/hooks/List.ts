@@ -53,6 +53,7 @@ export const useGetFolders = () => {
     queryKey: ['tagsFolder'],
     queryFn: () => fetchGetTagsFolders(),
     retry: 0,
+    enabled: typeof window !== 'undefined' && !!localStorage.getItem('LogmeToken'),
   });
 };
 
@@ -80,6 +81,9 @@ export const usePutTagsFolder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (params: UpdateForm) => putTagsFolders(params),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
+    },
     onError: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
     },

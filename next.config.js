@@ -60,42 +60,42 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // 모든 페이지에 X-Robots-Tag 헤더 추가 (기본: 색인 허용)
+        // 기본: 모든 페이지 색인 허용
         source: '/:path*',
         headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'index, follow',
-          },
-        ],
-      },
-      {
-        // 로그인 전용 페이지는 색인 차단
-        source: '/article/content/:pid(\\d+)',
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex, nofollow',
-          },
+          { key: 'X-Robots-Tag', value: 'index, follow' },
         ],
       },
       {
         // 수정/작성 페이지 색인 차단
         source: '/article/modify/:path*',
         headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex, nofollow',
-          },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
         ],
       },
       {
-        source: '/article/new/:path*',
+        source: '/article/new',
         headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex, nofollow',
-          },
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
+      },
+      {
+        // 인증 페이지 색인 차단
+        source: '/join',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
+      },
+      {
+        source: '/login',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
+      },
+      {
+        source: '/mypage',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
         ],
       },
     ];

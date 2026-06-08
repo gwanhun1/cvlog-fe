@@ -6,6 +6,7 @@ import {
   useMarkAsRead,
   useMarkAllAsRead,
 } from 'service/hooks/Notification';
+import { useToast } from 'components/Shared';
 import { cn } from 'styles/utils';
 
 const BellIcon = ({ filled }: { filled: boolean }) =>
@@ -60,7 +61,9 @@ const LogmeNotification = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const { data: unreadCount = 0 } = useGetUnreadCount();
+  const { showToast } = useToast();
+
+  const { data: unreadCount = 0 } = useGetUnreadCount(open);
   const { data: notifications = [], isLoading } = useGetNotifications(open);
   const { mutate: markRead } = useMarkAsRead();
   const { mutate: markAll } = useMarkAllAsRead();
@@ -70,6 +73,7 @@ const LogmeNotification = () => {
   useEffect(() => {
     if (unreadCount > prevCountRef.current) {
       setRinging(true);
+      prevCountRef.current = unreadCount;
       const t = setTimeout(() => setRinging(false), 700);
       return () => clearTimeout(t);
     }
@@ -87,7 +91,9 @@ const LogmeNotification = () => {
   }, []);
 
   const handleNotificationClick = (id: number, postId: number | null) => {
-    markRead(id);
+    markRead(id, {
+      onError: () => showToast('알림을 읽음 처리하지 못했습니다.', 'error'),
+    });
     setOpen(false);
     if (postId) router.push(`/article/content/${postId}`);
   };
@@ -129,7 +135,11 @@ const LogmeNotification = () => {
             {unreadCount > 0 && (
               <button
                 type="button"
-                onClick={() => markAll()}
+                onClick={() =>
+                  markAll(undefined, {
+                    onError: () => showToast('전체 읽음 처리에 실패했습니다.', 'error'),
+                  })
+                }
                 className="text-xs text-gray-400 hover:text-ftBlue transition-colors"
               >
                 전체 읽음

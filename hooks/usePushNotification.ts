@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { savePushSubscription, removePushSubscription } from 'service/api/notification';
+import { savePushSubscription } from 'service/api/notification';
 import LocalStorage from 'public/utils/Localstorage';
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '';
@@ -44,16 +44,8 @@ export const usePushNotification = () => {
     };
 
     setup();
-
-    // 로그아웃 시 구독 해제
-    return () => {
-      navigator.serviceWorker.getRegistration('/sw.js').then(async (reg) => {
-        if (!reg) return;
-        const sub = await reg.pushManager.getSubscription();
-        if (!sub) return;
-        await removePushSubscription(sub.endpoint).catch(() => {});
-        await sub.unsubscribe().catch(() => {});
-      });
-    };
+    // Push subscription is intentionally not cleaned up on unmount.
+    // Removal should happen only on explicit logout, not on component unmount
+    // (e.g. navigating to the editor would otherwise cancel the subscription).
   }, []);
 };

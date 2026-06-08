@@ -35,6 +35,27 @@ const Home: NextPage = () => {
         <meta name="twitter:description" content="개발자를 위한 궁극의 마크다운 블로그 플랫폼" />
         <meta name="twitter:image" content="https://logme-io.vercel.app/assets/logo.png" />
         <link rel="canonical" href="https://logme-io.vercel.app" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'LOGME',
+              url: 'https://logme-io.vercel.app',
+              description: '개발자를 위한 마크다운 블로그 플랫폼',
+              inLanguage: 'ko-KR',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: 'https://logme-io.vercel.app/article?q={search_term_string}',
+                },
+                'query-input': 'required name=search_term_string',
+              },
+            }),
+          }}
+        />
       </Head>
 
       <main className="mx-auto max-w-6xl space-y-8 px-4 py-10 tablet:px-6 desktop:px-8">
