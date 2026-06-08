@@ -49,9 +49,17 @@ export interface ContentData {
   content: string;
   user: UserIdType;
   public_status: boolean;
+  view_count: number;
   created_at: string;
   updated_at: string;
   deleted_at: null;
+  tags: TagType[];
+}
+
+export interface RelatedPost {
+  id: number;
+  title: string;
+  created_at: string;
   tags: TagType[];
 }
 

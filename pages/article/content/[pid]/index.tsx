@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
 import Head from 'next/head';
@@ -7,13 +7,16 @@ import removeMarkdown from 'markdown-to-text';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from 'components/Shared';
 import CommentBox from 'components/Shared/LogmeComment';
+import ShareButtons from 'components/Shared/ShareButtons';
 import { useGetDetail, useDeleteDetail, usePatchDetail } from 'service/hooks/Detail';
 import {
   Content as ContentLayout,
   Profile,
   PostNavigation,
+  RelatedPosts,
 } from '../../../../components/pages/article/content';
 import { useStore } from 'service/store/useStore';
+import { incrementViewCount } from 'service/api/detail';
 import type { ContentData, TagType, Content as ContentResponse } from 'service/api/detail/type';
 
 interface DetailProps {
@@ -83,6 +86,8 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const [patchMessage, setPatchMessage] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const [viewCount, setViewCount] = useState<number | null>(initialData?.post?.view_count ?? null);
+  const viewCountFired = useRef(false);
 
   const { data: detailData, isLoading } = useGetDetail(parseInt(pid), initialData ?? undefined);
 
@@ -90,8 +95,24 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     if (detailData?.post) {
       setPatchMessage(detailData.post.public_status);
       setTagList(detailData.post.tags);
+      if (viewCount === null) {
+        setViewCount(detailData.post.view_count ?? 0);
+      }
     }
   }, [detailData, setTagList]);
+
+  useEffect(() => {
+    if (!pid || viewCountFired.current) return;
+    const postId = parseInt(pid);
+    if (isNaN(postId)) return;
+    const isPublic = detailData?.post?.public_status ?? initialData?.post?.public_status;
+    if (isPublic === undefined) return;
+    if (!isPublic) return;
+    viewCountFired.current = true;
+    incrementViewCount(postId)
+      .then(res => setViewCount(res.view_count))
+      .catch(() => {});
+  }, [pid, detailData, initialData]);
 
   const patchDetailMutation = usePatchDetail();
 
@@ -338,7 +359,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
           </div>
         )}
 
-        {/* 태그 + 날짜 */}
+        {/* 태그 + 날짜 + 조회수 */}
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-wrap gap-1.5">
             {shouldShowSkeleton ? (
@@ -364,10 +385,28 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
               ))
             )}
           </div>
-          <time className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
-            {postData?.created_at?.slice(0, 10)}
-          </time>
+          <div className="flex items-center gap-3 flex-shrink-0">
+            {viewCount !== null && (
+              <span className="flex items-center gap-1 text-xs text-gray-400">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+                {viewCount.toLocaleString()}
+              </span>
+            )}
+            <time className="text-xs text-gray-400">
+              {postData?.created_at?.slice(0, 10)}
+            </time>
+          </div>
         </div>
+
+        {/* 공유 버튼 */}
+        {isPublic && !shouldShowSkeleton && (
+          <div className="flex justify-end mt-3">
+            <ShareButtons title={postTitle} url={canonicalUrl} />
+          </div>
+        )}
 
       </header>
 
@@ -390,6 +429,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       />
 
       <CommentBox pid={pid} />
+
+      {isPublic && postData?.id && (
+        <RelatedPosts postId={postData.id} />
+      )}
     </div>
   );
 };

@@ -4,6 +4,7 @@ import {
   CreateNewPostReq,
   DeleteDetail,
   PatchDetailType,
+  RelatedPost,
 } from './type';
 
 export const getDetail = async (params: number) => {
@@ -40,4 +41,14 @@ export const fetchCreateNewPost = async (params: CreateNewPostReq) => {
   const { data } = await axios.post<CreateNewPostReq>('/posts', params);
 
   return data;
+};
+
+export const incrementViewCount = async (id: number): Promise<{ view_count: number }> => {
+  const { data } = await axios.post<{ success: boolean; data: { view_count: number } }>(`/posts/${id}/view`);
+  return data.data;
+};
+
+export const getRelatedPosts = async (id: number): Promise<RelatedPost[]> => {
+  const { data } = await axios.get<{ success: boolean; data: RelatedPost[] }>(`/posts/${id}/related`);
+  return data.data;
 };
