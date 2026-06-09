@@ -10,11 +10,11 @@ import { cn } from 'styles/utils';
 import { usePushNotification } from 'hooks/usePushNotification';
 
 const MENU_ITEMS = [
-  { name: 'HOME', path: '/', requiresAuth: false },
-  { name: 'ARTICLE', path: '/article', requiresAuth: false },
-  { name: 'RESUME', path: '/resume', requiresAuth: true },
-  { name: 'GITHUB', path: '/github', requiresAuth: true },
-] as const;
+  { name: 'HOME', path: '/', requiresAuth: false, hideWhenGuest: false },
+  { name: 'ARTICLE', path: '/article', requiresAuth: false, hideWhenGuest: false },
+  { name: 'RESUME', path: '/resume', requiresAuth: false, hideWhenGuest: false },
+  { name: 'GITHUB', path: '/github', requiresAuth: false, hideWhenGuest: true },
+];
 
 const Nav = () => {
   const { isAuthenticated, isLoading } = useIsLogin();

@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import AuthGuard from 'components/Shared/common/AuthGuard';
+import { useRouter } from 'next/router';
+import useIsLogin from 'hooks/useIsLogin';
 import ResumePreview from 'components/pages/resume/ResumePreview';
 import ResumeListModal from 'components/pages/resume/ResumeListModal';
 import DraftResumeModal from 'components/Shared/DraftResumeModal';
@@ -360,6 +361,8 @@ const PhotoUpload = ({
 
 // ── Main builder ───────────────────────────────────────────────
 const ResumeBuilder = () => {
+  const router = useRouter();
+  const { isAuthenticated } = useIsLogin();
   const [data, setData] = useState<ResumeData>(DEFAULT_RESUME);
   const [photo, setPhoto] = useState('');
   const [title, setTitle] = useState('제목 없는 이력서');
@@ -369,6 +372,7 @@ const ResumeBuilder = () => {
   );
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [showListModal, setShowListModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [draftName, setDraftName] = useState('');
   const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
   const [autoSaved, setAutoSaved] = useState(false);
@@ -460,6 +464,10 @@ const ResumeBuilder = () => {
     });
 
   const handleSave = async () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
     // 클라이언트 유효성 검사
     if (!title.trim()) {
       setTitleError('이력서 제목을 입력해주세요');
@@ -1144,7 +1152,37 @@ const ResumeBuilder = () => {
   return (
     <>
       <Head>
-        <title>이력서 | LOGME</title>
+        <title>무료 개발자 이력서 작성 | LOGME 이력서 빌더</title>
+        <meta name="description" content="개발자 맞춤 이력서를 무료로 작성하세요. 경력·프로젝트·기술스택을 입력하면 A4 이력서가 완성됩니다. 실시간 미리보기, PDF 저장, 자동저장 제공." />
+        <meta name="keywords" content="이력서 작성, 개발자 이력서, 무료 이력서, 이력서 빌더, 이력서 템플릿, 취업 이력서, IT 이력서, 프론트엔드 이력서" />
+        <meta property="og:title" content="무료 개발자 이력서 작성 | LOGME 이력서 빌더" />
+        <meta property="og:description" content="개발자 맞춤 이력서를 무료로 작성하세요. 실시간 미리보기, PDF 저장, 자동저장까지 모두 무료." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://logme-io.vercel.app/resume" />
+        <meta property="og:image" content="https://logme-io.vercel.app/assets/logo.png" />
+        <meta property="og:site_name" content="LOGME" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="무료 개발자 이력서 작성 | LOGME" />
+        <meta name="twitter:description" content="개발자 맞춤 이력서 무료 작성. 실시간 미리보기 + PDF 저장." />
+        <link rel="canonical" href="https://logme-io.vercel.app/resume" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'LOGME 이력서 빌더',
+              applicationCategory: 'BusinessApplication',
+              operatingSystem: 'Web',
+              url: 'https://logme-io.vercel.app/resume',
+              description: '개발자 맞춤 무료 이력서 작성 도구. 경력, 프로젝트, 기술스택을 입력하면 A4 이력서로 완성됩니다. 실시간 미리보기, PDF 저장, 자동저장, 섹션 드래그 기능 제공.',
+              inLanguage: 'ko-KR',
+              author: { '@type': 'Organization', name: 'LOGME' },
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'KRW' },
+              featureList: ['실시간 미리보기', 'PDF 저장', '자동저장', '섹션 드래그 재정렬', '프로필 사진 업로드'],
+            }),
+          }}
+        />
         <style>{`
           @media print {
             header:not(#resume-print-root header) { display: none !important; }
@@ -1196,6 +1234,39 @@ const ResumeBuilder = () => {
           }}
           currentId={currentId}
         />
+
+        {/* 로그인 유도 모달 */}
+        {showLoginModal && (
+          <div className="fixed inset-0 z-[400] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowLoginModal(false)} />
+            <div className="relative bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center">
+              <div className="w-12 h-12 rounded-2xl bg-ftBlue/10 flex items-center justify-center mx-auto mb-4">
+                <svg className="w-6 h-6 text-ftBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h3 className="text-base font-extrabold text-gray-900 mb-1">저장하려면 로그인이 필요해요</h3>
+              <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                로그인하면 이력서를 서버에 저장하고<br />어디서든 불러올 수 있어요.<br />
+                <span className="text-xs text-gray-400 mt-1 block">PDF 저장·임시저장은 로그인 없이도 가능해요.</span>
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={() => router.push('/login?redirect=/resume')}
+                  className="w-full py-3 text-sm font-bold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 transition-colors shadow-lg shadow-ftBlue/25"
+                >
+                  로그인하기
+                </button>
+                <button
+                  onClick={() => setShowLoginModal(false)}
+                  className="w-full py-3 text-sm font-semibold text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  계속 작성하기
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex gap-6">
           {/* Left: Form */}
           <div
@@ -1205,7 +1276,7 @@ const ResumeBuilder = () => {
             <div className="flex items-center gap-3">
               {/* 내 이력서 버튼 */}
               <button
-                onClick={() => setShowListModal(true)}
+                onClick={() => isAuthenticated ? setShowListModal(true) : setShowLoginModal(true)}
                 className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-gray-600 bg-white border border-slate-200 rounded-xl hover:border-ftBlue/40 hover:text-ftBlue hover:bg-ftBlue/3 transition-all shadow-sm flex-shrink-0"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1458,10 +1529,6 @@ const ResumeBuilder = () => {
   );
 };
 
-const ResumePage: NextPage = () => (
-  <AuthGuard>
-    <ResumeBuilder />
-  </AuthGuard>
-);
+const ResumePage: NextPage = () => <ResumeBuilder />;
 
 export default ResumePage;

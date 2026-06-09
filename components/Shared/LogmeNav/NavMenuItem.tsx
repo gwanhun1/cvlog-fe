@@ -9,17 +9,21 @@ const NavMenuItem = ({
   name,
   path,
   requiresAuth = false,
+  hideWhenGuest = false,
   isAuthenticated,
   shrink = false,
 }: {
   name: string;
   path: string;
   requiresAuth?: boolean;
+  hideWhenGuest?: boolean;
   isAuthenticated: boolean;
   shrink?: boolean;
 }) => {
   const router = useRouter();
   const { showToast } = useToast();
+
+  if (hideWhenGuest && !isAuthenticated) return null;
 
   const isActive =
     path === '/' ? router.pathname === '/' : router.pathname.includes(path);

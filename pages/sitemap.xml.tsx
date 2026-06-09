@@ -49,6 +49,12 @@ function generateSiteMap(posts: any[]) {
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
+  <url>
+    <loc>${BASE_URL}/resume</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
   ${posts
     .map(({ id, updated_at, created_at, title, thumbnail }) => {
       const lastmod = new Date(updated_at || created_at).toISOString();
@@ -123,6 +129,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>${BASE_URL}</loc><priority>1.0</priority></url>
   <url><loc>${BASE_URL}/article</loc><priority>0.9</priority></url>
+  <url><loc>${BASE_URL}/resume</loc><priority>0.85</priority></url>
 </urlset>`;
     res.setHeader('Content-Type', 'text/xml; charset=utf-8');
     res.statusCode = 200;
