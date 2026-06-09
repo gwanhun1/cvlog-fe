@@ -82,8 +82,8 @@ function SiteMap() {}
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   try {
     const API_URL =
-      process.env.NEXT_PUBLIC_API_URL ||
-      'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
+      process.env.NEXT_PUBLIC_API_BASE_URL ||
+      'http://158.179.174.170:8000';
 
     // 모든 공개 게시물 가져오기 — 최대 200페이지까지 순회, 재시도 포함
     const allPosts: any[] = [];
