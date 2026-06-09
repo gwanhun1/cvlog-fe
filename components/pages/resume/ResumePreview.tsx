@@ -1,37 +1,93 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ResumeData, SectionKey } from './types';
 
 interface Props {
   data: ResumeData;
 }
 
+const PAGE_HEIGHT_PX = 297 * 3.7795275591;
+const PAGE_BREAKS_MM = [297, 594, 891];
+const MM_TO_PX = 3.7795275591;
+
+// SectionHeader is rendered INSIDE each section's first data-entry div
+// so header and first item always move together as one unit
 const SectionHeader = ({ label }: { label: string }) => (
-  <div className="mt-10 mb-4 first:mt-0">
+  <div className="mt-10 mb-4" data-section-header>
     <h2 className="text-[15px] font-bold text-gray-900 pb-1.5 border-b-2 border-gray-900">
       {label}
     </h2>
   </div>
 );
 
-const PAGE_BREAKS_MM = [297, 594, 891];
-const MM_TO_PX = 3.7795275591;
-
 const ResumePreview = ({ data }: Props) => {
   const { photo, basicInfo, experience, education, skills, projects, certifications, sectionOrder } = data;
   const containerRef = useRef<HTMLDivElement>(null);
   const [heightPx, setHeightPx] = useState(0);
 
+  const adjustPageBreaks = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const entries = Array.from(container.querySelectorAll<HTMLElement>('[data-entry]'));
+
+    // Reset all inline margins and capture natural CSS margins
+    entries.forEach(el => { el.style.marginTop = ''; });
+    entries.forEach(el => {
+      const natural = parseFloat(window.getComputedStyle(el).marginTop) || 0;
+      el.dataset.naturalMarginPx = String(natural);
+      el.dataset.pushPx = '0';
+    });
+
+    // Iteratively push entries that cross page boundaries to the next page
+    for (let pass = 0; pass < 20; pass++) {
+      let changed = false;
+      const cRect = container.getBoundingClientRect();
+
+      entries.forEach(el => {
+        const elHeight = el.offsetHeight;
+        // Skip entries taller than a full page (can't avoid breaking them)
+        if (elHeight >= PAGE_HEIGHT_PX) return;
+
+        const eRect = el.getBoundingClientRect();
+        const elTop = eRect.top - cRect.top;
+        const elBottom = elTop + elHeight;
+
+        const pageIdx = Math.floor(elTop / PAGE_HEIGHT_PX);
+        const boundary = (pageIdx + 1) * PAGE_HEIGHT_PX;
+
+        if (elTop < boundary && elBottom > boundary) {
+          const additionalPush = boundary - elTop + 4;
+          const naturalMargin = parseFloat(el.dataset.naturalMarginPx || '0');
+          const currentPush = parseFloat(el.dataset.pushPx || '0');
+          const newPush = currentPush + additionalPush;
+          el.dataset.pushPx = String(newPush);
+          el.style.marginTop = `${naturalMargin + newPush}px`;
+          changed = true;
+        }
+      });
+
+      if (!changed) break;
+    }
+  }, []);
+
+  // Height tracking (for page guide lines) — separate from adjustment
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const measure = () => setHeightPx(el.scrollHeight);
-    measure();
-    const ro = new ResizeObserver(measure);
+    const ro = new ResizeObserver(() => setHeightPx(el.scrollHeight));
     ro.observe(el);
+    setHeightPx(el.scrollHeight);
     return () => ro.disconnect();
   }, []);
 
-  // Only show a guide if content actually extends past that page boundary
+  // Page break adjustment — only when data changes
+  useEffect(() => {
+    const id = requestAnimationFrame(() =>
+      requestAnimationFrame(adjustPageBreaks)
+    );
+    return () => cancelAnimationFrame(id);
+  }, [data, adjustPageBreaks]);
+
   const visibleBreaks = PAGE_BREAKS_MM.filter(mm => (mm + 10) * MM_TO_PX < heightPx);
 
   const renderSection = (key: SectionKey) => {
@@ -40,9 +96,9 @@ const ResumePreview = ({ data }: Props) => {
         if (!experience.length) return null;
         return (
           <section key="experience">
-            <SectionHeader label="경력" />
             {experience.map((exp, i) => (
-              <div key={exp.id} className={i > 0 ? 'mt-7' : ''}>
+              <div key={exp.id} data-entry className={`${i > 0 ? 'mt-7' : ''} print:break-inside-avoid`}>
+                {i === 0 && <SectionHeader label="경력" />}
                 <div className="mb-1">
                   <div className="flex justify-between items-baseline gap-2">
                     <h3 className="text-[14px] font-bold text-gray-900">{exp.company}</h3>
@@ -79,9 +135,9 @@ const ResumePreview = ({ data }: Props) => {
         if (!projects.length) return null;
         return (
           <section key="projects">
-            <SectionHeader label="프로젝트" />
             {projects.map((proj, i) => (
-              <div key={proj.id} className={i > 0 ? 'mt-7' : ''}>
+              <div key={proj.id} data-entry className={`${i > 0 ? 'mt-7' : ''} print:break-inside-avoid`}>
+                {i === 0 && <SectionHeader label="프로젝트" />}
                 <div className="flex justify-between items-baseline gap-2">
                   <h3 className="text-[14px] font-bold text-gray-900">{proj.name}</h3>
                   <span className="text-[11px] text-gray-400 whitespace-nowrap">{proj.category}</span>
@@ -115,17 +171,19 @@ const ResumePreview = ({ data }: Props) => {
         if (!skills.length) return null;
         return (
           <section key="skills">
-            <SectionHeader label="기술 스택" />
-            <div className="space-y-1.5">
-              {skills.map(sg => (
-                <div key={sg.id} className="flex gap-2 text-[12px]">
-                  {sg.category && (
-                    <span className="font-semibold text-gray-700 flex-shrink-0 min-w-[72px]">{sg.category}</span>
-                  )}
-                  {sg.category && <span className="text-gray-300">|</span>}
-                  <span className="text-gray-600">{sg.items}</span>
-                </div>
-              ))}
+            <div data-entry className="print:break-inside-avoid">
+              <SectionHeader label="기술 스택" />
+              <div className="space-y-1.5">
+                {skills.map(sg => (
+                  <div key={sg.id} className="flex gap-2 text-[12px]">
+                    {sg.category && (
+                      <span className="font-semibold text-gray-700 flex-shrink-0 min-w-[72px]">{sg.category}</span>
+                    )}
+                    {sg.category && <span className="text-gray-300">|</span>}
+                    <span className="text-gray-600">{sg.items}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         );
@@ -134,9 +192,9 @@ const ResumePreview = ({ data }: Props) => {
         if (!education.length) return null;
         return (
           <section key="education">
-            <SectionHeader label="교육" />
             {education.map((edu, i) => (
-              <div key={edu.id} className={i > 0 ? 'mt-5' : ''}>
+              <div key={edu.id} data-entry className={`${i > 0 ? 'mt-5' : ''} print:break-inside-avoid`}>
+                {i === 0 && <SectionHeader label="교육" />}
                 <h3 className="text-[14px] font-bold text-gray-900">{edu.school}</h3>
                 <p className="text-[11px] text-gray-500">
                   {[edu.degree ? `졸업 | ${edu.degree}` : '', edu.major].filter(Boolean).join(' | ')}
@@ -153,9 +211,9 @@ const ResumePreview = ({ data }: Props) => {
         if (!certifications.length) return null;
         return (
           <section key="certifications">
-            <SectionHeader label="자격증" />
             {certifications.map((cert, i) => (
-              <div key={cert.id} className={i > 0 ? 'mt-3' : ''}>
+              <div key={cert.id} data-entry className={`${i > 0 ? 'mt-3' : ''} print:break-inside-avoid`}>
+                {i === 0 && <SectionHeader label="자격증" />}
                 <h3 className="text-[13px] font-bold text-gray-900">{cert.name}</h3>
                 <p className="text-[11px] text-gray-500">
                   {[cert.grade, cert.issuer].filter(Boolean).join(' | ')}
@@ -178,7 +236,6 @@ const ResumePreview = ({ data }: Props) => {
       className="relative bg-white w-full min-h-[297mm] p-10 text-gray-900"
       style={{ fontFamily: "'Pretendard Variable', 'Pretendard', 'Noto Sans KR', sans-serif" }}
     >
-      {/* Page break guides — screen only, only shown when content actually overflows */}
       {visibleBreaks.map(mm => (
         <div
           key={mm}
@@ -195,7 +252,6 @@ const ResumePreview = ({ data }: Props) => {
         </div>
       ))}
 
-      {/* Header */}
       <header className="flex justify-between items-start gap-6 mb-5">
         <div className="flex-1 min-w-0">
           {basicInfo.name && (
@@ -216,7 +272,7 @@ const ResumePreview = ({ data }: Props) => {
         </div>
         {photo && (
           <div className="flex-shrink-0">
-            <img src={photo} alt="프로필" className="w-20 h-24 object-cover rounded-lg border border-gray-100" />
+            <img src={photo} alt="프로필" className="w-28 h-28 object-cover rounded-lg border border-gray-100" />
           </div>
         )}
       </header>
@@ -229,16 +285,20 @@ const ResumePreview = ({ data }: Props) => {
 
       {basicInfo.about && (
         <section>
-          <SectionHeader label="자기소개" />
-          <p className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-line">{basicInfo.about}</p>
+          <div data-entry className="print:break-inside-avoid">
+            <SectionHeader label="자기소개" />
+            <p className="text-[11px] text-gray-700 leading-relaxed whitespace-pre-line">{basicInfo.about}</p>
+          </div>
         </section>
       )}
 
       {basicInfo.portfolio && (
         <section>
-          <SectionHeader label="포트폴리오" />
-          <p className="text-[11px] text-gray-500 font-semibold mb-0.5">링크</p>
-          <p className="text-[11px] text-gray-700 underline">{basicInfo.portfolio}</p>
+          <div data-entry className="print:break-inside-avoid">
+            <SectionHeader label="포트폴리오" />
+            <p className="text-[11px] text-gray-500 font-semibold mb-0.5">링크</p>
+            <p className="text-[11px] text-gray-700 underline">{basicInfo.portfolio}</p>
+          </div>
         </section>
       )}
 
