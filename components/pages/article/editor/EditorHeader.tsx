@@ -7,6 +7,7 @@ import { useCreatePost } from 'service/hooks/New';
 import { useModifyPost } from 'service/hooks/Detail';
 import { useStore } from 'service/store/useStore';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
+import { useTagAutocomplete } from 'hooks/useTagAutocomplete';
 import { DocType } from './EditorPreview';
 
 interface EditorHeaderProps {
@@ -42,6 +43,13 @@ const EditorHeader = ({
   const userInfo = useStore(state => state.userIdAtom);
   const { showToast } = useToast();
   const accessToken = LocalStorage.getItem('LogmeToken') as string;
+
+  const { data: tagSuggestions = [] } = useTagAutocomplete(tag, {
+    enabled: isTagInputOpen,
+  });
+  const visibleSuggestions = tagSuggestions.filter(
+    s => !doc.tags.includes(s.name),
+  );
 
   const mutationCreatePost = useCreatePost();
   const mutationModifyPost = useModifyPost(pid ? parseInt(pid) : 0);
@@ -290,31 +298,57 @@ const EditorHeader = ({
           )}
 
           {isTagInputOpen ? (
-            <input
-              ref={tagInputRef}
-              className="px-2 py-0.5 text-xs text-ftBlack placeholder:text-gray-400 focus:outline-none bg-transparent border-b border-ftBlue/40 min-w-[120px]"
-              name="tag"
-              value={tag}
-              placeholder="태그 입력 후 Enter"
-              onKeyDown={e => {
-                if (e.key === 'Escape') {
+            <div className="relative">
+              <input
+                ref={tagInputRef}
+                className="px-2 py-0.5 text-xs text-ftBlack placeholder:text-gray-400 focus:outline-none bg-transparent border-b border-ftBlue/40 min-w-[120px]"
+                name="tag"
+                value={tag}
+                placeholder="태그 입력 후 Enter"
+                onKeyDown={e => {
+                  if (e.key === 'Escape') {
+                    setIsTagInputOpen(false);
+                    setTag('');
+                    return;
+                  }
+                  if (e.key === 'Enter' && tag && !e.nativeEvent.isComposing) {
+                    createTags(e);
+                    setIsTagInputOpen(false);
+                    return;
+                  }
+                  createTags(e);
+                }}
+                onBlur={() => {
                   setIsTagInputOpen(false);
                   setTag('');
-                  return;
-                }
-                if (e.key === 'Enter' && tag && !e.nativeEvent.isComposing) {
-                  createTags(e);
-                  setIsTagInputOpen(false);
-                  return;
-                }
-                createTags(e);
-              }}
-              onBlur={() => {
-                setIsTagInputOpen(false);
-                setTag('');
-              }}
-              onChange={e => setTag(e.target.value)}
-            />
+                }}
+                onChange={e => setTag(e.target.value)}
+              />
+              {tag.trim().length > 0 && visibleSuggestions.length > 0 && (
+                <ul className="absolute top-full left-0 mt-1 min-w-[160px] bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-48 overflow-auto">
+                  {visibleSuggestions.map(suggestion => (
+                    <li key={suggestion.id}>
+                      <button
+                        type="button"
+                        className="w-full text-left px-3 py-1.5 text-xs text-ftBlack hover:bg-ftBlue/5 transition-colors"
+                        onMouseDown={e => {
+                          // blur로 인풋이 닫히기 전에 선택 처리
+                          e.preventDefault();
+                          setDoc(prev => ({
+                            ...prev,
+                            tags: [...prev.tags, suggestion.name],
+                          }));
+                          setTag('');
+                          tagInputRef.current?.focus();
+                        }}
+                      >
+                        {suggestion.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           ) : (
             <button
               type="button"

@@ -6,6 +6,8 @@ import {
   PutTagsFolderRes,
   UpdateForm,
   GetListType,
+  TagAutocompleteRes,
+  TagSuggestion,
 } from './type';
 
 export const getList = async (
@@ -72,6 +74,22 @@ export const putTagsFolders = async (params: UpdateForm) => {
     console.error('Error updating tag folder:', error);
     throw error;
   }
+};
+
+export const fetchTagAutocomplete = async (
+  keyword: string,
+  limit = 10,
+): Promise<TagSuggestion[]> => {
+  const trimmed = keyword.trim();
+  if (!trimmed) return [];
+  if (trimmed.length > 30) {
+    throw new Error('keyword too long');
+  }
+
+  const { data } = await axiosInstance.get<TagAutocompleteRes>('/tags/search', {
+    params: { keyword: trimmed, limit },
+  });
+  return data.data;
 };
 
 export const tagsAPI = {

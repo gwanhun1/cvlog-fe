@@ -91,6 +91,16 @@ export interface TagType {
   name: string;
 }
 
+export interface TagSuggestion {
+  id: number;
+  name: string;
+}
+
+export interface TagAutocompleteRes {
+  success: boolean;
+  data: TagSuggestion[];
+}
+
 export interface BlogType {
   id: number;
   title: string;
