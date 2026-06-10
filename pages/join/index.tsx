@@ -79,7 +79,6 @@ export const getServerSideProps: GetServerSideProps = async context => {
     const { code } = query;
 
     if (!code) {
-      console.error('GitHub OAuth 코드가 없습니다:', query);
       return {
         redirect: {
           destination: '/login?error=missing_code',
@@ -88,10 +87,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
       };
     }
 
-    console.log('GitHub OAuth 요청:', code);
-
     const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login?code=${code}`;
-    console.log('요청 URL:', url);
 
     const response = await axios.get(url, {
       withCredentials: true,
@@ -102,26 +98,18 @@ export const getServerSideProps: GetServerSideProps = async context => {
       },
     });
 
-    console.log('GitHub OAuth 응답 상태:', response.status);
-
     const info = response.data;
     const setLocalCookie: string[] = response.headers['set-cookie'] as string[];
     const cookie: string =
       setLocalCookie?.find(c => c.trimStart().startsWith('refreshToken')) || '';
 
     if (!info || !cookie) {
-      console.error('GitHub OAuth 응답이 잘못되었습니다:', { info, cookie });
       throw new Error('Invalid response from server');
     }
 
-    console.log('GitHub OAuth 성공:', {
-      hasAccessToken: !!info.data?.accessToken,
-      hasCookie: !!cookie,
-    });
-
     return { props: { info, cookie } };
   } catch (error: any) {
-    console.error('로그인 에러:', error.message, error.response?.data);
+    console.error('로그인 에러:', error?.message);
 
     let errorParam = 'auth_failed';
 

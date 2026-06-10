@@ -1,6 +1,7 @@
 import { CopyBlock, dracula } from 'react-code-blocks';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 import remarkGfm from 'remark-gfm';
 import styles from '../../../../styles/markdown.module.scss';
 
@@ -40,7 +41,7 @@ const EditorPreview = ({
           >
             <div className={styles.contentMarkdown}>
               <ReactMarkdown
-                rehypePlugins={[rehypeRaw]}
+                rehypePlugins={[rehypeRaw, rehypeSanitize]}
                 remarkPlugins={[remarkGfm]}
                 components={{
                   code: ({

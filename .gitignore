@@ -26,11 +26,12 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-# .env*.local
-# .env
+.env
+.env.*
+!.env.sample
 
-# dotenv environment variable files
-# .env
+# secrets / keys
+*.key
 
 # vercel
 .vercel

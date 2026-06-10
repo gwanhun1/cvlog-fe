@@ -1,6 +1,7 @@
 import { CopyBlock, dracula } from 'react-code-blocks';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 import { useRef, useMemo, memo } from 'react';
@@ -39,15 +40,29 @@ const MarkdownContentComponent = ({
     [selectedTags]
   );
 
-  // 텍스트에서 선택된 태그 단어들을 강조 처리
+  // 텍스트에서 선택된 태그 단어들을 강조 처리.
+  // dangerouslySetInnerHTML로 주입되므로 원본 텍스트는 먼저 HTML 이스케이프해
+  // 사용자 콘텐츠가 마크업으로 해석되는 것을 막는다.
   const highlightWords = useMemo(() => {
-    return (text: string) => {
-      if (!selectedWords.length) return text;
+    const escapeHtml = (value: string) =>
+      value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 
-      let result = text;
+    return (text: string) => {
+      const escaped = escapeHtml(text);
+      if (!selectedWords.length) return escaped;
+
+      let result = escaped;
       selectedWords.forEach((word, index) => {
         if (!word) return;
-        const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapedWord = escapeHtml(word).replace(
+          /[.*+?^${}()|[\]\\]/g,
+          '\\$&'
+        );
         const regex = new RegExp(`(${escapedWord})`, 'gi');
         const color = blueColors[index % blueColors.length];
         result = result.replace(
@@ -127,7 +142,7 @@ const MarkdownContentComponent = ({
       <div className="flex-1 w-full" ref={contentRef}>
         <div className={styles.contentMarkdown}>
           <ReactMarkdown
-            rehypePlugins={[rehypeRaw, rehypeSlug]}
+            rehypePlugins={[rehypeRaw, rehypeSanitize, rehypeSlug]}
             remarkPlugins={[remarkGfm]}
             components={components}
           >
