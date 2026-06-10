@@ -1,5 +1,4 @@
 import LocalStorage from 'public/utils/Localstorage';
-import Sessionstorage from 'public/utils/Sessionstorage';
 import { signOut as apiSignOut } from '../service/api/login';
 import { useStore } from 'service/store/useStore';
 
@@ -15,7 +14,6 @@ export const handleSignOut = async (
       // 로컬 스토리지 초기화
       LocalStorage.removeItem('LogmeToken');
       LocalStorage.removeItem('user_info');
-      // Sessionstorage.removeItem('recoil-persist'); // No longer needed
       localStorage.removeItem('logme-storage'); // Zustand persist key
 
       // 권한 정보 초기화

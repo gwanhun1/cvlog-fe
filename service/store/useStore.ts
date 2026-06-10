@@ -70,7 +70,7 @@ export const useStore = create<StoreState>()(
     {
       name: 'logme-storage',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ userIdAtom: state.userIdAtom }), // Only persist userIdAtom as in Recoil
+      partialize: (state) => ({ userIdAtom: state.userIdAtom }), // 유저 정보만 영속화
     }
   )
 );

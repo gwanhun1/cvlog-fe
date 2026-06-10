@@ -207,7 +207,7 @@ git clone https://github.com/your-username/cvlog-fe.git
 cd cvlog-fe
 
 # 환경 변수 설정 (.env.local 파일)
-NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 ```
 
 ### 🚀 설치 및 실행

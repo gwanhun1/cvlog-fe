@@ -53,7 +53,7 @@ export const StreakStats = ({ githubId }: ActivityStatsProps) => {
           <span className="text-[10px] px-2 py-1 rounded-full bg-blue-50 text-blue-600 border border-blue-100 flex-shrink-0">live</span>
         </div>
         <StatImage
-          src={`https://github-readme-streak-stats.herokuapp.com/?user=${githubId}&theme=transparent&hide_border=true&ring=2563eb&fire=2563eb&currStreakNum=0ea5e9`}
+          src={`https://streak-stats.demolab.com/?user=${githubId}&theme=transparent&hide_border=true&ring=2563eb&fire=2563eb&currStreakNum=0ea5e9`}
           alt={`${githubId} 연속 기여`}
         />
       </div>
