@@ -10,6 +10,7 @@ import { FaGithub } from 'react-icons/fa';
 const LoginButtonGroup = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const token = LocalStorage.getItem('LogmeToken');
   const { showToast, showConfirm } = useToast();
 
@@ -82,7 +83,8 @@ const LoginButtonGroup = () => {
         return;
       }
 
-      // 상태 변수 추가 - CSRF 보호용
+      setLoading(true);
+
       const state = Math.random().toString(36).substring(2, 15);
       sessionStorage.setItem('github_oauth_state', state);
 
@@ -96,13 +98,20 @@ const LoginButtonGroup = () => {
     <div className="flex flex-col gap-4 w-full">
       <div
         key={loginMethodArr[0].id}
-        onClick={event => handleLogin(loginMethodArr[0].method, event)}
-        className="w-full cursor-pointer"
+        onClick={event => !loading && handleLogin(loginMethodArr[0].method, event)}
+        className={`w-full ${loading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
         <div className="bg-[#24292e] flex items-center justify-center gap-2.5 h-11 px-4 rounded-xl shadow-sm hover:bg-[#1a1e22] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
-          <FaGithub className="w-5 h-5 text-white flex-shrink-0" />
+          {loading ? (
+            <svg className="w-5 h-5 text-white animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          ) : (
+            <FaGithub className="w-5 h-5 text-white flex-shrink-0" />
+          )}
           <span className="font-semibold text-sm text-white">
-            GitHub으로 로그인
+            {loading ? '연결 중...' : 'GitHub으로 로그인'}
           </span>
         </div>
       </div>
