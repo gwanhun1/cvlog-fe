@@ -42,9 +42,7 @@ export const getStaticProps: GetStaticProps = async context => {
   if (!pid) return { notFound: true };
 
   const API_URL =
-    process.env.NEXT_PUBLIC_API_URL ||
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    'https://port-0-cvlog-be-m708xf650a274e01.sel4.cloudtype.app';
+    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
 
   try {
     const response = await fetch(`${API_URL}/posts/${pid}`, {
