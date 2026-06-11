@@ -281,7 +281,8 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       </div>
 
       <Head>
-        <title>{postTitle} | LOGME</title>
+        {/* next/head의 title은 child가 하나여야 SSR에 포함됨 (변수+문자열 혼용 금지) */}
+        <title>{`${postTitle} | LOGME`}</title>
         <meta name="description" content={postDescription} />
         <meta
           name="keywords"
