@@ -233,9 +233,11 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
 
 export const getStaticProps = async () => {
   try {
-    // NEXT_PUBLIC_API_BASE_URL 과 동일한 이름을 사용 (.env.production 기준)
+    // 서버사이드(ISR)에서는 BE 직통 주소를 우선 사용 (자기 자신 프록시(/api) 호출 방지)
     const API_URL =
-      process.env.NEXT_PUBLIC_API_BASE_URL || 'http://158.179.174.170:8000';
+      process.env.API_SERVER_URL ||
+      process.env.NEXT_PUBLIC_API_BASE_URL ||
+      'http://158.179.174.170:8000';
 
     const response = await fetch(`${API_URL}/posts/public/page/1`, {
       next: { revalidate: 60 },

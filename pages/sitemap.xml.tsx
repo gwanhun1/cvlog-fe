@@ -81,7 +81,9 @@ function SiteMap() {}
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   try {
+    // 서버사이드에서는 BE 직통 주소를 우선 사용 (자기 자신 프록시(/api) 호출 방지)
     const API_URL =
+      process.env.API_SERVER_URL ||
       process.env.NEXT_PUBLIC_API_BASE_URL ||
       'http://158.179.174.170:8000';
 

@@ -42,8 +42,11 @@ export const getStaticProps: GetStaticProps = async context => {
 
   if (!pid) return { notFound: true };
 
+  // 서버사이드(ISR)에서는 BE 직통 주소를 우선 사용 (자기 자신 프록시(/api) 호출 방지)
   const API_URL =
-    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+    process.env.API_SERVER_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    'http://localhost:8000';
 
   try {
     const response = await fetch(`${API_URL}/posts/${pid}`, {
