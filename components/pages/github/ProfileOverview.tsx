@@ -127,7 +127,7 @@ const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar, onTopLanguage
       <section className={`${cardBase} min-h-[200px]`}>
         <div className="p-5">
           <div className="h-16 rounded-xl animate-pulse bg-gray-100" />
-          <div className="grid grid-cols-2 gap-3 mt-5 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 mt-5 mobile:grid-cols-4">
             {Array.from({ length: 4 }).map((_, idx) => (
               <div key={idx} className="h-14 rounded-xl animate-pulse bg-gray-100" />
             ))}
@@ -152,7 +152,7 @@ const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar, onTopLanguage
   return (
     <section className={`${cardBase} min-h-[200px]`}>
       <div className="p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 mobile:flex-row mobile:items-center mobile:justify-between">
           <div className="flex gap-3 items-center">
             {displayAvatar ? (
               <div className="overflow-hidden relative w-14 h-14 rounded-full border border-gray-200 flex-shrink-0">
@@ -177,7 +177,7 @@ const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar, onTopLanguage
             href={user.html_url}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex gap-2 items-center px-3.5 py-2 text-sm font-semibold rounded-xl border transition-all duration-200 text-ftBlue border-ftBlue/30 bg-white hover:bg-ftBlue hover:text-white self-start sm:self-auto"
+            className="inline-flex gap-2 items-center px-3.5 py-2 text-sm font-semibold rounded-xl border transition-all duration-200 text-ftBlue border-ftBlue/30 bg-white hover:bg-ftBlue hover:text-white self-start mobile:self-auto"
           >
             GitHub 프로필
             <span>↗</span>
@@ -188,7 +188,7 @@ const ProfileOverview = ({ githubId, fallbackName, fallbackAvatar, onTopLanguage
           <div className="mt-3 max-w-3xl text-sm leading-relaxed text-ftGray">{user.bio}</div>
         )}
 
-        <div className="grid grid-cols-2 gap-3 mt-4 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 mt-4 mobile:grid-cols-4">
           <StatPill label="Followers" value={String(user.followers)} />
           <StatPill label="Following" value={String(user.following)} />
           <StatPill label="Repos" value={String(user.public_repos)} />

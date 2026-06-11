@@ -60,7 +60,7 @@ const GithubSyncPanel = () => {
   return (
     <section className={cardBase}>
       <div className="p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 mobile:flex-row mobile:items-center mobile:justify-between">
           {/* 좌측 정보 */}
           <div className="flex items-start gap-3">
             <div className={`flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-xl ${
@@ -112,7 +112,7 @@ const GithubSyncPanel = () => {
               </button>
             </div>
           ) : (
-            <div className="flex flex-col gap-1.5 sm:items-end">
+            <div className="flex flex-col gap-1.5 mobile:items-end">
               <div className="flex gap-2">
                 <div className="flex flex-col gap-1">
                   <div className="flex gap-2">

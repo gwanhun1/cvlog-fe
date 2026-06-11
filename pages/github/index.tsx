@@ -33,7 +33,9 @@ const Github: NextPage = () => {
     return (
       <AuthGuard>
         <div className="flex flex-col items-center justify-center min-h-[90vh] text-center text-gray-400">
-          <p className="mb-2 text-2xl font-semibold">GitHub 연동 정보 없음 😢</p>
+          <p className="mb-2 text-2xl font-semibold">
+            GitHub 연동 정보 없음 😢
+          </p>
           <p className="text-lg">GitHub 계정과 연결된 정보가 없습니다.</p>
         </div>
       </AuthGuard>
@@ -43,8 +45,7 @@ const Github: NextPage = () => {
   return (
     <AuthGuard>
       <div className="min-h-[90vh]">
-        <div className="px-4 pt-5 pb-10 mx-auto space-y-5 max-w-6xl tablet:px-6 desktop:px-8">
-
+        <div className="mx-auto space-y-5">
           {/* 프로필 */}
           <ProfileOverview
             githubId={userInfo.github_id}
@@ -80,7 +81,6 @@ const Github: NextPage = () => {
               />
             </div>
           </div>
-
         </div>
       </div>
     </AuthGuard>

@@ -283,7 +283,7 @@ export const GithubLanguagesCard = ({ githubId }: StatsSectionProps) => (
 );
 
 const StatsSection = ({ githubId }: StatsSectionProps) => (
-  <section className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
+  <section className="grid grid-cols-1 gap-4 tablet:gap-6 tablet:grid-cols-2">
     <GithubStatsCard githubId={githubId} />
     <GithubLanguagesCard githubId={githubId} />
   </section>

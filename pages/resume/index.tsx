@@ -186,12 +186,25 @@ const SectionCard = ({
       {onAdd && (
         <button
           type="button"
-          onClick={e => { e.stopPropagation(); onAdd(); }}
+          onClick={e => {
+            e.stopPropagation();
+            onAdd();
+          }}
           className="w-7 h-7 flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-400 hover:bg-ftBlue/10 hover:text-ftBlue hover:border-ftBlue/40 transition-all flex-shrink-0"
           title="항목 추가"
         >
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
+          <svg
+            className="w-3 h-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M12 4v16m8-8H4"
+            />
           </svg>
         </button>
       )}
@@ -326,20 +339,53 @@ const PhotoUpload = ({
     >
       {photo ? (
         <>
-          <img src={photo} alt="프로필" className="absolute inset-0 w-full h-full object-cover" />
+          <img
+            src={photo}
+            alt="프로필"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            <svg
+              className="w-5 h-5 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+              />
             </svg>
           </div>
         </>
       ) : (
         <>
-          <svg className="w-7 h-7 text-slate-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <svg
+            className="w-7 h-7 text-slate-300 mb-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
           </svg>
-          <span className="text-[9px] text-slate-400 font-medium leading-tight text-center">사진<br/>추가</span>
+          <span className="text-[9px] text-slate-400 font-medium leading-tight text-center">
+            사진
+            <br />
+            추가
+          </span>
         </>
       )}
     </button>
@@ -350,12 +396,28 @@ const PhotoUpload = ({
         className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md hover:bg-red-600 transition-colors z-10"
         title="삭제"
       >
-        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+        <svg
+          className="w-2.5 h-2.5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={3}
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
     )}
-    <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={onUpload} />
+    <input
+      ref={inputRef}
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={onUpload}
+    />
   </div>
 );
 
@@ -729,7 +791,10 @@ const ResumeBuilder = () => {
               collapsed={isColl}
               onToggle={() => toggleCollapse(key)}
               dragProps={dragProps}
-              onAdd={() => { addExp(); expandSection(key); }}
+              onAdd={() => {
+                addExp();
+                expandSection(key);
+              }}
               {...orderProps}
             >
               {data.experience.map((exp, i) => (
@@ -869,7 +934,10 @@ const ResumeBuilder = () => {
               collapsed={isColl}
               onToggle={() => toggleCollapse(key)}
               dragProps={dragProps}
-              onAdd={() => { addProj(); expandSection(key); }}
+              onAdd={() => {
+                addProj();
+                expandSection(key);
+              }}
               {...orderProps}
             >
               {data.projects.map((proj, i) => (
@@ -972,7 +1040,10 @@ const ResumeBuilder = () => {
               title={SECTION_LABELS.skills}
               collapsed={isColl}
               onToggle={() => toggleCollapse(key)}
-              onAdd={() => { addSkill(); expandSection(key); }}
+              onAdd={() => {
+                addSkill();
+                expandSection(key);
+              }}
               dragProps={dragProps}
               {...orderProps}
             >
@@ -1019,7 +1090,10 @@ const ResumeBuilder = () => {
               title={SECTION_LABELS.education}
               collapsed={isColl}
               onToggle={() => toggleCollapse(key)}
-              onAdd={() => { addEdu(); expandSection(key); }}
+              onAdd={() => {
+                addEdu();
+                expandSection(key);
+              }}
               dragProps={dragProps}
               {...orderProps}
             >
@@ -1088,7 +1162,10 @@ const ResumeBuilder = () => {
               title={SECTION_LABELS.certifications}
               collapsed={isColl}
               onToggle={() => toggleCollapse(key)}
-              onAdd={() => { addCert(); expandSection(key); }}
+              onAdd={() => {
+                addCert();
+                expandSection(key);
+              }}
               dragProps={dragProps}
               {...orderProps}
             >
@@ -1153,17 +1230,35 @@ const ResumeBuilder = () => {
     <>
       <Head>
         <title>무료 개발자 이력서 작성 | LOGME 이력서 빌더</title>
-        <meta name="description" content="개발자 맞춤 이력서를 무료로 작성하세요. 경력·프로젝트·기술스택을 입력하면 A4 이력서가 완성됩니다. 실시간 미리보기, PDF 저장, 자동저장 제공." />
-        <meta name="keywords" content="이력서 작성, 개발자 이력서, 무료 이력서, 이력서 빌더, 이력서 템플릿, 취업 이력서, IT 이력서, 프론트엔드 이력서" />
-        <meta property="og:title" content="무료 개발자 이력서 작성 | LOGME 이력서 빌더" />
-        <meta property="og:description" content="개발자 맞춤 이력서를 무료로 작성하세요. 실시간 미리보기, PDF 저장, 자동저장까지 모두 무료." />
+        <meta
+          name="description"
+          content="개발자 맞춤 이력서를 무료로 작성하세요. 경력·프로젝트·기술스택을 입력하면 A4 이력서가 완성됩니다. 실시간 미리보기, PDF 저장, 자동저장 제공."
+        />
+        <meta
+          name="keywords"
+          content="이력서 작성, 개발자 이력서, 무료 이력서, 이력서 빌더, 이력서 템플릿, 취업 이력서, IT 이력서, 프론트엔드 이력서"
+        />
+        <meta
+          property="og:title"
+          content="무료 개발자 이력서 작성 | LOGME 이력서 빌더"
+        />
+        <meta
+          property="og:description"
+          content="개발자 맞춤 이력서를 무료로 작성하세요. 실시간 미리보기, PDF 저장, 자동저장까지 모두 무료."
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://logme-io.vercel.app/resume" />
-        <meta property="og:image" content="https://logme-io.vercel.app/assets/logo.png" />
+        <meta
+          property="og:image"
+          content="https://logme-io.vercel.app/assets/logo.png"
+        />
         <meta property="og:site_name" content="LOGME" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="무료 개발자 이력서 작성 | LOGME" />
-        <meta name="twitter:description" content="개발자 맞춤 이력서 무료 작성. 실시간 미리보기 + PDF 저장." />
+        <meta
+          name="twitter:description"
+          content="개발자 맞춤 이력서 무료 작성. 실시간 미리보기 + PDF 저장."
+        />
         <link rel="canonical" href="https://logme-io.vercel.app/resume" />
         <script
           type="application/ld+json"
@@ -1175,11 +1270,18 @@ const ResumeBuilder = () => {
               applicationCategory: 'BusinessApplication',
               operatingSystem: 'Web',
               url: 'https://logme-io.vercel.app/resume',
-              description: '개발자 맞춤 무료 이력서 작성 도구. 경력, 프로젝트, 기술스택을 입력하면 A4 이력서로 완성됩니다. 실시간 미리보기, PDF 저장, 자동저장, 섹션 드래그 기능 제공.',
+              description:
+                '개발자 맞춤 무료 이력서 작성 도구. 경력, 프로젝트, 기술스택을 입력하면 A4 이력서로 완성됩니다. 실시간 미리보기, PDF 저장, 자동저장, 섹션 드래그 기능 제공.',
               inLanguage: 'ko-KR',
               author: { '@type': 'Organization', name: 'LOGME' },
               offers: { '@type': 'Offer', price: '0', priceCurrency: 'KRW' },
-              featureList: ['실시간 미리보기', 'PDF 저장', '자동저장', '섹션 드래그 재정렬', '프로필 사진 업로드'],
+              featureList: [
+                '실시간 미리보기',
+                'PDF 저장',
+                '자동저장',
+                '섹션 드래그 재정렬',
+                '프로필 사진 업로드',
+              ],
             }),
           }}
         />
@@ -1213,10 +1315,7 @@ const ResumeBuilder = () => {
         <ResumePreview data={{ ...data, photo }} />
       </div>
 
-      <div
-        id="resume-editor-wrap"
-        className="w-full max-w-7xl mx-auto px-4 pt-3 pb-6"
-      >
+      <div id="resume-editor-wrap" className="w-full max-w-7xl mx-auto">
         <DraftResumeModal
           isOpen={showDraftModal}
           draftTitle={draftName}
@@ -1238,17 +1337,37 @@ const ResumeBuilder = () => {
         {/* 로그인 유도 모달 */}
         {showLoginModal && (
           <div className="fixed inset-0 z-[400] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowLoginModal(false)} />
+            <div
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              onClick={() => setShowLoginModal(false)}
+            />
             <div className="relative bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center">
               <div className="w-12 h-12 rounded-2xl bg-ftBlue/10 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-ftBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <svg
+                  className="w-6 h-6 text-ftBlue"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
                 </svg>
               </div>
-              <h3 className="text-base font-extrabold text-gray-900 mb-1">저장하려면 로그인이 필요해요</h3>
+              <h3 className="text-base font-extrabold text-gray-900 mb-1">
+                저장하려면 로그인이 필요해요
+              </h3>
               <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-                로그인하면 이력서를 서버에 저장하고<br />어디서든 불러올 수 있어요.<br />
-                <span className="text-xs text-gray-400 mt-1 block">PDF 저장·임시저장은 로그인 없이도 가능해요.</span>
+                로그인하면 이력서를 서버에 저장하고
+                <br />
+                어디서든 불러올 수 있어요.
+                <br />
+                <span className="text-xs text-gray-400 mt-1 block">
+                  PDF 저장·임시저장은 로그인 없이도 가능해요.
+                </span>
               </p>
               <div className="flex flex-col gap-2">
                 <button
@@ -1269,103 +1388,132 @@ const ResumeBuilder = () => {
         )}
         <div className="flex gap-6">
           {/* Left: Form */}
-          <div
-            className={`flex-1 min-w-0 flex flex-col gap-3 ${activeTab === 'preview' ? 'hidden tablet:flex' : ''}`}
-          >
+          <div className="flex-1 min-w-0 flex flex-col gap-3">
             {/* Top bar */}
-            <div className="flex items-center gap-3">
-              {/* 내 이력서 버튼 */}
-              <button
-                onClick={() => isAuthenticated ? setShowListModal(true) : setShowLoginModal(true)}
-                className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-gray-600 bg-white border border-slate-200 rounded-xl hover:border-ftBlue/40 hover:text-ftBlue hover:bg-ftBlue/3 transition-all shadow-sm flex-shrink-0"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
-                </svg>
-                <span className="hidden tablet:inline">내 이력서</span>
-              </button>
-
-              {/* 제목 인라인 편집 */}
-              <div className="flex-1 min-w-0 relative">
-                <input
-                  type="text"
-                  value={title}
-                  onChange={e => {
-                    setTitle(e.target.value);
-                    if (e.target.value.trim()) setTitleError('');
-                  }}
-                  className={`w-full px-3 py-2 text-sm font-bold text-gray-800 bg-white border rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300
-                    ${titleError ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-slate-200 focus:ring-ftBlue/20 focus:border-ftBlue'}`}
-                  placeholder="이력서 제목 (필수)"
-                />
-                {titleError && (
-                  <p className="absolute left-0 -bottom-5 text-[11px] text-red-400 font-medium whitespace-nowrap">
-                    {titleError}
-                  </p>
-                )}
-              </div>
-
-              {/* 상태 메시지 */}
-              <div className="flex-shrink-0 text-right">
-                {saveMsg ? (
-                  <span className={`text-xs font-semibold ${saveMsg === '저장됨' ? 'text-emerald-500' : 'text-red-400'}`}>
-                    {saveMsg}
-                  </span>
-                ) : autoSaved ? (
-                  <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    자동저장됨
-                  </span>
-                ) : null}
-              </div>
-
-              {/* 모바일 탭 */}
-              <div className="flex tablet:hidden rounded-xl border border-slate-200 overflow-hidden flex-shrink-0">
+            <div className="flex flex-col gap-2">
+              {/* Row 1: 내 이력서 + 제목 + 상태 (tablet: + 저장/PDF) */}
+              <div className="flex items-center gap-2">
+                {/* 내 이력서 버튼 */}
                 <button
-                  onClick={() => setActiveTab('form')}
-                  className={`px-3 py-2 text-xs font-bold transition-colors ${activeTab === 'form' ? 'bg-ftBlue text-white' : 'text-gray-400 hover:bg-slate-50'}`}
+                  onClick={() =>
+                    isAuthenticated
+                      ? setShowListModal(true)
+                      : setShowLoginModal(true)
+                  }
+                  className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-600 bg-white border border-slate-200 rounded-xl hover:border-ftBlue/40 hover:text-ftBlue hover:bg-ftBlue/3 transition-all shadow-sm flex-shrink-0"
                 >
-                  편집
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />
+                  </svg>
+                  <span className="hidden tablet:inline">내 이력서</span>
                 </button>
+
+                {/* 제목 인라인 편집 */}
+                <div className="flex-1 min-w-0 relative">
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={e => {
+                      setTitle(e.target.value);
+                      if (e.target.value.trim()) setTitleError('');
+                    }}
+                    className={`w-full px-3 py-2 text-sm font-bold text-gray-800 bg-white border rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300
+                      ${titleError ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-slate-200 focus:ring-ftBlue/20 focus:border-ftBlue'}`}
+                    placeholder="이력서 제목 (필수)"
+                  />
+                  {titleError && (
+                    <p className="absolute left-0 -bottom-5 text-[11px] text-red-400 font-medium whitespace-nowrap">
+                      {titleError}
+                    </p>
+                  )}
+                </div>
+
+                {/* 상태 메시지 */}
+                <div className="flex-shrink-0 text-right">
+                  {saveMsg ? (
+                    <span className={`text-xs font-semibold ${saveMsg === '저장됨' ? 'text-emerald-500' : 'text-red-400'}`}>
+                      {saveMsg}
+                    </span>
+                  ) : autoSaved ? (
+                    <span className="text-[11px] text-gray-400 flex items-center gap-1">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      자동저장됨
+                    </span>
+                  ) : null}
+                </div>
+
+                {/* 저장 버튼 — tablet+ only */}
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="hidden tablet:flex items-center gap-1.5 px-3.5 py-2 text-sm font-bold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-ftBlue/25 flex-shrink-0"
+                >
+                  {saving ? (
+                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                  )}
+                  저장
+                </button>
+
+                {/* PDF 버튼 — tablet+ only */}
+                <button
+                  onClick={() => window.print()}
+                  className="hidden tablet:flex items-center gap-1.5 px-3.5 py-2 text-sm font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 active:scale-95 transition-all flex-shrink-0"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  PDF
+                </button>
+              </div>
+
+              {/* Row 2: 액션 버튼 — mobile only */}
+              <div className="flex items-center gap-2 tablet:hidden">
                 <button
                   onClick={() => setActiveTab('preview')}
-                  className={`px-3 py-2 text-xs font-bold transition-colors ${activeTab === 'preview' ? 'bg-ftBlue text-white' : 'text-gray-400 hover:bg-slate-50'}`}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-gray-600 bg-white border border-slate-200 rounded-xl hover:border-ftBlue/40 hover:text-ftBlue transition-all"
                 >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
                   미리보기
                 </button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 disabled:opacity-50 active:scale-95 transition-all shadow-md shadow-ftBlue/25"
+                >
+                  {saving ? (
+                    <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                    </svg>
+                  )}
+                  저장
+                </button>
+                <button
+                  onClick={() => window.print()}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 active:scale-95 transition-all"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  PDF
+                </button>
               </div>
-
-              {/* 저장 버튼 — mobile only */}
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="tablet:hidden flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-ftBlue/25 flex-shrink-0"
-              >
-                {saving ? (
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                  </svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                  </svg>
-                )}
-                저장
-              </button>
-
-              {/* PDF 버튼 — mobile only */}
-              <button
-                onClick={() => window.print()}
-                className="tablet:hidden flex items-center gap-2 px-4 py-2 text-sm font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 active:scale-95 transition-all flex-shrink-0"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                PDF
-              </button>
             </div>
 
             {/* Basic Info */}
@@ -1404,10 +1552,20 @@ const ResumeBuilder = () => {
                   <div className="flex items-start gap-4">
                     <div className="flex-1 flex flex-col gap-3">
                       <Field label="이름">
-                        <input className={inputCls} placeholder="홍길동" value={data.basicInfo.name} onChange={e => setBasic('name', e.target.value)} />
+                        <input
+                          className={inputCls}
+                          placeholder="홍길동"
+                          value={data.basicInfo.name}
+                          onChange={e => setBasic('name', e.target.value)}
+                        />
                       </Field>
                       <Field label="직함">
-                        <input className={inputCls} placeholder="프론트엔드 개발자" value={data.basicInfo.title} onChange={e => setBasic('title', e.target.value)} />
+                        <input
+                          className={inputCls}
+                          placeholder="프론트엔드 개발자"
+                          value={data.basicInfo.title}
+                          onChange={e => setBasic('title', e.target.value)}
+                        />
                       </Field>
                     </div>
                     <PhotoUpload
@@ -1421,28 +1579,70 @@ const ResumeBuilder = () => {
                   {/* 연락처 + 링크 2열 그리드 */}
                   <FieldGroup>
                     <Field label="이메일">
-                      <input className={inputCls} placeholder="hello@example.com" value={data.basicInfo.email} onChange={e => setBasic('email', e.target.value)} />
+                      <input
+                        className={inputCls}
+                        placeholder="hello@example.com"
+                        value={data.basicInfo.email}
+                        onChange={e => setBasic('email', e.target.value)}
+                      />
                     </Field>
                     <Field label="전화번호">
-                      <input className={inputCls} placeholder="010-0000-0000" value={data.basicInfo.phone} onChange={e => setBasic('phone', e.target.value)} />
+                      <input
+                        className={inputCls}
+                        placeholder="010-0000-0000"
+                        value={data.basicInfo.phone}
+                        onChange={e => setBasic('phone', e.target.value)}
+                      />
                     </Field>
                     <Field label="주소">
-                      <input className={inputCls} placeholder="서울시 강남구" value={data.basicInfo.location} onChange={e => setBasic('location', e.target.value)} />
+                      <input
+                        className={inputCls}
+                        placeholder="서울시 강남구"
+                        value={data.basicInfo.location}
+                        onChange={e => setBasic('location', e.target.value)}
+                      />
                     </Field>
                     <Field label="GitHub">
-                      <input className={inputCls} placeholder="github.com/username" value={data.basicInfo.github} onChange={e => setBasic('github', e.target.value)} />
+                      <input
+                        className={inputCls}
+                        placeholder="github.com/username"
+                        value={data.basicInfo.github}
+                        onChange={e => setBasic('github', e.target.value)}
+                      />
                     </Field>
                     <Field label="웹사이트">
-                      <input className={inputCls} placeholder="https://logme.shop" value={data.basicInfo.website} onChange={e => setBasic('website', e.target.value)} />
+                      <input
+                        className={inputCls}
+                        placeholder="https://logme.shop"
+                        value={data.basicInfo.website}
+                        onChange={e => setBasic('website', e.target.value)}
+                      />
                     </Field>
                     <Field label="포트폴리오 링크">
-                      <input className={inputCls} placeholder="https://portfolio.link" value={data.basicInfo.portfolio} onChange={e => setBasic('portfolio', e.target.value)} />
+                      <input
+                        className={inputCls}
+                        placeholder="https://portfolio.link"
+                        value={data.basicInfo.portfolio}
+                        onChange={e => setBasic('portfolio', e.target.value)}
+                      />
                     </Field>
                     <Field label="핵심 요약" span2>
-                      <textarea className={inputCls + ' resize-none'} rows={2} placeholder="본인의 핵심 역량과 커리어 방향을 한두 문장으로 요약..." value={data.basicInfo.summary} onChange={e => setBasic('summary', e.target.value)} />
+                      <textarea
+                        className={inputCls + ' resize-none'}
+                        rows={2}
+                        placeholder="본인의 핵심 역량과 커리어 방향을 한두 문장으로 요약..."
+                        value={data.basicInfo.summary}
+                        onChange={e => setBasic('summary', e.target.value)}
+                      />
                     </Field>
                     <Field label="자기소개 (상세)" span2>
-                      <textarea className={inputCls + ' resize-none'} rows={4} placeholder="본인의 개발 철학, 경험, 강점을 구체적으로 작성..." value={data.basicInfo.about} onChange={e => setBasic('about', e.target.value)} />
+                      <textarea
+                        className={inputCls + ' resize-none'}
+                        rows={4}
+                        placeholder="본인의 개발 철학, 경험, 강점을 구체적으로 작성..."
+                        value={data.basicInfo.about}
+                        onChange={e => setBasic('about', e.target.value)}
+                      />
                     </Field>
                   </FieldGroup>
                 </div>
@@ -1482,7 +1682,9 @@ const ResumeBuilder = () => {
             <div className="sticky top-[68px] z-30">
               {/* Sticky action buttons — tablet+ only */}
               <div className="flex items-center justify-between mb-2 px-1">
-                <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">미리보기</span>
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
+                  미리보기
+                </span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={handleSave}
@@ -1490,13 +1692,38 @@ const ResumeBuilder = () => {
                     className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-bold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-ftBlue/25"
                   >
                     {saving ? (
-                      <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                      <svg
+                        className="w-3.5 h-3.5 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8H4z"
+                        />
                       </svg>
                     ) : (
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                        />
                       </svg>
                     )}
                     저장
@@ -1505,8 +1732,18 @@ const ResumeBuilder = () => {
                     onClick={() => window.print()}
                     className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 active:scale-95 transition-all"
                   >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    <svg
+                      className="w-3.5 h-3.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                      />
                     </svg>
                     PDF
                   </button>
@@ -1518,9 +1755,32 @@ const ResumeBuilder = () => {
             </div>
           </div>
 
+          {/* Mobile fullscreen preview overlay */}
           {activeTab === 'preview' && (
-            <div className="flex-1 min-w-0 tablet:hidden overflow-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="fixed inset-0 z-[60] bg-white overflow-y-auto tablet:hidden">
               <ResumePreview data={{ ...data, photo }} />
+
+              {/* Floating controls */}
+              <div className="fixed top-4 left-4 right-4 z-[61] flex items-center justify-between pointer-events-none tablet:hidden">
+                <button
+                  onClick={() => setActiveTab('form')}
+                  className="pointer-events-auto flex items-center gap-1.5 pl-2.5 pr-3.5 py-2 text-xs font-bold text-gray-700 bg-white/80 backdrop-blur-md rounded-full shadow-lg border border-white/60 hover:bg-white transition-all active:scale-95"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  편집으로
+                </button>
+                <button
+                  onClick={() => window.print()}
+                  className="pointer-events-auto flex items-center gap-1.5 pl-3 pr-3.5 py-2 text-xs font-bold text-white bg-ftBlue/90 backdrop-blur-md rounded-full shadow-lg hover:bg-ftBlue transition-all active:scale-95"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  PDF 저장
+                </button>
+              </div>
             </div>
           )}
         </div>

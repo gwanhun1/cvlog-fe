@@ -65,7 +65,7 @@ const Mypage: NextPage = () => {
   return (
     <AuthGuard>
       <section className="w-full min-h-screen">
-        <div className="px-4 py-6 mx-auto space-y-4 w-full max-w-6xl tablet:px-6 desktop:px-8">
+        <div className="mx-auto space-y-4 w-full max-w-6xl">
           {/* 프로필 헤더 */}
           <section className={cardBase}>
             <div className="p-5">

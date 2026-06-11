@@ -1,29 +1,37 @@
 import { GiHamburgerMenu } from 'react-icons/gi';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   useToast,
   LogmeDropdown,
   DropdownHeader,
   DropdownItem,
+  LogmeNotification,
 } from 'components/Shared';
 import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
 import LocalStorage from 'public/utils/Localstorage';
 import { useStore } from 'service/store/useStore';
 
-const menu = ['Article', 'Resume'];
+const MENU_ITEMS = [
+  { label: 'Home', path: '/', authRequired: false },
+  { label: 'Article', path: '/article', authRequired: false },
+  { label: 'Resume', path: '/resume', authRequired: false },
+  { label: 'GitHub', path: '/github', authRequired: true },
+];
 
 interface MobileNavProps {
   isLoading: boolean;
+  isAuth: boolean;
 }
 
-const MobileNav = ({ isLoading }: MobileNavProps) => {
-  const [page, setPage] = useState(menu[0]);
+const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
   const [token, setToken] = useState<string | null>(null);
-  const setAuthority = useStore((state) => state.setAuthorityState);
-  const userInfo = useStore((state) => state.userIdAtom);
+  const setAuthority = useStore(state => state.setAuthorityState);
+  const userInfo = useStore(state => state.userIdAtom);
   const { showToast } = useToast();
+  const { pathname } = useRouter();
 
   useEffect(() => {
     const checkToken = () => {
@@ -32,12 +40,8 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
     };
 
     checkToken();
-
     window.addEventListener('storage', checkToken);
-
-    return () => {
-      window.removeEventListener('storage', checkToken);
-    };
+    return () => window.removeEventListener('storage', checkToken);
   }, [isLoading]);
 
   const onClickLogout = async () => {
@@ -48,12 +52,14 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
     return <Loader />;
   }
 
+  const visibleMenuItems = MENU_ITEMS.filter(
+    item => !item.authRequired || !!token,
+  );
+
   return (
     <nav>
       <LogmeDropdown
-        trigger={
-          <GiHamburgerMenu className="mb-1 ml-2 w-5 h-5 stroke-gray-800" />
-        }
+        trigger={<GiHamburgerMenu className="w-5 h-5 text-gray-700" />}
         align="right"
       >
         {token && (
@@ -65,44 +71,56 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
                 className="object-cover w-10 h-10 rounded-full"
               />
               <div className="text-sm font-semibold text-gray-900">
-                {userInfo?.github_id || '아이디가 없어요'}
+                {userInfo?.github_id}
               </div>
               <div className="text-xs text-gray-500">
                 {userInfo?.name
                   ? `${userInfo.name}님 환영합니다`
-                  : '이름을 등록해주세요.'}
+                  : userInfo?.github_id}
               </div>
             </div>
           </DropdownHeader>
         )}
 
-        <Link key="Home" href="/" prefetch={true}>
-          <DropdownItem
-            onClick={() => setPage('Home')}
-            className={page === 'Home' ? 'text-ftBlue font-bold' : ''}
+        {isAuth && (
+          <div
+            className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100"
+            onClick={(e) => e.stopPropagation()}
           >
-            Home
-          </DropdownItem>
-        </Link>
-        {menu.map(list => (
-          <Link key={list} href={`/${list.toLowerCase()}`} prefetch={true}>
+            <span className="text-sm text-gray-500">알림</span>
+            <LogmeNotification />
+          </div>
+        )}
+
+        {visibleMenuItems.map(item => (
+          <Link key={item.path} href={item.path} prefetch={true}>
             <DropdownItem
-              onClick={() => setPage(list)}
-              className={page === list ? 'text-ftBlue font-bold' : ''}
+              className={
+                pathname === item.path ||
+                (item.path !== '/' && pathname.startsWith(item.path))
+                  ? 'text-ftBlue font-bold'
+                  : ''
+              }
             >
-              {list}
+              {item.label}
             </DropdownItem>
           </Link>
         ))}
 
         {token ? (
           <>
+            <Link href="/mypage" prefetch={true}>
+              <DropdownItem
+                className={
+                  pathname === '/mypage' ? 'text-ftBlue font-bold' : ''
+                }
+              >
+                마이페이지/설정
+              </DropdownItem>
+            </Link>
             <DropdownItem onClick={onClickLogout} danger>
               로그아웃
             </DropdownItem>
-            <Link href="/mypage" prefetch={true}>
-              <DropdownItem>Setting</DropdownItem>
-            </Link>
           </>
         ) : (
           <>
@@ -112,19 +130,10 @@ const MobileNav = ({ isLoading }: MobileNavProps) => {
             <DropdownItem
               onClick={() => showToast('로그인 먼저 해주세요.', 'warning')}
             >
-              Setting
+              마이페이지/설정
             </DropdownItem>
           </>
         )}
-
-        <DropdownItem>
-          <span className="flex gap-2 items-center">
-            Alarm
-            {token && (
-              <span className="w-2 h-2 rounded-full animate-ping bg-ftBlue" />
-            )}
-          </span>
-        </DropdownItem>
       </LogmeDropdown>
     </nav>
   );

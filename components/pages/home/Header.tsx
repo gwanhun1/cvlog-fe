@@ -30,7 +30,7 @@ const Header = () => {
   };
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-ftBlue/15 bg-white px-8 py-12 shadow-lg shadow-ftBlue/8 tablet:px-14 tablet:py-16">
+    <section className="relative overflow-hidden rounded-3xl border border-ftBlue/15 bg-white px-4 py-8 shadow-lg shadow-ftBlue/8 tablet:px-14 tablet:py-16">
       {/* 배경 장식 */}
       <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-gradient-to-br from-ftBlue/15 to-transparent blur-3xl" />
       <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-gradient-to-tr from-ftBlue/10 to-transparent blur-2xl" />

@@ -13,16 +13,25 @@ const LikedPostsPage: NextPage = () => {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <div className="px-4 pt-8 pb-12 mx-auto max-w-6xl tablet:px-6 desktop:px-8">
-
+      <div className="mx-auto max-w-6xl">
         {/* 페이지 헤더 */}
         <div className="mb-6">
           <Link
             href="/article"
             className="inline-flex items-center gap-1 mb-4 text-xs text-gray-400 hover:text-gray-600 transition-colors"
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
             </svg>
             블로그로 돌아가기
           </Link>
@@ -34,7 +43,6 @@ const LikedPostsPage: NextPage = () => {
 
         {/* 콘텐츠 */}
         <LikedListContainer />
-
       </div>
     </AuthGuard>
   );

@@ -85,8 +85,8 @@ const NewPost: NextPage = () => {
 
   return (
     <AuthGuard>
-      <main className="h-screen min-h-screen px-2 tablet:px-10">
-        <div className="flex flex-col h-full">
+      <main className="min-h-screen tablet:h-screen px-2 tablet:px-10">
+        <div className="flex flex-col tablet:h-full">
           <header className="flex-none">
             <EditorHeader
               doc={doc}

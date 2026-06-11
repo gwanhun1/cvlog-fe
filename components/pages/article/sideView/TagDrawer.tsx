@@ -42,7 +42,7 @@ const TagDrawer = ({ open, onClose }: TagDrawerProps) => {
 
       {/* drawer panel */}
       <div
-        className={`fixed top-0 left-0 z-50 h-full w-[300px] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
+        className={`fixed top-0 left-0 z-50 h-full w-[85vw] max-w-[300px] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
           open ? 'translate-x-0' : '-translate-x-full'
         }`}
         role="dialog"

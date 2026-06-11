@@ -117,7 +117,7 @@ const ResumeListModal = ({ isOpen, onClose, onSelect, onNewResume, currentId }: 
 
           {/* Loading skeleton */}
           {loading && (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 mobile:grid-cols-3 gap-3">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="rounded-2xl border border-slate-100 p-3 animate-pulse">
                   <div className="w-full aspect-[4/5] bg-slate-100 rounded-lg mb-2" />
@@ -152,7 +152,7 @@ const ResumeListModal = ({ isOpen, onClose, onSelect, onNewResume, currentId }: 
 
           {/* Resume grid */}
           {hasResumes && (
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 mobile:grid-cols-3 gap-3">
               {resumes.map(resume => {
                 const isActive = currentId === resume.id;
                 return (

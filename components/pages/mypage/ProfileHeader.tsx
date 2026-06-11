@@ -30,15 +30,16 @@ const ProfileHeader = ({ profileImage, githubId, joinDate }: ProfileHeaderProps)
       <div className="min-w-0">
         <div className="text-xs uppercase tracking-widest text-ftGray mb-0.5">My Page</div>
         <div className="text-xl font-bold text-gray-900 truncate">{githubId}</div>
-        <div className="flex gap-2 items-center text-gray-400 text-sm mt-0.5">
-          <FiGithub className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
-          <span>GitHub Developer</span>
+        <div className="flex flex-col gap-0.5 mt-0.5">
+          <div className="flex gap-2 items-center text-gray-400 text-sm">
+            <FiGithub className="w-3.5 h-3.5 flex-shrink-0" aria-hidden="true" />
+            <span>GitHub Developer</span>
+          </div>
           {joinDate && (
-            <>
-              <span className="text-gray-200">·</span>
+            <div className="flex gap-1.5 items-center text-gray-400">
               <FiCalendar className="w-3.5 h-3.5 flex-shrink-0 text-ftBlue" />
               <span className="text-xs">{joinDate}</span>
-            </>
+            </div>
           )}
         </div>
       </div>

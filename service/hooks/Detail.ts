@@ -17,7 +17,7 @@ export const useGetDetail = (params: number, initialData?: any) => {
     retry: 0,
     enabled: !isNaN(params),
     initialData,
-    // useErrorBoundary is renamed to throwOnError
+    initialDataUpdatedAt: 0,
     throwOnError: false,
     staleTime: 1000 * 60 * 2,
     gcTime: 1000 * 60 * 10,

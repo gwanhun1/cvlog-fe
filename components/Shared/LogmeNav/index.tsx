@@ -86,11 +86,13 @@ const Nav = () => {
           </div>
         </nav>
 
-        <div className="flex col-span-8 gap-4 justify-end items-center tablet:col-span-3">
-          <div className="tablet:hidden">
-            <MobileNav isLoading={isLoading} />
+        <div className="flex col-span-8 gap-2 justify-end items-center tablet:col-span-3">
+          <div className="hidden tablet:flex">
+            {isAuth && <Shared.LogmeNotification />}
           </div>
-          {isAuth && <Shared.LogmeNotification />}
+          <div className="tablet:hidden">
+            <MobileNav isLoading={isLoading} isAuth={isAuth} />
+          </div>
           <DesktopNavActions
             isAuthenticated={isAuth}
             setAuthority={() => {}}

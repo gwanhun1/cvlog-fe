@@ -113,7 +113,7 @@ const LogmeNotification = () => {
       </button>
 
       {open && (
-        <div className="notification-in absolute right-0 top-11 z-50 w-[340px] rounded-2xl border border-slate-100 bg-white shadow-xl overflow-hidden">
+        <div className="notification-in absolute right-0 top-11 z-50 w-[340px] max-w-[calc(100vw-1rem)] rounded-2xl border border-slate-100 bg-white shadow-xl overflow-hidden">
           {/* 헤더 */}
           <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-100">
             <div className="flex items-center gap-2">

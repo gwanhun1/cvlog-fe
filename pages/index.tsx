@@ -24,17 +24,38 @@ const Home: NextPage = () => {
           name="description"
           content="개발자를 위한 마크다운 블로그 플랫폼. 무료 개발자 이력서 작성, 실시간 미리보기, PDF 저장까지 한 곳에서. 이력서 작성이 고민이라면 LOGME를 사용해보세요."
         />
-        <meta name="keywords" content="마크다운, 블로그, 개발자, 프로그래밍, 기술 블로그, LOGME, 이력서, 이력서 작성, 개발자 이력서, 무료 이력서, 이력서 빌더, 이력서 템플릿" />
-        <meta property="og:title" content="LOGME - 개발자를 위한 마크다운 블로그 & 무료 이력서 빌더" />
-        <meta property="og:description" content="개발자를 위한 마크다운 블로그 플랫폼. 무료 개발자 이력서 작성, 실시간 미리보기, PDF 저장까지 한 곳에서." />
+        <meta
+          name="keywords"
+          content="마크다운, 블로그, 개발자, 프로그래밍, 기술 블로그, LOGME, 이력서, 이력서 작성, 개발자 이력서, 무료 이력서, 이력서 빌더, 이력서 템플릿"
+        />
+        <meta
+          property="og:title"
+          content="LOGME - 개발자를 위한 마크다운 블로그 & 무료 이력서 빌더"
+        />
+        <meta
+          property="og:description"
+          content="개발자를 위한 마크다운 블로그 플랫폼. 무료 개발자 이력서 작성, 실시간 미리보기, PDF 저장까지 한 곳에서."
+        />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://logme-io.vercel.app" />
-        <meta property="og:image" content="https://logme-io.vercel.app/assets/logo.png" />
+        <meta
+          property="og:image"
+          content="https://logme-io.vercel.app/assets/logo.png"
+        />
         <meta property="og:site_name" content="LOGME" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="LOGME - 개발자를 위한 마크다운 블로그 & 무료 이력서 빌더" />
-        <meta name="twitter:description" content="개발자를 위한 마크다운 블로그 플랫폼. 무료 개발자 이력서 작성, PDF 저장까지." />
-        <meta name="twitter:image" content="https://logme-io.vercel.app/assets/logo.png" />
+        <meta
+          name="twitter:title"
+          content="LOGME - 개발자를 위한 마크다운 블로그 & 무료 이력서 빌더"
+        />
+        <meta
+          name="twitter:description"
+          content="개발자를 위한 마크다운 블로그 플랫폼. 무료 개발자 이력서 작성, PDF 저장까지."
+        />
+        <meta
+          name="twitter:image"
+          content="https://logme-io.vercel.app/assets/logo.png"
+        />
         <link rel="canonical" href="https://logme-io.vercel.app" />
         <script
           type="application/ld+json"
@@ -51,7 +72,8 @@ const Home: NextPage = () => {
                   '@type': 'SearchAction',
                   target: {
                     '@type': 'EntryPoint',
-                    urlTemplate: 'https://logme-io.vercel.app/article?q={search_term_string}',
+                    urlTemplate:
+                      'https://logme-io.vercel.app/article?q={search_term_string}',
                   },
                   'query-input': 'required name=search_term_string',
                 },
@@ -63,7 +85,8 @@ const Home: NextPage = () => {
                 applicationCategory: 'BusinessApplication',
                 operatingSystem: 'Web',
                 url: 'https://logme-io.vercel.app/resume',
-                description: '개발자 맞춤 무료 이력서 작성 도구. 실시간 미리보기, PDF 저장, 자동저장, 섹션 드래그 지원.',
+                description:
+                  '개발자 맞춤 무료 이력서 작성 도구. 실시간 미리보기, PDF 저장, 자동저장, 섹션 드래그 지원.',
                 inLanguage: 'ko-KR',
                 offers: {
                   '@type': 'Offer',
@@ -76,7 +99,7 @@ const Home: NextPage = () => {
         />
       </Head>
 
-      <main className="mx-auto max-w-6xl space-y-8 px-4 py-10 tablet:px-6 desktop:px-8">
+      <main className="mx-auto space-y-8 tablet:px-12 desktop:px-24">
         {/* Hero — 헤드라인 + CTA + 브라우저 프레임 비디오 */}
         <Header />
 

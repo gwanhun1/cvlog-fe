@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai';
 import { motion } from 'framer-motion';
 import { useToggleLike } from 'service/hooks/Like';
@@ -23,13 +22,8 @@ const LikeButton = ({
 }: LikeButtonProps) => {
   const router = useRouter();
   const { mutate: toggleLike, isPending } = useToggleLike(postId);
-  const [isLiked, setIsLiked] = useState(initialLiked);
-  const [count, setCount] = useState(initialCount);
-
-  useEffect(() => {
-    setIsLiked(initialLiked);
-    setCount(initialCount);
-  }, [initialLiked, initialCount]);
+  const isLiked = initialLiked;
+  const count = initialCount;
 
   if (!isPublic) return null;
 

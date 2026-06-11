@@ -287,10 +287,18 @@ const EditorContents = ({
 
   const editorHeight = isMobile ? 300 : `calc(100vh - 100px)`;
 
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  useEffect(() => {
+    if (!isMobile) return;
+    const onScroll = () => setShowScrollTop(window.scrollY > 200);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [isMobile]);
+
   return (
     <div
       ref={outerRef}
-      className="relative flex w-full"
+      className="relative flex flex-col tablet:flex-row w-full tablet:h-full"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -373,12 +381,24 @@ const EditorContents = ({
         />
       </div>
 
-      {!isMobile && (
-        <EditorPreview
-          isVisiblePreview={isVisiblePreview}
-          containerTopRef={containerTopRef}
-          doc={doc}
-        />
+      <EditorPreview
+        isVisiblePreview={isVisiblePreview}
+        containerTopRef={containerTopRef}
+        doc={doc}
+        isMobile={isMobile}
+      />
+
+      {/* 모바일 위로가기 플로팅 버튼 */}
+      {isMobile && showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="fixed bottom-20 right-4 z-[100] w-10 h-10 flex items-center justify-center rounded-full bg-white/90 backdrop-blur-md shadow-lg border border-slate-200 text-gray-500 hover:text-ftBlue hover:border-ftBlue/40 transition-all active:scale-95"
+          aria-label="맨 위로"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
       )}
     </div>
   );

@@ -115,10 +115,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
           content="https://logme-io.vercel.app/assets/logo.png"
         />
 
-        <link
-          rel="canonical"
-          href="https://logme-io.vercel.app/article"
-        />
+        <link rel="canonical" href="https://logme-io.vercel.app/article" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -149,15 +146,25 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
               className="desktop:hidden fixed bottom-6 left-6 z-30 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-ftBlue rounded-full shadow-lg shadow-ftBlue/30 hover:bg-[#1f4a8c] transition-all duration-200 hover:scale-105 active:scale-95"
               aria-label="태그 관리 열기"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                />
               </svg>
               태그
             </button>
           </>
         )}
 
-        <div className="relative px-4 pt-4 pb-8 mx-auto max-w-6xl tablet:px-6 desktop:px-8">
+        <div className="relative mx-auto">
           {/* 데스크톱: 사이드바 + 메인 2컬럼 */}
           <div className="flex items-start gap-4">
             {/* 사이드바 (데스크톱 전용) */}
@@ -207,7 +214,11 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
                       inputRef={inputRef}
                       setKeyword={setKeyword}
                       mode="public"
-                      initialPosts={initialPosts && initialPosts.length > 0 ? initialPosts : undefined}
+                      initialPosts={
+                        initialPosts && initialPosts.length > 0
+                          ? initialPosts
+                          : undefined
+                      }
                     />
                   </div>
                 )}
@@ -224,8 +235,7 @@ export const getStaticProps = async () => {
   try {
     // NEXT_PUBLIC_API_BASE_URL 과 동일한 이름을 사용 (.env.production 기준)
     const API_URL =
-      process.env.NEXT_PUBLIC_API_BASE_URL ||
-      'http://158.179.174.170:8000';
+      process.env.NEXT_PUBLIC_API_BASE_URL || 'http://158.179.174.170:8000';
 
     const response = await fetch(`${API_URL}/posts/public/page/1`, {
       next: { revalidate: 60 },

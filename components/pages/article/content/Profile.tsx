@@ -42,7 +42,7 @@ const Profile = ({ getDetailData }: ProfileProps) => {
           ))}
       </figure>
 
-      <div className="flex flex-col w-full max-w-[250px]">
+      <div className="flex flex-col min-w-0 flex-1">
         <div className="text-sm font-semibold tablet:text-lg text-ftBlack">{displayName}</div>
         <div className="w-full text-gray-700 text-xs tablet:text-sm dark:text-gray-400 line-clamp-2">
           {!isDeletedUser && getDetailData?.description}

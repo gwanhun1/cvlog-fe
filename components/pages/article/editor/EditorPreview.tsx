@@ -15,6 +15,7 @@ interface EditorPreviewProps {
   isVisiblePreview: boolean;
   containerTopRef: React.RefObject<HTMLDivElement>;
   doc: DocType;
+  isMobile?: boolean;
 }
 
 interface CodeBlockProps {
@@ -29,15 +30,16 @@ const EditorPreview = ({
   isVisiblePreview,
   containerTopRef,
   doc,
+  isMobile,
 }: EditorPreviewProps) => {
   return (
     <>
       {isVisiblePreview && (
-        <div className="flex-1 tablet:min-w-[50vw] tablet:w-[50vw] overflow-hidden h-[80vh] border-l border-slate-200">
+        <div className="flex-1 w-full tablet:min-w-[50vw] tablet:w-[50vw] tablet:overflow-hidden border-t tablet:border-t-0 tablet:border-l border-slate-200">
           <div
             ref={containerTopRef}
-            className="w-full px-4 overflow-y-auto tablet:px-8"
-            style={{ height: 'calc(100vh - 100px)' }}
+            className="w-full px-4 tablet:overflow-y-auto tablet:px-8"
+            style={isMobile ? undefined : { height: 'calc(100vh - 100px)' }}
           >
             <div className={styles.contentMarkdown}>
               <ReactMarkdown

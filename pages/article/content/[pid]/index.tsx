@@ -18,7 +18,7 @@ import {
 } from '../../../../components/pages/article/content';
 import { useStore } from 'service/store/useStore';
 import { incrementViewCount } from 'service/api/detail';
-import type { ContentData, TagType, Content as ContentResponse } from 'service/api/detail/type';
+import type { ContentData, TagType } from 'service/api/detail/type';
 
 interface DetailProps {
   pid: string;
@@ -123,7 +123,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       await patchDetailMutation.mutateAsync({ id: parseInt(pid), public_status: newPublicStatus });
       setPatchMessage(newPublicStatus);
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['detail', pid] }),
+        queryClient.invalidateQueries({ queryKey: ['detail', parseInt(pid)] }),
         queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'publicList' }),
         queryClient.invalidateQueries({ predicate: q => q.queryKey[0] === 'list' }),
       ]);
@@ -357,7 +357,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         )}
 
         {/* 태그 + 날짜 + 조회수 */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-2 mobile:flex-row mobile:items-center mobile:justify-between">
           <div className="flex flex-wrap gap-1.5">
             {shouldShowSkeleton ? (
               <>
