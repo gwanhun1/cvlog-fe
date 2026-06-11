@@ -34,65 +34,44 @@ export const ErrorScreen = ({
   primaryCard,
   secondaryCard,
 }: ErrorScreenProps) => {
-  const renderCard = ({
-    title: cardTitle,
-    description: cardDescription,
-    buttonLabel,
-    onClick,
-    variant = 'classic',
-    buttonStyle,
-    buttonTextColor,
-    buttonClassName,
-    cardClassName,
-    cardStyle,
-  }: ErrorActionCard) => (
-    <div
-      className={`flex flex-col gap-4 rounded-2xl border border-gray-100 px-4 py-4 ${cardClassName || ''}`}
-      style={cardStyle}
-    >
-      <div>
-        <Shared.LogmeHeadline type="medium" fontStyle="bold">{cardTitle}</Shared.LogmeHeadline>
-        <Shared.LogmeText type="body" fontStyle="regular" className="text-ftGray">{cardDescription}</Shared.LogmeText>
-      </div>
-      <Shared.LogmeButton
-        variant={variant}
-        size="small"
-        onClick={onClick}
-        className={`${variant === 'ghost' ? 'border border-gray-200 bg-white' : ''} ${buttonClassName || ''}`}
-        style={buttonStyle}
-        fullWidth
-      >
-        <Shared.LogmeHeadline
-          type="medium"
-          fontStyle="semibold"
-          className="w-full text-center"
-          style={buttonTextColor ? { color: buttonTextColor } : variant === 'classic' ? { color: '#fff' } : undefined}
-        >
-          {buttonLabel}
-        </Shared.LogmeHeadline>
-      </Shared.LogmeButton>
-    </div>
-  );
-
   return (
-    <div className="min-h-[50vh] w-full bg-[#f7f9fe] px-3 py-8 text-ftBlack">
-      <div className="mx-auto w-full max-w-2xl rounded-3xl border border-gray-100 bg-white px-6 py-7 shadow-[0_25px_60px_rgba(15,23,42,0.08)]">
-        <div className="flex gap-4 items-start">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-200 bg-blue-50 text-xl font-bold text-ftBlue shadow-[0_10px_30px_rgba(37,99,235,0.15)]">
-            !
-          </div>
-          <div className="flex-1 space-y-1">
-            <div className="inline-flex gap-2 items-center px-3 py-1 text-xs font-semibold bg-blue-50 rounded-full border border-blue-100 text-ftBlue">
-              {badgeLabel}
-            </div>
-            <Shared.LogmeHeadline type="big" fontStyle="bold">{title}</Shared.LogmeHeadline>
-            <Shared.LogmeText type="body" fontStyle="regular" className="text-ftGray">{description}</Shared.LogmeText>
-          </div>
+    <div className="min-h-[50vh] w-full flex items-center justify-center bg-[#f7f9fe] px-4 py-12">
+      <div className="w-full max-w-sm rounded-2xl border border-gray-100 bg-white px-7 py-8 shadow-[0_8px_32px_rgba(15,23,42,0.08)] flex flex-col items-center text-center gap-5">
+
+        {/* 아이콘 */}
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-400 border border-red-100">
+          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+          </svg>
         </div>
-        <div className="mt-6 space-y-3">
-          {renderCard(primaryCard)}
-          {renderCard(secondaryCard)}
+
+        {/* 텍스트 */}
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-500 rounded-full">
+            {badgeLabel}
+          </div>
+          <h2 className="text-lg font-bold text-gray-900">{title}</h2>
+          <p className="text-sm text-gray-500 leading-relaxed break-keep">{description}</p>
         </div>
+
+        {/* 버튼 2개 가로 나열 */}
+        <div className="flex w-full gap-2 pt-1">
+          <button
+            type="button"
+            onClick={secondaryCard.onClick}
+            className="flex-1 py-2.5 text-sm font-semibold rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {secondaryCard.buttonLabel}
+          </button>
+          <button
+            type="button"
+            onClick={primaryCard.onClick}
+            className="flex-1 py-2.5 text-sm font-semibold rounded-xl bg-ftBlue text-white hover:bg-ftBlue/90 transition-colors"
+          >
+            {primaryCard.buttonLabel}
+          </button>
+        </div>
+
       </div>
     </div>
   );

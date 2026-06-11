@@ -14,6 +14,7 @@ import {
   Profile,
   PostNavigation,
   RelatedPosts,
+  LikeButton,
 } from '../../../../components/pages/article/content';
 import { useStore } from 'service/store/useStore';
 import { incrementViewCount } from 'service/api/detail';
@@ -169,7 +170,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     [selectTagList, setSelectTagList],
   );
 
-  const resolvedData = initialData || detailData;
+  const resolvedData = detailData || initialData;
   const shouldShowSkeleton = isLoading && !initialData;
   const postData = resolvedData?.post;
   const isOwner =
@@ -200,10 +201,8 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
         <div className="mb-4 text-2xl font-bold text-gray-700">게시물을 찾을 수 없습니다.</div>
         <div className="mb-8 text-gray-500">삭제되었거나 비공개된 게시물일 수 있습니다.</div>
-        <Link href="/article">
-          <a className="px-6 py-2 text-white bg-ftBlue rounded-lg transition-colors hover:bg-[#1f4a8c]">
-            목록으로 돌아가기
-          </a>
+        <Link href="/article" className="px-6 py-2 text-white bg-ftBlue rounded-lg transition-colors hover:bg-[#1f4a8c]">
+          목록으로 돌아가기
         </Link>
       </div>
     );
@@ -393,6 +392,16 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                 {viewCount.toLocaleString()}
               </span>
             )}
+            {!shouldShowSkeleton && postData && (
+              <LikeButton
+                postId={postData.id}
+                initialLiked={postData.is_liked ?? false}
+                initialCount={postData.like_count ?? 0}
+                isPublic={postData.public_status}
+                currentUserId={userInfo?.id}
+                isInHeader={true}
+              />
+            )}
             <time className="text-xs text-gray-400">
               {postData?.created_at?.slice(0, 10)}
             </time>
@@ -416,6 +425,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
           id={postData?.id}
         />
       </main>
+
 
       <PostNavigation
         prevPostInfo={resolvedData?.prevPostInfo}

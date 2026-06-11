@@ -8,7 +8,7 @@ import { useStore } from 'service/store/useStore';
 import { cn } from 'styles/utils';
 
 const NavProfile = ({ setAuthority, shrink = false }: Props) => {
-  const userInfo = useStore((state) => state.userIdAtom);
+  const userInfo = useStore(state => state.userIdAtom);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const NavProfile = ({ setAuthority, shrink = false }: Props) => {
             alt="User"
             className={cn(
               'rounded-full object-cover cursor-pointer ring-2 ring-slate-200 hover:ring-ftBlue/40 transition-all duration-300',
-              shrink ? 'w-6 h-6' : 'w-9 h-9'
+              shrink ? 'w-6 h-6' : 'w-9 h-9',
             )}
           />
         }
@@ -54,7 +54,7 @@ const NavProfile = ({ setAuthority, shrink = false }: Props) => {
           <Link href="/mypage" prefetch={true}>
             <DropdownItem>
               <HiOutlineCog6Tooth className="w-4 h-4 flex-shrink-0" />
-              설정
+              마이페이지/설정
             </DropdownItem>
           </Link>
           <DropdownItem onClick={onClickLogout} danger>

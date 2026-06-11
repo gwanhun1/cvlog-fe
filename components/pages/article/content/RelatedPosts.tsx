@@ -40,25 +40,27 @@ export const RelatedPosts = ({ postId }: RelatedPostsProps) => {
       <h2 className="mb-3 text-sm font-semibold text-gray-500">관련 글</h2>
       <div className="flex flex-col gap-2">
         {posts.map(post => (
-          <Link key={post.id} href={`/article/content/${post.id}`}>
-            <a className="flex items-center justify-between px-4 py-3 rounded-xl border border-slate-100 bg-white hover:border-ftBlue/30 hover:bg-ftBlue/5 transition-all group">
-              <span className="text-sm font-medium text-gray-700 group-hover:text-ftBlue line-clamp-1 flex-1">
-                {post.title}
-              </span>
-              <div className="flex items-center gap-2 ml-3 flex-shrink-0">
-                {post.tags?.slice(0, 2).map(tag => (
-                  <span
-                    key={tag.id}
-                    className="px-2 py-0.5 text-xs text-ftBlue bg-ftBlue/5 border border-ftBlue/20 rounded-full"
-                  >
-                    {tag.name}
-                  </span>
-                ))}
-                <time className="text-xs text-gray-400">
-                  {post.created_at?.slice(0, 10)}
-                </time>
-              </div>
-            </a>
+          <Link
+            key={post.id}
+            href={`/article/content/${post.id}`}
+            className="flex items-center justify-between px-4 py-3 rounded-xl border border-slate-100 bg-white hover:border-ftBlue/30 hover:bg-ftBlue/5 transition-all group"
+          >
+            <span className="text-sm font-medium text-gray-700 group-hover:text-ftBlue line-clamp-1 flex-1">
+              {post.title}
+            </span>
+            <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+              {post.tags?.slice(0, 2).map(tag => (
+                <span
+                  key={tag.id}
+                  className="px-2 py-0.5 text-xs text-ftBlue bg-ftBlue/5 border border-ftBlue/20 rounded-full"
+                >
+                  {tag.name}
+                </span>
+              ))}
+              <time className="text-xs text-gray-400">
+                {post.created_at?.slice(0, 10)}
+              </time>
+            </div>
           </Link>
         ))}
       </div>

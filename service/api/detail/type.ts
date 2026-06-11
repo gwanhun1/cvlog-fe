@@ -54,6 +54,8 @@ export interface ContentData {
   updated_at: string;
   deleted_at: null;
   tags: TagType[];
+  is_liked: boolean;
+  like_count: number;
 }
 
 export interface RelatedPost {

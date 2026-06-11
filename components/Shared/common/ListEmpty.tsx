@@ -1,4 +1,12 @@
-const ListEmpty = () => {
+interface ListEmptyProps {
+  message?: string;
+  subMessage?: string;
+}
+
+const ListEmpty = ({
+  message = '아직 작성된 글이 없어요',
+  subMessage = '첫 번째 이야기의 주인공이 되어보세요',
+}: ListEmptyProps) => {
   return (
     <div className="flex flex-col gap-6 w-full justify-center items-center h-80 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
       <div className="relative">
@@ -37,10 +45,10 @@ const ListEmpty = () => {
       </div>
       <div className="flex flex-col gap-2 items-center text-center">
         <h3 className="text-xl font-semibold text-gray-700">
-          아직 작성된 글이 없어요
+          {message}
         </h3>
         <p className="text-sm text-gray-500">
-          첫 번째 이야기의 주인공이 되어보세요
+          {subMessage}
         </p>
       </div>
     </div>

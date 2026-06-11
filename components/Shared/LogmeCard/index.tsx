@@ -149,7 +149,7 @@ const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
           <div className="overflow-hidden absolute right-0 bottom-0 pointer-events-none">
             <div className="flex items-center gap-2 py-1.5 px-3 mb-2 mr-2 bg-white/80 backdrop-blur-md rounded-full border shadow-sm transition-all duration-300 translate-y-full opacity-0 border-ftBlue/20 group-hover:translate-y-0 group-hover:opacity-100">
               <div className="overflow-hidden relative w-5 h-5 rounded-full ring-1 ring-ftBlue/10">
-                {user.profile_image.includes('googleusercontent.com') ? (
+                {user.profile_image?.includes('googleusercontent.com') ? (
                   <img
                     src={user.profile_image}
                     alt={user.name}

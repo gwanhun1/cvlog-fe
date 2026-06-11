@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
+import { HiBell, HiOutlineBell } from 'react-icons/hi2';
 import {
   useGetNotifications,
   useGetUnreadCount,
@@ -11,18 +12,9 @@ import { cn } from 'styles/utils';
 
 const BellIcon = ({ filled }: { filled: boolean }) =>
   filled ? (
-    <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
-    </svg>
+    <HiBell className="w-[18px] h-[18px]" />
   ) : (
-    <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.8}
-        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a1 1 0 10-2 0v.083A6 6 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-      />
-    </svg>
+    <HiOutlineBell className="w-[18px] h-[18px]" strokeWidth={1.8} />
   );
 
 const CommentIcon = () => (
@@ -104,11 +96,11 @@ const LogmeNotification = () => {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          'relative flex items-center justify-center w-8 h-8 rounded-full transition-colors',
+          'relative flex items-center justify-center w-9 h-9 rounded-full border-2 transition-all duration-300',
           ringing && 'bell-ring',
           open
-            ? 'text-ftBlue bg-ftBlue/10'
-            : 'text-gray-400 hover:text-ftBlue hover:bg-ftBlue/5',
+            ? 'text-ftBlue bg-ftBlue/10 border-ftBlue/30'
+            : 'text-gray-400 border-slate-200 hover:text-ftBlue hover:border-ftBlue/40 hover:bg-ftBlue/5',
         )}
         aria-label="알림"
       >
