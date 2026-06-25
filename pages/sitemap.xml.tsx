@@ -142,9 +142,12 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 
   const sitemap = generateSiteMap(posts);
   res.setHeader('Content-Type', 'text/xml; charset=utf-8');
+  // CDN에 하루 캐시 + 일주일간 stale-while-revalidate.
+  // 트래픽이 적어 서버가 자주 cold가 되더라도, 구글봇은 백엔드(최대 9초)를
+  // 기다리지 않고 항상 캐시된 sitemap을 즉시 받는다. 갱신은 백그라운드에서 처리.
   res.setHeader(
     'Cache-Control',
-    'public, s-maxage=3600, stale-while-revalidate=600',
+    'public, s-maxage=86400, stale-while-revalidate=604800',
   );
   res.statusCode = 200;
   res.write(sitemap);
