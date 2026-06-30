@@ -70,8 +70,9 @@ const LoginButtonGroup = () => {
     if (loginMethod === 'Github') {
       const githubId = process.env.NEXT_PUBLIC_GITHUB_ID;
       // 로그인한 도메인 그대로 돌아오도록 현재 origin 사용 (고정 env 대신).
-      // logme.cloud에서 로그인하면 logme.cloud로 복귀.
-      const redirectUri = window.location.origin;
+      // OAuth 콜백 경로가 /join 이므로 반드시 /join 을 붙인다.
+      // logme.cloud에서 로그인하면 https://logme.cloud/join 으로 복귀.
+      const redirectUri = `${window.location.origin}/join`;
 
       if (!githubId) {
         console.error('GitHub OAuth 설정이 누락되었습니다:', {
