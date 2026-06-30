@@ -69,9 +69,11 @@ const LoginButtonGroup = () => {
   const proceedLogin = (loginMethod: string) => {
     if (loginMethod === 'Github') {
       const githubId = process.env.NEXT_PUBLIC_GITHUB_ID;
-      const redirectUri = process.env.NEXT_PUBLIC_URL;
+      // 로그인한 도메인 그대로 돌아오도록 현재 origin 사용 (고정 env 대신).
+      // logme.cloud에서 로그인하면 logme.cloud로 복귀.
+      const redirectUri = window.location.origin;
 
-      if (!githubId || !redirectUri) {
+      if (!githubId) {
         console.error('GitHub OAuth 설정이 누락되었습니다:', {
           githubId,
           redirectUri,

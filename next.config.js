@@ -47,7 +47,22 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
   async redirects() {
-    return [];
+    return [
+      // 정식 도메인 통일: 구 도메인/www 접속은 logme.cloud로 301 리다이렉트.
+      // (Vercel 프리뷰 *.vercel.app은 정확히 logme-io.vercel.app만 매칭되어 영향 없음)
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'logme-io.vercel.app' }],
+        destination: 'https://logme.cloud/:path*',
+        permanent: true,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'www.logme.cloud' }],
+        destination: 'https://logme.cloud/:path*',
+        permanent: true,
+      },
+    ];
   },
   // 비공개/삭제된 게시물 접근 시 /article/content/[pid] (로그인 전용)에서
   // 404가 아닌 리디렉션 오류가 발생하지 않도록 rewrites 없이 깔끔하게 처리
