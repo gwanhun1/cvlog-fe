@@ -37,10 +37,10 @@ const Home: NextPage = () => {
           content="개발자를 위한 마크다운 블로그 플랫폼. 무료 개발자 이력서 작성, 실시간 미리보기, PDF 저장까지 한 곳에서."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://logme-io.vercel.app" />
+        <meta property="og:url" content="https://logme.cloud" />
         <meta
           property="og:image"
-          content="https://logme-io.vercel.app/assets/logo.png"
+          content="https://logme.cloud/assets/logo.png"
         />
         <meta property="og:site_name" content="LOGME" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -54,9 +54,9 @@ const Home: NextPage = () => {
         />
         <meta
           name="twitter:image"
-          content="https://logme-io.vercel.app/assets/logo.png"
+          content="https://logme.cloud/assets/logo.png"
         />
-        <link rel="canonical" href="https://logme-io.vercel.app" />
+        <link rel="canonical" href="https://logme.cloud" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -65,7 +65,7 @@ const Home: NextPage = () => {
                 '@context': 'https://schema.org',
                 '@type': 'WebSite',
                 name: 'LOGME',
-                url: 'https://logme-io.vercel.app',
+                url: 'https://logme.cloud',
                 description: '개발자를 위한 마크다운 블로그 & 무료 이력서 빌더',
                 inLanguage: 'ko-KR',
                 potentialAction: {
@@ -73,7 +73,7 @@ const Home: NextPage = () => {
                   target: {
                     '@type': 'EntryPoint',
                     urlTemplate:
-                      'https://logme-io.vercel.app/article?q={search_term_string}',
+                      'https://logme.cloud/article?q={search_term_string}',
                   },
                   'query-input': 'required name=search_term_string',
                 },
@@ -84,7 +84,7 @@ const Home: NextPage = () => {
                 name: 'LOGME 이력서 빌더',
                 applicationCategory: 'BusinessApplication',
                 operatingSystem: 'Web',
-                url: 'https://logme-io.vercel.app/resume',
+                url: 'https://logme.cloud/resume',
                 description:
                   '개발자 맞춤 무료 이력서 작성 도구. 실시간 미리보기, PDF 저장, 자동저장, 섹션 드래그 지원.',
                 inLanguage: 'ko-KR',

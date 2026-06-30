@@ -202,7 +202,7 @@ const PostListView = ({
                         >
                           <meta
                             itemProp="mainEntityOfPage"
-                            content={`https://logme-io.vercel.app/article/content/${id}`}
+                            content={`https://logme.cloud/article/content/${id}`}
                           />
                           <meta itemProp="headline" content={title} />
                           <meta itemProp="dateModified" content={updated_at} />

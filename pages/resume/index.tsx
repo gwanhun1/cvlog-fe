@@ -1247,10 +1247,10 @@ const ResumeBuilder = () => {
           content="개발자 맞춤 이력서를 무료로 작성하세요. 실시간 미리보기, PDF 저장, 자동저장까지 모두 무료."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://logme-io.vercel.app/resume" />
+        <meta property="og:url" content="https://logme.cloud/resume" />
         <meta
           property="og:image"
-          content="https://logme-io.vercel.app/assets/logo.png"
+          content="https://logme.cloud/assets/logo.png"
         />
         <meta property="og:site_name" content="LOGME" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -1259,7 +1259,7 @@ const ResumeBuilder = () => {
           name="twitter:description"
           content="개발자 맞춤 이력서 무료 작성. 실시간 미리보기 + PDF 저장."
         />
-        <link rel="canonical" href="https://logme-io.vercel.app/resume" />
+        <link rel="canonical" href="https://logme.cloud/resume" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -1269,7 +1269,7 @@ const ResumeBuilder = () => {
               name: 'LOGME 이력서 빌더',
               applicationCategory: 'BusinessApplication',
               operatingSystem: 'Web',
-              url: 'https://logme-io.vercel.app/resume',
+              url: 'https://logme.cloud/resume',
               description:
                 '개발자 맞춤 무료 이력서 작성 도구. 경력, 프로젝트, 기술스택을 입력하면 A4 이력서로 완성됩니다. 실시간 미리보기, PDF 저장, 자동저장, 섹션 드래그 기능 제공.',
               inLanguage: 'ko-KR',

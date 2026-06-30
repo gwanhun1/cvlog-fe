@@ -191,12 +191,12 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
 
   const postImage = useMemo(() => {
     const content = postData?.content;
-    if (!content) return 'https://logme-io.vercel.app/assets/logo.png';
+    if (!content) return 'https://logme.cloud/assets/logo.png';
     const md = content.match(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/);
     if (md) return md[1];
     const html = content.match(/<img[^>]+src=["'](https?:\/\/[^\s"']+)["']/);
     if (html) return html[1];
-    return 'https://logme-io.vercel.app/assets/logo.png';
+    return 'https://logme.cloud/assets/logo.png';
   }, [postData?.content]);
 
   if (!shouldShowSkeleton && !resolvedData?.post) {
@@ -211,7 +211,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     );
   }
 
-  const canonicalUrl = `https://logme-io.vercel.app/article/content/${pid}`;
+  const canonicalUrl = `https://logme.cloud/article/content/${pid}`;
   const isPublic = postData?.public_status ?? false;
 
   return (
@@ -335,7 +335,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                   name: 'LOGME',
                   logo: {
                     '@type': 'ImageObject',
-                    url: 'https://logme-io.vercel.app/assets/logo.png',
+                    url: 'https://logme.cloud/assets/logo.png',
                   },
                 },
                 mainEntityOfPage: {

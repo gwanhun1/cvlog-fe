@@ -14,4 +14,4 @@ Disallow: /article/new
 Disallow: /github
 Disallow: /api/
 
-Sitemap: https://logme-io.vercel.app/sitemap.xml
+Sitemap: https://logme.cloud/sitemap.xml

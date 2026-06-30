@@ -15,13 +15,13 @@ export default function Document() {
         <meta name="application-name" content="LogMe" />
         <meta
           name="msapplication-TileImage"
-          content="https://logme-io.vercel.app/assets/logo.png"
+          content="https://logme.cloud/assets/logo.png"
         />
 
         {/* 기본 OG 이미지 - 각 페이지에서 개별 설정으로 덮어씀 */}
         <meta
           property="og:image"
-          content="https://logme-io.vercel.app/assets/logo.png"
+          content="https://logme.cloud/assets/logo.png"
         />
         <meta property="og:locale" content="ko_KR" />
 

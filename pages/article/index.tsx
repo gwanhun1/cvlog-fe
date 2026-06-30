@@ -97,10 +97,10 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
           content="LOGME의 다양한 개발 관련 게시물을 확인하세요."
         />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://logme-io.vercel.app/article" />
+        <meta property="og:url" content="https://logme.cloud/article" />
         <meta
           property="og:image"
-          content="https://logme-io.vercel.app/assets/logo.png"
+          content="https://logme.cloud/assets/logo.png"
         />
         <meta property="og:site_name" content="LOGME" />
 
@@ -112,10 +112,10 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
         />
         <meta
           name="twitter:image"
-          content="https://logme-io.vercel.app/assets/logo.png"
+          content="https://logme.cloud/assets/logo.png"
         />
 
-        <link rel="canonical" href="https://logme-io.vercel.app/article" />
+        <link rel="canonical" href="https://logme.cloud/article" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -123,13 +123,13 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
               '@context': 'https://schema.org',
               '@type': 'CollectionPage',
               name: 'LOGME - 모든 게시물 목록',
-              url: 'https://logme-io.vercel.app/article',
+              url: 'https://logme.cloud/article',
               description: 'LOGME의 모든 개발 관련 게시물을 확인하세요.',
               inLanguage: 'ko-KR',
               isPartOf: {
                 '@type': 'WebSite',
                 name: 'LOGME',
-                url: 'https://logme-io.vercel.app',
+                url: 'https://logme.cloud',
               },
             }),
           }}

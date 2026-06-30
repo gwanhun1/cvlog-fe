@@ -7,9 +7,9 @@ All public posts are written in Korean by software developers.
 
 ## Service
 
-- Homepage: https://logme-io.vercel.app
-- All Posts: https://logme-io.vercel.app/article
-- Sitemap: https://logme-io.vercel.app/sitemap.xml
+- Homepage: https://logme.cloud
+- All Posts: https://logme.cloud/article
+- Sitemap: https://logme.cloud/sitemap.xml
 
 ## Content
 

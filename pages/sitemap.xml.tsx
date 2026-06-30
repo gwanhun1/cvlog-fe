@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 
-const BASE_URL = 'https://logme-io.vercel.app';
+const BASE_URL = 'https://logme.cloud';
 
 // 마지막으로 성공한 게시물 목록을 메모리에 캐시 (백엔드 장애 시 fallback로 글이
 // 통째로 사라지는 사고 방지 — 구글이 빈 sitemap을 받지 않도록)
