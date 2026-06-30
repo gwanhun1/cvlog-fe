@@ -118,6 +118,7 @@ const EditorHeader = ({
       title: doc.title.trim(),
       content: doc.content.trim(),
       user_id: userId,
+      public_status: true,
       tags: doc.tags,
       files: imageArr,
       ...(mode === 'edit' && { category_id: 1 }),

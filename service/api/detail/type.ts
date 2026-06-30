@@ -78,6 +78,7 @@ export interface CreateNewPostReq {
   title: string;
   content: string;
   user_id: number;
+  public_status: boolean;
   category_id?: number;
   tags: string[];
   files: string[];
