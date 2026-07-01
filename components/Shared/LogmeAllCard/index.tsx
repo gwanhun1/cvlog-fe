@@ -71,7 +71,10 @@ const LogmeAllCard: React.FC<CardProps> = ({ title, content, updated_at, tags })
             )}
           </div>
           {updated_at && (
-            <time className="flex-shrink-0 ml-3 text-xs text-gray-400">
+            <time
+              suppressHydrationWarning
+              className="flex-shrink-0 ml-3 text-xs text-gray-400"
+            >
               {formatTimeAgo(updated_at)}
             </time>
           )}

@@ -133,6 +133,7 @@ const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
             </div>
             {updated_at && (
               <time
+                suppressHydrationWarning
                 className="flex-shrink-0 ml-3 text-xs text-slate-400"
                 itemProp="dateModified"
                 dateTime={updated_at}
