@@ -56,6 +56,8 @@ export interface ContentData {
   tags: TagType[];
   is_liked: boolean;
   like_count: number;
+  series?: string | null;
+  series_order?: number | null;
 }
 
 export interface RelatedPost {
@@ -82,4 +84,6 @@ export interface CreateNewPostReq {
   category_id?: number;
   tags: string[];
   files: string[];
+  series?: string | null;
+  series_order?: number | null;
 }

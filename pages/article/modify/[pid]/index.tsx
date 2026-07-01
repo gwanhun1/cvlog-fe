@@ -34,11 +34,13 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
 
   useEffect(() => {
     if (isDetailSuccess && detailData?.post) {
-      const { title, content, tags } = detailData.post;
+      const { title, content, tags, series, series_order } = detailData.post;
       setDoc({
         title: title || '',
         content: content || '',
         tags: tags?.map(tag => tag.name) || [],
+        series: series || '',
+        series_order: series_order ?? null,
       });
       setIsInitialized(true);
     }

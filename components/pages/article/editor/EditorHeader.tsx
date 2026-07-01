@@ -114,6 +114,7 @@ const EditorHeader = ({
       return;
     }
 
+    const series = doc.series?.trim() || null;
     const formData = {
       title: doc.title.trim(),
       content: doc.content.trim(),
@@ -121,6 +122,8 @@ const EditorHeader = ({
       public_status: true,
       tags: doc.tags,
       files: imageArr,
+      series,
+      series_order: series ? doc.series_order ?? null : null,
       ...(mode === 'edit' && { category_id: 1 }),
     };
 
@@ -334,6 +337,37 @@ const EditorHeader = ({
                 />
               </svg>
             </button>
+          )}
+        </div>
+
+        {/* ③ 시리즈(연재) — 선택 입력 */}
+        <div className="flex items-center gap-2 px-3 py-2 border-t border-slate-50">
+          <span className="flex-shrink-0 text-xs text-gray-400">시리즈</span>
+          <input
+            className="flex-1 min-w-0 text-sm text-ftBlack placeholder:text-gray-300 focus:outline-none bg-transparent"
+            name="series"
+            value={doc.series || ''}
+            placeholder="연재 시리즈 이름 (선택)"
+            onChange={e =>
+              setDoc(prev => ({ ...prev, series: e.target.value }))
+            }
+          />
+          {doc.series?.trim() && (
+            <input
+              type="number"
+              min={1}
+              className="w-16 text-sm text-center text-ftBlack placeholder:text-gray-300 focus:outline-none bg-transparent border-b border-ftBlue/30"
+              name="series_order"
+              value={doc.series_order ?? ''}
+              placeholder="순번"
+              onChange={e =>
+                setDoc(prev => ({
+                  ...prev,
+                  series_order:
+                    e.target.value === '' ? null : Number(e.target.value),
+                }))
+              }
+            />
           )}
         </div>
       </div>
