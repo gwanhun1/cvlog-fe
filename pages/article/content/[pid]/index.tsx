@@ -8,6 +8,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from 'components/Shared';
 import CommentBox from 'components/Shared/LogmeComment';
 import ShareButtons from 'components/Shared/ShareButtons';
+import ReadingProgressBar from 'components/Shared/ReadingProgressBar';
+import { getReadingTimeMinutes } from 'utils/readingTime';
 import { useGetDetail, useDeleteDetail, usePatchDetail } from 'service/hooks/Detail';
 import {
   Content as ContentLayout,
@@ -199,6 +201,11 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     return 'https://logme.cloud/assets/logo.png';
   }, [postData?.content]);
 
+  const readingMinutes = useMemo(
+    () => getReadingTimeMinutes(postData?.content),
+    [postData?.content],
+  );
+
   if (!shouldShowSkeleton && !resolvedData?.post) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
@@ -216,6 +223,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
 
   return (
     <div className="flex flex-col items-center gap-6 pb-12 w-full">
+      <ReadingProgressBar />
       {/* 뒤로가기 + owner 버튼 상단 바 */}
       <div className="flex justify-between items-center w-full pt-2">
         <button
@@ -387,6 +395,14 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
             )}
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
+            {!shouldShowSkeleton && postData?.content && (
+              <span className="flex items-center gap-1 text-xs text-gray-400">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {readingMinutes}분
+              </span>
+            )}
             {viewCount !== null && (
               <span className="flex items-center gap-1 text-xs text-gray-400">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

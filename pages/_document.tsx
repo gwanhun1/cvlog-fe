@@ -11,6 +11,14 @@ export default function Document() {
         {/* 파비콘 설정 */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
 
+        {/* RSS 피드 자동 발견 (피드 리더가 인식) */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="LOGME RSS"
+          href="https://logme.cloud/rss.xml"
+        />
+
         {/* 검색 엔진에 표시되는 아이콘 설정 */}
         <meta name="application-name" content="LogMe" />
         <meta
