@@ -4,8 +4,17 @@ import LoginButtonGroup from 'components/pages/dashboard/LoginButtonGroup';
 import GuestButton from 'components/pages/dashboard/GuestButton';
 import * as Shared from 'components/Shared';
 
+// ssr:false로 버튼이 마운트 후 나타나면 세로 중앙정렬 카드의 높이가 커지며
+// 위로 밀리는 레이아웃 시프트(깜빡임)가 생긴다. 동일 높이(h-11) placeholder로
+// 공간을 미리 확보해 시프트를 없앤다.
 const ClientButtonGroup = dynamic(() => Promise.resolve(LoginButtonGroup), {
   ssr: false,
+  loading: () => (
+    <div
+      aria-hidden
+      className="h-11 rounded-xl bg-gray-100 animate-pulse"
+    />
+  ),
 });
 
 const Login = () => {

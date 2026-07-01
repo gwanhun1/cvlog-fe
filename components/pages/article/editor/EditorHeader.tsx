@@ -147,45 +147,8 @@ const EditorHeader = ({
     <>
       {isLoading && <LoaderAnimation />}
       <div className="w-full">
-        {/* ① 제목 행 = 배지 + 제목(flex-1) + 버튼들 */}
+        {/* ① 제목 행 = 제목(flex-1) + 버튼들 */}
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-slate-100">
-          {/* 모드 배지 */}
-          {mode === 'create' ? (
-            <div className="hidden tablet:inline-flex flex-shrink-0 items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-md border border-ftBlue/20 bg-ftBlue/5 text-ftBlue tracking-wide">
-              <svg
-                className="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              새 글
-            </div>
-          ) : (
-            <span className="hidden tablet:inline-flex flex-shrink-0 items-center gap-1 text-[11px] text-gray-400 select-none">
-              <svg
-                className="w-3 h-3"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                />
-              </svg>
-              수정 중
-            </span>
-          )}
-
           {/* 제목 입력 */}
           <input
             className="flex-1 min-w-0 font-bold text-ftBlack placeholder:text-gray-300 text-lg tablet:text-2xl focus:outline-none bg-transparent"

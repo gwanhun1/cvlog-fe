@@ -1680,74 +1680,11 @@ const ResumeBuilder = () => {
           {/* Right: Preview */}
           <div className={`hidden tablet:block w-[50%] flex-shrink-0`}>
             <div className="sticky top-[68px] z-30">
-              {/* Sticky action buttons — tablet+ only */}
-              <div className="flex items-center justify-between mb-2 px-1">
+              {/* 미리보기 라벨 (저장/PDF는 좌측 상단바에 이미 있어 중복 제거) */}
+              <div className="flex items-center mb-2 px-1">
                 <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
                   미리보기
                 </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleSave}
-                    disabled={saving}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-bold text-white bg-ftBlue rounded-xl hover:bg-ftBlue/90 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-ftBlue/25"
-                  >
-                    {saving ? (
-                      <svg
-                        className="w-3.5 h-3.5 animate-spin"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
-                        />
-                      </svg>
-                    )}
-                    저장
-                  </button>
-                  <button
-                    onClick={() => window.print()}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 text-sm font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 active:scale-95 transition-all"
-                  >
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                      />
-                    </svg>
-                    PDF
-                  </button>
-                </div>
               </div>
               <div className="rounded-2xl border border-slate-200 shadow-lg overflow-auto max-h-[calc(100vh-116px)] bg-white">
                 <ResumePreview data={{ ...data, photo }} />
