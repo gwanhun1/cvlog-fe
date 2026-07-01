@@ -9,6 +9,8 @@ export interface DocType {
   title: string;
   content: string;
   tags: string[];
+  series?: string;
+  series_order?: number | null;
 }
 
 interface EditorPreviewProps {

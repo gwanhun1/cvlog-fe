@@ -8,6 +8,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from 'components/Shared';
 import CommentBox from 'components/Shared/LogmeComment';
 import ShareButtons from 'components/Shared/ShareButtons';
+import SeriesNav from 'components/Shared/SeriesNav';
 import { useGetDetail, useDeleteDetail, usePatchDetail } from 'service/hooks/Detail';
 import {
   Content as ContentLayout,
@@ -420,6 +421,10 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         )}
 
       </header>
+
+      {!shouldShowSkeleton && postData?.series && (
+        <SeriesNav seriesName={postData.series} currentPostId={postData.id} />
+      )}
 
       <main className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm px-6 py-8 tablet:px-10">
         <ContentLayout
