@@ -9,6 +9,7 @@ import SideView from '../../components/pages/article/sideView/SideView';
 import LocalStorage from 'public/utils/Localstorage';
 import MenuTab from 'components/pages/article/sideView/MenuTab';
 import FilterBox from 'components/Shared/LogmeFilterBox/FilterBox';
+import PopularPosts from 'components/Shared/PopularPosts';
 import { useStore } from 'service/store/useStore';
 import { BlogType } from 'service/api/tag/type';
 
@@ -186,7 +187,8 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
             </AnimatePresence>
 
             {/* 메인 콘텐츠 */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 space-y-4">
+              <PopularPosts />
               <div className="p-4 space-y-3 rounded-2xl bg-white shadow-sm">
                 <FilterBox
                   keyword={keyword}
