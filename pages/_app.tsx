@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import { GoogleTagManager } from '@next/third-parties/google';
+import { GoogleTagManager, GoogleAnalytics } from '@next/third-parties/google';
 
 const ClientNav = dynamic(() => import('components/Shared/LogmeNav'), {
   ssr: true,
@@ -32,6 +32,8 @@ export default function App({ Component, pageProps }: AppProps) {
   );
 
   const gtmId = process.env.NEXT_PUBLIC_GTM_ID || '';
+  // GA4 측정 ID(G-XXXX). Vercel 환경변수에만 설정 → 로컬/미설정 환경에선 로드 안 됨.
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || '';
 
   useEffect(() => {
     const handleStart = () => NProgress.start();
@@ -59,6 +61,7 @@ export default function App({ Component, pageProps }: AppProps) {
             />
           </Head>
           {gtmId && <GoogleTagManager gtmId={gtmId} />}
+          {gaId && <GoogleAnalytics gaId={gaId} />}
           {router.pathname === '/login' ||
           router.pathname === '/article/new' ||
           router.pathname.startsWith('/article/modify/') ? null : (
