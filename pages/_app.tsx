@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import { GoogleTagManager, GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const ClientNav = dynamic(() => import('components/Shared/LogmeNav'), {
   ssr: true,
@@ -31,9 +31,9 @@ export default function App({ Component, pageProps }: AppProps) {
       }),
   );
 
-  const gtmId = process.env.NEXT_PUBLIC_GTM_ID || '';
-  // GA4 측정 ID(G-XXXX). Vercel 환경변수에만 설정 → 로컬/미설정 환경에선 로드 안 됨.
-  const gaId = process.env.NEXT_PUBLIC_GA_ID || '';
+  // GA4(logme 전용 속성). 기존 GTM(cvlog G-7WVP5XN87G) 중복을 없애기 위해 GTM은 제거하고
+  // logme 측정 ID를 단일 소스로 사용. 환경변수로 덮어쓸 수 있게 기본값 지정.
+  const gaId = process.env.NEXT_PUBLIC_GA_ID || 'G-JD2NS6CQGN';
 
   useEffect(() => {
     const handleStart = () => NProgress.start();
@@ -60,7 +60,6 @@ export default function App({ Component, pageProps }: AppProps) {
               content="width=device-width, initial-scale=1.0"
             />
           </Head>
-          {gtmId && <GoogleTagManager gtmId={gtmId} />}
           {gaId && <GoogleAnalytics gaId={gaId} />}
           {router.pathname === '/login' ||
           router.pathname === '/article/new' ||
