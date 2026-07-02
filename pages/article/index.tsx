@@ -188,7 +188,8 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
 
             {/* 메인 콘텐츠 */}
             <div className="flex-1 min-w-0 space-y-4">
-              <PopularPosts />
+              {/* 인기 글은 공개 발견용 — '전체' 탭에서만 노출('내 글' 관리 탭 제외) */}
+              {menu === 'all' && <PopularPosts />}
               <div className="p-4 space-y-3 rounded-2xl bg-white shadow-sm">
                 <FilterBox
                   keyword={keyword}
