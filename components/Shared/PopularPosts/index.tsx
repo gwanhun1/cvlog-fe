@@ -12,7 +12,27 @@ interface PopularPostsProps {
 const PopularPosts = ({ limit = 5 }: PopularPostsProps) => {
   const { data, isLoading } = usePopularPosts(limit);
 
-  if (isLoading || !data || data.length === 0) return null;
+  // 로딩 중엔 동일 골격의 스켈레톤으로 공간을 미리 확보해 갑툭튀(CLS)를 막는다
+  if (isLoading) {
+    return (
+      <section aria-hidden className="p-4 rounded-2xl bg-white shadow-sm">
+        <div className="flex items-center gap-1.5 mb-2">
+          <div className="w-4 h-4 rounded bg-gray-100 animate-pulse" />
+          <div className="w-14 h-4 rounded bg-gray-100 animate-pulse" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          {Array.from({ length: limit }).map((_, i) => (
+            <div
+              key={i}
+              className="h-[26px] rounded bg-gray-50 animate-pulse"
+            />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (!data || data.length === 0) return null;
 
   return (
     <section

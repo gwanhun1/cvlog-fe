@@ -14,6 +14,7 @@ export interface TagItem {
 export interface CardProps {
   title: string;
   content: string;
+  created_at?: string;
   updated_at?: string;
   tags: TagItem[];
   user?: UserIdType;
@@ -51,7 +52,9 @@ const HighlightText = ({ text, keyword }: { text: string; keyword: string }) => 
   );
 };
 
-const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
+const Card = ({ title, created_at, updated_at, content, tags, user }: CardProps) => {
+  // 카드에 보여줄 날짜는 '게시일'(created_at). 조회/수정으로 흔들리지 않는다.
+  const publishedAt = created_at ?? updated_at;
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
   const keyword = useStore(state => state.tagAtom);
@@ -131,18 +134,18 @@ const Card = ({ title, updated_at, content, tags, user }: CardProps) => {
             <div className="flex-1 min-w-0">
               <TagList tags={tags} keyword={keyword} />
             </div>
-            {updated_at && (
+            {publishedAt && (
               <time
                 suppressHydrationWarning
                 className="flex-shrink-0 ml-3 text-xs text-slate-400"
-                itemProp="dateModified"
-                dateTime={updated_at}
+                itemProp="datePublished"
+                dateTime={publishedAt}
               >
-                {formatTimeAgo(updated_at)}
+                {formatTimeAgo(publishedAt)}
               </time>
             )}
           </div>
-          {updated_at && <meta itemProp="datePublished" content={updated_at} />}
+          {updated_at && <meta itemProp="dateModified" content={updated_at} />}
         </div>
 
         {/* 작성자 정보 (호버 시 아래에서 위로 슬라이드) */}

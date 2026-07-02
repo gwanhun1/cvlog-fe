@@ -11,6 +11,7 @@ export interface TagItem {
 export interface CardProps {
   title: string;
   content: string;
+  created_at?: string;
   updated_at?: string;
   tags: TagItem[];
 }
@@ -25,7 +26,8 @@ const removeImageFromContent = (content: string): string => {
   return content.replace(/!\[([^\]]*)\]\([^)]+\)/g, '').trim().replace(/\n\s*\n/g, '\n');
 };
 
-const LogmeAllCard: React.FC<CardProps> = ({ title, content, updated_at, tags }) => {
+const LogmeAllCard: React.FC<CardProps> = ({ title, content, created_at, updated_at, tags }) => {
+  const publishedAt = created_at ?? updated_at;
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
   const plainText = markdownToText(cleanContent);
@@ -70,12 +72,12 @@ const LogmeAllCard: React.FC<CardProps> = ({ title, content, updated_at, tags })
               </span>
             )}
           </div>
-          {updated_at && (
+          {publishedAt && (
             <time
               suppressHydrationWarning
               className="flex-shrink-0 ml-3 text-xs text-gray-400"
             >
-              {formatTimeAgo(updated_at)}
+              {formatTimeAgo(publishedAt)}
             </time>
           )}
         </div>
