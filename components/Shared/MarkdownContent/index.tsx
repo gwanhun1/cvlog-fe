@@ -105,14 +105,20 @@ const MarkdownContentComponent = ({
       li: createHighlightComponent('li'),
       em: createHighlightComponent('em'),
       strong: createHighlightComponent('strong'),
+      table: ({ ...props }: any) => (
+        <div className={styles.tableWrapper}>
+          <table {...props} />
+        </div>
+      ),
       code: ({ inline, className, children, ...props }: CodeProps) => {
         const match = /language-(\w+)/.exec(className || '');
-        const isMultiLine = !inline && match;
+        const text = String(children).replace(/\n$/, '');
+        const isMultiLine = !inline && (match || text.includes('\n'));
 
         return isMultiLine ? (
           <div className="w-full tablet:max-w-[880px] overflow-x-auto mb-4">
             <CopyBlock
-              text={String(children).replace(/\n$/, '')}
+              text={text}
               language={match ? match[1] : 'text'}
               showLineNumbers={true}
               theme={dracula}

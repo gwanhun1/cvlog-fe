@@ -56,47 +56,27 @@ const EditorPreview = ({
                     ...props
                   }: CodeBlockProps) => {
                     const match = /language-(\w+)/.exec(className || '');
-                    return !inline && match ? (
-                      <CopyBlock
-                        text={String(children).replace(/\n$/, '')}
-                        language={match[1]}
-                        showLineNumbers={true}
-                        theme={dracula}
-                        codeBlock
-                      />
+                    const text = String(children).replace(/\n$/, '');
+                    const isBlock = !inline && (match || text.includes('\n'));
+                    return isBlock ? (
+                      <div className="w-full overflow-x-auto mb-4">
+                        <CopyBlock
+                          text={text}
+                          language={match ? match[1] : 'text'}
+                          showLineNumbers={true}
+                          theme={dracula}
+                          codeBlock
+                        />
+                      </div>
                     ) : (
                       <code {...props}>{children}</code>
                     );
                   },
-                  ul: ({ node, ...props }: any) => {
-                    return (
-                      <ul
-                        style={{
-                          listStyleType: 'disc',
-                          marginLeft: '1rem',
-                          marginTop: '0.5rem',
-                          marginBottom: '0.5rem',
-                        }}
-                        {...props}
-                      />
-                    );
-                  },
-                  ol: ({ node, ...props }: any) => {
-                    return (
-                      <ol
-                        style={{
-                          listStyleType: 'decimal',
-                          marginLeft: '1rem',
-                          marginTop: '0.5rem',
-                          marginBottom: '0.5rem',
-                        }}
-                        {...props}
-                      />
-                    );
-                  },
-                  li: ({ node, ...props }: any) => {
-                    return <li style={{ margin: '0.25rem 0' }} {...props} />;
-                  },
+                  table: ({ node, ...props }: any) => (
+                    <div className={styles.tableWrapper}>
+                      <table {...props} />
+                    </div>
+                  ),
                 }}
               >
                 {doc.content || ''}
