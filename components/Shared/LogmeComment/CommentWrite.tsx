@@ -2,6 +2,7 @@ import React, { ChangeEvent, useState } from 'react';
 import { useToast } from 'components/Shared';
 import { useStore } from 'service/store/useStore';
 import { useGetCommentList, usePostNewComment } from 'service/hooks/Comment';
+import useIsLogin from 'hooks/useIsLogin';
 import Link from 'next/link';
 
 const CommentWrite = ({
@@ -18,7 +19,10 @@ const CommentWrite = ({
   const { showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isLoggedIn = !!userInfo?.github_id;
+  // 스토어의 유저 정보만 믿으면 세션 만료 후에도 입력창이 노출된다.
+  // 실제 토큰 보유(useIsLogin)까지 확인한다.
+  const { isAuthenticated } = useIsLogin();
+  const isLoggedIn = isAuthenticated && !!userInfo?.github_id;
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value);
 

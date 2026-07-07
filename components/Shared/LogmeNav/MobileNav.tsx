@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
-  useToast,
   LogmeDropdown,
   DropdownHeader,
   DropdownItem,
@@ -30,7 +29,6 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
   const [token, setToken] = useState<string | null>(null);
   const setAuthority = useStore(state => state.setAuthorityState);
   const userInfo = useStore(state => state.userIdAtom);
-  const { showToast } = useToast();
   const { pathname } = useRouter();
 
   useEffect(() => {
@@ -123,16 +121,9 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
             </DropdownItem>
           </>
         ) : (
-          <>
-            <Link href="/login">
-              <DropdownItem>로그인</DropdownItem>
-            </Link>
-            <DropdownItem
-              onClick={() => showToast('로그인 먼저 해주세요.', 'warning')}
-            >
-              마이페이지/설정
-            </DropdownItem>
-          </>
+          <Link href="/login">
+            <DropdownItem>로그인</DropdownItem>
+          </Link>
         )}
       </LogmeDropdown>
     </nav>

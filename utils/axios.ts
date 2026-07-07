@@ -113,6 +113,9 @@ axiosInstance.interceptors.response.use(
           if (typeof window !== 'undefined') {
             Cookie.removeItem('refreshToken');
             LocalStorage.removeItem('LogmeToken');
+            // 세션이 죽으면 영속화된 유저 정보도 지운다.
+            // 남겨두면 로그아웃 상태인데 소유자 UI(나만보기/수정/삭제)가 노출된다.
+            localStorage.removeItem('logme-storage');
 
             if (!window.location.pathname.includes('/login')) {
               window.location.href = '/login';
@@ -153,6 +156,7 @@ axiosInstance.interceptors.response.use(
         if (typeof window !== 'undefined') {
           LocalStorage.removeItem('LogmeToken');
           Cookie.removeItem('refreshToken');
+          localStorage.removeItem('logme-storage');
           // 로그인 페이지로 리다이렉트 (alert 대신)
           if (!window.location.pathname.includes('/login')) {
             window.location.href = '/login';

@@ -147,7 +147,7 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
               <div
                 className={`flex items-center gap-3 px-5 py-3.5 rounded-2xl ${
                   toastStyles[toast.type]
-                } w-fit max-w-[calc(100vw-2rem)] backdrop-blur-md backdrop-saturate-200`}
+                } w-max max-w-[calc(100vw-2rem)] mx-auto backdrop-blur-md backdrop-saturate-200`}
               >
                 <div
                   className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
@@ -156,7 +156,10 @@ export const ToastProvider = ({ children }: ToastProviderProps) => {
                 >
                   <ToastIcon type={toast.type} />
                 </div>
-                {toast.message}
+                {/* break-keep: 한국어가 음절 단위로 끊기지 않고 어절(띄어쓰기) 단위로 줄바꿈 */}
+                <span className="text-sm font-medium leading-snug break-keep">
+                  {toast.message}
+                </span>
               </div>
             </motion.div>
           ))}

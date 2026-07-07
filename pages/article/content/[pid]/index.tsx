@@ -20,6 +20,7 @@ import {
   LikeButton,
 } from '../../../../components/pages/article/content';
 import { useStore } from 'service/store/useStore';
+import LocalStorage from 'public/utils/Localstorage';
 import { incrementViewCount } from 'service/api/detail';
 import type { ContentData, TagType } from 'service/api/detail/type';
 
@@ -176,10 +177,18 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     [selectTagList, setSelectTagList],
   );
 
+  // 소유자 판단은 저장된 유저 정보만 믿지 않고 실제 토큰 보유까지 확인한다.
+  // (세션 만료 후 스토어에 유저 정보만 남는 경우 소유자 UI가 잘못 노출되는 것 방지)
+  const [hasToken, setHasToken] = useState(false);
+  useEffect(() => {
+    setHasToken(!!LocalStorage.getItem('LogmeToken'));
+  }, []);
+
   const resolvedData = detailData || initialData;
   const shouldShowSkeleton = isLoading && !initialData;
   const postData = resolvedData?.post;
   const isOwner =
+    hasToken &&
     !!postData &&
     (Number(userInfo?.id) === postData.user?.id ||
       userInfo?.github_id === String(postData.user?.github_id));
@@ -419,7 +428,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                 initialLiked={postData.is_liked ?? false}
                 initialCount={postData.like_count ?? 0}
                 isPublic={postData.public_status}
-                currentUserId={userInfo?.id}
+                currentUserId={hasToken ? userInfo?.id : undefined}
                 isInHeader={true}
               />
             )}
