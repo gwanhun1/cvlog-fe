@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import axios from 'axios';
 import Cookie from 'public/utils/Cookie';
@@ -6,11 +6,12 @@ import LocalStorage from 'public/utils/Localstorage';
 import { useStore } from 'service/store/useStore';
 import { useRouter } from 'next/router';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
+import { trackEvent, isNewSignup } from 'utils/analytics';
 
 axios.defaults.withCredentials = true;
 
 interface Info {
-  data: { accessToken: string };
+  data: { accessToken: string; isNewUser?: boolean };
 }
 
 interface JoinProps {
@@ -24,6 +25,7 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
   const setRefreshToken = useStore((state) => state.setRefreshTokenAtom);
 
   const router = useRouter();
+  const initializedRef = useRef(false);
 
   const cookies = Object.fromEntries(
     cookie.split(';').map((c: string) => {
@@ -52,6 +54,17 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
         setAccessToken(info.data.accessToken);
         setRefreshToken(cookies.refreshToken);
 
+        // GA4 이벤트: OAuth 인증 성공 시점.
+        // 신규가입 여부는 백엔드 /auth/login의 isNewUser 플래그가 기준.
+        // 플래그가 없는 구버전 백엔드 응답이면 created_at 60초 휴리스틱으로 폴백.
+        const isNew =
+          info.data.isNewUser ?? isNewSignup(userData?.created_at);
+        if (isNew) {
+          trackEvent('sign_up', { method: 'github' });
+        } else {
+          trackEvent('login', { method: 'github' });
+        }
+
         LocalStorage.setItem('user_info', JSON.stringify(userData));
 
         window.dispatchEvent(new Event('storage'));
@@ -64,6 +77,15 @@ const Join: NextPage<JoinProps> = ({ info, cookie }) => {
         router.push('/login?error=user_info_failed');
       }
     };
+
+    // StrictMode 이중 마운트/향후 deps 변경에도 인증 처리와 GA 이벤트가
+    // 정확히 한 번만 실행되도록 가드
+    if (initializedRef.current) return;
+    initializedRef.current = true;
+
+    // GA 자동 page_view가 OAuth code/state 쿼리를 수집하지 않도록
+    // gtag 처리 전에 주소창에서 제거
+    window.history.replaceState({}, '', '/join');
 
     initializeAuth();
     // eslint-disable-next-line react-hooks/exhaustive-deps

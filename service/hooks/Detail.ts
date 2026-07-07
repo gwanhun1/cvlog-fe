@@ -8,6 +8,7 @@ import {
   patchDetail,
 } from 'service/api/detail';
 import { CreateNewPostReq } from 'service/api/detail/type';
+import { trackEvent } from 'utils/analytics';
 
 // Always pass parseInt(pid) — never a string. queryKey uses ['detail', number].
 export const useGetDetail = (params: number, initialData?: any) => {
@@ -60,7 +61,12 @@ export const usePatchDetail = () => {
       public_status: boolean;
     }) => patchDetail(id, public_status),
     retry: 0,
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      // GA4 이벤트: 공개/비공개 토글. to_public=true가 실질적인 "발행" 순간.
+      trackEvent('post_visibility_change', {
+        post_id: variables.id,
+        to_public: variables.public_status,
+      });
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
       queryClient.invalidateQueries({ queryKey: ['detail'] });
       queryClient.invalidateQueries({ queryKey: ['list'] });
@@ -75,7 +81,12 @@ export const useModifyPost = (pid: number) => {
   return useMutation({
     mutationFn: (params: CreateNewPostReq) =>
       fetchCreateModifyPost(params, pid),
-    onSuccess: async () => {
+    onSuccess: async (_data, variables) => {
+      // GA4 이벤트: 글 수정 완료
+      trackEvent('post_update', {
+        post_id: pid,
+        public_status: variables?.public_status ?? false,
+      });
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['list'] }),
         queryClient.invalidateQueries({ queryKey: ['publicList'] }),

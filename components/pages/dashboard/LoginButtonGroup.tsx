@@ -6,6 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { SiNaver } from 'react-icons/si';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 import { FaGithub } from 'react-icons/fa';
+import { trackEvent } from 'utils/analytics';
 
 const LoginButtonGroup = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -31,9 +32,15 @@ const LoginButtonGroup = () => {
       dns_error: 'DNS 오류가 발생했습니다. 네트워크 연결을 확인해주세요.',
       api_not_found: 'API 서버를 찾을 수 없습니다. 관리자에게 문의해주세요.',
       unauthorized: '인증에 실패했습니다. 다시 시도해주세요.',
+      user_info_failed:
+        '사용자 정보를 불러오지 못했습니다. 다시 로그인해주세요.',
+      missing_code: '인증 정보가 누락되었습니다. 다시 시도해주세요.',
     };
 
     if (error && errorMessages[error]) {
+      // GA4 퍼널: login_start → login_failed | sign_up/login.
+      // reason은 GSSP/join에서 내려주는 고정된 에러 코드라 카디널리티 안전.
+      trackEvent('login_failed', { method: 'github', reason: error });
       showToast(errorMessages[error], 'error');
       console.error('GitHub OAuth 인증 실패:', error);
 
@@ -90,6 +97,10 @@ const LoginButtonGroup = () => {
 
       const state = Math.random().toString(36).substring(2, 15);
       sessionStorage.setItem('github_oauth_state', state);
+
+      // GA4 퍼널 시작점: 실제 OAuth 리다이렉트가 확정된 직후에만 발화.
+      // (설정 누락/미지원 provider에서 발화하면 퍼널 분모가 부풀려짐)
+      trackEvent('login_start', { method: 'github' });
 
       window.location.href = `https://github.com/login/oauth/authorize?client_id=${githubId}&redirect_uri=${redirectUri}&state=${state}&scope=repo delete_repo`;
     } else {
