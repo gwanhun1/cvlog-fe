@@ -93,7 +93,7 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
         )}
 
         {visibleMenuItems.map(item => (
-          <Link key={item.path} href={item.path} prefetch={true}>
+          <Link key={item.path} href={item.path}>
             <DropdownItem
               className={
                 pathname === item.path ||
@@ -109,7 +109,7 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
 
         {token ? (
           <>
-            <Link href="/mypage" prefetch={true}>
+            <Link href="/mypage">
               <DropdownItem
                 className={
                   pathname === '/mypage' ? 'text-ftBlue font-bold' : ''
@@ -124,7 +124,7 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
           </>
         ) : (
           <>
-            <Link href="/login" prefetch={true}>
+            <Link href="/login">
               <DropdownItem>로그인</DropdownItem>
             </Link>
             <DropdownItem

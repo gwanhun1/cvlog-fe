@@ -48,7 +48,7 @@ const PostNavigation = ({
           {/* 이전 포스트 */}
           <div>
             {prevPostInfo ? (
-              <Link href={`${basePath}/${prevPostInfo.id}`} prefetch>
+              <Link href={`${basePath}/${prevPostInfo.id}`}>
                 <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
                   <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
                     <span className="text-gray-600">←</span>
@@ -74,7 +74,7 @@ const PostNavigation = ({
           {/* 다음 포스트 */}
           <div>
             {nextPostInfo ? (
-              <Link href={`${basePath}/${nextPostInfo.id}`} prefetch>
+              <Link href={`${basePath}/${nextPostInfo.id}`}>
                 <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
                   <div className="flex flex-col flex-1 min-w-0 text-right">
                     <span className="mb-1 text-xs text-gray-500">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import markdownToText from 'markdown-to-text';
 import Image from 'next/image';
 import TagList from './TagList';
@@ -57,6 +57,16 @@ const Card = ({ title, created_at, updated_at, content, tags, user }: CardProps)
   const publishedAt = created_at ?? updated_at;
   const imageUrl = extractImageUrl(content);
   const cleanContent = removeImageFromContent(content);
+
+  // 죽은 이미지 URL이면 썸네일 영역 자체를 숨긴다.
+  // SSG된 HTML은 하이드레이션 전에 로드 실패가 나 onError가 안 불릴 수 있어
+  // 마운트 후 naturalWidth로 한 번 더 확인한다.
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [imgFailed, setImgFailed] = useState(false);
+  useEffect(() => {
+    const el = imgRef.current;
+    if (el && el.complete && el.naturalWidth === 0) setImgFailed(true);
+  }, []);
   const keyword = useStore(state => state.tagAtom);
   const isMatched =
     keyword.trim() !== '' &&
@@ -78,17 +88,16 @@ const Card = ({ title, created_at, updated_at, content, tags, user }: CardProps)
       itemType="http://schema.org/BlogPosting"
     >
       <div className="flex flex-col w-full h-full">
-        {imageUrl && (
+        {imageUrl && !imgFailed && (
           <div className="relative w-full h-0 pb-[56%] overflow-hidden bg-gray-50">
             {imageUrl.includes('googleusercontent.com') ||
             imageUrl.startsWith('http') ? (
               <img
+                ref={imgRef}
                 src={imageUrl}
                 alt={title}
                 className="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-                onError={e => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
+                onError={() => setImgFailed(true)}
               />
             ) : (
               <Image
@@ -99,10 +108,7 @@ const Card = ({ title, created_at, updated_at, content, tags, user }: CardProps)
                 style={{ objectFit: 'cover' }}
                 fill
                 sizes="100vw"
-                onError={e => {
-                  const imgElement = e.target as HTMLImageElement;
-                  imgElement.style.display = 'none';
-                }}
+                onError={() => setImgFailed(true)}
                 itemProp="image"
               />
             )}
@@ -164,6 +170,7 @@ const Card = ({ title, created_at, updated_at, content, tags, user }: CardProps)
                     src={user.profile_image}
                     alt={user.name}
                     fill
+                    sizes="20px"
                     className="object-cover"
                   />
                 )}

@@ -31,7 +31,7 @@ const DesktopNavActions = ({
 
   return (
     <div className="hidden items-center tablet:flex">
-      <Link href="/login" prefetch={true}>
+      <Link href="/login">
         <Shared.LogmeButton
           variant="classic"
           size={shrink ? 'small' : 'small'} // Already small, maybe custom size needed if it's too big

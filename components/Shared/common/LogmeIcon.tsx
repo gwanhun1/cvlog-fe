@@ -11,6 +11,7 @@ interface IconProps {
   height: number;
   alt: string;
   cn?: string;
+  priority?: boolean;
   onClick?: () => void;
 }
 
@@ -30,6 +31,7 @@ export const LogmeMarkIcon = (props: IconProps) => (
     alt={props.alt}
     width={props.width}
     height={props.height}
+    style={{ height: 'auto' }}
     className={props.cn}
   />
 );
@@ -49,6 +51,8 @@ export const SymbolLogoIcon = (props: IconProps) => (
     alt={props.alt}
     width={props.width}
     height={props.height}
+    style={{ height: 'auto' }}
+    priority={props.priority}
     className={props.cn}
   />
 );

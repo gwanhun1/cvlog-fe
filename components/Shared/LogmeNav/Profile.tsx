@@ -51,7 +51,7 @@ const NavProfile = ({ setAuthority, shrink = false }: Props) => {
           </div>
         </DropdownHeader>
         <div className="py-1">
-          <Link href="/mypage" prefetch={true}>
+          <Link href="/mypage">
             <DropdownItem>
               <HiOutlineCog6Tooth className="w-4 h-4 flex-shrink-0" />
               마이페이지/설정

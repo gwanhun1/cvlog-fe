@@ -1651,6 +1651,7 @@ const ResumeBuilder = () => {
 
             {/* Draggable sections */}
             <DndContext
+              id="resume-sections-dnd"
               sensors={sensors}
               collisionDetection={closestCenter}
               onDragEnd={handleDragEnd}

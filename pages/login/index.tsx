@@ -23,7 +23,8 @@ const Login = () => {
       <Shared.LogmeIcon.SymbolLogoIcon
         alt={'logo'}
         width={220}
-        height={220}
+        height={67}
+        priority
       />
 
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-7">
@@ -49,8 +50,8 @@ const Login = () => {
         </div>
       </div>
 
-      <div className="text-gray-400 text-xs">
-        © 2025 Logme. All rights reserved.
+      <div className="text-gray-400 text-xs" suppressHydrationWarning>
+        © {new Date().getFullYear()} Logme. All rights reserved.
       </div>
     </div>
   );

@@ -9,7 +9,7 @@ interface ActivityRowProps {
 
 const ActivityRow = ({ title, time, id }: ActivityRowProps) => {
   return (
-    <Link href={`/article/content/${id}`} prefetch>
+    <Link href={`/article/content/${id}`}>
       <div className="flex items-center gap-6 p-4 bg-gray-50 rounded-lg mb-4 transition-colors hover:bg-gray-100 hover:cursor-pointer">
         <div className="p-3 bg-blue-100 rounded-lg">
           <FiBookOpen className="w-5 h-5 text-blue-600" aria-hidden="true" />
