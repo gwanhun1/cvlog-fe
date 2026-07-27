@@ -8,6 +8,7 @@ import { useStore } from 'service/store/useStore';
 import Link from 'next/link';
 import Card from 'components/Shared/LogmeCard';
 import ListEmpty from '../../../Shared/common/ListEmpty';
+import { useResponsiveColumnCount } from 'hooks/useResponsiveColumnCount';
 
 interface PostListViewProps {
   inputRef: React.RefObject<HTMLInputElement>;
@@ -159,92 +160,139 @@ const PostListView = ({
     }
   };
 
-  const initialSkeleton = (
+  // CSS 멀티컬럼(columns-*)은 아이템이 추가될 때마다 전체를 컬럼 개수만큼 다시 분배하므로,
+  // 무한 스크롤로 새 게시물이 붙을 때 이미 보이던 카드가 다른 컬럼으로 튀는 문제가 있었다.
+  // 하이드레이션 이후에는 index % columnCount로 직접 배치해 각 게시물의 컬럼을 고정한다(가로 우선).
+  // 다만 서버는 뷰포트를 모르므로, 해결 전(null)에는 기존 CSS 멀티컬럼으로 렌더한다.
+  // 그래야 SSG된 첫 페인트가 모든 breakpoint에서 올바르게 보인다.
+  const columnCount = useResponsiveColumnCount();
+
+  const renderCard = ({
+    id,
+    title,
+    content,
+    tags,
+    created_at,
+    updated_at,
+    user,
+  }: BlogType, index: number) => (
+    <Link
+      key={id}
+      href={getPostLink(id)}
+      onClick={() => saveListIndex(index)}
+      onMouseEnter={() => handlePrefetch(id)}
+      className="block"
+      {...(mode === 'public' && {
+        title: title,
+        'aria-label': `게시물 보기: ${title}`,
+        'data-seo-important': 'true',
+      })}
+    >
+      {mode === 'public' ? (
+        <div itemScope itemType="https://schema.org/BlogPosting">
+          <meta
+            itemProp="mainEntityOfPage"
+            content={`https://logme.cloud/article/content/${id}`}
+          />
+          <meta itemProp="headline" content={title} />
+          <meta itemProp="dateModified" content={updated_at} />
+          <Card
+            title={title}
+            content={content}
+            tags={tags}
+            created_at={created_at}
+            updated_at={updated_at}
+            user={user}
+          />
+        </div>
+      ) : (
+        <Card
+          title={title}
+          content={content}
+          tags={tags}
+          created_at={created_at}
+          updated_at={updated_at}
+          user={user}
+        />
+      )}
+    </Link>
+  );
+
+  // 현재 화면에 그려야 할 아이템들을 순서대로 만든다(게시물 + 다음 페이지 스켈레톤).
+  const buildItems = (): React.ReactNode[] => {
+    const items: React.ReactNode[] = posts.map((post, index) =>
+      renderCard(post, index),
+    );
+
+    if (hasMore && isLoadingMore) {
+      for (let i = 0; i < 3; i += 1) {
+        items.push(
+          <div key={`skeleton-${i}`}>
+            <CardSkeleton />
+          </div>,
+        );
+      }
+    }
+
+    return items;
+  };
+
+  const buildSkeletonItems = (count: number): React.ReactNode[] =>
+    [...Array(count)].map((_, index) => (
+      <div key={`initial-skeleton-${index}`}>
+        <CardSkeleton />
+      </div>
+    ));
+
+  // 하이드레이션 전: CSS 멀티컬럼. 서버가 뷰포트를 몰라도 breakpoint별로 올바르게 렌더된다.
+  const renderCssColumns = (items: React.ReactNode[]) => (
     <div className="gap-4 w-full columns-1 tablet:columns-2 desktop:columns-3">
-      {[...Array(6)].map((_, index) => (
-        <div
-          key={`initial-skeleton-${index}`}
-          className="mb-4 break-inside-avoid"
-        >
-          <CardSkeleton />
+      {items.map((item, index) => (
+        <div key={`css-col-item-${index}`} className="mb-4 break-inside-avoid">
+          {item}
         </div>
       ))}
     </div>
   );
+
+  // 하이드레이션 후: index % columnCount 고정 배치라 새 페이지가 붙어도 기존 카드가 안 움직인다.
+  const renderFixedColumns = (items: React.ReactNode[], count: number) => {
+    const columns: React.ReactNode[][] = Array.from({ length: count }, () => []);
+    items.forEach((item, index) => {
+      columns[index % count].push(
+        <div key={`fixed-col-item-${index}`} className="mb-4">
+          {item}
+        </div>,
+      );
+    });
+
+    return (
+      <div className="flex gap-4 items-start w-full">
+        {columns.map((column, colIndex) => (
+          <div
+            key={`column-${colIndex}`}
+            className="flex flex-col flex-1 min-w-0"
+          >
+            {column}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderLayout = (items: React.ReactNode[]) =>
+    columnCount === null
+      ? renderCssColumns(items)
+      : renderFixedColumns(items, columnCount);
 
   return (
     <>
       <div className="flex flex-col gap-4">
         <div className="w-full">
           {isInitialLoading ? (
-            initialSkeleton
+            renderLayout(buildSkeletonItems(6))
           ) : posts.length > 0 ? (
-            <div className="gap-4 w-full columns-1 tablet:columns-2 desktop:columns-3">
-              {posts.map(
-                (
-                  { id, title, content, tags, created_at, updated_at, user },
-                  index,
-                ) => (
-                  <div key={id} className="mb-4 break-inside-avoid">
-                    <Link
-                      href={getPostLink(id)}
-                      onClick={() => saveListIndex(index)}
-                      onMouseEnter={() => handlePrefetch(id)}
-                      className="block h-full"
-                      {...(mode === 'public' && {
-                        title: title,
-                        'aria-label': `게시물 보기: ${title}`,
-                        'data-seo-important': 'true',
-                      })}
-                    >
-                      {mode === 'public' ? (
-                        <div
-                          itemScope
-                          itemType="https://schema.org/BlogPosting"
-                          className="h-full"
-                        >
-                          <meta
-                            itemProp="mainEntityOfPage"
-                            content={`https://logme.cloud/article/content/${id}`}
-                          />
-                          <meta itemProp="headline" content={title} />
-                          <meta itemProp="dateModified" content={updated_at} />
-                          <Card
-                            title={title}
-                            content={content}
-                            tags={tags}
-                            created_at={created_at}
-                            updated_at={updated_at}
-                            user={user}
-                          />
-                        </div>
-                      ) : (
-                        <Card
-                          title={title}
-                          content={content}
-                          tags={tags}
-                          created_at={created_at}
-                          updated_at={updated_at}
-                          user={user}
-                        />
-                      )}
-                    </Link>
-                  </div>
-                ),
-              )}
-              {hasMore && isLoadingMore && (
-                <>
-                  {[...Array(3)].map((_, index) => (
-                    <div
-                      key={`skeleton-${index}`}
-                      className="mb-4 break-inside-avoid"
-                    >
-                      <CardSkeleton />
-                    </div>
-                  ))}
-                </>
-              )}
-            </div>
+            renderLayout(buildItems())
           ) : (
             <ListEmpty />
           )}

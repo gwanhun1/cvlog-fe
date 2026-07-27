@@ -38,11 +38,9 @@ const DroppableFolder = ({
   }, [isOver, draggedTagName, isDragging, includeHeader]);
 
   return (
-    <div
-      ref={setNodeRef}
-      className={containerClassName}
-      style={{ touchAction: 'none', minHeight: '40px' }}
-    >
+    // touch-action:none은 드래그 대상(TagItem)에만 건다. 폴더 컨테이너에까지 걸면
+    // 태그 목록 위에서 손가락 스크롤이 막혀 모바일 드로어를 스크롤할 수 없다.
+    <div ref={setNodeRef} className={containerClassName} style={{ minHeight: '40px' }}>
       {children}
 
       {isOver && draggedTagName && (

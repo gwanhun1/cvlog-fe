@@ -15,7 +15,7 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
 
   const { data: folders } = useGetFolders();
   const queryClient = useQueryClient();
-  const removeTagsFolders = useRemoveFolders(selectFolder);
+  const removeTagsFolders = useRemoveFolders();
 
   const handleClose = () => !isLoading && setShowModal(false);
 
@@ -24,7 +24,7 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
     setIsLoading(true);
     document.body.style.cursor = 'wait';
     try {
-      await removeTagsFolders.mutateAsync(undefined, {
+      await removeTagsFolders.mutateAsync(selectFolder, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
           setSelectFolder(0);

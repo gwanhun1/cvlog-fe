@@ -3,6 +3,7 @@ import {
   fetchCreateTagsFolders,
   fetchGetTagsFolders,
   fetchRemoveTagsFolders,
+  fetchUpdateTagsFolderName,
   getList,
   getPublicList,
   putTagsFolders,
@@ -11,6 +12,7 @@ import {
   CreateTagsFolderReq,
   CreateTagsFolderRes,
   UpdateForm,
+  UpdateFolderNameReq,
 } from 'service/api/tag/type';
 
 export const useGetList = (
@@ -67,10 +69,21 @@ export const useCreateFolders = () => {
   });
 };
 
-export const useRemoveFolders = (params: number) => {
+export const useRemoveFolders = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => fetchRemoveTagsFolders(params),
+    mutationFn: (folderId: number) => fetchRemoveTagsFolders(folderId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
+    },
+  });
+};
+
+export const useUpdateFolderName = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params: UpdateFolderNameReq) =>
+      fetchUpdateTagsFolderName(params),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tagsFolder'] });
     },

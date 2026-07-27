@@ -17,10 +17,6 @@ import {
   restrictToVerticalAxis,
   restrictToWindowEdges,
 } from '@dnd-kit/modifiers';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 import { useGetFolders } from 'service/hooks/List';
 import LogmeAddModal from 'components/Shared/LogmeTag/LogmeAddModal';
 import LogmeRemoveModal from 'components/Shared/LogmeTag/LogmeRemoveModal';
@@ -39,23 +35,14 @@ const SideMenu = ({ className }: { className?: string }) => {
   const [closedIdx, setClosedIdx] = useState<number[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectModal, setSelectModal] = useState<string>('');
+  // 드래그 중 텍스트 선택 방지용. user-select는 상속되므로 컨테이너에만 걸면 하위 전체에 적용된다.
+  // 이전에는 document.querySelector('.dnd-container')로 클래스를 토글했는데, SideView가
+  // 데스크톱 사이드바와 TagDrawer에 동시에 마운트돼 항상 드로어 쪽만 잡히는 버그가 있었다.
   const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = `
-      .dnd-active * {
-        user-select: none !important;
-      }
-      .dnd-container {
-        touch-action: none;
-      }
-    `;
-    document.head.appendChild(styleElement);
-
     return () => {
       document.body.style.cursor = 'default';
-      document.head.removeChild(styleElement);
     };
   }, []);
 
@@ -73,26 +60,47 @@ const SideMenu = ({ className }: { className?: string }) => {
     })
   );
 
-  // 폴더 영역 우선 감지를 위한 커스텀 collision detection
+  // 폴더 영역 우선 감지를 위한 커스텀 collision detection.
+  // 폴더의 droppable 영역은 그 안의 태그들을 모두 감싸므로, 포인터 아래에는
+  // 여러 폴더의 rect가 동시에 겹쳐 걸릴 수 있다(특히 아코디언 열림/닫힘 트랜지션 중).
+  // 배열의 첫 항목(등록 순서)을 그대로 쓰면 실제로 가장 위에 있는 폴더가 아닌
+  // 엉뚱한 폴더가 선택되어 "잘못된 폴더로 드롭"되는 원인이 됐다.
+  // rect 면적이 가장 작은(=가장 안쪽/구체적인) 폴더를 선택해 이를 보정한다.
+  const pickMostSpecificFolder = (
+    collisions: ReturnType<CollisionDetection>
+  ) => {
+    const folderCollisions = collisions.filter(
+      collision => !String(collision.id).includes('-')
+    );
+    if (folderCollisions.length === 0) return null;
+    if (folderCollisions.length === 1) return folderCollisions[0];
+
+    return folderCollisions.reduce((smallest, current) => {
+      const smallestRect = smallest.data?.droppableContainer?.rect?.current;
+      const currentRect = current.data?.droppableContainer?.rect?.current;
+      if (!currentRect) return smallest;
+      if (!smallestRect) return current;
+      const smallestArea = smallestRect.width * smallestRect.height;
+      const currentArea = currentRect.width * currentRect.height;
+      return currentArea < smallestArea ? current : smallest;
+    });
+  };
+
   const collisionDetection: CollisionDetection = useCallback(args => {
     // pointerWithin으로 먼저 감지
     const pointerCollisions = pointerWithin(args);
 
     if (pointerCollisions.length > 0) {
-      // 폴더(droppable)를 우선 반환
-      const folderCollision = pointerCollisions.find(
-        collision => !String(collision.id).includes('-')
-      );
+      const folderCollision = pickMostSpecificFolder(pointerCollisions);
       if (folderCollision) {
         return [folderCollision];
       }
+      return pointerCollisions;
     }
 
     // fallback으로 rectIntersection 사용
     const rectCollisions = rectIntersection(args);
-    const folderRectCollision = rectCollisions.find(
-      collision => !String(collision.id).includes('-')
-    );
+    const folderRectCollision = pickMostSpecificFolder(rectCollisions);
     if (folderRectCollision) {
       return [folderRectCollision];
     }
@@ -126,38 +134,10 @@ const SideMenu = ({ className }: { className?: string }) => {
     [optimisticFoldersData]
   );
 
-  const sortableItems = useMemo(() => {
-    const items: string[] = [];
-
-    if (namedFolder) {
-      namedFolder.forEach(folder => {
-        if (folder.tags) {
-          folder.tags.forEach(tag => {
-            items.push(`${folder.id}-${tag.id}`);
-          });
-        }
-      });
-    }
-
-    if (unassignedFolder && unassignedFolder.tags) {
-      unassignedFolder.tags.forEach(tag => {
-        items.push(`unassigned-${tag.id}`);
-      });
-    }
-
-    return items;
-  }, [namedFolder, unassignedFolder]);
-
   const onDragStart = useCallback(
     (event: DragStartEvent) => {
       document.body.style.cursor = 'grabbing';
       setDragActive(true);
-
-      const container = document.querySelector('.dnd-container');
-      if (container) {
-        container.classList.add('dnd-active');
-      }
-
       handleDragStart(event);
     },
     [handleDragStart]
@@ -167,12 +147,6 @@ const SideMenu = ({ className }: { className?: string }) => {
     (event: DragEndEvent) => {
       document.body.style.cursor = 'default';
       setDragActive(false);
-
-      const container = document.querySelector('.dnd-container');
-      if (container) {
-        container.classList.remove('dnd-active');
-      }
-
       handleDragEnd(event);
     },
     [handleDragEnd]
@@ -182,12 +156,6 @@ const SideMenu = ({ className }: { className?: string }) => {
     (event: DragCancelEvent) => {
       document.body.style.cursor = 'default';
       setDragActive(false);
-
-      const container = document.querySelector('.dnd-container');
-      if (container) {
-        container.classList.remove('dnd-active');
-      }
-
       handleDragCancel(event);
     },
     [handleDragCancel]
@@ -264,7 +232,7 @@ const SideMenu = ({ className }: { className?: string }) => {
           ) : !hasContent ? (
             <EmptyState onAddClick={() => tryOpenModal('add')} />
           ) : (
-            <div className="dnd-container">
+            <div className={dragActive ? 'select-none' : undefined}>
               <DndContext
                 sensors={sensors}
                 collisionDetection={collisionDetection}
@@ -274,41 +242,34 @@ const SideMenu = ({ className }: { className?: string }) => {
                 onDragCancel={onDragCancel}
                 modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
               >
-                <SortableContext
-                  items={sortableItems}
-                  strategy={verticalListSortingStrategy}
+                <div className="space-y-4">
+                  <NamedFolderList
+                    folders={namedFolder}
+                    draggedTagName={draggedTagName}
+                    closedIdx={closedIdx}
+                    onClickAccordion={onClickAccordion}
+                    movingTags={movingTags}
+                  />
+
+                  {unassignedFolder && (
+                    <div className="mt-4">
+                      <UnassignedTagListContent
+                        folder={unassignedFolder}
+                        draggedTagName={draggedTagName}
+                        movingTags={movingTags}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <DragOverlay
+                  dropAnimation={{
+                    duration: 150,
+                    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                  }}
                 >
-                  <div className="space-y-4">
-                    <NamedFolderList
-                      folders={namedFolder}
-                      draggedTagName={draggedTagName}
-                      closedIdx={closedIdx}
-                      onClickAccordion={onClickAccordion}
-                      movingTags={movingTags}
-                      disabled={hasPendingOperations}
-                    />
-
-                    {unassignedFolder && (
-                      <div className="mt-4">
-                        <UnassignedTagListContent
-                          folder={unassignedFolder}
-                          draggedTagName={draggedTagName}
-                          movingTags={movingTags}
-                          disabled={hasPendingOperations}
-                        />
-                      </div>
-                    )}
-                  </div>
-
-                  <DragOverlay
-                    dropAnimation={{
-                      duration: 150,
-                      easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-                    }}
-                  >
-                    {activeTag && <DragOverlayItem tag={activeTag.tag} />}
-                  </DragOverlay>
-                </SortableContext>
+                  {activeTag && <DragOverlayItem tag={activeTag.tag} />}
+                </DragOverlay>
               </DndContext>
             </div>
           )}

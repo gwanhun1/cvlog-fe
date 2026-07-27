@@ -8,6 +8,7 @@ import {
 } from '@dnd-kit/core';
 import { Folder, Tag } from 'service/api/tag/type';
 import { usePutTagsFolder } from 'service/hooks/List';
+import { useToast } from 'components/Shared';
 
 interface ActiveTag {
   tag: Tag;
@@ -76,6 +77,7 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
 
   const queryClient = useQueryClient();
   const mutationUpdateTagsFolders = usePutTagsFolder();
+  const { showToast } = useToast();
 
   const generateOperationId = useCallback(() => {
     return `op-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -228,8 +230,13 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
           });
           // refetchQueries는 실제로 데이터를 다시 가져올 때까지 대기
           await queryClient.refetchQueries({ queryKey: ['tagsFolder'], type: 'active' });
-        } catch (error) {
+        } catch (error: any) {
           console.error('Error updating folder:', error);
+          // 실패 시 optimistic 표시가 조용히 원위치로 되돌아가기만 해서
+          // 사용자는 "드롭이 잘못됐다"고 느끼기 쉬웠다. 실패를 명시적으로 알린다.
+          const message =
+            error?.response?.data?.message ?? '태그 이동에 실패했습니다.';
+          showToast(message, 'error');
         } finally {
           processingTagsRef.current.delete(tagId);
           document.body.style.cursor = 'default';
@@ -242,7 +249,7 @@ export const useTagDragState = (foldersData: Folder[] | undefined) => {
         document.body.style.cursor = 'default';
       }
     },
-    [mutationUpdateTagsFolders, generateOperationId, queryClient]
+    [mutationUpdateTagsFolders, generateOperationId, queryClient, showToast]
   );
 
   const hasPendingOperations = pendingOperations.length > 0;

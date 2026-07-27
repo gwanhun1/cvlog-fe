@@ -1,5 +1,5 @@
 const CardSkeleton = () => (
-  <article className="block overflow-hidden relative bg-white rounded-lg border border-blue-100 shadow-sm transition-all duration-300 animate-pulse group hover:bg-blue-50 hover:shadow-lg">
+  <article className="block overflow-hidden relative bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-200 animate-pulse group">
     <div className="flex flex-col h-full">
       <div className="relative w-full h-0 pb-[70%] bg-gray-200 rounded-t-lg" />
 

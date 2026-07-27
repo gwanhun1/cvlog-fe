@@ -16,14 +16,12 @@ interface UnassignedTagListContentProps {
   folder: Folder;
   draggedTagName: string;
   movingTags: MovingTagInfo[];
-  disabled: boolean;
 }
 
 const UnassignedTagListContent = ({
   folder,
   draggedTagName,
   movingTags,
-  disabled,
 }: UnassignedTagListContentProps) => {
   // 이동 중인 태그인지 확인 (소스/타겟 모두 스켈레톤 표시)
   const isTagMovingInFolder = (tagId: number, folderId: number) => {
@@ -35,10 +33,7 @@ const UnassignedTagListContent = ({
   };
   return (
     <div className="overflow-hidden relative rounded-xl">
-      <div
-        className="bg-white rounded-xl shadow-sm transition-all duration-200"
-        style={{ touchAction: 'none' }}
-      >
+      <div className="bg-white rounded-xl shadow-sm transition-all duration-200">
         <DroppableFolder
           folder={folder}
           draggedTagName={draggedTagName}
@@ -63,7 +58,6 @@ const UnassignedTagListContent = ({
                     tag={tag}
                     folderId={folder.id}
                     isMoving={isTagMovingInFolder(tag.id, folder.id)}
-                    disabled={disabled}
                   />
                 ))}
               </div>

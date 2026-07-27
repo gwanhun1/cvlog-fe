@@ -5,6 +5,7 @@ import {
   CreateTagsFolderRes,
   PutTagsFolderRes,
   UpdateForm,
+  UpdateFolderNameReq,
   GetListType,
   TagAutocompleteRes,
   TagSuggestion,
@@ -53,6 +54,16 @@ export const fetchCreateTagsFolders = async (
 
 export const fetchRemoveTagsFolders = async (params: number) => {
   const { data } = await axiosInstance.delete(`/tag_folders/${params}`);
+  return data;
+};
+
+export const fetchUpdateTagsFolderName = async (
+  params: UpdateFolderNameReq,
+): Promise<PutTagsFolderRes> => {
+  const { data } = await axiosInstance.put<PutTagsFolderRes>(
+    `/tag_folders/${params.id}`,
+    { name: params.name },
+  );
   return data;
 };
 

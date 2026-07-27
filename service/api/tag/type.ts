@@ -61,6 +61,11 @@ export interface UpdateForm {
   folder_id: number;
 }
 
+export interface UpdateFolderNameReq {
+  id: number;
+  name: string;
+}
+
 export interface GetNewToken {
   headers: {
     refreshToken: string;

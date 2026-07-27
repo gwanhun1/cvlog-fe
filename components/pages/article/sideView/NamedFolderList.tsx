@@ -21,7 +21,6 @@ interface NamedFolderListProps {
     id: number
   ) => (e: React.MouseEvent<HTMLDivElement>) => void;
   movingTags: MovingTagInfo[];
-  disabled: boolean;
 }
 
 const NamedFolderList = ({
@@ -30,7 +29,6 @@ const NamedFolderList = ({
   closedIdx,
   onClickAccordion,
   movingTags,
-  disabled,
 }: NamedFolderListProps) => {
   // 해당 폴더에서 이동 중인 태그인지 확인 (소스/타겟 모두 스켈레톤 표시)
   const isTagMovingInFolder = (tagId: number, folderId: number) =>
@@ -43,10 +41,7 @@ const NamedFolderList = ({
     <>
       {folders.map((folder: Folder) => (
         <div key={folder.id} className="mb-4">
-          <div
-            className="overflow-hidden relative bg-white rounded-xl shadow-sm transition-all duration-300"
-            style={{ touchAction: 'none' }}
-          >
+          <div className="overflow-hidden relative bg-white rounded-xl shadow-sm transition-all duration-300">
             <DroppableFolder
               folder={folder}
               draggedTagName={draggedTagName}
@@ -80,7 +75,6 @@ const NamedFolderList = ({
                           tag={tag}
                           folderId={folder.id}
                           isMoving={isTagMovingInFolder(tag.id, folder.id)}
-                          disabled={disabled}
                         />
                       ))}
                     </SortableContext>
