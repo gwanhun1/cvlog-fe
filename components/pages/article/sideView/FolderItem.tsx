@@ -165,7 +165,8 @@ const FolderItem = ({
         />
       ) : (
         <span className="text-sm font-semibold text-gray-900 select-none w-full overflow-hidden text-ellipsis">
-          {folder.name}
+          {/* 가입 초기에 이름 없이 만들어진 기본 폴더 등, 빈 이름 폴더가 라벨 없이 보이지 않도록 폴백 */}
+          {folder.name || '이름 없는 폴더'}
         </span>
       )}
       <svg
