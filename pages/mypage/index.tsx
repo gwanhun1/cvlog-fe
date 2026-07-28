@@ -9,6 +9,7 @@ import AccountManagement from '../../components/pages/mypage/AccountManagement';
 import GithubSyncSettings from '../../components/pages/mypage/GithubSync';
 import { useGetUserInfo } from 'service/hooks/Login';
 import AuthGuard from 'components/Shared/common/AuthGuard';
+import { getDisplayName, hasCapability } from 'utils/user';
 
 const cardBase =
   'rounded-2xl border border-slate-100 bg-white shadow-sm overflow-hidden';
@@ -71,8 +72,9 @@ const Mypage: NextPage = () => {
             <div className="p-5">
               <ProfileHeader
                 profileImage={userInfo?.profile_image}
-                githubId={userInfo?.github_id}
+                displayName={getDisplayName(userInfo)}
                 joinDate={joinDateLabel}
+                providers={userInfo?.providers}
               />
             </div>
           </section>
@@ -99,17 +101,24 @@ const Mypage: NextPage = () => {
                 title="연락처"
                 subtitle="외부 프로필/연동 정보를 관리합니다."
               >
-                <ContactInfo githubId={userInfo?.github_id} />
+                <ContactInfo
+                  displayName={getDisplayName(userInfo)}
+                  githubId={userInfo?.github_id}
+                />
               </SectionCard>
 
-              <SectionCard
-                label="Sync"
-                title="GitHub 동기화"
-                subtitle="게시물을 GitHub 저장소와 연동해 관리합니다."
-              >
-                <GithubSyncSettings />
-              </SectionCard>
+              {/* GitHub로 로그인/연동한 유저에게만 노출. 다른 소셜 로그인 유저는 애초에 쓸 수 없는 기능이라 진입점 자체를 숨긴다. */}
+              {hasCapability(userInfo, 'githubStats') && (
+                <SectionCard
+                  label="Sync"
+                  title="GitHub 동기화"
+                  subtitle="게시물을 GitHub 저장소와 연동해 관리합니다."
+                >
+                  <GithubSyncSettings />
+                </SectionCard>
+              )}
 
+              {hasCapability(userInfo, 'githubStats') && (
               <Link href="/github" className="block">
                 <section
                   className={`${cardBase} cursor-pointer group hover:border-ftBlue/30 transition-colors`}
@@ -143,6 +152,7 @@ const Mypage: NextPage = () => {
                   </div>
                 </section>
               </Link>
+              )}
 
               <SectionCard
                 label="Account"

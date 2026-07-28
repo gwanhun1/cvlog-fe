@@ -12,6 +12,7 @@ import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
 import LocalStorage from 'public/utils/Localstorage';
 import { useStore } from 'service/store/useStore';
+import { getDisplayName } from 'utils/user';
 
 const MENU_ITEMS = [
   { label: 'Home', path: '/', authRequired: false },
@@ -69,12 +70,12 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
                 className="object-cover w-10 h-10 rounded-full"
               />
               <div className="text-sm font-semibold text-gray-900">
-                {userInfo?.github_id}
+                {getDisplayName(userInfo)}
               </div>
               <div className="text-xs text-gray-500">
                 {userInfo?.name
                   ? `${userInfo.name}님 환영합니다`
-                  : userInfo?.github_id}
+                  : getDisplayName(userInfo)}
               </div>
             </div>
           </DropdownHeader>

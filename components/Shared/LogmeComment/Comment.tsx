@@ -4,6 +4,7 @@ import { useDeleteComment, useModifyComment } from 'service/hooks/Comment';
 import { useQueryClient } from '@tanstack/react-query';
 import { useStore } from 'service/store/useStore';
 import { useToast } from 'components/Shared';
+import { getDisplayName, isSameUser } from 'utils/user';
 
 const CommentItem = ({
   id,
@@ -70,7 +71,10 @@ const CommentItem = ({
   const profileImage = isDeletedUser
     ? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
     : user.profile_image;
-  const githubId = isDeletedUser ? '탈퇴한 사용자' : user.github_id;
+  const authorName = isDeletedUser ? '탈퇴한 사용자' : getDisplayName(user);
+  // 소유권은 id로만 비교한다. github_id로 비교하면 소셜 유저끼리 null === null 이 되어
+  // 남의 댓글에 수정/삭제 버튼이 노출된다.
+  const isMyComment = isSameUser(userInfo, user);
 
   return (
     <article className="py-3 border-b border-gray-100 last:border-0">
@@ -78,7 +82,7 @@ const CommentItem = ({
         <div className="flex items-center gap-3">
           <img
             src={profileImage}
-            alt={githubId}
+            alt={authorName}
             className="w-8 h-8 rounded-full flex-shrink-0 object-cover"
             onError={e => {
               (e.target as HTMLImageElement).src =
@@ -86,12 +90,12 @@ const CommentItem = ({
             }}
           />
           <div>
-            <span className="text-sm font-semibold text-ftBlack">{githubId}</span>
+            <span className="text-sm font-semibold text-ftBlack">{authorName}</span>
             <time className="block text-xs text-gray-400 mt-0.5">{created_at.slice(0, 10)}</time>
           </div>
         </div>
 
-        {user && userInfo?.github_id === user.github_id && (
+        {isMyComment && (
           <div className="flex items-center gap-1">
             <button
               className="px-2.5 py-1 text-xs font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-ftBlue transition-colors disabled:opacity-40"

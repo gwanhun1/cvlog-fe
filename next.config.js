@@ -35,6 +35,13 @@ const nextConfig = {
       'res.cloudinary.com',
       'cdn.pixabay.com',
       'googleusercontent.com',
+      // 소셜 로그인 프로필 이미지 호스트.
+      // 등록하지 않으면 next/image가 런타임에 에러를 던진다.
+      'k.kakaocdn.net',
+      'img1.kakaocdn.net',
+      't1.kakaocdn.net',
+      'phinf.pstatic.net',
+      'ssl.pstatic.net',
     ],
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],

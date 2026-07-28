@@ -9,6 +9,10 @@ import {
   useCreateGithubRepo,
   useDisconnectGithubSync,
 } from 'service/hooks/useGithubSync';
+import { useStore } from 'service/store/useStore';
+import { hasCapability } from 'utils/user';
+import GithubConnectPrompt from 'components/Shared/GithubConnectPrompt';
+import { buildLinkUrl, GITHUB_SYNC_SCOPE } from 'utils/oauth';
 
 type ConnectionStatus = 'disconnected' | 'connected' | 'error' | 'loading';
 
@@ -17,6 +21,8 @@ const GithubSyncSettings = () => {
   const createRepoMutation = useCreateGithubRepo();
   const disconnectMutation = useDisconnectGithubSync();
   const { showToast, showConfirm } = useToast();
+  const userInfo = useStore(state => state.userIdAtom);
+  const canSync = hasCapability(userInfo, 'githubSync');
 
   const [isEnabled, setIsEnabled] = useState(false);
   const [repoName, setRepoName] = useState('');
@@ -101,13 +107,18 @@ const GithubSyncSettings = () => {
     );
   }, [disconnectMutation, showConfirm]);
 
-  // 권한 재인증
+  // 권한 재인증 — 로그인이 아니라 "연동" 플로우로 보낸다.
+  // (로그인 플로우로 보내면 다른 GitHub 계정으로 세션이 갈아타 버린다)
   const handleReauthorize = useCallback(() => {
-    // GitHub OAuth 재인증 페이지로 이동
-    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/github/callback`;
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=repo delete_repo`;
-  }, []);
+    const url = buildLinkUrl('github', GITHUB_SYNC_SCOPE);
+
+    if (!url) {
+      showToast('GitHub 연동 설정이 없습니다. 관리자에게 문의해주세요.', 'error');
+      return;
+    }
+
+    window.location.href = url;
+  }, [showToast]);
 
   // 로딩 중
   if (isLoading || connectionStatus === 'loading') {
@@ -132,22 +143,30 @@ const GithubSyncSettings = () => {
         </div>
 
         <button
-          onClick={handleToggle}
+          onClick={canSync ? handleToggle : undefined}
+          disabled={!canSync}
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            isEnabled ? 'bg-blue-500' : 'bg-gray-300'
-          }`}
+            isEnabled && canSync ? 'bg-blue-500' : 'bg-gray-300'
+          } ${canSync ? '' : 'opacity-40 cursor-not-allowed'}`}
           aria-label="GitHub 동기화 토글"
         >
           <span
             className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-              isEnabled ? 'translate-x-6' : 'translate-x-1'
+              isEnabled && canSync ? 'translate-x-6' : 'translate-x-1'
             }`}
           />
         </button>
       </div>
 
       {/* 상태별 UI */}
-      {isEnabled ? (
+      {!canSync ? (
+        <GithubConnectPrompt
+          compact
+          withRepoScope
+          title="GitHub 연동이 필요합니다"
+          description="연동하면 작성한 글이 GitHub 저장소에 자동 백업됩니다."
+        />
+      ) : isEnabled ? (
         <div className="space-y-4">
           {connectionStatus === 'disconnected' && (
             <DisconnectedState

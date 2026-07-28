@@ -4,12 +4,16 @@ import { useToast } from 'components/Shared';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { cn } from 'styles/utils';
+import { useStore } from 'service/store/useStore';
+import { hasCapability } from 'utils/user';
+import type { UserCapabilities } from 'service/api/login/type';
 
 const NavMenuItem = ({
   name,
   path,
   requiresAuth = false,
   hideWhenGuest = false,
+  requiresCapability,
   isAuthenticated,
   shrink = false,
 }: {
@@ -17,13 +21,18 @@ const NavMenuItem = ({
   path: string;
   requiresAuth?: boolean;
   hideWhenGuest?: boolean;
+  /** 해당 기능을 쓸 수 있는 유저에게만 노출 (예: GitHub 미연동 유저에게 GITHUB 탭 숨김) */
+  requiresCapability?: keyof UserCapabilities;
   isAuthenticated: boolean;
   shrink?: boolean;
 }) => {
   const router = useRouter();
   const { showToast } = useToast();
+  const userInfo = useStore(state => state.userIdAtom);
 
   if (hideWhenGuest && !isAuthenticated) return null;
+  if (requiresCapability && !hasCapability(userInfo, requiresCapability))
+    return null;
 
   const isActive =
     path === '/' ? router.pathname === '/' : router.pathname.includes(path);

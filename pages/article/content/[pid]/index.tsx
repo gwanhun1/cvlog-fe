@@ -23,6 +23,7 @@ import { useStore } from 'service/store/useStore';
 import LocalStorage from 'public/utils/Localstorage';
 import { incrementViewCount } from 'service/api/detail';
 import type { ContentData, TagType } from 'service/api/detail/type';
+import { isSameUser } from 'utils/user';
 
 interface DetailProps {
   pid: string;
@@ -187,11 +188,9 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const resolvedData = detailData || initialData;
   const shouldShowSkeleton = isLoading && !initialData;
   const postData = resolvedData?.post;
-  const isOwner =
-    hasToken &&
-    !!postData &&
-    (Number(userInfo?.id) === postData.user?.id ||
-      userInfo?.github_id === String(postData.user?.github_id));
+  // 소유권은 id로만 판정한다.
+  // 예전에 있던 github_id 비교는 소셜 유저끼리 서로 소유자로 잡힐 수 있어 제거했다.
+  const isOwner = hasToken && !!postData && isSameUser(userInfo, postData.user);
 
   const postTitle = postData?.title || 'LOGME 게시물';
   const postDescription = useMemo(() => {
@@ -455,7 +454,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         <ContentLayout
           data={postData?.content}
           isLoading={shouldShowSkeleton}
-          writer={postData?.user?.github_id}
+          writerId={postData?.user?.id}
           id={postData?.id}
         />
       </main>

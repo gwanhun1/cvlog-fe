@@ -26,7 +26,10 @@ interface StoreState {
 
 const initialUserId: UserInfoType = {
   id: 0,
-  github_id: '',
+  // 비로그인 기본값. github_id는 빈 문자열이 아니라 null이어야 한다 —
+  // 빈 문자열끼리는 서로 같다고 판정되어 소유권 비교가 뚫린다.
+  github_id: null,
+  username: null,
   name: '',
   profile_image: '',
   description: null,

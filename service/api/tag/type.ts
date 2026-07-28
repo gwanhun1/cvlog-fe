@@ -26,7 +26,8 @@ export interface CreateTagsFolderRes {
   data: {
     name: string;
     user: {
-      github_id: string;
+      username: string | null;
+      github_id: string | null;
       name: string;
       refresh_token: string;
       description: string;

@@ -5,16 +5,16 @@ interface ContentProps {
   id?: number;
   data?: string | null;
   isLoading: boolean;
-  writer?: string;
+  writerId?: number;
 }
 
-const Content = ({ id, data, isLoading, writer }: ContentProps) => {
+const Content = ({ id, data, isLoading, writerId }: ContentProps) => {
   return (
     <div className="w-full">
       {isLoading ? (
         <ContentSkeleton />
       ) : (
-        <MarkdownContent content={data} writer={writer} id={id} />
+        <MarkdownContent content={data} writerId={writerId} id={id} />
       )}
     </div>
   );

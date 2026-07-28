@@ -4,6 +4,7 @@ import { useStore } from 'service/store/useStore';
 import { useGetCommentList, usePostNewComment } from 'service/hooks/Comment';
 import useIsLogin from 'hooks/useIsLogin';
 import Link from 'next/link';
+import { getDisplayName, isLoggedIn } from 'utils/user';
 
 const CommentWrite = ({
   pid,
@@ -21,8 +22,9 @@ const CommentWrite = ({
 
   // 스토어의 유저 정보만 믿으면 세션 만료 후에도 입력창이 노출된다.
   // 실제 토큰 보유(useIsLogin)까지 확인한다.
+  // 로그인 판단은 id로만 한다 — github_id로 판단하면 소셜 로그인 유저가 댓글을 못 쓴다.
   const { isAuthenticated } = useIsLogin();
-  const isLoggedIn = isAuthenticated && !!userInfo?.github_id;
+  const canWrite = isAuthenticated && isLoggedIn(userInfo);
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => setComment(e.target.value);
 
@@ -56,7 +58,7 @@ const CommentWrite = ({
     }
   };
 
-  if (!isLoggedIn) {
+  if (!canWrite) {
     return (
       <div className="flex items-center justify-center gap-3 py-6 mt-4 rounded-xl border border-dashed border-gray-200 bg-gray-50">
         <span className="text-sm text-gray-400">댓글을 작성하려면</span>
@@ -76,13 +78,13 @@ const CommentWrite = ({
       <div className="flex items-start gap-3">
         <img
           src={userInfo.profile_image || '/images/github.png'}
-          alt={userInfo.github_id}
+          alt={getDisplayName(userInfo)}
           className="w-8 h-8 rounded-full flex-shrink-0 object-cover mt-1"
         />
         <div className="flex-1 space-y-2">
           <textarea
             spellCheck={false}
-            placeholder={`${userInfo.github_id}님, 댓글을 남겨보세요. (Ctrl+Enter로 제출)`}
+            placeholder={`${getDisplayName(userInfo)}님, 댓글을 남겨보세요. (Ctrl+Enter로 제출)`}
             className="w-full px-3 py-2.5 text-sm text-ftBlack bg-white rounded-xl border border-gray-200 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue/40 transition-all resize-none"
             rows={3}
             value={comment}

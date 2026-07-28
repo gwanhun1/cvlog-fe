@@ -9,6 +9,7 @@ interface PostInfo {
 type ProfileDetailData = {
   id?: number;
   name?: string | null;
+  username?: string | null;
   github_id?: string | null;
   profile_image?: string | null;
   description?: string | null;

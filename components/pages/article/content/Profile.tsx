@@ -1,22 +1,27 @@
 import Image from 'next/image';
+import { getDisplayName } from 'utils/user';
 
 interface ProfileProps {
   getDetailData?: {
+    id?: number | null;
     profile_image?: string | null;
     name?: string | null;
+    username?: string | null;
     github_id?: string | null;
     description?: string | null;
   };
 }
 
 const Profile = ({ getDetailData }: ProfileProps) => {
-  const isDeletedUser = !getDetailData || !getDetailData.github_id;
+  // 탈퇴 판정은 유저 객체(id)의 존재로 한다.
+  // github_id로 판정하면 소셜 로그인 작성자의 글이 전부 "탈퇴한 사용자"로 보인다.
+  const isDeletedUser = !getDetailData || !getDetailData.id;
   const profileImage = isDeletedUser
     ? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
     : getDetailData.profile_image;
   const displayName = isDeletedUser
     ? '탈퇴한 사용자'
-    : (getDetailData.name ?? getDetailData.github_id);
+    : getDetailData.name || getDisplayName(getDetailData);
 
   return (
     <article className="flex items-center gap-x-4 p-2 mobile:mb-2">

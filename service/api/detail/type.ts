@@ -33,7 +33,8 @@ export interface Content {
 
 export interface UserIdType {
   id: number;
-  github_id: string;
+  username: string | null;
+  github_id: string | null;
   name: string;
   profile_image: string;
   description: string | null;

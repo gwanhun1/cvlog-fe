@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm';
 import { useRef, useMemo, memo } from 'react';
 import { cn } from 'styles/utils';
 import { useStore } from 'service/store/useStore';
+import { isSameUser } from 'utils/user';
 import styles from '../../../styles/markdown.module.scss';
 import TocItemsContainer from './TocItemsContainer';
 
@@ -19,7 +20,7 @@ interface CodeProps {
 interface MarkdownContentProps {
   content?: string | null;
   className?: string;
-  writer?: string;
+  writerId?: number;
   id?: number;
 }
 
@@ -28,7 +29,7 @@ const blueColors = ['#60a5fa', '#7bb9f9', '#93c8f8', '#a9d7f7', '#bedff6'];
 const MarkdownContentComponent = ({
   content = '',
   className = '',
-  writer,
+  writerId,
   id,
 }: MarkdownContentProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
@@ -141,7 +142,7 @@ const MarkdownContentComponent = ({
         className || ''
       )}
     >
-      {id && writer && writer !== userInfo?.github_id && (
+      {id && writerId && !isSameUser(userInfo, { id: writerId }) && (
         <nav className="hidden tablet:fixed tablet:top-40 tablet:right-1/2 tablet:translate-x-[-360px] tablet:w-64 tablet:h-fit tablet:ml-8 tablet:p-4"></nav>
       )}
 

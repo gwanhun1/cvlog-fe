@@ -4,6 +4,7 @@ import { deleteAccount } from 'service/api/login';
 import LocalStorage from 'public/utils/Localstorage';
 import Sessionstorage from 'public/utils/Sessionstorage';
 import Cookie from 'public/utils/Cookie';
+import { LINK_STATE_KEY, LOGIN_STATE_KEY } from 'utils/oauth';
 
 const AccountManagement = () => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -32,7 +33,8 @@ const AccountManagement = () => {
       localStorage.removeItem('logme-storage'); // Zustand persist
 
       // SessionStorage 정리
-      Sessionstorage.removeItem('github_oauth_state');
+      Sessionstorage.removeItem(LOGIN_STATE_KEY);
+      Sessionstorage.removeItem(LINK_STATE_KEY);
 
       // Cookie 정리
       Cookie.removeItem('refreshToken');

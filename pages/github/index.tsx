@@ -15,6 +15,8 @@ import RelatedPostsCard from '../../components/pages/github/RelatedPostsCard';
 import { useStore } from 'service/store/useStore';
 import { NextPage } from 'next';
 import AuthGuard from 'components/Shared/common/AuthGuard';
+import GithubConnectPrompt from 'components/Shared/GithubConnectPrompt';
+import { hasCapability } from 'utils/user';
 
 const Github: NextPage = () => {
   const userInfo = useStore(state => state.userIdAtom);
@@ -29,15 +31,11 @@ const Github: NextPage = () => {
     );
   }
 
-  if (!userInfo?.github_id) {
+  // 미연동 유저에게는 막다른 안내 대신 연동 경로를 준다
+  if (!hasCapability(userInfo, 'githubStats') || !userInfo.github_id) {
     return (
       <AuthGuard>
-        <div className="flex flex-col items-center justify-center min-h-[90vh] text-center text-gray-400">
-          <p className="mb-2 text-2xl font-semibold">
-            GitHub 연동 정보 없음 😢
-          </p>
-          <p className="text-lg">GitHub 계정과 연결된 정보가 없습니다.</p>
-        </div>
+        <GithubConnectPrompt description="GitHub을 연동하면 기여 그래프, 언어 분포, 저장소 하이라이트를 볼 수 있어요." />
       </AuthGuard>
     );
   }

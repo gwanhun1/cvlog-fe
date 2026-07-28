@@ -6,6 +6,7 @@ import { handleSignOut } from 'utils/auth';
 import Loader from '../common/Loader';
 import { useStore } from 'service/store/useStore';
 import { cn } from 'styles/utils';
+import { getDisplayName } from 'utils/user';
 
 const NavProfile = ({ setAuthority, shrink = false }: Props) => {
   const userInfo = useStore(state => state.userIdAtom);
@@ -44,10 +45,10 @@ const NavProfile = ({ setAuthority, shrink = false }: Props) => {
       >
         <DropdownHeader>
           <div className="text-[13px] font-semibold text-gray-900">
-            {userInfo.name || userInfo.github_id || '사용자'}
+            {userInfo.name || getDisplayName(userInfo)}
           </div>
           <div className="text-[11px] text-gray-400 mt-0.5">
-            @{userInfo.github_id || '아이디가 없어요'}
+            @{getDisplayName(userInfo)}
           </div>
         </DropdownHeader>
         <div className="py-1">

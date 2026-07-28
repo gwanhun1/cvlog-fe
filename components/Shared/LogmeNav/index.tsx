@@ -13,7 +13,14 @@ const MENU_ITEMS = [
   { name: 'HOME', path: '/', requiresAuth: false, hideWhenGuest: false },
   { name: 'ARTICLE', path: '/article', requiresAuth: false, hideWhenGuest: false },
   { name: 'RESUME', path: '/resume', requiresAuth: false, hideWhenGuest: false },
-  { name: 'GITHUB', path: '/github', requiresAuth: false, hideWhenGuest: true },
+  // GITHUB 탭은 실제로 연동된 유저에게만 보인다 (미연동 유저에게는 빈 페이지로 가는 죽은 링크)
+  {
+    name: 'GITHUB',
+    path: '/github',
+    requiresAuth: false,
+    hideWhenGuest: true,
+    requiresCapability: 'githubStats' as const,
+  },
 ];
 
 const Nav = () => {
