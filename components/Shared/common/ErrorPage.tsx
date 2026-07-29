@@ -80,7 +80,7 @@ export const ErrorScreen = ({
 // ── 404 전용 풀페이지 컴포넌트 ─────────────────────────────────
 export const NotFoundScreen = () => (
   <div
-    className="h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 relative overflow-hidden"
+    className="h-[calc(100vh-4rem)] h-[calc(100dvh-4rem)] flex flex-col items-center justify-center px-4 relative overflow-hidden"
     style={{ background: 'radial-gradient(ellipse at center, #eff6ff 0%, transparent 68%)' }}
   >
     {/* 배경 깊이용 뮤트 숫자 — 시각적 앵커 */}

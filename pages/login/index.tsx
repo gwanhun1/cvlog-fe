@@ -19,7 +19,7 @@ const ClientButtonGroup = dynamic(() => Promise.resolve(LoginButtonGroup), {
 
 const Login = () => {
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 gap-6">
+    <div className="min-h-screen min-h-[100dvh] flex flex-col justify-center items-center px-4 gap-6">
       <Shared.LogmeIcon.SymbolLogoIcon
         alt={'logo'}
         width={220}

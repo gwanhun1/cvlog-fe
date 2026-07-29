@@ -78,7 +78,7 @@ const Article: NextPage<ArticleProps> = ({ initialPosts }) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="w-full min-h-screen">
+    <div className="w-full min-h-screen min-h-[100dvh]">
       <Head>
         <title>LOGME - 게시물 목록</title>
         <meta

@@ -239,7 +239,7 @@ const SectionCard = ({
 
 // ── Field group label ──────────────────────────────────────────
 const FieldGroup = ({ children }: { children: React.ReactNode }) => (
-  <div className="grid grid-cols-2 gap-x-3 gap-y-3">{children}</div>
+  <div className="grid grid-cols-1 mobile:grid-cols-2 gap-x-3 gap-y-3">{children}</div>
 );
 
 const Field = ({
@@ -251,7 +251,7 @@ const Field = ({
   children: React.ReactNode;
   span2?: boolean;
 }) => (
-  <div className={span2 ? 'col-span-2' : ''}>
+  <div className={span2 ? 'mobile:col-span-2' : ''}>
     <label className={labelCls}>{label}</label>
     {children}
   </div>
