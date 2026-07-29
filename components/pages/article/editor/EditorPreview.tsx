@@ -37,11 +37,11 @@ const EditorPreview = ({
   return (
     <>
       {isVisiblePreview && (
-        <div className="flex-1 w-full tablet:min-w-[50vw] tablet:w-[50vw] tablet:overflow-hidden border-t tablet:border-t-0 tablet:border-l border-slate-200">
+        <div className="flex-1 w-full tablet:min-w-[50vw] tablet:w-[50vw] tablet:h-full tablet:min-h-0 tablet:overflow-hidden border-t tablet:border-t-0 tablet:border-l border-slate-200">
           <div
             ref={containerTopRef}
             className="w-full px-4 tablet:overflow-y-auto tablet:px-8"
-            style={isMobile ? undefined : { height: 'calc(100vh - 100px)' }}
+            style={isMobile ? undefined : { height: '100%' }}
           >
             <div className={styles.contentMarkdown}>
               <ReactMarkdown

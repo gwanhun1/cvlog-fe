@@ -285,7 +285,7 @@ const EditorContents = ({
     },
   };
 
-  const editorHeight = isMobile ? 300 : `calc(100vh - 100px)`;
+  const editorHeight = isMobile ? 300 : '100%';
 
   const [showScrollTop, setShowScrollTop] = useState(false);
   useEffect(() => {
@@ -298,7 +298,7 @@ const EditorContents = ({
   return (
     <div
       ref={outerRef}
-      className="relative flex flex-col tablet:flex-row w-full tablet:h-full"
+      className="relative flex flex-col tablet:flex-row w-full tablet:h-full tablet:min-h-0"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -337,7 +337,9 @@ const EditorContents = ({
       )}
 
       <div
-        className={`relative ${isVisiblePreview ? 'w-full tablet:w-1/2' : 'w-full'}`}
+        className={`relative tablet:h-full tablet:min-h-0 tablet:overflow-hidden ${
+          isVisiblePreview ? 'w-full tablet:w-1/2' : 'w-full'
+        }`}
         data-color-mode="light"
       >
         {/* 이미지 업로드 중 — thin 인디케이터 바 */}

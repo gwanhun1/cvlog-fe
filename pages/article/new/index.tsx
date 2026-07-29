@@ -85,8 +85,8 @@ const NewPost: NextPage = () => {
 
   return (
     <AuthGuard>
-      <main className="min-h-screen tablet:h-screen px-2 tablet:px-10">
-        <div className="flex flex-col tablet:h-full">
+      <main className="min-h-screen tablet:h-screen tablet:overflow-hidden px-2 tablet:px-10">
+        <div className="flex flex-col tablet:h-full tablet:min-h-0">
           <header className="flex-none">
             <EditorHeader
               doc={doc}
@@ -98,7 +98,7 @@ const NewPost: NextPage = () => {
               onSaveSuccess={handleSaveSuccess}
             />
           </header>
-          <div className="flex flex-col flex-1 w-full tablet:flex-row">
+          <div className="flex flex-col flex-1 w-full tablet:flex-row tablet:min-h-0">
             <EditorContents
               doc={doc}
               setDoc={setDoc}
