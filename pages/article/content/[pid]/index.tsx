@@ -24,6 +24,8 @@ import LocalStorage from 'public/utils/Localstorage';
 import { incrementViewCount } from 'service/api/detail';
 import type { ContentData, TagType } from 'service/api/detail/type';
 import { isSameUser } from 'utils/user';
+import { useArticleTranslation } from 'hooks/useArticleTranslation';
+import TranslateButton from 'components/pages/article/content/TranslateButton';
 
 interface DetailProps {
   pid: string;
@@ -95,6 +97,9 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const [isToggling, setIsToggling] = useState(false);
   const [viewCount, setViewCount] = useState<number | null>(initialData?.post?.view_count ?? null);
   const viewCountFired = useRef(false);
+  // 본문+댓글 영역을 브라우저 내장 번역으로 바꿔주는 훅 (미지원 환경에서는 버튼이 안 뜬다)
+  const translatableRef = useRef<HTMLDivElement>(null);
+  const translation = useArticleTranslation(translatableRef);
 
   const { data: detailData, isLoading } = useGetDetail(parseInt(pid), initialData ?? undefined);
 
@@ -437,9 +442,17 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
           </div>
         </div>
 
-        {/* 공유 버튼 */}
+        {/* 번역 · 공유 버튼 */}
         {isPublic && !shouldShowSkeleton && (
-          <div className="flex justify-end mt-3">
+          <div className="flex justify-end items-center gap-2 mt-3">
+            <TranslateButton
+              status={translation.status}
+              progress={translation.progress}
+              targetLabel={translation.targetLabel}
+              isTranslated={translation.isTranslated}
+              isBusy={translation.isBusy}
+              onClick={translation.toggle}
+            />
             <ShareButtons title={postTitle} url={canonicalUrl} />
           </div>
         )}
@@ -450,26 +463,29 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         <SeriesNav seriesName={postData.series} currentPostId={postData.id} />
       )}
 
-      <main className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm px-6 py-8 tablet:px-10">
-        <ContentLayout
-          data={postData?.content}
+      {/* 본문과 댓글을 한 덩어리로 묶어야 번역 버튼이 둘 다 처리한다 */}
+      <div ref={translatableRef}>
+        <main className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm px-6 py-8 tablet:px-10">
+          <ContentLayout
+            data={postData?.content}
+            isLoading={shouldShowSkeleton}
+            writerId={postData?.user?.id}
+            id={postData?.id}
+          />
+        </main>
+
+
+        <PostNavigation
+          prevPostInfo={resolvedData?.prevPostInfo}
+          nextPostInfo={resolvedData?.nextPostInfo}
+          basePath="/article/content"
+          userInfo={postData?.user}
           isLoading={shouldShowSkeleton}
-          writerId={postData?.user?.id}
-          id={postData?.id}
+          ProfileComponent={Profile}
         />
-      </main>
 
-
-      <PostNavigation
-        prevPostInfo={resolvedData?.prevPostInfo}
-        nextPostInfo={resolvedData?.nextPostInfo}
-        basePath="/article/content"
-        userInfo={postData?.user}
-        isLoading={shouldShowSkeleton}
-        ProfileComponent={Profile}
-      />
-
-      <CommentBox pid={pid} />
+        <CommentBox pid={pid} />
+      </div>
 
       {isPublic && postData?.id && (
         <RelatedPosts postId={postData.id} />
