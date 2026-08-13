@@ -189,7 +189,9 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
 
         <section
           aria-labelledby="article-list-title"
-          className="pb-14 tablet:pb-16"
+          className={`pb-14 tablet:pb-16 ${
+            menu === 'list' ? 'pt-9 tablet:pt-11' : ''
+          }`}
         >
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>

@@ -43,8 +43,8 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
             />
           )}
 
-          <div className="absolute inset-0 flex flex-col justify-end bg-slate-950/80 p-5 text-white transition-[background-color] duration-300 ease-out desktop:bg-slate-950/35 desktop:group-hover/media:bg-slate-950/80 desktop:group-focus-visible/media:bg-slate-950/80">
-            <div className="transition-opacity duration-300 ease-out desktop:opacity-45 desktop:group-hover/media:opacity-100 desktop:group-focus-visible/media:opacity-100">
+          <div className="absolute inset-0 flex flex-col justify-end bg-slate-950/80 p-5 text-white transition-[background-color] duration-300 ease-out desktop:bg-slate-950/20 desktop:group-hover/media:bg-slate-950/80 desktop:group-focus-visible/media:bg-slate-950/80">
+            <div className="transition-opacity duration-300 ease-out desktop:opacity-20 desktop:group-hover/media:opacity-100 desktop:group-focus-visible/media:opacity-100">
               <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-white/70">
                 {post.tags[0] && (
                   <span className="font-semibold text-white">
