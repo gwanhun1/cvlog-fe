@@ -71,6 +71,9 @@ const TAB_ICONS = [
 
 const INTERVAL = 5000;
 
+// 녹화 원본의 비율이 서로 달라 같은 무대에서도 핵심 화면이 중앙에 오도록 보정한다.
+const VIDEO_FOCUS = ['50% 50%', '38% 50%', '50% 46%', '50% 50%'];
+
 const FeaturesSection = ({ data }: Props) => {
   const [active, setActive] = useState(0);
   const [progressKey, setProgressKey] = useState(0);
@@ -165,7 +168,7 @@ const FeaturesSection = ({ data }: Props) => {
               className="flex flex-col gap-5 tablet:flex-row tablet:items-start tablet:gap-8"
             >
               {/* 비디오 */}
-              <div className="aspect-video overflow-hidden rounded-[14px] border border-slate-200 bg-slate-50 tablet:flex-1">
+              <div className="aspect-video overflow-hidden rounded-[14px] border border-slate-200 bg-slate-100 tablet:flex-1">
                 <video
                   ref={videoRef}
                   key={current.src}
@@ -175,7 +178,8 @@ const FeaturesSection = ({ data }: Props) => {
                   muted
                   playsInline
                   preload="none"
-                  className="h-full w-full object-contain"
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: VIDEO_FOCUS[active] ?? '50% 50%' }}
                 />
               </div>
 
