@@ -147,9 +147,23 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
       )}
 
       <main className="w-full">
+        {featuredPost && (
+          <section
+            aria-label="최신 공개 글과 인기 글"
+            className="py-8 tablet:py-10 desktop:py-12"
+          >
+            <div className="grid grid-cols-1 gap-10 desktop:grid-cols-[minmax(0,1.95fr)_minmax(350px,1fr)] desktop:gap-10">
+              <FeaturedPost post={featuredPost} />
+              <PopularPosts limit={3} />
+            </div>
+          </section>
+        )}
+
         <section
           aria-label="글 탐색"
-          className="grid grid-cols-1 gap-4 border-b border-slate-300 py-5 tablet:grid-cols-[minmax(0,1fr)_auto] tablet:items-center tablet:gap-7"
+          className={`grid grid-cols-1 gap-4 border-b border-slate-300 py-5 tablet:grid-cols-[minmax(0,1fr)_auto] tablet:items-center tablet:gap-7 ${
+            featuredPost ? 'border-t' : ''
+          }`}
         >
           <FilterBox
             keyword={keyword}
@@ -175,23 +189,9 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
           </div>
         </section>
 
-        {featuredPost && (
-          <section
-            aria-label="최신 공개 글과 인기 글"
-            className="py-8 tablet:py-10 desktop:py-12"
-          >
-            <div className="grid grid-cols-1 gap-10 desktop:grid-cols-[minmax(0,1.95fr)_minmax(350px,1fr)] desktop:gap-10">
-              <FeaturedPost post={featuredPost} />
-              <PopularPosts limit={3} />
-            </div>
-          </section>
-        )}
-
         <section
           aria-labelledby="article-list-title"
-          className={`pb-14 pt-9 tablet:pb-16 tablet:pt-11 ${
-            featuredPost ? 'border-t border-slate-300' : ''
-          }`}
+          className="pb-14 pt-9 tablet:pb-16 tablet:pt-11"
         >
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>
