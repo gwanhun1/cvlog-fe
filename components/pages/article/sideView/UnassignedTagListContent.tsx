@@ -28,19 +28,19 @@ const UnassignedTagListContent = ({
     return movingTags.some(
       mt =>
         mt.tagId === tagId &&
-        (mt.sourceFolderId === folderId || mt.targetFolderId === folderId)
+        (mt.sourceFolderId === folderId || mt.targetFolderId === folderId),
     );
   };
   return (
-    <div className="overflow-hidden relative rounded-xl">
-      <div className="bg-white rounded-xl shadow-sm transition-all duration-200">
+    <div className="relative overflow-hidden border-t border-slate-200 pt-2">
+      <div className="transition-colors duration-200">
         <DroppableFolder
           folder={folder}
           draggedTagName={draggedTagName}
           includeHeader={true}
         >
-          <div className="p-3 w-full">
-            <div className="mb-2 text-xs font-medium text-gray-500 select-none">
+          <div className="w-full px-2 py-2">
+            <div className="mb-2 text-[11px] font-bold text-slate-500 select-none">
               {folder.name}
             </div>
             <SortableContext

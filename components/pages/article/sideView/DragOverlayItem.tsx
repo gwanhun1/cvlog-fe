@@ -8,8 +8,8 @@ interface DragOverlayItemProps {
 const DragOverlayItem = ({ tag }: DragOverlayItemProps) => {
   const style: CSSProperties = {
     transform: 'scale(1.05)',
-    boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
-    opacity: 0.9,
+    boxShadow: '0 12px 28px rgba(38, 87, 166, 0.18)',
+    opacity: 0.96,
     cursor: 'grabbing',
     zIndex: 999,
     pointerEvents: 'none',
@@ -19,11 +19,10 @@ const DragOverlayItem = ({ tag }: DragOverlayItemProps) => {
   return (
     <div
       style={style}
-      className="bg-white rounded-lg border border-blue-300 p-2 animate-pulse"
+      className="rounded-md border border-ftBlue/30 bg-white px-3 py-2"
     >
-      <div className="flex items-center space-x-2">
-        <div className="w-2 h-2 rounded-full bg-blue-400" />
-        <span className="text-sm font-medium text-gray-800">{tag.name}</span>
+      <div className="flex items-center">
+        <span className="text-xs font-bold text-slate-700">{tag.name}</span>
       </div>
     </div>
   );

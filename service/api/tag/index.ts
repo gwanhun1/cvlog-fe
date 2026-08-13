@@ -16,24 +16,23 @@ export const getList = async (
   userId?: number,
   keyword?: string,
 ) => {
-  let url = userId
-    ? `/posts/page/${page}?userId=${userId}`
-    : `/posts/page/${page}`;
-
-  if (keyword) {
-    url += userId ? `&keyword=${keyword}` : `?keyword=${keyword}`;
-  }
-
-  const { data } = await axiosInstance.get<GetListType>(url);
+  const { data } = await axiosInstance.get<GetListType>(`/posts/page/${page}`, {
+    params: {
+      ...(userId ? { userId } : {}),
+      ...(keyword ? { keyword } : {}),
+    },
+  });
 
   return data.data;
 };
 
 export const getPublicList = async (page: number, keyword?: string) => {
-  const url = keyword
-    ? `/posts/public/page/${page}?keyword=${keyword}`
-    : `/posts/public/page/${page}`;
-  const { data } = await axiosInstance.get<GetListType>(url);
+  const { data } = await axiosInstance.get<GetListType>(
+    `/posts/public/page/${page}`,
+    {
+      params: keyword ? { keyword } : undefined,
+    },
+  );
   return data.data;
 };
 

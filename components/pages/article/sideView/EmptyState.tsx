@@ -1,48 +1,25 @@
 import { memo } from 'react';
+import { IoAddOutline } from 'react-icons/io5';
 
 interface EmptyStateProps {
   onAddClick: () => void;
 }
 
 const EmptyState = ({ onAddClick }: EmptyStateProps) => (
-  <div className="text-center py-8">
-    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-50 flex items-center justify-center">
-      <svg
-        className="w-8 h-8 text-blue-500"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-        />
-      </svg>
-    </div>
-    <h3 className="text-base font-semibold text-gray-900 mb-1">
-      태그가 없습니다
+  <div className="border-b border-slate-200 px-2 py-8 text-center">
+    <h3 className="m-0 text-sm font-bold text-slate-800">
+      태그 폴더가 없습니다
     </h3>
-    <p className="text-sm text-gray-500 mb-4">첫 번째 태그를 만들어보세요!</p>
+    <p className="mb-0 mt-1 text-xs leading-relaxed text-slate-500">
+      폴더를 만들어 태그를 정리해보세요.
+    </p>
     <button
+      type="button"
       onClick={onAddClick}
-      className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-md shadow-blue-200 text-sm"
+      className="mt-4 inline-flex min-h-[40px] items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 transition-colors hover:border-ftBlue hover:text-ftBlue focus-visible:ring-2 focus-visible:ring-ftBlue"
     >
-      <svg
-        className="w-4 h-4 mr-1.5"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M12 4v16m8-8H4"
-        />
-      </svg>
-      새 태그 만들기
+      <IoAddOutline aria-hidden className="h-4 w-4" />
+      폴더 추가
     </button>
   </div>
 );

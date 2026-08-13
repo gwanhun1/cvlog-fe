@@ -1,5 +1,3 @@
-import { UserIdType } from '../detail/type';
-
 export interface Tag {
   id: number;
   name: string;
@@ -102,6 +100,13 @@ export interface TagSuggestion {
   name: string;
 }
 
+export interface PublicAuthor {
+  id: number;
+  username: string | null;
+  name: string | null;
+  profile_image: string | null;
+}
+
 export interface TagAutocompleteRes {
   success: boolean;
   data: TagSuggestion[];
@@ -111,12 +116,13 @@ export interface BlogType {
   id: number;
   title: string;
   content: string;
-  user: UserIdType;
+  user?: PublicAuthor;
   public_status: boolean;
   created_at: string;
   updated_at: string;
-  image: string;
-  index: number;
+  image?: string;
+  index?: number;
+  view_count?: number;
   tags: TagType[];
 }
 

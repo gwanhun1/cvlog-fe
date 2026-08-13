@@ -1,44 +1,37 @@
 const CardSkeleton = () => (
-  <article className="block overflow-hidden relative bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06),0_4px_12px_rgba(0,0,0,0.04)] transition-all duration-200 animate-pulse group">
-    <div className="flex flex-col h-full">
-      <div className="relative w-full h-0 pb-[70%] bg-gray-200 rounded-t-lg" />
-
-      <div className="flex flex-col flex-grow justify-between p-5 w-full">
-        <div className="flex flex-col h-full">
-          <div className="mb-2 w-3/4 h-8 bg-gray-200 rounded" />
-
-          <div className="space-y-2">
-            <div className="w-full h-4 bg-gray-200 rounded" />
-            <div className="w-5/6 h-4 bg-gray-200 rounded" />
-            <div className="w-4/6 h-4 bg-gray-200 rounded" />
-          </div>
-
-          <div className="flex items-center pt-4 mt-auto">
-            <div className="flex flex-1 gap-2">
-              <div className="w-16 h-6 bg-gray-200 rounded-full" />
-              <div className="w-20 h-6 bg-gray-200 rounded-full" />
-              <div className="w-14 h-6 bg-gray-200 rounded-full" />
-            </div>
-          </div>
-        </div>
+  <article
+    aria-hidden
+    className="overflow-hidden rounded-[14px] border border-slate-200 bg-white"
+  >
+    <div className="aspect-[16/9] animate-pulse bg-slate-100" />
+    <div className="p-5">
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <div className="h-3 w-16 animate-pulse rounded bg-slate-200" />
+        <div className="h-3 w-10 animate-pulse rounded bg-slate-100" />
+      </div>
+      <div className="h-5 w-5/6 animate-pulse rounded bg-slate-200" />
+      <div className="mt-2 h-5 w-3/5 animate-pulse rounded bg-slate-200" />
+      <div className="mt-5 space-y-2">
+        <div className="h-3 w-full animate-pulse rounded bg-slate-100" />
+        <div className="h-3 w-4/5 animate-pulse rounded bg-slate-100" />
+      </div>
+      <div className="mt-5 flex gap-2 border-t border-slate-100 pt-4">
+        <div className="h-5 w-14 animate-pulse rounded bg-slate-100" />
+        <div className="h-5 w-16 animate-pulse rounded bg-slate-100" />
       </div>
     </div>
   </article>
 );
 
-const SkeletonLoader = () => {
-  return (
-    <div className="masonry-grid">
-      {[...Array(6)].map((_, index) => (
-        <div key={index} className="masonry-item break-inside-avoid">
-          <div className="block h-full">
-            <CardSkeleton />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
+const SkeletonLoader = () => (
+  <div className="masonry-grid">
+    {Array.from({ length: 6 }).map((_, index) => (
+      <div key={index} className="masonry-item break-inside-avoid">
+        <CardSkeleton />
+      </div>
+    ))}
+  </div>
+);
 
 export default CardSkeleton;
 export { SkeletonLoader };

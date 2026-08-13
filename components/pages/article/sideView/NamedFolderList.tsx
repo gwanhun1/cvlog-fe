@@ -18,7 +18,7 @@ interface NamedFolderListProps {
   draggedTagName: string;
   closedIdx: number[];
   onClickAccordion: (
-    id: number
+    id: number,
   ) => (e: React.MouseEvent<HTMLDivElement>) => void;
   movingTags: MovingTagInfo[];
 }
@@ -35,13 +35,16 @@ const NamedFolderList = ({
     movingTags.some(
       mt =>
         mt.tagId === tagId &&
-        (mt.sourceFolderId === folderId || mt.targetFolderId === folderId)
+        (mt.sourceFolderId === folderId || mt.targetFolderId === folderId),
     );
   return (
     <>
       {folders.map((folder: Folder) => (
-        <div key={folder.id} className="mb-4">
-          <div className="overflow-hidden relative bg-white rounded-xl shadow-sm transition-all duration-300">
+        <div
+          key={folder.id}
+          className="border-b border-slate-200 py-1 last:border-b-0"
+        >
+          <div className="relative overflow-hidden transition-colors duration-300">
             <DroppableFolder
               folder={folder}
               draggedTagName={draggedTagName}
@@ -58,9 +61,10 @@ const NamedFolderList = ({
 
                 {/* 태그 리스트 영역 */}
                 <div
+                  aria-hidden={closedIdx.includes(folder.id)}
                   className={`w-full px-2 transition-all duration-300 ease-in-out ${
                     closedIdx.includes(folder.id)
-                      ? 'max-h-0 overflow-hidden opacity-0 pointer-events-none'
+                      ? 'invisible max-h-0 overflow-hidden opacity-0 pointer-events-none'
                       : 'max-h-[500px] opacity-100 mt-1'
                   }`}
                 >

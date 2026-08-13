@@ -6,6 +6,7 @@ import {
   useSensors,
   MouseSensor,
   TouchSensor,
+  KeyboardSensor,
   DragStartEvent,
   DragEndEvent,
   DragCancelEvent,
@@ -13,6 +14,7 @@ import {
   rectIntersection,
   CollisionDetection,
 } from '@dnd-kit/core';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import {
   restrictToVerticalAxis,
   restrictToWindowEdges,
@@ -57,7 +59,10 @@ const SideMenu = ({ className }: { className?: string }) => {
         delay: 100,
         tolerance: 5,
       },
-    })
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   );
 
   // 폴더 영역 우선 감지를 위한 커스텀 collision detection.
@@ -67,10 +72,10 @@ const SideMenu = ({ className }: { className?: string }) => {
   // 엉뚱한 폴더가 선택되어 "잘못된 폴더로 드롭"되는 원인이 됐다.
   // rect 면적이 가장 작은(=가장 안쪽/구체적인) 폴더를 선택해 이를 보정한다.
   const pickMostSpecificFolder = (
-    collisions: ReturnType<CollisionDetection>
+    collisions: ReturnType<CollisionDetection>,
   ) => {
     const folderCollisions = collisions.filter(
-      collision => !String(collision.id).includes('-')
+      collision => !String(collision.id).includes('-'),
     );
     if (folderCollisions.length === 0) return null;
     if (folderCollisions.length === 1) return folderCollisions[0];
@@ -122,7 +127,7 @@ const SideMenu = ({ className }: { className?: string }) => {
 
   const unassignedFolder = useMemo(
     () => optimisticFoldersData?.find(folder => folder.id === 999),
-    [optimisticFoldersData]
+    [optimisticFoldersData],
   );
 
   const { namedFolder, defaultFolder } = useMemo(
@@ -131,7 +136,7 @@ const SideMenu = ({ className }: { className?: string }) => {
       defaultFolder:
         optimisticFoldersData?.filter(item => item.id === 999) ?? [],
     }),
-    [optimisticFoldersData]
+    [optimisticFoldersData],
   );
 
   const onDragStart = useCallback(
@@ -140,7 +145,7 @@ const SideMenu = ({ className }: { className?: string }) => {
       setDragActive(true);
       handleDragStart(event);
     },
-    [handleDragStart]
+    [handleDragStart],
   );
 
   const onDragEnd = useCallback(
@@ -149,7 +154,7 @@ const SideMenu = ({ className }: { className?: string }) => {
       setDragActive(false);
       handleDragEnd(event);
     },
-    [handleDragEnd]
+    [handleDragEnd],
   );
 
   const onDragCancel = useCallback(
@@ -158,7 +163,7 @@ const SideMenu = ({ className }: { className?: string }) => {
       setDragActive(false);
       handleDragCancel(event);
     },
-    [handleDragCancel]
+    [handleDragCancel],
   );
 
   const onClickAccordion = useCallback(
@@ -174,7 +179,7 @@ const SideMenu = ({ className }: { className?: string }) => {
         return hasId ? prev.filter(storedId => storedId !== id) : [...prev, id];
       });
     },
-    [dragActive]
+    [dragActive],
   );
 
   const tryOpenModal = useCallback((name: string) => {
@@ -200,11 +205,10 @@ const SideMenu = ({ className }: { className?: string }) => {
         unassignedFolder.tags &&
         unassignedFolder.tags.length > 0));
 
-  const outerCls =
+  const outerCls = `${
     className ??
-    `sticky top-[var(--header-height,64px)] w-full max-w-[200px] max-h-[calc(100vh-var(--header-height,64px)-1rem)] flex flex-col overflow-hidden bg-white rounded-xl shadow-sm border border-gray-100 transition-[top,max-height] duration-300 ${
-      hasPendingOperations ? 'ring-2 ring-ftBlue/20' : ''
-    }`;
+    'sticky top-[var(--header-height,64px)] flex max-h-[calc(100vh-var(--header-height,64px)-1rem)] w-full max-w-[200px] flex-col overflow-hidden border-t-2 border-slate-900 bg-transparent transition-[top,max-height] duration-300'
+  } ${hasPendingOperations ? 'ring-2 ring-ftBlue/20' : ''}`;
 
   return (
     <>
@@ -224,7 +228,7 @@ const SideMenu = ({ className }: { className?: string }) => {
           />
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain p-2 [&::-webkit-scrollbar]:w-[3px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
+        <div className="flex-1 overflow-y-auto overscroll-contain py-2 pr-1 [&::-webkit-scrollbar]:w-[3px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-200 hover:[&::-webkit-scrollbar-thumb]:bg-slate-300">
           {isLoading ? (
             <SideViewSkeleton />
           ) : isError ? (
@@ -242,7 +246,7 @@ const SideMenu = ({ className }: { className?: string }) => {
                 onDragCancel={onDragCancel}
                 modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
               >
-                <div className="space-y-4">
+                <div>
                   <NamedFolderList
                     folders={namedFolder}
                     draggedTagName={draggedTagName}
@@ -252,7 +256,7 @@ const SideMenu = ({ className }: { className?: string }) => {
                   />
 
                   {unassignedFolder && (
-                    <div className="mt-4">
+                    <div className="mt-3">
                       <UnassignedTagListContent
                         folder={unassignedFolder}
                         draggedTagName={draggedTagName}
@@ -265,7 +269,7 @@ const SideMenu = ({ className }: { className?: string }) => {
                 <DragOverlay
                   dropAnimation={{
                     duration: 150,
-                    easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+                    easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
                   }}
                 >
                   {activeTag && <DragOverlayItem tag={activeTag.tag} />}

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { IoMdSearch, IoMdCreate } from 'react-icons/io';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import useIsLogin from 'hooks/useIsLogin';
 import { useDraftResume } from 'hooks/useDraftResume';
 import DraftResumeModal from 'components/Shared/DraftResumeModal';
@@ -14,59 +14,82 @@ interface FilterBoxProps {
 const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
   const [localKeyword, setLocalKeyword] = useState(keyword);
   const [isMounted, setIsMounted] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const reduceMotion = useReducedMotion();
   const { isAuthenticated } = useIsLogin();
-  const { handleNewArticle, showModal, draftInfo, handleResume, handleFresh, handleClose } =
-    useDraftResume();
+  const {
+    handleNewArticle,
+    showModal,
+    draftInfo,
+    handleResume,
+    handleFresh,
+    handleClose,
+  } = useDraftResume();
 
   useEffect(() => {
     setIsMounted(true);
-    const check = () => setIsMobile(window.innerWidth < 640);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
   }, []);
 
   useEffect(() => {
     setLocalKeyword(keyword);
   }, [keyword]);
 
-  const handleSearch = () => setKeyword(localKeyword.trim());
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSearch();
+  const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setKeyword(localKeyword.trim());
   };
 
   return (
-    <div className="flex items-center gap-2 w-full">
-      <div className="relative flex-1">
-        <IoMdSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-        <input
-          ref={inputRef}
-          type="text"
-          value={localKeyword}
-          onChange={e => setLocalKeyword(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="w-full h-10 pl-10 pr-4 text-sm bg-gray-50 border border-gray-400 rounded-lg text-gray-900 placeholder:text-gray-400 shadow-[inset_0_1px_3px_rgba(0,0,0,0.07)] focus:outline-none focus:bg-white focus:border-ftBlue/50 focus:ring-2 focus:ring-ftBlue/10 focus:shadow-none transition-all"
-          placeholder={isMobile ? '검색어 또는 태그' : '태그나 키워드로 검색 (Enter)'}
-          aria-label="게시물 검색"
-        />
-      </div>
+    <>
+      <form
+        role="search"
+        onSubmit={handleSearch}
+        className="flex w-full items-center gap-2.5"
+      >
+        <div className="flex min-w-0 flex-1 items-stretch">
+          <label htmlFor="article-search" className="sr-only">
+            게시물 검색
+          </label>
+          <div className="relative min-w-0 flex-1">
+            <IoMdSearch className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400" />
+            <input
+              id="article-search"
+              ref={inputRef}
+              type="search"
+              value={localKeyword}
+              onChange={event => setLocalKeyword(event.target.value)}
+              className="h-12 w-full rounded-l-[12px] border border-r-0 border-slate-300 bg-white pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 transition-[border-color,box-shadow] focus:border-ftBlue focus:ring-2 focus:ring-ftBlue/10 focus-visible:outline-none"
+              placeholder="제목 또는 태그 검색"
+              autoComplete="off"
+            />
+          </div>
+          <button
+            type="submit"
+            className="flex h-12 min-w-[52px] items-center justify-center rounded-r-[12px] bg-ftBlue px-4 text-sm font-bold text-white transition-colors hover:bg-[#1f4a8c] focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2 active:translate-y-px mobile:min-w-[74px]"
+          >
+            <span className="hidden mobile:inline">검색</span>
+            <IoMdSearch aria-hidden className="h-5 w-5 mobile:hidden" />
+          </button>
+        </div>
 
-      {isMounted && isAuthenticated && (
-        <motion.button
-          className="write-btn relative flex-shrink-0 h-10 px-4 text-sm font-semibold text-white bg-ftBlue rounded-lg overflow-hidden"
-          whileHover={{ scale: 1.03, backgroundColor: '#1f4a8c' }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-          onClick={handleNewArticle}
-        >
-          <span className="relative z-10 flex items-center gap-1.5">
-            <IoMdCreate className="w-4 h-4" />
-            {isMobile ? '작성' : '글 작성하기'}
-          </span>
-        </motion.button>
-      )}
+        {isMounted && isAuthenticated && (
+          <motion.button
+            type="button"
+            className="write-btn relative flex h-12 flex-shrink-0 items-center overflow-hidden rounded-[12px] border border-slate-300 bg-white px-3 text-sm font-bold text-slate-700 focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2 mobile:px-4"
+            whileHover={
+              reduceMotion ? undefined : { y: -2, borderColor: '#2657A6' }
+            }
+            whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+            onClick={handleNewArticle}
+          >
+            <span className="relative z-10 flex items-center gap-1.5 whitespace-nowrap">
+              <IoMdCreate className="w-4 h-4" />
+              <span className="hidden mobile:inline">글 작성</span>
+              <span className="mobile:hidden">작성</span>
+            </span>
+          </motion.button>
+        )}
+      </form>
 
       <DraftResumeModal
         isOpen={showModal}
@@ -75,7 +98,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
         onFresh={handleFresh}
         onClose={handleClose}
       />
-    </div>
+    </>
   );
 };
 

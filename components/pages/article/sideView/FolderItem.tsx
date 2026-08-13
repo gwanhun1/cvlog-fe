@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
+import { IoChevronDown } from 'react-icons/io5';
 import { Folder } from 'service/api/tag/type';
 import { useUpdateFolderName, useRemoveFolders } from 'service/hooks/List';
 import { useToast } from 'components/Shared';
@@ -7,7 +8,7 @@ export interface FolderItemProps {
   folder: Folder;
   isOpened: boolean;
   onClickAccordion: (
-    id: number
+    id: number,
   ) => (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
@@ -38,6 +39,14 @@ const FolderItem = ({
     e.preventDefault();
     // 아코디언 클릭 핸들러 호출
     onClickAccordion(folder.id)(e);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    onClickAccordion(folder.id)(
+      e as unknown as React.MouseEvent<HTMLDivElement>,
+    );
   };
 
   const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -141,8 +150,9 @@ const FolderItem = ({
 
   return (
     <div
-      className="flex items-center justify-between p-3.5 cursor-pointer bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 transition-all duration-300 border-b border-gray-100 select-none w-full z-30 relative"
+      className="relative z-30 flex w-full cursor-pointer select-none items-center justify-between px-2 py-3 transition-colors duration-200 hover:bg-slate-100/70"
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       onMouseDown={e => e.stopPropagation()}
       onContextMenu={handleContextMenu}
       role="button"
@@ -164,26 +174,20 @@ const FolderItem = ({
           className="w-full text-sm font-semibold text-gray-900 bg-white rounded-md border border-ftBlue/40 outline-none px-1.5 py-0.5"
         />
       ) : (
-        <span className="text-sm font-semibold text-gray-900 select-none w-full overflow-hidden text-ellipsis">
+        <span className="w-full overflow-hidden text-ellipsis text-xs font-bold text-slate-700">
           {/* 가입 초기에 이름 없이 만들어진 기본 폴더 등, 빈 이름 폴더가 라벨 없이 보이지 않도록 폴백 */}
           {folder.name || '이름 없는 폴더'}
         </span>
       )}
-      <svg
-        className={`w-5 h-5 text-gray-400 transform transition-transform duration-300 ${
-          !isOpened ? '' : 'rotate-180'
-        } flex-shrink-0 ml-2`}
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M19 9l-7 7-7-7"
+      <span className="ml-2 flex shrink-0 items-center gap-2 text-[10px] text-slate-400">
+        {folder.tags.length}
+        <IoChevronDown
+          aria-hidden
+          className={`h-4 w-4 transition-transform duration-300 ${
+            isOpened ? 'rotate-180' : ''
+          }`}
         />
-      </svg>
+      </span>
 
       {menuPosition && (
         <div

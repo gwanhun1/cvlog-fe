@@ -1,87 +1,148 @@
-import { useEffect, useCallback } from 'react';
-import SideView from './SideView';
+import { useCallback, useEffect, useRef } from 'react';
+import { IoCloseOutline, IoPricetagsOutline } from 'react-icons/io5';
 import { useGetFolders } from 'service/hooks/List';
+import SideView from './SideView';
 
 interface TagDrawerProps {
   open: boolean;
   onClose: () => void;
 }
 
+const FOCUSABLE_ELEMENTS =
+  'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 const TagDrawer = ({ open, onClose }: TagDrawerProps) => {
   const { data: folders } = useGetFolders();
-
-  const totalTags = folders?.reduce((sum, f) => sum + (f.tags?.length ?? 0), 0) ?? 0;
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const totalTags =
+    folders?.reduce((sum, folder) => sum + (folder.tags?.length ?? 0), 0) ?? 0;
 
   const handleKey = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+    (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !panelRef.current) return;
+
+      const panel = panelRef.current;
+      const focusableElements = Array.from(
+        panel.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS),
+      ).filter(element => element.offsetParent !== null);
+
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        panel.focus();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const activeElement = document.activeElement;
+
+      if (
+        event.shiftKey &&
+        (activeElement === firstElement || !panel.contains(activeElement))
+      ) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
     },
     [onClose],
   );
 
   useEffect(() => {
-    if (!open) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    if (!open) {
+      panel.setAttribute('inert', '');
+      return;
+    }
+
+    panel.removeAttribute('inert');
+    openerRef.current = document.activeElement as HTMLElement | null;
     document.addEventListener('keydown', handleKey);
     document.body.style.overflow = 'hidden';
+    const focusTimer = window.setTimeout(
+      () => closeButtonRef.current?.focus(),
+      0,
+    );
+
     return () => {
+      window.clearTimeout(focusTimer);
       document.removeEventListener('keydown', handleKey);
       document.body.style.overflow = '';
+      openerRef.current?.focus();
     };
-  }, [open, handleKey]);
+  }, [handleKey, open]);
 
   return (
     <>
-      {/* backdrop */}
       <div
-        className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
-          open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-40 bg-slate-950/30 transition-opacity duration-300 ${
+          open
+            ? 'pointer-events-auto opacity-100'
+            : 'pointer-events-none opacity-0'
         }`}
         onClick={onClose}
         aria-hidden
       />
 
-      {/* drawer panel */}
       <div
-        className={`fixed top-0 left-0 z-50 h-full w-[85vw] max-w-[300px] bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
-          open ? 'translate-x-0' : '-translate-x-full'
+        id="article-tag-drawer"
+        ref={panelRef}
+        className={`fixed bottom-0 left-0 top-[var(--header-height,64px)] z-50 flex w-[86vw] max-w-[320px] flex-col border-r border-slate-200 bg-white shadow-[18px_0_50px_rgba(15,23,42,0.16)] transition-[transform,opacity] duration-300 ease-out ${
+          open ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
         }`}
         role="dialog"
         aria-modal="true"
-        aria-label="태그 관리"
+        aria-label="내 태그 정리"
+        aria-describedby="article-tag-drawer-help"
+        aria-hidden={!open}
+        tabIndex={-1}
       >
-        {/* header */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 flex-shrink-0">
-          <div className="flex items-center gap-2">
-            <svg className="w-4 h-4 text-ftBlue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-            </svg>
-            <span className="text-sm font-bold text-ftBlack">태그 관리</span>
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-4 py-4">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <IoPricetagsOutline
+              aria-hidden
+              className="h-4 w-4 shrink-0 text-ftBlue"
+            />
+            <span className="text-sm font-bold text-slate-900">태그 정리</span>
             {totalTags > 0 && (
-              <span className="px-1.5 py-0.5 text-[10px] font-bold text-white bg-ftBlue rounded-full">
-                {totalTags}
+              <span className="text-[11px] font-medium text-slate-400">
+                {totalTags}개
               </span>
             )}
           </div>
           <button
+            ref={closeButtonRef}
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
-            aria-label="닫기"
+            className="flex h-10 w-10 items-center justify-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-ftBlue"
+            aria-label="태그 정리 닫기"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <IoCloseOutline aria-hidden className="h-5 w-5" />
           </button>
         </div>
 
-        {/* scrollable body */}
-        <div className="flex-1 overflow-y-auto px-3 py-3">
-          <SideView className="w-full flex flex-col bg-white/90 backdrop-blur rounded-xl border border-ftBlue/20 transition-opacity duration-200" />
+        <div className="flex-1 overflow-y-auto px-4 py-3">
+          <SideView className="flex w-full flex-col bg-white" />
         </div>
 
-        {/* footer hint */}
-        <div className="px-4 py-3 border-t border-gray-100 flex-shrink-0">
-          <p className="text-[11px] text-gray-400 text-center">
-            태그를 드래그해서 폴더로 이동할 수 있어요
+        <div className="shrink-0 border-t border-slate-200 px-4 py-3">
+          <p
+            id="article-tag-drawer-help"
+            className="m-0 text-center text-[11px] leading-relaxed text-slate-400"
+          >
+            태그를 끌어 다른 폴더로 이동할 수 있습니다.
           </p>
         </div>
       </div>

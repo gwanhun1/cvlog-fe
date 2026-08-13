@@ -20,80 +20,42 @@ const MenuTab = ({ setMenu, activeMenu = 'list' }: MenuTabProps) => {
   }, [activeMenu, hasToken, setMenu]);
 
   const isReady = hasToken !== null;
-  const showMyPostsTab = hasToken === true;
-  const resolvedActiveMenu: 'list' | 'all' | null =
-    hasToken === null ? null : showMyPostsTab ? activeMenu : 'all';
+  const showMyPosts = hasToken === true;
+  const resolvedMenu = showMyPosts ? activeMenu : 'all';
 
-  const handleSetMenu = (menu: 'list' | 'all') => {
-    setMenu(menu);
-  };
+  const tabClass = (selected: boolean) =>
+    `relative min-h-[44px] whitespace-nowrap px-1 text-[13px] font-bold transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:bg-ftBlue after:transition-transform after:duration-300 focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2 ${
+      selected
+        ? 'text-slate-950 after:scale-x-100'
+        : 'text-slate-400 after:scale-x-0 hover:text-slate-700'
+    }`;
 
   return (
-    <div className="w-full">
-      <div className="flex gap-1 items-center p-1 rounded-xl bg-gray-100">
+    <div
+      className="flex min-h-[44px] items-center gap-5"
+      role="group"
+      aria-label="게시물 보기 범위"
+    >
+      <button
+        type="button"
+        onClick={isReady ? () => setMenu('all') : undefined}
+        disabled={!isReady}
+        aria-pressed={resolvedMenu === 'all'}
+        className={tabClass(resolvedMenu === 'all')}
+      >
+        전체 글
+      </button>
+
+      {showMyPosts && (
         <button
-          onClick={
-            isReady && showMyPostsTab ? () => handleSetMenu('list') : undefined
-          }
-          disabled={!isReady || !showMyPostsTab}
-          tabIndex={isReady && showMyPostsTab ? 0 : -1}
-          aria-hidden={!showMyPostsTab}
-          className={`flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-150 focus:outline-none ${
-            resolvedActiveMenu === 'list'
-              ? 'bg-white text-ftBlue shadow-sm'
-              : 'text-gray-500 hover:text-gray-700'
-          } ${
-            showMyPostsTab ? '' : 'hidden'
-          }`}
-          aria-current={resolvedActiveMenu === 'list' ? 'page' : undefined}
+          type="button"
+          onClick={() => setMenu('list')}
+          aria-pressed={resolvedMenu === 'list'}
+          className={tabClass(resolvedMenu === 'list')}
         >
-          <span className="flex gap-2 justify-center items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 10h16M4 14h16M4 18h16"
-              />
-            </svg>
-            나의 게시물
-          </span>
+          내 기록
         </button>
-        <button
-          onClick={isReady ? () => handleSetMenu('all') : undefined}
-          disabled={!isReady}
-          className={`flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-150 focus:outline-none ${
-            resolvedActiveMenu === 'all'
-              ? 'bg-white text-ftBlue shadow-sm'
-              : 'text-gray-500 hover:text-gray-700'
-          }`}
-          aria-current={resolvedActiveMenu === 'all' ? 'page' : undefined}
-        >
-          <span className="flex gap-2 justify-center items-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="mr-2 w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-            전체 게시물
-          </span>
-        </button>
-      </div>
+      )}
     </div>
   );
 };

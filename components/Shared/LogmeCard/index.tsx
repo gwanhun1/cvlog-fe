@@ -4,7 +4,7 @@ import Image from 'next/image';
 import TagList from './TagList';
 import { formatTimeAgo } from 'styles/utils/timeCheck';
 import { useStore } from 'service/store/useStore';
-import { UserIdType } from 'service/api/detail/type';
+import { PublicAuthor } from 'service/api/tag/type';
 
 export interface TagItem {
   id: number;
@@ -17,7 +17,7 @@ export interface CardProps {
   created_at?: string;
   updated_at?: string;
   tags: TagItem[];
-  user?: UserIdType;
+  user?: PublicAuthor;
 }
 
 const extractImageUrl = (content: string): string | undefined => {
@@ -31,7 +31,13 @@ const removeImageFromContent = (content: string): string => {
   return cleanContent.replace(/\n\s*\n/g, '\n');
 };
 
-const HighlightText = ({ text, keyword }: { text: string; keyword: string }) => {
+const HighlightText = ({
+  text,
+  keyword,
+}: {
+  text: string;
+  keyword: string;
+}) => {
   if (!keyword.trim()) return <>{text}</>;
 
   const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -41,18 +47,28 @@ const HighlightText = ({ text, keyword }: { text: string; keyword: string }) => 
     <>
       {parts.map((part, i) =>
         part.toLowerCase() === keyword.toLowerCase() ? (
-          <mark key={i} className="bg-yellow-200 text-slate-900 rounded-sm not-italic">
+          <mark
+            key={i}
+            className="bg-yellow-200 text-slate-900 rounded-sm not-italic"
+          >
             {part}
           </mark>
         ) : (
           part
-        )
+        ),
       )}
     </>
   );
 };
 
-const Card = ({ title, created_at, updated_at, content, tags, user }: CardProps) => {
+const Card = ({
+  title,
+  created_at,
+  updated_at,
+  content,
+  tags,
+  user,
+}: CardProps) => {
   // 카드에 보여줄 날짜는 '게시일'(created_at). 조회/수정으로 흔들리지 않는다.
   const publishedAt = created_at ?? updated_at;
   const imageUrl = extractImageUrl(content);
@@ -158,25 +174,27 @@ const Card = ({ title, created_at, updated_at, content, tags, user }: CardProps)
         {user && (
           <div className="overflow-hidden absolute right-0 bottom-0 pointer-events-none">
             <div className="flex items-center gap-2 py-1.5 px-3 mb-2 mr-2 bg-white/80 backdrop-blur-md rounded-full border shadow-sm transition-all duration-300 translate-y-full opacity-0 border-ftBlue/20 group-hover:translate-y-0 group-hover:opacity-100">
-              <div className="overflow-hidden relative w-5 h-5 rounded-full ring-1 ring-ftBlue/10">
+              <div className="overflow-hidden relative flex w-5 h-5 items-center justify-center rounded-full bg-ftBlue/10 text-[9px] font-bold text-ftBlue ring-1 ring-ftBlue/10">
                 {user.profile_image?.includes('googleusercontent.com') ? (
                   <img
                     src={user.profile_image}
-                    alt={user.name}
+                    alt={user.name ?? user.username ?? ''}
                     className="object-cover w-full h-full"
                   />
-                ) : (
+                ) : user.profile_image ? (
                   <Image
                     src={user.profile_image}
-                    alt={user.name}
+                    alt={user.name ?? user.username ?? ''}
                     fill
                     sizes="20px"
                     className="object-cover"
                   />
+                ) : (
+                  (user.username ?? user.name ?? 'L').slice(0, 1).toUpperCase()
                 )}
               </div>
               <span className="text-xs font-medium text-slate-600">
-                {user.name}
+                {user.username ?? user.name ?? 'LOGME 사용자'}
               </span>
             </div>
           </div>

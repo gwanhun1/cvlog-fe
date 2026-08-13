@@ -1,6 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useMemo, useCallback, CSSProperties } from 'react';
+import { IoReorderThreeOutline } from 'react-icons/io5';
 import { useStore } from 'service/store/useStore';
 import { Tag } from 'service/api/tag/type';
 
@@ -38,12 +39,25 @@ const TagItem = ({
     },
   });
 
-  const keyword = useStore((state) => state.tagAtom);
-  const setKeyword = useStore((state) => state.setTagAtom);
+  const keyword = useStore(state => state.tagAtom);
+  const setKeyword = useStore(state => state.setTagAtom);
 
   const handleTagClick = useCallback(() => {
     setKeyword(tag.name);
   }, [tag.name, setKeyword]);
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleTagClick();
+        return;
+      }
+
+      listeners?.onKeyDown?.(event);
+    },
+    [handleTagClick, listeners],
+  );
 
   const style = useMemo(
     (): CSSProperties => ({
@@ -55,16 +69,15 @@ const TagItem = ({
       touchAction: 'none',
       userSelect: 'none' as 'none',
     }),
-    [transform, transition, isDragging]
+    [transform, transition, isDragging],
   );
 
   // 이동 중인 태그는 스켈레톤으로 표시
   if (isMoving) {
     return (
-      <div className="flex items-center justify-between w-full py-2.5 px-3 mb-2 rounded-lg border border-blue-200 bg-blue-50 animate-pulse">
-        <div className="flex items-center space-x-3 w-full">
-          <div className="w-2.5 h-2.5 rounded-full bg-blue-300 flex-shrink-0 animate-pulse" />
-          <div className="w-3/4 h-4 bg-blue-200 rounded animate-pulse" />
+      <div className="mb-1 flex w-full items-center justify-between rounded-md border border-blue-200 bg-blue-50 px-2 py-2 animate-pulse">
+        <div className="flex w-full items-center gap-2">
+          <div className="h-3 w-3/4 rounded bg-blue-200 animate-pulse" />
         </div>
       </div>
     );
@@ -79,28 +92,41 @@ const TagItem = ({
       {...attributes}
       {...listeners}
       className={`
-        flex items-center justify-between w-full py-2.5 px-3 mb-2 rounded-lg 
-        border border-gray-100 cursor-move select-none
-        hover:border-blue-200 hover:bg-blue-50 hover:shadow-sm 
-        active:bg-blue-500 active:text-white 
-        transition-all duration-200 ease-in-out
-        ${isSelected ? 'bg-blue-400 text-white shadow-md' : 'bg-white'}
+        mb-1 flex w-full cursor-grab select-none items-center justify-between rounded-md border px-2 py-2
+        transition-[background-color,border-color,color,transform] duration-200 ease-out active:cursor-grabbing
+        ${
+          isSelected
+            ? 'border-ftBlue bg-ftBlue text-white'
+            : 'border-transparent bg-white text-slate-600 hover:border-ftBlue/20 hover:bg-ftBlue/5 hover:text-ftBlue'
+        }
       `}
       onClick={handleTagClick}
+      onKeyDown={handleKeyDown}
       role="option"
       tabIndex={0}
       aria-selected={isSelected}
+      aria-label={`${tag.name} 태그. Enter로 필터링, Space로 폴더 이동`}
     >
-      <div className="flex items-center space-x-3 w-full">
-        <div
-          className={`w-2.5 h-2.5 rounded-full ${
-            isSelected ? 'bg-white' : 'bg-blue-300'
-          } flex-shrink-0`}
+      <div className="flex min-w-0 items-center gap-1.5">
+        <IoReorderThreeOutline
+          aria-hidden
+          className={`h-4 w-4 shrink-0 ${
+            isSelected ? 'text-white/70' : 'text-slate-300'
+          }`}
         />
-        <span className="max-w-full text-sm font-medium truncate">
+        <span className="max-w-full truncate text-xs font-semibold">
           {tag.name}
         </span>
       </div>
+      {Number.isFinite(tag.postsCount) && (
+        <span
+          className={`ml-2 shrink-0 text-[10px] ${
+            isSelected ? 'text-white/70' : 'text-slate-400'
+          }`}
+        >
+          {tag.postsCount}
+        </span>
+      )}
     </div>
   );
 };
