@@ -1,8 +1,15 @@
 .contentMarkdown {
   width: 100%;
+  max-width: 72ch;
+  margin: 0 auto;
   word-break: break-word;
   color: #212529;
-  line-height: 1.75;
+  font-size: 17px;
+  line-height: 1.85;
+
+  p {
+    margin: 0 0 1.15em;
+  }
 
   h1 {
     font-size: 32px;
@@ -96,7 +103,7 @@
   blockquote {
     margin: 20px 0;
     padding: 12px 18px;
-    border-left: 4px solid #94a3b8;
+    border-left: 1px solid #94a3b8;
     border-radius: 0 8px 8px 0;
     background-color: #f8fafc;
     color: #475569;
@@ -170,10 +177,10 @@
 
   img {
     display: block;
-    max-width: 70%;
+    max-width: 100%;
     height: auto !important;
-    margin: 20px auto;
-    border-radius: 4px;
+    margin: 16px auto;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
@@ -250,6 +257,27 @@
 
   .sessionImg.loading {
     width: 100px;
+  }
+
+  @media (max-width: 639px) {
+    font-size: 16px;
+
+    h1 {
+      font-size: 28px;
+    }
+
+    h2 {
+      font-size: 24px;
+    }
+
+    h3 {
+      font-size: 21px;
+    }
+
+    ul,
+    ol {
+      padding-left: 24px;
+    }
   }
 }
 

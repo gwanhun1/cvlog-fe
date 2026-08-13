@@ -24,8 +24,8 @@ const Profile = ({ getDetailData }: ProfileProps) => {
     : getDetailData.name || getDisplayName(getDetailData);
 
   return (
-    <article className="flex items-center gap-x-4 p-2 mobile:mb-2">
-      <figure className="w-[70px] h-[70px] tablet:w-[80px] tablet:h-[80px] desktop:w-[100px] desktop:h-[100px] rounded-full overflow-hidden">
+    <article className="flex min-w-0 items-center gap-3">
+      <figure className="h-9 w-9 flex-shrink-0 overflow-hidden rounded-full bg-slate-100">
         {profileImage &&
           (profileImage.includes('googleusercontent.com') ? (
             <img
@@ -48,9 +48,8 @@ const Profile = ({ getDetailData }: ProfileProps) => {
       </figure>
 
       <div className="flex flex-col min-w-0 flex-1">
-        <div className="text-sm font-semibold tablet:text-lg text-ftBlack">{displayName}</div>
-        <div className="w-full text-gray-700 text-xs tablet:text-sm dark:text-gray-400 line-clamp-2">
-          {!isDeletedUser && getDetailData?.description}
+        <div className="text-sm font-semibold text-slate-900">
+          {displayName}
         </div>
       </div>
     </article>

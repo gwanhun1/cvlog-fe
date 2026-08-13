@@ -18,9 +18,9 @@ const SeriesNav = ({ seriesName, currentPostId }: SeriesNavProps) => {
   return (
     <section
       aria-label="시리즈"
-      className="w-full rounded-2xl border border-ftBlue/20 bg-ftBlue/5 p-5"
+      className="w-full border-y border-ftBlue/20 py-3"
     >
-      <div className="flex items-center gap-1.5 mb-3">
+      <div className="mb-3 flex items-center gap-2">
         <svg
           className="w-4 h-4 text-ftBlue"
           fill="none"
@@ -34,34 +34,34 @@ const SeriesNav = ({ seriesName, currentPostId }: SeriesNavProps) => {
             d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
           />
         </svg>
-        <h2 className="text-sm font-bold text-ftBlue truncate">
-          시리즈 · {seriesName}
+        <h2 className="truncate text-sm font-bold text-ftBlue">
+          {seriesName}
         </h2>
-        <span className="flex-shrink-0 text-xs text-gray-400">
-          ({data.length}편)
+        <span className="flex-shrink-0 text-xs text-slate-400">
+          {data.findIndex(post => post.id === currentPostId) + 1} / {data.length}편
         </span>
       </div>
-      <ol className="flex flex-col gap-0.5">
+      <ol className="flex flex-col">
         {data.map((post, idx) => {
           const isCurrent = post.id === currentPostId;
           return (
             <li key={post.id}>
               {isCurrent ? (
-                <div className="flex items-center gap-2 py-1.5 px-2 rounded-lg bg-white">
+                <div className="flex items-center gap-2 border-l-2 border-ftBlue py-1.5 pl-3">
                   <span className="w-5 text-center text-xs font-bold text-ftBlue flex-shrink-0">
                     {idx + 1}
                   </span>
                   <span className="flex-1 min-w-0 truncate text-sm font-semibold text-ftBlue">
                     {post.title}
                   </span>
-                  <span className="flex-shrink-0 text-[10px] font-medium text-ftBlue/60">
+                  <span className="flex-shrink-0 text-[11px] font-medium text-ftBlue/60">
                     현재 글
                   </span>
                 </div>
               ) : (
                 <Link
                   href={`/article/content/${post.id}`}
-                  className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-white/70 transition-colors group"
+                  className="group flex items-center gap-2 border-l-2 border-transparent py-1.5 pl-3 transition-colors hover:border-ftBlue/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue"
                 >
                   <span className="w-5 text-center text-xs font-bold text-gray-400 flex-shrink-0">
                     {idx + 1}

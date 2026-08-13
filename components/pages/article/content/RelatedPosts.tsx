@@ -22,11 +22,13 @@ export const RelatedPosts = ({ postId }: RelatedPostsProps) => {
 
   if (loading) {
     return (
-      <section className="w-full">
-        <h2 className="mb-3 text-sm font-semibold text-gray-500">관련 글</h2>
-        <div className="flex flex-col gap-2">
+      <section className="w-full" aria-labelledby="related-posts-title">
+        <h2 id="related-posts-title" className="mb-4 text-xl font-bold text-slate-950">
+          이어서 읽기
+        </h2>
+        <div className="border-t border-slate-200">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-12 bg-gray-100 rounded-xl animate-pulse" />
+            <div key={i} className="h-[76px] animate-pulse border-b border-slate-100 bg-slate-50" />
           ))}
         </div>
       </section>
@@ -36,30 +38,33 @@ export const RelatedPosts = ({ postId }: RelatedPostsProps) => {
   if (posts.length === 0) return null;
 
   return (
-    <section className="w-full">
-      <h2 className="mb-3 text-sm font-semibold text-gray-500">관련 글</h2>
-      <div className="flex flex-col gap-2">
+    <section className="w-full" aria-labelledby="related-posts-title">
+      <h2 id="related-posts-title" className="mb-4 text-xl font-bold text-slate-950">
+        이어서 읽기
+      </h2>
+      <div className="border-t border-slate-200">
         {posts.map(post => (
           <Link
             key={post.id}
             href={`/article/content/${post.id}`}
-            className="flex items-center justify-between px-4 py-3 rounded-xl border border-slate-100 bg-white hover:border-ftBlue/30 hover:bg-ftBlue/5 transition-all group"
+            className="group flex min-h-[64px] flex-col justify-center gap-2 border-b border-slate-200 py-3 transition-colors hover:text-ftBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-4 mobile:flex-row mobile:items-center mobile:justify-between"
           >
-            <span className="text-sm font-medium text-gray-700 group-hover:text-ftBlue line-clamp-1 flex-1">
+            <span className="line-clamp-2 flex-1 text-sm font-semibold leading-6 text-slate-700 group-hover:text-ftBlue">
               {post.title}
             </span>
-            <div className="flex items-center gap-2 ml-3 flex-shrink-0">
+            <div className="flex flex-shrink-0 items-center gap-2 mobile:ml-4">
               {post.tags?.slice(0, 2).map(tag => (
                 <span
                   key={tag.id}
-                  className="px-2 py-0.5 text-xs text-ftBlue bg-ftBlue/5 border border-ftBlue/20 rounded-full"
+                  className="text-xs font-medium text-ftBlue"
                 >
-                  {tag.name}
+                  #{tag.name}
                 </span>
               ))}
-              <time className="text-xs text-gray-400">
+              <time className="text-xs text-slate-400">
                 {post.created_at?.slice(0, 10)}
               </time>
+              <span aria-hidden="true" className="text-slate-300 transition-transform group-hover:translate-x-1 group-hover:text-ftBlue">→</span>
             </div>
           </Link>
         ))}

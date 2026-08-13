@@ -34,16 +34,17 @@ export const ShareButtons = ({ title, url }: ShareButtonsProps) => {
     <div className="flex items-center gap-2">
       <span className="text-xs text-gray-400 mr-1">공유</span>
       <button
+        type="button"
         onClick={handleXShare}
         aria-label="X(Twitter)로 공유"
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 rounded-lg border border-gray-200 hover:bg-gray-50 hover:text-black transition-all"
+        className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-600 transition-all hover:bg-gray-50 hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue"
       >
         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.745l7.73-8.835L1.254 2.25H8.08l4.256 5.627L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
         </svg>
-        X
       </button>
       <button
+        type="button"
         onClick={handleCopyLink}
         aria-label="링크 복사"
         className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${

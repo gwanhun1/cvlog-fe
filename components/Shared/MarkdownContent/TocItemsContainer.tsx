@@ -100,7 +100,7 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   }, [tocItems]);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
@@ -146,7 +146,39 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
   };
 
   return (
-    <div className="">
+    <div>
+      {tocItems.length > 0 && (
+        <details className="fixed bottom-4 right-4 z-30 desktop:hidden">
+          <summary className="flex min-h-[44px] cursor-pointer list-none items-center rounded-full border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700 shadow-[0_8px_24px_rgba(15,23,42,0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue">
+            목차
+          </summary>
+          <nav
+            aria-label="게시글 목차"
+            className="absolute bottom-12 right-0 max-h-[52vh] w-[min(19rem,calc(100vw-2rem))] overflow-y-auto rounded-[14px] border border-slate-200 bg-white p-3 shadow-[0_16px_40px_rgba(15,23,42,0.16)]"
+          >
+            <ul className="space-y-1">
+              {tocItems.map(item => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    style={{ paddingLeft: `${Math.max(item.level - 1, 0) * 0.75 + 0.75}rem` }}
+                    className={cn(
+                      'min-h-[40px] w-full truncate rounded-lg pr-3 text-left text-sm transition-colors',
+                      activeId === item.id
+                        ? 'bg-ftBlue/5 font-bold text-ftBlue'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-ftBlue'
+                    )}
+                    onClick={() => scrollToHeading(item.id)}
+                  >
+                    {item.text}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </details>
+      )}
+
       <div className="tablet:fixed tablet:left-1/2 tablet:translate-x-[480px] tablet:w-52 tablet:top-40">
         <div className="hidden desktop:flex flex-col gap-5">
           {/* 맨 위로 버튼 */}
@@ -162,18 +194,20 @@ const TocItemsContainer = ({ content, contentRef }: TocItemsProps) => {
             <nav className="tablet:h-fit tablet:border-l tablet:border-gray-200 max-h-[60vh] overflow-y-auto scrollbar-hide">
               <ul className="space-y-2 pl-4">
                 {tocItems.map(item => (
-                  <li
-                    key={item.id}
-                    style={{ paddingLeft: `${(item.level - 1) * 1}rem` }}
-                    className={cn(
-                      'cursor-pointer hover:text-blue-500 transition-colors duration-200 py-1 text-sm truncate whitespace-nowrap',
-                      activeId === item.id
-                        ? 'text-blue-700 font-bold border-l-2 border-blue-500'
-                        : 'text-gray-600'
-                    )}
-                    onClick={() => scrollToHeading(item.id)}
-                  >
-                    {item.text}
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      style={{ paddingLeft: `${Math.max(item.level - 1, 0)}rem` }}
+                      className={cn(
+                        'w-full truncate whitespace-nowrap py-1 text-left text-sm transition-colors duration-200 hover:text-ftBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue',
+                        activeId === item.id
+                          ? 'font-bold text-ftBlue'
+                          : 'text-slate-600'
+                      )}
+                      onClick={() => scrollToHeading(item.id)}
+                    >
+                      {item.text}
+                    </button>
                   </li>
                 ))}
               </ul>

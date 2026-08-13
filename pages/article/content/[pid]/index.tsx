@@ -236,13 +236,13 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const isPublic = postData?.public_status ?? false;
 
   return (
-    <div className="flex flex-col items-center gap-6 pb-12 w-full">
+    <div className="flex w-full flex-col items-center pb-10">
       <ReadingProgressBar />
       {/* 뒤로가기 + owner 버튼 상단 바 */}
-      <div className="flex justify-between items-center w-full pt-2">
+      <div className="mx-auto flex w-full max-w-[820px] items-center justify-between py-1">
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-500 rounded-lg hover:bg-gray-100 hover:text-ftBlue transition-colors"
+          className="flex min-h-[40px] items-center gap-1.5 text-sm font-semibold text-slate-500 transition-colors hover:text-ftBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-4"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -251,7 +251,8 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         </button>
 
         {isOwner && (
-          <div className="flex items-center gap-1">
+          <>
+          <div className="hidden items-center gap-1 mobile:flex">
             <button
               onClick={handlePrivateToggle}
               disabled={isToggling || isDeleting}
@@ -299,6 +300,38 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
               삭제
             </button>
           </div>
+          <details className="relative mobile:hidden">
+            <summary className="flex min-h-[40px] cursor-pointer list-none items-center rounded-lg px-2 text-sm font-semibold text-slate-500 hover:text-ftBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue">
+              관리
+            </summary>
+            <div className="absolute right-0 top-11 z-20 flex min-w-[132px] flex-col overflow-hidden rounded-[12px] border border-slate-200 bg-white p-1 shadow-[0_12px_30px_rgba(15,23,42,0.12)]">
+              <button
+                type="button"
+                onClick={handlePrivateToggle}
+                disabled={isToggling || isDeleting}
+                className="min-h-[40px] rounded-lg px-3 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+              >
+                {patchMessage ? '나만보기로 전환' : '공개로 전환'}
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push(`/article/modify/${pid}`)}
+                disabled={isDeleting}
+                className="min-h-[40px] rounded-lg px-3 text-left text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+              >
+                수정
+              </button>
+              <button
+                type="button"
+                onClick={deleteCheck}
+                disabled={isDeleting}
+                className="min-h-[40px] rounded-lg px-3 text-left text-sm font-medium text-red-500 hover:bg-red-50 disabled:opacity-40"
+              >
+                삭제
+              </button>
+            </div>
+          </details>
+          </>
         )}
       </div>
 
@@ -372,60 +405,55 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
         )}
       </Head>
 
-      <header className="w-full">
-        {/* 제목 */}
+      <header className="mx-auto w-full max-w-[820px] pb-4 pt-3 tablet:pb-5 tablet:pt-4">
+        <div className="mb-2 flex flex-wrap gap-x-3 gap-y-2">
+          {shouldShowSkeleton ? (
+            <>
+              <div className="h-5 w-16 animate-pulse bg-slate-100" />
+              <div className="h-5 w-20 animate-pulse bg-slate-100" />
+            </>
+          ) : (
+            postData?.tags?.map((tag: TagType) => (
+              <button
+                type="button"
+                key={tag.id}
+                onClick={() => handleTagSelect(tag)}
+                title={`${tag.name} 키워드를 본문에서 강조`}
+                className={`text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-4 ${
+                  selectTagList.some(item => item.id === tag.id)
+                    ? 'text-ftBlue underline decoration-ftBlue/40 underline-offset-4'
+                    : 'text-ftBlue/75 hover:text-ftBlue'
+                }`}
+              >
+                #{tag.name}
+              </button>
+            ))
+          )}
+        </div>
+
         {shouldShowSkeleton ? (
-          <div className="mb-4 w-3/4 h-8 bg-gray-200 rounded-lg tablet:h-12" />
+          <div className="mb-4 h-10 w-3/4 animate-pulse bg-slate-100 tablet:h-12" />
         ) : (
-          <div className="mb-4 text-2xl font-bold text-ftBlack mobile:text-3xl tablet:text-4xl leading-snug tracking-tight">
+          <h1 className="mb-4 text-[clamp(1.75rem,5vw,2.75rem)] font-extrabold leading-[1.18] tracking-[-0.04em] text-slate-950">
             {postData?.title}
-          </div>
+          </h1>
         )}
 
-        {/* 태그 + 날짜 + 조회수 */}
-        <div className="flex flex-col gap-2 mobile:flex-row mobile:items-center mobile:justify-between">
-          <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-col gap-3 mobile:flex-row mobile:items-end mobile:justify-between">
+          <div className="min-w-0">
             {shouldShowSkeleton ? (
-              <>
-                <div className="w-20 h-6 bg-gray-200 rounded-full" />
-                <div className="w-16 h-6 bg-gray-200 rounded-full" />
-                <div className="w-24 h-6 bg-gray-200 rounded-full" />
-              </>
+              <div className="h-10 w-40 animate-pulse rounded-full bg-slate-100" />
             ) : (
-              postData?.tags?.map((tag: TagType) => (
-                <button
-                  type="button"
-                  key={tag.id}
-                  onClick={() => handleTagSelect(tag)}
-                  className={`px-3 py-0.5 text-xs font-medium rounded-full border transition-all duration-200 hover:scale-105 cursor-pointer ${
-                    selectTagList.some(item => item.id === tag.id)
-                      ? 'bg-ftBlue text-white border-ftBlue'
-                      : 'bg-ftBlue/5 text-ftBlue border-ftBlue/20 hover:bg-ftBlue/10 hover:border-ftBlue/40'
-                  }`}
-                >
-                  {tag.name}
-                </button>
-              ))
+              <Profile getDetailData={postData?.user} />
             )}
+            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 pl-12 text-xs text-slate-400">
+              <time>{postData?.created_at?.slice(0, 10)}</time>
+              {!shouldShowSkeleton && postData?.content && <span>{readingMinutes}분 읽기</span>}
+              {viewCount !== null && <span>조회 {viewCount.toLocaleString()}</span>}
+            </div>
           </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
-            {!shouldShowSkeleton && postData?.content && (
-              <span className="flex items-center gap-1 text-xs text-gray-400">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                {readingMinutes}분
-              </span>
-            )}
-            {viewCount !== null && (
-              <span className="flex items-center gap-1 text-xs text-gray-400">
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                </svg>
-                {viewCount.toLocaleString()}
-              </span>
-            )}
+
+          <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
             {!shouldShowSkeleton && postData && (
               <LikeButton
                 postId={postData.id}
@@ -436,36 +464,32 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                 isInHeader={true}
               />
             )}
-            <time className="text-xs text-gray-400">
-              {postData?.created_at?.slice(0, 10)}
-            </time>
+            {isPublic && !shouldShowSkeleton && (
+              <>
+                <TranslateButton
+                  status={translation.status}
+                  progress={translation.progress}
+                  targetLabel={translation.targetLabel}
+                  isTranslated={translation.isTranslated}
+                  isBusy={translation.isBusy}
+                  onClick={translation.toggle}
+                />
+                <ShareButtons title={postTitle} url={canonicalUrl} />
+              </>
+            )}
           </div>
         </div>
-
-        {/* 번역 · 공유 버튼 */}
-        {isPublic && !shouldShowSkeleton && (
-          <div className="flex justify-end items-center gap-2 mt-3">
-            <TranslateButton
-              status={translation.status}
-              progress={translation.progress}
-              targetLabel={translation.targetLabel}
-              isTranslated={translation.isTranslated}
-              isBusy={translation.isBusy}
-              onClick={translation.toggle}
-            />
-            <ShareButtons title={postTitle} url={canonicalUrl} />
-          </div>
-        )}
-
       </header>
 
       {!shouldShowSkeleton && postData?.series && (
-        <SeriesNav seriesName={postData.series} currentPostId={postData.id} />
+        <div className="mx-auto mb-6 w-full max-w-[820px]">
+          <SeriesNav seriesName={postData.series} currentPostId={postData.id} />
+        </div>
       )}
 
       {/* 본문과 댓글을 한 덩어리로 묶어야 번역 버튼이 둘 다 처리한다 */}
-      <div ref={translatableRef}>
-        <main className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm px-6 py-8 tablet:px-10">
+      <div ref={translatableRef} className="mx-auto w-full max-w-[820px]">
+        <main className="w-full border-t border-slate-200 py-4 tablet:py-6">
           <ContentLayout
             data={postData?.content}
             isLoading={shouldShowSkeleton}
@@ -474,22 +498,20 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
           />
         </main>
 
-
         <PostNavigation
           prevPostInfo={resolvedData?.prevPostInfo}
           nextPostInfo={resolvedData?.nextPostInfo}
           basePath="/article/content"
-          userInfo={postData?.user}
-          isLoading={shouldShowSkeleton}
-          ProfileComponent={Profile}
         />
+
+        {isPublic && postData?.id && (
+          <div className="py-8">
+            <RelatedPosts postId={postData.id} />
+          </div>
+        )}
 
         <CommentBox pid={pid} />
       </div>
-
-      {isPublic && postData?.id && (
-        <RelatedPosts postId={postData.id} />
-      )}
     </div>
   );
 };

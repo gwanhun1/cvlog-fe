@@ -1,103 +1,89 @@
 import Link from 'next/link';
-import type React from 'react';
 
 interface PostInfo {
   id: number;
   title: string;
 }
 
-type ProfileDetailData = {
-  id?: number;
-  name?: string | null;
-  username?: string | null;
-  github_id?: string | null;
-  profile_image?: string | null;
-  description?: string | null;
-};
-
 interface PostNavigationProps {
   prevPostInfo?: PostInfo | null;
   nextPostInfo?: PostInfo | null;
   basePath: string;
-  userInfo?: ProfileDetailData;
-  isLoading?: boolean;
-  ProfileComponent: React.ComponentType<{ getDetailData?: ProfileDetailData }>;
 }
 
-import { ProfileSkeleton } from './Skeleton';
+const NavigationLink = ({
+  post,
+  label,
+  direction,
+  basePath,
+}: {
+  post: PostInfo;
+  label: string;
+  direction: 'previous' | 'next';
+  basePath: string;
+}) => {
+  const isNext = direction === 'next';
+
+  return (
+    <Link
+      href={`${basePath}/${post.id}`}
+      className={`group flex min-h-[72px] items-center gap-4 py-3 transition-colors hover:text-ftBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-4 ${
+        isNext ? 'justify-end text-right' : ''
+      }`}
+    >
+      {!isNext && (
+        <span aria-hidden="true" className="w-5 flex-shrink-0 text-lg text-slate-300 transition-colors group-hover:text-ftBlue">
+          ←
+        </span>
+      )}
+      <div className="min-w-0 flex-1">
+        <div className="mb-1 text-xs font-semibold text-slate-400">{label}</div>
+        <div className="line-clamp-1 text-sm font-semibold text-slate-700 group-hover:text-ftBlue">
+          {post.title}
+        </div>
+      </div>
+      {isNext && (
+        <span aria-hidden="true" className="w-5 flex-shrink-0 text-lg text-slate-300 transition-colors group-hover:text-ftBlue">
+          →
+        </span>
+      )}
+    </Link>
+  );
+};
 
 const PostNavigation = ({
   prevPostInfo,
   nextPostInfo,
   basePath,
-  userInfo,
-  isLoading,
-  ProfileComponent,
 }: PostNavigationProps) => {
+  if (!prevPostInfo && !nextPostInfo) return null;
+
   return (
-    <section className="w-full">
-      <div className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div className="px-2 pt-4">
-          {isLoading ? (
-            <ProfileSkeleton />
-          ) : (
-            <ProfileComponent getDetailData={userInfo} />
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 p-4 tablet:gap-4">
-          {/* 이전 포스트 */}
-          <div>
-            {prevPostInfo ? (
-              <Link href={`${basePath}/${prevPostInfo.id}`}>
-                <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
-                  <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
-                    <span className="text-gray-600">←</span>
-                  </div>
-                  <div className="flex flex-col flex-1 min-w-0">
-                    <span className="mb-1 text-xs text-gray-500">
-                      이전 포스트
-                    </span>
-                    <span className="text-sm font-semibold text-gray-800 truncate">
-                      {prevPostInfo.title}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ) : (
-              <div className="flex gap-3 items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
-                <div className="w-8 h-8 bg-gray-200 rounded-full" />
-                <span className="text-sm text-gray-400">이전 포스트 없음</span>
-              </div>
-            )}
+    <section
+      aria-label="이전 글과 다음 글"
+      className="w-full border-y border-ftBlue/15 bg-ftBlue/[0.035] px-4 tablet:px-5"
+    >
+      <div className={prevPostInfo && nextPostInfo ? 'grid grid-cols-2' : 'flex'}>
+        {prevPostInfo && (
+          <div className={nextPostInfo ? 'pr-8' : 'w-1/2'}>
+            <NavigationLink
+              post={prevPostInfo}
+              label="이전 글"
+              direction="previous"
+              basePath={basePath}
+            />
           </div>
-
-          {/* 다음 포스트 */}
-          <div>
-            {nextPostInfo ? (
-              <Link href={`${basePath}/${nextPostInfo.id}`}>
-                <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-200 transition-all duration-200 cursor-pointer group hover:bg-gray-100 hover:border-gray-300">
-                  <div className="flex flex-col flex-1 min-w-0 text-right">
-                    <span className="mb-1 text-xs text-gray-500">
-                      다음 포스트
-                    </span>
-                    <span className="text-sm font-semibold text-gray-800 truncate">
-                      {nextPostInfo.title}
-                    </span>
-                  </div>
-                  <div className="flex justify-center items-center w-8 h-8 bg-gray-200 rounded-full transition-colors group-hover:bg-gray-300">
-                    <span className="text-gray-600">→</span>
-                  </div>
-                </div>
-              </Link>
-            ) : (
-              <div className="flex gap-3 justify-end items-center p-4 h-full bg-gray-50 rounded-xl border border-gray-100 opacity-40 cursor-not-allowed">
-                <span className="text-sm text-gray-400">다음 포스트 없음</span>
-                <div className="w-8 h-8 bg-gray-200 rounded-full" />
-              </div>
-            )}
+        )}
+        {nextPostInfo && (
+          <div className={`border-ftBlue/15 ${prevPostInfo ? 'border-l pl-8' : 'ml-auto w-1/2'}`}>
+            <NavigationLink
+              post={nextPostInfo}
+              label="다음 글"
+              direction="next"
+              basePath={basePath}
+            />
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

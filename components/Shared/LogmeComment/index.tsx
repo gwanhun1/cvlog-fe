@@ -43,8 +43,8 @@ const CommentBox = ({ pid }: { pid: string }) => {
   }, [commentListData]);
 
   return (
-    <section className="w-full rounded-2xl border border-slate-100 bg-white shadow-sm px-6 py-5">
-      <div className="mb-4 text-sm font-semibold text-ftBlack">
+    <section className="w-full py-8">
+      <div className="mb-4 text-xl font-bold text-slate-950">
         {isLoading ? (
           <div className="w-20 h-4 bg-gray-100 rounded animate-pulse" />
         ) : (
