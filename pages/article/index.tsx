@@ -146,7 +146,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
         <TagDrawer open={drawerOpen} onClose={closeTagDrawer} />
       )}
 
-      <main className="w-full pt-8 tablet:pt-10 desktop:pt-12">
+      <main className="w-full">
         {featuredPost && (
           <section
             aria-label="최신 공개 글과 인기 글"
