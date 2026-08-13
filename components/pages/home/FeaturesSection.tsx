@@ -168,7 +168,7 @@ const FeaturesSection = ({ data }: Props) => {
               className="flex flex-col gap-5 tablet:flex-row tablet:items-start tablet:gap-8"
             >
               {/* 비디오 */}
-              <div className="aspect-video overflow-hidden rounded-[14px] border border-slate-200 bg-slate-100 tablet:flex-1">
+              <div className="relative h-[clamp(11rem,45vw,20rem)] w-full overflow-hidden rounded-[14px] border border-slate-200 bg-slate-100 tablet:min-w-0 tablet:flex-1">
                 <video
                   ref={videoRef}
                   key={current.src}
@@ -178,7 +178,7 @@ const FeaturesSection = ({ data }: Props) => {
                   muted
                   playsInline
                   preload="none"
-                  className="h-full w-full object-cover"
+                  className="absolute inset-0 h-full w-full object-cover"
                   style={{ objectPosition: VIDEO_FOCUS[active] ?? '50% 50%' }}
                 />
               </div>
