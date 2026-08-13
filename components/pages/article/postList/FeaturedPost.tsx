@@ -63,7 +63,7 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
                 )}
               </div>
 
-              <h2 className="mb-0 mt-2 max-w-[720px] text-[clamp(23px,2.35vw,32px)] font-bold leading-[1.2] tracking-[-0.04em] text-white">
+              <h2 className="mb-0 mt-2 line-clamp-3 max-w-[720px] text-[clamp(21px,6vw,25px)] font-bold leading-[1.18] tracking-[-0.04em] text-white tablet:line-clamp-none tablet:text-[clamp(23px,2.35vw,32px)] tablet:leading-[1.2]">
                 {post.title}
               </h2>
 
