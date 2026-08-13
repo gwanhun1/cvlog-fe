@@ -45,7 +45,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
         onSubmit={handleSearch}
         className="flex w-full items-center gap-2.5"
       >
-        <div className="flex min-w-0 flex-1 items-stretch">
+        <div className="flex min-w-0 flex-1 items-stretch overflow-hidden rounded-[12px] border border-slate-300 bg-white transition-[border-color,box-shadow] focus-within:border-ftBlue focus-within:ring-2 focus-within:ring-ftBlue/10">
           <label htmlFor="article-search" className="sr-only">
             게시물 검색
           </label>
@@ -57,14 +57,14 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
               type="search"
               value={localKeyword}
               onChange={event => setLocalKeyword(event.target.value)}
-              className="h-12 w-full rounded-l-[12px] border border-r-0 border-slate-300 bg-white pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 transition-[border-color,box-shadow] focus:border-ftBlue focus:ring-2 focus:ring-ftBlue/10 focus-visible:outline-none"
+              className="h-12 w-full bg-transparent pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none"
               placeholder="제목 또는 태그 검색"
               autoComplete="off"
             />
           </div>
           <button
             type="submit"
-            className="flex h-12 min-w-[52px] items-center justify-center rounded-r-[12px] bg-ftBlue px-4 text-sm font-bold text-white transition-colors hover:bg-[#1f4a8c] focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2 active:translate-y-px mobile:min-w-[74px]"
+            className="flex h-12 min-w-[52px] items-center justify-center bg-ftBlue px-4 text-sm font-bold text-white transition-colors hover:bg-[#1f4a8c] focus-visible:outline-none active:translate-y-px mobile:min-w-[74px]"
           >
             <span className="hidden mobile:inline">검색</span>
             <IoMdSearch aria-hidden className="h-5 w-5 mobile:hidden" />
