@@ -43,34 +43,36 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
             />
           )}
 
-          <div className="absolute inset-0 flex flex-col justify-end bg-slate-950/80 p-5 text-white transition-opacity duration-300 ease-out desktop:opacity-0 desktop:group-hover/media:opacity-100 desktop:group-focus-visible/media:opacity-100">
-            <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-white/70">
-              {post.tags[0] && (
-                <span className="font-semibold text-white">
-                  {post.tags[0].name}
-                </span>
-              )}
-              {publishedAt && (
-                <>
-                  <span aria-hidden className="text-white/40">
-                    /
+          <div className="absolute inset-0 flex flex-col justify-end bg-slate-950/80 p-5 text-white transition-[background-color] duration-300 ease-out desktop:bg-slate-950/35 desktop:group-hover/media:bg-slate-950/80 desktop:group-focus-visible/media:bg-slate-950/80">
+            <div className="transition-opacity duration-300 ease-out desktop:opacity-45 desktop:group-hover/media:opacity-100 desktop:group-focus-visible/media:opacity-100">
+              <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-white/70">
+                {post.tags[0] && (
+                  <span className="font-semibold text-white">
+                    {post.tags[0].name}
                   </span>
-                  <time suppressHydrationWarning dateTime={publishedAt}>
-                    {formatTimeAgo(publishedAt)}
-                  </time>
-                </>
+                )}
+                {publishedAt && (
+                  <>
+                    <span aria-hidden className="text-white/40">
+                      /
+                    </span>
+                    <time suppressHydrationWarning dateTime={publishedAt}>
+                      {formatTimeAgo(publishedAt)}
+                    </time>
+                  </>
+                )}
+              </div>
+
+              <h2 className="mb-0 mt-2 max-w-[720px] text-[clamp(23px,2.35vw,32px)] font-bold leading-[1.2] tracking-[-0.04em] text-white">
+                {post.title}
+              </h2>
+
+              {excerpt && (
+                <p className="mb-0 mt-3 line-clamp-2 max-w-[680px] text-[13px] leading-[1.7] text-white/75">
+                  {excerpt}
+                </p>
               )}
             </div>
-
-            <h2 className="mb-0 mt-2 max-w-[720px] text-[clamp(23px,2.35vw,32px)] font-bold leading-[1.2] tracking-[-0.04em] text-white">
-              {post.title}
-            </h2>
-
-            {excerpt && (
-              <p className="mb-0 mt-3 line-clamp-2 max-w-[680px] text-[13px] leading-[1.7] text-white/75">
-                {excerpt}
-              </p>
-            )}
           </div>
         </Link>
       ) : (
