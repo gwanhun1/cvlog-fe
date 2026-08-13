@@ -99,7 +99,7 @@ const Home: NextPage = () => {
         />
       </Head>
 
-      <main className="mx-auto space-y-8 tablet:px-12 desktop:px-24">
+      <main className="mx-auto w-full max-w-[1120px] space-y-10 px-3 pb-12 tablet:space-y-14 tablet:px-8 tablet:pb-16 desktop:px-0">
         {/* Hero — 헤드라인 + CTA + 브라우저 프레임 비디오 */}
         <Header />
 
