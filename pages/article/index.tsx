@@ -150,7 +150,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
         {featuredPost && (
           <section
             aria-label="최신 공개 글과 인기 글"
-            className="pb-8 tablet:pb-10 desktop:pb-12"
+            className="hidden pb-8 tablet:block tablet:pb-10 desktop:pb-12"
           >
             <div className="grid grid-cols-1 gap-10 desktop:grid-cols-[minmax(0,1.95fr)_minmax(350px,1fr)] desktop:gap-10">
               <FeaturedPost post={featuredPost} />
@@ -255,7 +255,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
                 setKeyword={setKeyword}
                 mode="public"
                 initialList={initialList}
-                excludedPostId={featuredPost?.id}
+                featuredPostId={featuredPost?.id}
               />
             )}
           </div>

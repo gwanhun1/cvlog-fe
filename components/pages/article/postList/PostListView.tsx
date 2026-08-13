@@ -15,12 +15,13 @@ interface PostListViewProps {
   setKeyword: React.Dispatch<React.SetStateAction<string>>;
   mode: 'public' | 'my';
   initialList?: ListDataType;
-  excludedPostId?: number;
+  featuredPostId?: number;
 }
 
 interface MasonryItem {
   key: string;
   node: ReactNode;
+  className?: string;
 }
 
 const PostListView = ({
@@ -28,20 +29,12 @@ const PostListView = ({
   setKeyword,
   mode,
   initialList,
-  excludedPostId,
+  featuredPostId,
 }: PostListViewProps) => {
-  const getVisiblePosts = useCallback(
-    (nextPosts: BlogType[]) =>
-      excludedPostId
-        ? nextPosts.filter(post => post.id !== excludedPostId)
-        : nextPosts,
-    [excludedPostId],
-  );
-
   const hasPublicSeed = mode === 'public' && initialList !== undefined;
   const [page, setPage] = useState(1);
   const [posts, setPosts] = useState<BlogType[]>(
-    hasPublicSeed ? getVisiblePosts(initialList.posts) : [],
+    hasPublicSeed ? initialList.posts : [],
   );
   const [hasMore, setHasMore] = useState(
     hasPublicSeed ? initialList.maxPage > 1 : true,
@@ -70,12 +63,12 @@ const PostListView = ({
     const canUseSeed =
       mode === 'public' && !keyword && initialList !== undefined;
     setPage(1);
-    setPosts(canUseSeed ? getVisiblePosts(initialList.posts) : []);
+    setPosts(canUseSeed ? initialList.posts : []);
     setHasMore(canUseSeed ? initialList.maxPage > 1 : true);
     setIsInitialLoading(!canUseSeed);
     setIsLoadingMore(false);
     loadingLockRef.current = false;
-  }, [getVisiblePosts, initialList, keyword, mode]);
+  }, [initialList, keyword, mode]);
 
   useEffect(() => {
     if (!tagKeyword) return;
@@ -88,14 +81,14 @@ const PostListView = ({
   useEffect(() => {
     if (!list) return;
 
-    const visiblePosts = getVisiblePosts(list.posts);
     if (page === 1) {
-      setPosts(visiblePosts);
+      setPosts(list.posts);
       setIsInitialLoading(false);
     } else {
       setPosts(previous => {
-        const nextPosts = visiblePosts.filter(
-          post => !previous.some(previousPost => previousPost.id === post.id),
+        const nextPosts: BlogType[] = list.posts.filter(
+          (post: BlogType) =>
+            !previous.some(previousPost => previousPost.id === post.id),
         );
         return nextPosts.length > 0 ? [...previous, ...nextPosts] : previous;
       });
@@ -104,7 +97,7 @@ const PostListView = ({
 
     setHasMore(page < list.maxPage);
     loadingLockRef.current = false;
-  }, [getVisiblePosts, list, page]);
+  }, [list, page]);
 
   useEffect(() => {
     if (!listQuery.isError) return;
@@ -182,8 +175,10 @@ const PostListView = ({
   );
 
   const buildItems = (): MasonryItem[] => {
-    const items = posts.map((post, index) => ({
+    const items: MasonryItem[] = posts.map((post, index) => ({
       key: `post-${post.id}`,
+      className:
+        mode === 'public' && post.id === featuredPostId ? 'tablet:hidden' : '',
       node: renderCard(post, index),
     }));
 
@@ -208,7 +203,10 @@ const PostListView = ({
   const renderCssColumns = (items: MasonryItem[]) => (
     <div className="w-full gap-4 columns-1 tablet:columns-2 desktop:columns-3">
       {items.map(item => (
-        <div key={item.key} className="mb-4 break-inside-avoid">
+        <div
+          key={item.key}
+          className={`mb-4 break-inside-avoid ${item.className ?? ''}`}
+        >
           {item.node}
         </div>
       ))}
@@ -227,7 +225,7 @@ const PostListView = ({
             className="flex min-w-0 flex-1 flex-col"
           >
             {column.map(item => (
-              <div key={item.key} className="mb-4">
+              <div key={item.key} className={`mb-4 ${item.className ?? ''}`}>
                 {item.node}
               </div>
             ))}
@@ -259,10 +257,7 @@ const PostListView = ({
         };
 
   const showError = listQuery.isError && posts.length === 0;
-  const showEmpty =
-    !isInitialLoading &&
-    posts.length === 0 &&
-    !(excludedPostId && !keyword && mode === 'public');
+  const showEmpty = !isInitialLoading && posts.length === 0;
 
   return (
     <div className="w-full">
