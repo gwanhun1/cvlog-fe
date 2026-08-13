@@ -146,11 +146,11 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
         <TagDrawer open={drawerOpen} onClose={closeTagDrawer} />
       )}
 
-      <main className="w-full">
+      <main className="w-full pt-8 tablet:pt-10 desktop:pt-12">
         {featuredPost && (
           <section
             aria-label="최신 공개 글과 인기 글"
-            className="py-8 tablet:py-10 desktop:py-12"
+            className="pb-8 tablet:pb-10 desktop:pb-12"
           >
             <div className="grid grid-cols-1 gap-10 desktop:grid-cols-[minmax(0,1.95fr)_minmax(350px,1fr)] desktop:gap-10">
               <FeaturedPost post={featuredPost} />
@@ -161,9 +161,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
 
         <section
           aria-label="글 탐색"
-          className={`grid grid-cols-1 gap-4 border-b border-slate-300 py-5 tablet:grid-cols-[minmax(0,1fr)_auto] tablet:items-center tablet:gap-7 ${
-            featuredPost ? 'border-t' : ''
-          }`}
+          className="grid grid-cols-1 gap-4 border-b border-slate-300 pb-5 tablet:grid-cols-[minmax(0,1fr)_auto] tablet:items-center tablet:gap-7"
         >
           <FilterBox
             keyword={keyword}
@@ -191,7 +189,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
 
         <section
           aria-labelledby="article-list-title"
-          className="pb-14 pt-9 tablet:pb-16 tablet:pt-11"
+          className="pb-14 tablet:pb-16"
         >
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>
