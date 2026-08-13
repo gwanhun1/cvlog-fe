@@ -182,7 +182,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
           >
             <div className="grid grid-cols-1 gap-10 desktop:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] desktop:gap-10">
               <FeaturedPost post={featuredPost} />
-              <PopularPosts limit={3} />
+              <PopularPosts limit={5} />
             </div>
           </section>
         )}

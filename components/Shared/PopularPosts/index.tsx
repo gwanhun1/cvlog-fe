@@ -51,16 +51,16 @@ const PopularPosts = ({ limit = 3 }: PopularPostsProps) => {
           >
             <Link
               href={`/article/content/${post.id}`}
-              className="group grid grid-cols-[28px_minmax(0,1fr)] gap-3 py-5 focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"
+              className="group grid grid-cols-[28px_minmax(0,1fr)] gap-3 py-3.5 focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"
             >
               <span className="pt-0.5 font-mono text-[11px] font-bold text-ftBlue">
                 {String(index + 1).padStart(2, '0')}
               </span>
               <span className="min-w-0">
-                <strong className="line-clamp-2 block text-[15px] leading-[1.45] text-slate-800 transition-colors group-hover:text-ftBlue">
+                <strong className="line-clamp-1 block text-[14px] leading-[1.45] text-slate-800 transition-colors group-hover:text-ftBlue">
                   {post.title}
                 </strong>
-                <span className="mt-2 block text-[11px] text-slate-400">
+                <span className="mt-1 block text-[11px] text-slate-400">
                   조회 {post.view_count.toLocaleString()}
                 </span>
               </span>
