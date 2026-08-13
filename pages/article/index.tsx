@@ -180,9 +180,9 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
             aria-label="최신 공개 글과 인기 글"
             className="py-8 tablet:py-10 desktop:py-12"
           >
-            <div className="grid grid-cols-1 gap-10 desktop:grid-cols-[minmax(0,2fr)_minmax(300px,1fr)] desktop:gap-10">
+            <div className="grid grid-cols-1 gap-10 desktop:grid-cols-[minmax(0,2.25fr)_minmax(280px,0.85fr)] desktop:gap-10">
               <FeaturedPost post={featuredPost} />
-              <PopularPosts limit={5} />
+              <PopularPosts limit={3} />
             </div>
           </section>
         )}
