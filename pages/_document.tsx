@@ -38,6 +38,12 @@ export default function Document() {
           name="google-site-verification"
           content="DLgQVazvcLQBr_yugYwLQICxsdlVoMyQ6PimovMzDsw"
         />
+
+        {/* Naver Search Advisor ownership verification */}
+        <meta
+          name="naver-site-verification"
+          content="8a658dc0019385cfbae0bcb2c237adddcac77689"
+        />
       </Head>
       <body>
         <Main />
