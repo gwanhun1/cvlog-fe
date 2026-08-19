@@ -12,6 +12,10 @@ import type { AuthProvider } from 'service/api/login/type';
 
 axios.defaults.withCredentials = true;
 
+// OAuth 공급자 통신(각 15초)과 DB 갱신이 순차 실행되므로 30초는 경계값에 가깝다.
+// Vercel 함수 제한(60초)보다 짧게 두어 실패 시에도 에러 리다이렉트 시간을 확보한다.
+const OAUTH_CALLBACK_TIMEOUT_MS = 45_000;
+
 interface Info {
   data: { accessToken: string; isNewUser?: boolean };
 }
@@ -136,7 +140,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
     const response = await axios.get(url, {
       withCredentials: true,
-      timeout: 30000,
+      timeout: OAUTH_CALLBACK_TIMEOUT_MS,
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -183,4 +187,9 @@ export const getServerSideProps: GetServerSideProps = async context => {
       },
     };
   }
+};
+
+// Pages Router에서는 config를 통해 Vercel 함수 실행 제한을 전달한다.
+export const config = {
+  maxDuration: 60,
 };
