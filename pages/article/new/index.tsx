@@ -24,6 +24,7 @@ const NewPost: NextPage = () => {
   const [isMobile, setIsMobile] = useState(false);
   const containerTopRef = useRef<HTMLDivElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const canAutoSaveRef = useRef(true);
 
   // 저장된 임시글 불러오기
   useEffect(() => {
@@ -31,10 +32,17 @@ const NewPost: NextPage = () => {
     if (!saved) return;
     try {
       const draft = JSON.parse(saved) as DocType;
-      if (draft.title || draft.content !== INIT_USER_INPUT.content || draft.tags.length > 0) {
+      if (
+        typeof draft.title === 'string' &&
+        typeof draft.content === 'string' &&
+        Array.isArray(draft.tags) &&
+        (draft.title || draft.content !== INIT_USER_INPUT.content || draft.tags.length > 0)
+      ) {
         setDoc(draft);
       }
-    } catch {}
+    } catch {
+      localStorage.removeItem(DRAFT_KEY);
+    }
   }, []);
 
   // 1초 디바운스 자동저장
@@ -46,7 +54,9 @@ const NewPost: NextPage = () => {
 
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     autoSaveTimerRef.current = setTimeout(() => {
+      if (!canAutoSaveRef.current) return;
       if (hasContent) localStorage.setItem(DRAFT_KEY, JSON.stringify(doc));
+      else localStorage.removeItem(DRAFT_KEY);
     }, 1000);
 
     return () => {
@@ -54,7 +64,9 @@ const NewPost: NextPage = () => {
     };
   }, [doc]);
 
-  const handleSaveSuccess = useCallback(() => {
+  const discardDraft = useCallback(() => {
+    canAutoSaveRef.current = false;
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     localStorage.removeItem(DRAFT_KEY);
   }, []);
 
@@ -95,7 +107,8 @@ const NewPost: NextPage = () => {
               mode="create"
               isVisiblePreview={isVisiblePreview}
               onTogglePreview={() => setIsVisiblePreview(v => !v)}
-              onSaveSuccess={handleSaveSuccess}
+              onSaveSuccess={discardDraft}
+              onCancel={discardDraft}
             />
           </header>
           <div className="flex flex-col flex-1 w-full tablet:flex-row tablet:min-h-0">

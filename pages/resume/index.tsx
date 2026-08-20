@@ -38,6 +38,27 @@ import { DEFAULT_RESUME, SECTION_LABELS } from 'components/pages/resume/types';
 const STORAGE_KEY = 'logme_resume_v2';
 const PHOTO_KEY = 'logme_resume_photo';
 const genId = () => Math.random().toString(36).slice(2, 9);
+const serializeResumeDraft = (resume: ResumeData) => {
+  const { photo: _, ...rest } = resume;
+  return JSON.stringify(rest);
+};
+const hasResumeDraftContent = (resume: ResumeData, hasPhoto: boolean) => {
+  if (hasPhoto) return true;
+  if (Object.values(resume.basicInfo ?? {}).some(value => value?.trim())) return true;
+  return [
+    resume.experience,
+    resume.projects,
+    resume.skills,
+    resume.education,
+    resume.certifications,
+  ].some(items =>
+    (items ?? []).some(item =>
+      Object.entries(item).some(
+        ([key, value]) => key !== 'id' && typeof value === 'string' && value.trim(),
+      ),
+    ),
+  );
+};
 
 const inputCls =
   'w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue transition-all placeholder:text-gray-300';
@@ -443,6 +464,7 @@ const ResumeBuilder = () => {
   const [titleError, setTitleError] = useState('');
   const photoInputRef = useRef<HTMLInputElement>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedSnapshotRef = useRef(serializeResumeDraft(DEFAULT_RESUME));
   // Prevent auto-save from overwriting localStorage while draft modal is pending
   const draftPendingRef = useRef(false);
 
@@ -453,18 +475,15 @@ const ResumeBuilder = () => {
     if (raw) {
       try {
         const parsed: ResumeData = JSON.parse(raw);
-        const hasContent =
-          parsed.basicInfo?.name?.trim() ||
-          parsed.experience?.length > 0 ||
-          parsed.projects?.length > 0 ||
-          parsed.skills?.length > 0 ||
-          parsed.education?.length > 0;
+        const hasContent = hasResumeDraftContent(parsed, Boolean(savedPhoto));
         if (hasContent) {
           draftPendingRef.current = true; // block auto-save until user resolves the modal
           setDraftName(parsed.basicInfo?.name || '이름 없음');
           setShowDraftModal(true);
         }
-      } catch {}
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
     }
   }, []);
 
@@ -476,8 +495,12 @@ const ResumeBuilder = () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       if (draftPendingRef.current) return; // don't overwrite while draft modal is pending
-      const { photo: _, ...rest } = data;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(rest));
+      const snapshot = serializeResumeDraft(data);
+      if (snapshot === savedSnapshotRef.current && !localStorage.getItem(PHOTO_KEY)) {
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        localStorage.setItem(STORAGE_KEY, snapshot);
+      }
       setAutoSaved(true);
       setTimeout(() => setAutoSaved(false), 2000);
     }, 600);
@@ -545,6 +568,10 @@ const ResumeBuilder = () => {
         const saved = await createResume(title, payload);
         setCurrentId(saved.id);
       }
+      savedSnapshotRef.current = serializeResumeDraft(data);
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(PHOTO_KEY);
       setSaveMsg('저장됨');
       setTimeout(() => setSaveMsg(''), 2500);
     } catch (err: any) {
@@ -563,11 +590,14 @@ const ResumeBuilder = () => {
     try {
       const resume = await getResume(id);
       const parsed: ResumeData = JSON.parse(resume.data);
-      if (parsed.photo) setPhoto(parsed.photo);
-      setData({ ...parsed, photo: '' });
+      const { photo: _, ...rest } = parsed;
+      savedSnapshotRef.current = serializeResumeDraft(parsed);
+      setPhoto(parsed.photo || '');
+      setData({ ...rest, photo: '' });
       setTitle(resume.title);
       setCurrentId(resume.id);
       localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(PHOTO_KEY);
     } catch {
       setSaveMsg('불러오기 실패');
       setTimeout(() => setSaveMsg(''), 3000);
@@ -575,6 +605,7 @@ const ResumeBuilder = () => {
   };
 
   const handleNewResume = () => {
+    savedSnapshotRef.current = serializeResumeDraft(DEFAULT_RESUME);
     setData(DEFAULT_RESUME);
     setPhoto('');
     setTitle('');
@@ -758,6 +789,7 @@ const ResumeBuilder = () => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(PHOTO_KEY);
     setData(DEFAULT_RESUME);
+    savedSnapshotRef.current = serializeResumeDraft(DEFAULT_RESUME);
     setPhoto('');
     draftPendingRef.current = false;
     setShowDraftModal(false);

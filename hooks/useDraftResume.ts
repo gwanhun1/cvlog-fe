@@ -26,7 +26,9 @@ export const useDraftResume = () => {
           setShowModal(true);
           return;
         }
-      } catch {}
+      } catch {
+        localStorage.removeItem(DRAFT_KEY);
+      }
     }
     router.push('/article/new');
   }, [router]);

@@ -23,6 +23,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   const [isMobile, setIsMobile] = useState(false);
   const containerTopRef = useRef<HTMLDivElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const canAutoSaveRef = useRef(true);
 
   const draftKey = `logme_draft_edit_${pid}`;
 
@@ -52,6 +53,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
 
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     autoSaveTimerRef.current = setTimeout(() => {
+      if (!canAutoSaveRef.current) return;
       localStorage.setItem(draftKey, JSON.stringify(doc));
     }, 1000);
 
@@ -60,7 +62,9 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
     };
   }, [doc, draftKey, isInitialized]);
 
-  const handleSaveSuccess = useCallback(() => {
+  const discardDraft = useCallback(() => {
+    canAutoSaveRef.current = false;
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     localStorage.removeItem(draftKey);
   }, [draftKey]);
 
@@ -101,7 +105,8 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
               pid={pid}
               isVisiblePreview={isVisiblePreview}
               onTogglePreview={() => setIsVisiblePreview(v => !v)}
-              onSaveSuccess={handleSaveSuccess}
+              onSaveSuccess={discardDraft}
+              onCancel={discardDraft}
             />
           </header>
           <div className="flex flex-col flex-1 w-full tablet:flex-row tablet:min-h-0">

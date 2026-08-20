@@ -19,6 +19,7 @@ interface EditorHeaderProps {
   isVisiblePreview: boolean;
   onTogglePreview: () => void;
   onSaveSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 const EditorHeader = ({
@@ -30,6 +31,7 @@ const EditorHeader = ({
   isVisiblePreview,
   onTogglePreview,
   onSaveSuccess,
+  onCancel,
 }: EditorHeaderProps) => {
   const [tag, setTag] = useState('');
   const [isTagInputOpen, setIsTagInputOpen] = useState(false);
@@ -214,11 +216,7 @@ const EditorHeader = ({
             <button
               type="button"
               onClick={() => {
-                if (mode === 'create') {
-                  localStorage.removeItem('logme_draft_new');
-                } else if (pid) {
-                  localStorage.removeItem(`logme_draft_edit_${pid}`);
-                }
+                onCancel?.();
                 router.push(accessToken ? '/article' : '/');
               }}
               className="px-3 py-1.5 text-xs font-semibold text-gray-600 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"

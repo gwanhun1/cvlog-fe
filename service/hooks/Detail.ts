@@ -82,6 +82,7 @@ export const useModifyPost = (pid: number) => {
     mutationFn: (params: CreateNewPostReq) =>
       fetchCreateModifyPost(params, pid),
     onSuccess: async (_data, variables) => {
+      localStorage.removeItem(`logme_draft_edit_${pid}`);
       // GA4 이벤트: 글 수정 완료
       trackEvent('post_update', {
         post_id: pid,
