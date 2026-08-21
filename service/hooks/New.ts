@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchCreateNewPost } from 'service/api/detail';
 import { CreateNewPostReq } from 'service/api/detail/type';
 import { trackEvent } from 'utils/analytics';
+import { clearDraftStorage } from 'utils/draftStorage';
 
 export const useCreatePost = () => {
   const router = useRouter();
@@ -12,7 +13,7 @@ export const useCreatePost = () => {
     onSuccess: async (_data, variables) => {
       // mutate 호출부의 콜백은 라우팅으로 컴포넌트가 먼저 언마운트되면
       // 실행되지 않을 수 있으므로 성공 처리 자체에서 임시글을 제거한다.
-      localStorage.removeItem('logme_draft_new');
+      clearDraftStorage('logme_draft_new', 'logme_draft_new_updated_at');
       // GA4 이벤트: 글 작성 완료. "발행 전환"은 GA4 관리 콘솔에서
       // post_create(public_status=true) + post_visibility_change(to_public=true)
       // 파생 이벤트로 정의한다 (클라이언트는 사실만 전송).

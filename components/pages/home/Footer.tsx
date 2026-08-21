@@ -2,18 +2,10 @@ import React from 'react';
 import Link from 'next/link';
 import useIsLogin from 'hooks/useIsLogin';
 import { useDraftResume } from 'hooks/useDraftResume';
-import DraftResumeModal from 'components/Shared/DraftResumeModal';
 
 const Footer = () => {
   const { isAuthenticated } = useIsLogin();
-  const {
-    handleNewArticle,
-    showModal,
-    draftInfo,
-    handleResume,
-    handleFresh,
-    handleClose,
-  } = useDraftResume();
+  const { handleNewArticle } = useDraftResume();
 
   return (
     <section className="relative overflow-hidden rounded-[16px] bg-ftBlue p-8 shadow-[0_18px_50px_rgba(38,87,166,0.18)] tablet:p-12">
@@ -108,13 +100,6 @@ const Footer = () => {
         </div>
       </div>
 
-      <DraftResumeModal
-        isOpen={showModal}
-        draftTitle={draftInfo?.title ?? ''}
-        onResume={handleResume}
-        onFresh={handleFresh}
-        onClose={handleClose}
-      />
     </section>
   );
 };

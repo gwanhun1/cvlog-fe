@@ -3,7 +3,6 @@ import { IoMdSearch, IoMdCreate } from 'react-icons/io';
 import { motion, useReducedMotion } from 'framer-motion';
 import useIsLogin from 'hooks/useIsLogin';
 import { useDraftResume } from 'hooks/useDraftResume';
-import DraftResumeModal from 'components/Shared/DraftResumeModal';
 
 interface FilterBoxProps {
   keyword: string;
@@ -16,14 +15,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const reduceMotion = useReducedMotion();
   const { isAuthenticated } = useIsLogin();
-  const {
-    handleNewArticle,
-    showModal,
-    draftInfo,
-    handleResume,
-    handleFresh,
-    handleClose,
-  } = useDraftResume();
+  const { handleNewArticle } = useDraftResume();
 
   useEffect(() => {
     setIsMounted(true);
@@ -91,13 +83,6 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
         )}
       </form>
 
-      <DraftResumeModal
-        isOpen={showModal}
-        draftTitle={draftInfo?.title ?? ''}
-        onResume={handleResume}
-        onFresh={handleFresh}
-        onClose={handleClose}
-      />
     </>
   );
 };

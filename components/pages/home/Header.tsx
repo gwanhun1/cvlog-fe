@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import useIsLogin from 'hooks/useIsLogin';
 import { useDraftResume } from 'hooks/useDraftResume';
-import DraftResumeModal from 'components/Shared/DraftResumeModal';
 
 const VIDEO_ITEMS = [
   { src: '/videos/4th.mp4', label: 'Masonry 탐색' },
@@ -16,14 +15,7 @@ const Header = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { isAuthenticated } = useIsLogin();
-  const {
-    handleNewArticle,
-    showModal,
-    draftInfo,
-    handleResume,
-    handleFresh,
-    handleClose,
-  } = useDraftResume();
+  const { handleNewArticle } = useDraftResume();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -217,13 +209,6 @@ const Header = () => {
         </div>
       </div>
 
-      <DraftResumeModal
-        isOpen={showModal}
-        draftTitle={draftInfo?.title ?? ''}
-        onResume={handleResume}
-        onFresh={handleFresh}
-        onClose={handleClose}
-      />
     </section>
   );
 };

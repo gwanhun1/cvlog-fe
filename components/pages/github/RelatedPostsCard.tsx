@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getList } from 'service/api/tag';
 import { useDraftResume } from 'hooks/useDraftResume';
-import DraftResumeModal from 'components/Shared/DraftResumeModal';
 
 interface Props {
   userId: number;
@@ -30,8 +29,7 @@ const RelatedPostsCard = ({ userId, topLanguages }: Props) => {
   const [posts, setPosts] = useState<PostItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { handleNewArticle, showModal, draftInfo, handleResume, handleFresh, handleClose } =
-    useDraftResume();
+  const { handleNewArticle } = useDraftResume();
 
   useEffect(() => {
     let cancelled = false;
@@ -176,13 +174,6 @@ const RelatedPostsCard = ({ userId, topLanguages }: Props) => {
         )}
       </div>
 
-      <DraftResumeModal
-        isOpen={showModal}
-        draftTitle={draftInfo?.title ?? ''}
-        onResume={handleResume}
-        onFresh={handleFresh}
-        onClose={handleClose}
-      />
     </section>
   );
 };

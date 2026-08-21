@@ -34,9 +34,11 @@ import type {
   CertItem,
 } from 'components/pages/resume/types';
 import { DEFAULT_RESUME, SECTION_LABELS } from 'components/pages/resume/types';
+import { clearDraftStorage, isDraftFresh, markDraftUpdated } from 'utils/draftStorage';
 
 const STORAGE_KEY = 'logme_resume_v2';
 const PHOTO_KEY = 'logme_resume_photo';
+const UPDATED_AT_KEY = 'logme_resume_v2_updated_at';
 const genId = () => Math.random().toString(36).slice(2, 9);
 const serializeResumeDraft = (resume: ResumeData) => {
   const { photo: _, ...rest } = resume;
@@ -470,8 +472,12 @@ const ResumeBuilder = () => {
 
   useEffect(() => {
     const savedPhoto = localStorage.getItem(PHOTO_KEY);
-    if (savedPhoto) setPhoto(savedPhoto);
     const raw = localStorage.getItem(STORAGE_KEY);
+    if ((raw || savedPhoto) && !isDraftFresh(UPDATED_AT_KEY)) {
+      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
+      return;
+    }
+    if (savedPhoto) setPhoto(savedPhoto);
     if (raw) {
       try {
         const parsed: ResumeData = JSON.parse(raw);
@@ -482,7 +488,7 @@ const ResumeBuilder = () => {
           setShowDraftModal(true);
         }
       } catch {
-        localStorage.removeItem(STORAGE_KEY);
+        clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
       }
     }
   }, []);
@@ -497,9 +503,10 @@ const ResumeBuilder = () => {
       if (draftPendingRef.current) return; // don't overwrite while draft modal is pending
       const snapshot = serializeResumeDraft(data);
       if (snapshot === savedSnapshotRef.current && !localStorage.getItem(PHOTO_KEY)) {
-        localStorage.removeItem(STORAGE_KEY);
+        clearDraftStorage(STORAGE_KEY, UPDATED_AT_KEY);
       } else {
         localStorage.setItem(STORAGE_KEY, snapshot);
+        markDraftUpdated(UPDATED_AT_KEY);
       }
       setAutoSaved(true);
       setTimeout(() => setAutoSaved(false), 2000);
@@ -570,8 +577,7 @@ const ResumeBuilder = () => {
       }
       savedSnapshotRef.current = serializeResumeDraft(data);
       if (saveTimer.current) clearTimeout(saveTimer.current);
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(PHOTO_KEY);
+      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
       setSaveMsg('저장됨');
       setTimeout(() => setSaveMsg(''), 2500);
     } catch (err: any) {
@@ -596,8 +602,7 @@ const ResumeBuilder = () => {
       setData({ ...rest, photo: '' });
       setTitle(resume.title);
       setCurrentId(resume.id);
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(PHOTO_KEY);
+      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
     } catch {
       setSaveMsg('불러오기 실패');
       setTimeout(() => setSaveMsg(''), 3000);
@@ -610,8 +615,7 @@ const ResumeBuilder = () => {
     setPhoto('');
     setTitle('');
     setCurrentId(null);
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(PHOTO_KEY);
+    clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -623,6 +627,7 @@ const ResumeBuilder = () => {
       setPhoto(result);
       try {
         localStorage.setItem(PHOTO_KEY, result);
+        markDraftUpdated(UPDATED_AT_KEY);
       } catch {}
     };
     reader.readAsDataURL(file);
@@ -786,8 +791,7 @@ const ResumeBuilder = () => {
     setShowDraftModal(false);
   };
   const handleFreshStart = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(PHOTO_KEY);
+    clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
     setData(DEFAULT_RESUME);
     savedSnapshotRef.current = serializeResumeDraft(DEFAULT_RESUME);
     setPhoto('');

@@ -8,8 +8,10 @@ import {
   DocType,
 } from '../../../components/pages/article/editor';
 import { EDITOR_CONSTANTS } from 'lib/constants';
+import { clearDraftStorage, isDraftFresh, markDraftUpdated } from 'utils/draftStorage';
 
 const DRAFT_KEY = 'logme_draft_new';
+const DRAFT_UPDATED_AT_KEY = 'logme_draft_new_updated_at';
 
 const INIT_USER_INPUT: DocType = {
   title: '',
@@ -21,15 +23,21 @@ const NewPost: NextPage = () => {
   const [doc, setDoc] = useState<DocType>(INIT_USER_INPUT);
   const [isVisiblePreview, setIsVisiblePreview] = useState(true);
   const [imageArr, setImageArr] = useState<string[]>([]);
+  const [pendingDraft, setPendingDraft] = useState<DocType | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const containerTopRef = useRef<HTMLDivElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const canAutoSaveRef = useRef(true);
+  const draftPendingRef = useRef(false);
 
   // 저장된 임시글 불러오기
   useEffect(() => {
     const saved = localStorage.getItem(DRAFT_KEY);
     if (!saved) return;
+    if (!isDraftFresh(DRAFT_UPDATED_AT_KEY)) {
+      clearDraftStorage(DRAFT_KEY, DRAFT_UPDATED_AT_KEY);
+      return;
+    }
     try {
       const draft = JSON.parse(saved) as DocType;
       if (
@@ -38,10 +46,11 @@ const NewPost: NextPage = () => {
         Array.isArray(draft.tags) &&
         (draft.title || draft.content !== INIT_USER_INPUT.content || draft.tags.length > 0)
       ) {
-        setDoc(draft);
+        draftPendingRef.current = true;
+        setPendingDraft(draft);
       }
     } catch {
-      localStorage.removeItem(DRAFT_KEY);
+      clearDraftStorage(DRAFT_KEY, DRAFT_UPDATED_AT_KEY);
     }
   }, []);
 
@@ -55,8 +64,17 @@ const NewPost: NextPage = () => {
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     autoSaveTimerRef.current = setTimeout(() => {
       if (!canAutoSaveRef.current) return;
-      if (hasContent) localStorage.setItem(DRAFT_KEY, JSON.stringify(doc));
-      else localStorage.removeItem(DRAFT_KEY);
+      if (draftPendingRef.current) {
+        if (!hasContent) return;
+        draftPendingRef.current = false;
+        setPendingDraft(null);
+      }
+      if (hasContent) {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(doc));
+        markDraftUpdated(DRAFT_UPDATED_AT_KEY);
+      } else {
+        clearDraftStorage(DRAFT_KEY, DRAFT_UPDATED_AT_KEY);
+      }
     }, 1000);
 
     return () => {
@@ -67,7 +85,19 @@ const NewPost: NextPage = () => {
   const discardDraft = useCallback(() => {
     canAutoSaveRef.current = false;
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
-    localStorage.removeItem(DRAFT_KEY);
+    clearDraftStorage(DRAFT_KEY, DRAFT_UPDATED_AT_KEY);
+  }, []);
+
+  const handleRestoreDraft = useCallback(() => {
+    if (pendingDraft) setDoc(pendingDraft);
+    draftPendingRef.current = false;
+    setPendingDraft(null);
+  }, [pendingDraft]);
+
+  const handleDeleteDraft = useCallback(() => {
+    clearDraftStorage(DRAFT_KEY, DRAFT_UPDATED_AT_KEY);
+    draftPendingRef.current = false;
+    setPendingDraft(null);
   }, []);
 
   useEffect(() => {
@@ -109,6 +139,11 @@ const NewPost: NextPage = () => {
               onTogglePreview={() => setIsVisiblePreview(v => !v)}
               onSaveSuccess={discardDraft}
               onCancel={discardDraft}
+              draftTitle={
+                pendingDraft ? pendingDraft.title.trim() || '제목 없음' : undefined
+              }
+              onRestoreDraft={handleRestoreDraft}
+              onDiscardDraft={handleDeleteDraft}
             />
           </header>
           <div className="flex flex-col flex-1 w-full tablet:flex-row tablet:min-h-0">

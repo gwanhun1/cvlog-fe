@@ -20,6 +20,9 @@ interface EditorHeaderProps {
   onTogglePreview: () => void;
   onSaveSuccess?: () => void;
   onCancel?: () => void;
+  draftTitle?: string;
+  onRestoreDraft?: () => void;
+  onDiscardDraft?: () => void;
 }
 
 const EditorHeader = ({
@@ -32,10 +35,14 @@ const EditorHeader = ({
   onTogglePreview,
   onSaveSuccess,
   onCancel,
+  draftTitle,
+  onRestoreDraft,
+  onDiscardDraft,
 }: EditorHeaderProps) => {
   const [tag, setTag] = useState('');
   const [isTagInputOpen, setIsTagInputOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDraftMenuOpen, setIsDraftMenuOpen] = useState(false);
   const tagInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -212,6 +219,50 @@ const EditorHeader = ({
               )}
               {isVisiblePreview ? '미리보기 끄기' : '미리보기'}
             </button>
+
+            {draftTitle && (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsDraftMenuOpen(open => !open)}
+                  className="px-3 py-1.5 text-xs font-semibold text-ftBlue rounded-lg border border-ftBlue/25 bg-ftBlue/5 hover:bg-ftBlue/10 transition-colors"
+                  aria-expanded={isDraftMenuOpen}
+                >
+                  임시저장
+                </button>
+                {isDraftMenuOpen && (
+                  <div className="absolute right-0 top-full z-50 mt-2 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
+                    <p className="text-xs font-semibold text-ftBlack">임시 저장된 글</p>
+                    <p className="mt-1 truncate text-xs text-gray-400">{draftTitle}</p>
+                    <p className="mt-2 text-[11px] leading-relaxed text-gray-400">
+                      불러오면 현재 편집 내용이 임시 저장된 내용으로 바뀝니다.
+                    </p>
+                    <div className="mt-3 flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onDiscardDraft?.();
+                          setIsDraftMenuOpen(false);
+                        }}
+                        className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-gray-500 hover:bg-slate-50"
+                      >
+                        삭제
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onRestoreDraft?.();
+                          setIsDraftMenuOpen(false);
+                        }}
+                        className="rounded-lg bg-ftBlue px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-ftBlue/90"
+                      >
+                        불러오기
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             <button
               type="button"
