@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { IoMdSearch, IoMdCreate } from 'react-icons/io';
 import { motion, useReducedMotion } from 'framer-motion';
 import useIsLogin from 'hooks/useIsLogin';
@@ -13,8 +14,9 @@ interface FilterBoxProps {
 const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
   const [localKeyword, setLocalKeyword] = useState(keyword);
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
   const reduceMotion = useReducedMotion();
-  const { isAuthenticated } = useIsLogin();
+  const { isAuthenticated, isLoading } = useIsLogin();
   const { handleNewArticle } = useDraftResume();
 
   useEffect(() => {
@@ -28,6 +30,15 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setKeyword(localKeyword.trim());
+  };
+
+  const handleWrite = () => {
+    if (isAuthenticated) {
+      handleNewArticle();
+      return;
+    }
+
+    router.push('/login?redirect=/article/new');
   };
 
   return (
@@ -63,7 +74,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
           </button>
         </div>
 
-        {isMounted && isAuthenticated && (
+        {isMounted && !isLoading && (
           <motion.button
             type="button"
             className="write-btn relative flex h-12 flex-shrink-0 items-center overflow-hidden rounded-[12px] border border-slate-300 bg-white px-3 text-sm font-bold text-slate-700 focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2 mobile:px-4"
@@ -72,7 +83,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
             }
             whileTap={reduceMotion ? undefined : { scale: 0.98 }}
             transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-            onClick={handleNewArticle}
+            onClick={handleWrite}
           >
             <span className="relative z-10 flex items-center gap-1.5 whitespace-nowrap">
               <IoMdCreate className="w-4 h-4" />

@@ -1,7 +1,7 @@
 import { BlogType } from '../tag/type';
 
-// 인기 글 = 공개 글 목록 항목 + 조회수
-export type PopularPost = BlogType & { view_count: number };
+// 인기 글의 정렬 기준은 서버가 관리하고, 화면에는 게시물 정보만 노출한다.
+export type PopularPost = BlogType;
 
 export interface GetPopularRes {
   success: boolean;

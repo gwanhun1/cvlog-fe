@@ -39,7 +39,7 @@ const PopularPosts = ({ limit = 3 }: PopularPostsProps) => {
           많이 읽은 글
         </h2>
         <span className="text-[11px] font-medium text-slate-400">
-          누적 조회
+          게시일
         </span>
       </div>
 
@@ -60,9 +60,12 @@ const PopularPosts = ({ limit = 3 }: PopularPostsProps) => {
                 <strong className="line-clamp-1 block text-[14px] leading-[1.45] text-slate-800 transition-colors group-hover:text-ftBlue">
                   {post.title}
                 </strong>
-                <span className="mt-1 block text-[11px] text-slate-400">
-                  조회 {post.view_count.toLocaleString()}
-                </span>
+                <time
+                  dateTime={post.created_at}
+                  className="mt-1 block text-[11px] text-slate-400"
+                >
+                  {post.created_at.slice(0, 10)}
+                </time>
               </span>
             </Link>
           </li>
