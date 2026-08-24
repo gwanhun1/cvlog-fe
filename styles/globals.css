@@ -188,6 +188,7 @@ table {
   }
 }
 
+
 @layer components {
   .labelMd {
     @apply text-base font-normal;

@@ -33,6 +33,7 @@
     "axios": "^1.4.0",
     "browser-image-compression": "^2.0.2",
     "classnames": "^2.5.1",
+    "echarts": "^6.0.0",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
     "framer-motion": "^12.6.1",

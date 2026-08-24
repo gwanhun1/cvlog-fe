@@ -48,21 +48,21 @@ const GithubConnectPrompt = ({
       }`}
     >
       <FaGithub
-        className={`text-gray-300 ${compact ? 'w-8 h-8' : 'w-12 h-12'}`}
+        className={`text-ftBlue ${compact ? 'w-8 h-8' : 'w-12 h-12'}`}
       />
       <p
-        className={`font-semibold text-gray-700 ${
+        className={`font-semibold text-ftBlack ${
           compact ? 'text-sm' : 'text-xl'
         }`}
       >
         {title}
       </p>
-      <p className={`text-gray-400 ${compact ? 'text-xs' : 'text-sm'}`}>
+      <p className={`text-ftGray ${compact ? 'text-xs' : 'text-sm'}`}>
         {description}
       </p>
       <button
         onClick={handleConnect}
-        className="mt-2 inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-[#24292e] rounded-xl hover:bg-[#1a1e22] transition-colors"
+        className="mt-2 inline-flex items-center gap-2 rounded-xl bg-ftBlue px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-ftBlue/90"
       >
         <FaGithub className="w-4 h-4" />
         GitHub 연동하기

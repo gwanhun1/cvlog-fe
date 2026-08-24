@@ -18,7 +18,7 @@ const MENU_ITEMS = [
   { label: 'Home', path: '/', authRequired: false },
   { label: 'Article', path: '/article', authRequired: false },
   { label: 'Resume', path: '/resume', authRequired: false },
-  { label: 'GitHub', path: '/github', authRequired: true },
+  { label: 'GitHub', path: '/github', authRequired: false },
 ];
 
 interface MobileNavProps {
