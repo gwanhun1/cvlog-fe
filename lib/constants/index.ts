@@ -1,3 +1,5 @@
+import { getApiBaseUrl } from 'utils/apiUrl';
+
 export enum KeyMap {
   ENTER = 'Enter',
   ESCAPE = 'Escape',
@@ -44,5 +46,5 @@ export const ERROR_MESSAGES = {
 } as const;
 
 export const EDITOR_PATHS = {
-  UPLOAD_ENDPOINT: `${process.env.NEXT_PUBLIC_API_BASE_URL}/posts/upload`,
+  UPLOAD_ENDPOINT: `${getApiBaseUrl()}/posts/upload`,
 } as const;

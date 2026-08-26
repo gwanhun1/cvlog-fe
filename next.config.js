@@ -96,6 +96,13 @@ const nextConfig = {
         ],
       },
       {
+        // 공개 페이지 렌더링에는 허용하되 API 응답 자체는 검색 결과에서 제외
+        source: '/api/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
+      },
+      {
         // 인증 페이지 색인 차단
         source: '/join',
         headers: [

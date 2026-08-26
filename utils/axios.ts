@@ -6,9 +6,9 @@ import axios, {
 } from 'axios';
 import Cookie from 'public/utils/Cookie';
 import LocalStorage from 'public/utils/Localstorage';
+import { getApiBaseUrl } from 'utils/apiUrl';
 
-const API_URL: string =
-  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+const API_URL = getApiBaseUrl();
 
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];

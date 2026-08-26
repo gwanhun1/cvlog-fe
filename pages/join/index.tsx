@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 import { trackEvent, isNewSignup } from 'utils/analytics';
 import { LOGIN_STATE_KEY, parseProviderFromState } from 'utils/oauth';
+import { getApiBaseUrl, getServerApiBaseUrl } from 'utils/apiUrl';
 import type { AuthProvider } from 'service/api/login/type';
 
 axios.defaults.withCredentials = true;
@@ -48,7 +49,7 @@ const Join: NextPage<JoinProps> = ({ info, cookie, provider }) => {
         Cookie.setItem('refreshToken', cookies.refreshToken, 7);
 
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/info`,
+          `${getApiBaseUrl()}/users/info`,
           {
             headers: {
               Authorization: `Bearer ${info.data.accessToken}`,
@@ -136,7 +137,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
     });
     if (typeof state === 'string') params.set('state', state);
 
-    const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/${provider}/login?${params.toString()}`;
+    const url = `${getServerApiBaseUrl()}/auth/${provider}/login?${params.toString()}`;
 
     const response = await axios.get(url, {
       withCredentials: true,

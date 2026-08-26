@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
+import { getServerApiBaseUrl } from 'utils/apiUrl';
 
 const BASE_URL = 'https://logme.cloud';
 const FEED_TITLE = 'LOGME';
@@ -112,10 +113,7 @@ async function fetchAllPosts(API_URL: string): Promise<any[]> {
 function Rss() {}
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
-  const API_URL =
-    process.env.API_SERVER_URL ||
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    'http://158.179.174.170:8000';
+  const API_URL = getServerApiBaseUrl();
 
   let posts: any[];
 

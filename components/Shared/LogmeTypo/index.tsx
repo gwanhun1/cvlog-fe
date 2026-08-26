@@ -23,7 +23,6 @@ export const LogmeHeadline = ({
   className,
   style,
   children,
-  link,
 }: LogmeHeadlineProps) => {
   let fontWeight = '';
   switch (fontStyle) {
@@ -54,12 +53,12 @@ export const LogmeHeadline = ({
       break;
   }
 
-  const headlineClassNames = `m-0 ${fontWeight} ${fontSize} ${className || ''}`;
+  const headlineClassNames = `m-0 block ${fontWeight} ${fontSize} ${className || ''}`;
 
   return (
-    <h1 className={headlineClassNames} style={style} {...(link && { as: 'a' })}>
+    <span className={headlineClassNames} style={style}>
       {children}
-    </h1>
+    </span>
   );
 };
 
