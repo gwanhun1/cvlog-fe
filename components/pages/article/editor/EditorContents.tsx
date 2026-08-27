@@ -30,6 +30,84 @@ interface CaretPos {
 const getEditorTextarea = () =>
   document.querySelector<HTMLTextAreaElement>('.w-md-editor-text-input');
 
+const TEXTAREA_MIRROR_STYLES = [
+  'boxSizing', 'width', 'borderTopWidth', 'borderRightWidth',
+  'borderBottomWidth', 'borderLeftWidth', 'paddingTop', 'paddingRight',
+  'paddingBottom', 'paddingLeft', 'fontFamily', 'fontSize', 'fontWeight',
+  'fontStyle', 'letterSpacing', 'lineHeight', 'textAlign', 'textIndent',
+  'textTransform', 'tabSize', 'wordSpacing',
+] as const;
+
+/** 브라우저가 렌더링한 textarea와 같은 줄바꿈을 재현해 화면 좌표를 문자 위치로 바꾼다. */
+const getTextareaOffsetFromPoint = (
+  textarea: HTMLTextAreaElement,
+  clientX: number,
+  clientY: number,
+) => {
+  const textareaRect = textarea.getBoundingClientRect();
+  const computed = getComputedStyle(textarea);
+  const mirror = document.createElement('div');
+
+  mirror.setAttribute('aria-hidden', 'true');
+  Object.assign(mirror.style, {
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    height: 'auto',
+    minHeight: '0',
+    overflow: 'visible',
+    visibility: 'hidden',
+    pointerEvents: 'none',
+    whiteSpace: 'pre-wrap',
+    overflowWrap: 'break-word',
+    wordBreak: computed.wordBreak,
+  });
+  TEXTAREA_MIRROR_STYLES.forEach(property => {
+    mirror.style[property] = computed[property];
+  });
+
+  const offsets: number[] = [];
+  let codeUnitOffset = 0;
+  Array.from(textarea.value).forEach(character => {
+    const span = document.createElement('span');
+    span.textContent = character;
+    span.dataset.offset = String(codeUnitOffset);
+    mirror.appendChild(span);
+    offsets.push(codeUnitOffset);
+    codeUnitOffset += character.length;
+  });
+
+  const endMarker = document.createElement('span');
+  endMarker.textContent = '\u200b';
+  endMarker.dataset.offset = String(textarea.value.length);
+  mirror.appendChild(endMarker);
+  offsets.push(textarea.value.length);
+  document.body.appendChild(mirror);
+
+  const mirrorRect = mirror.getBoundingClientRect();
+  const pointX = clientX - textareaRect.left + textarea.scrollLeft + mirrorRect.left;
+  const pointY = clientY - textareaRect.top + textarea.scrollTop + mirrorRect.top;
+  let closestOffset = textarea.value.length;
+  let closestDistance = Number.POSITIVE_INFINITY;
+
+  Array.from(mirror.children).forEach((child, index) => {
+    const rect = child.getBoundingClientRect();
+    const dx = pointX < rect.left ? rect.left - pointX : pointX > rect.right ? pointX - rect.right : 0;
+    const dy = pointY < rect.top ? rect.top - pointY : pointY > rect.bottom ? pointY - rect.bottom : 0;
+    const distance = dy * dy * 4 + dx * dx;
+    if (distance >= closestDistance) return;
+
+    closestDistance = distance;
+    const offset = offsets[index];
+    closestOffset = pointX > rect.left + rect.width / 2
+      ? offset + (child.textContent === '\u200b' ? 0 : child.textContent?.length ?? 0)
+      : offset;
+  });
+
+  mirror.remove();
+  return Math.min(textarea.value.length, closestOffset);
+};
+
 const EditorContents = ({
   doc,
   setDoc,
@@ -168,19 +246,7 @@ const EditorContents = ({
       const textarea = getEditorTextarea();
       if (!textarea) { processFileAndUpload(file, null); return; }
 
-      const taRect = textarea.getBoundingClientRect();
-      const cs = getComputedStyle(textarea);
-      const lh = parseFloat(cs.lineHeight) || 20;
-      const pt = parseFloat(cs.paddingTop);
-
-      const relY = e.clientY - taRect.top - pt + textarea.scrollTop;
-      const lineIdx = Math.max(0, Math.floor(relY / lh));
-
-      const lines = textarea.value.split('\n');
-      let charPos = 0;
-      for (let i = 0; i < Math.min(lineIdx, lines.length - 1); i++) {
-        charPos += lines[i].length + 1;
-      }
+      const charPos = getTextareaOffsetFromPoint(textarea, e.clientX, e.clientY);
 
       processFileAndUpload(file, charPos);
     },
