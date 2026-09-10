@@ -1739,20 +1739,20 @@ const ResumeBuilder = () => {
           </div>
 
           {/* Right: Preview */}
-          <div className={`hidden tablet:block w-[50%] flex-shrink-0`}>
-            <div className="sticky top-[68px] z-30">
+          <aside className="hidden w-[50%] flex-shrink-0 self-start tablet:sticky tablet:top-[68px] tablet:block tablet:h-[calc(100vh-84px)]">
+            <div className="flex h-full flex-col">
               {/* 미리보기 라벨 (저장/PDF는 좌측 상단바에 이미 있어 중복 제거) */}
               <div className="flex items-center mb-2 px-1">
                 <span className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
                   미리보기
                 </span>
               </div>
-              <div className="rounded-2xl border border-slate-200 shadow-lg overflow-auto max-h-[calc(100vh-116px)] bg-white">
+              <div className="min-h-0 flex-1 overflow-auto rounded-2xl border border-slate-200 bg-white shadow-lg">
                 {!hasResumeDraftContent(data, Boolean(photo)) && <div className="m-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-slate-600 print:hidden"><p className="font-semibold text-slate-900">작성한 내용이 여기에 표시됩니다</p><p className="mt-2 text-sm leading-6">이름과 직함부터 입력해보세요. 프로젝트에는 문제·담당 역할·결과를 중심으로 적으면 좋습니다.</p></div>}
                 <ResumePreview data={{ ...data, photo }} />
               </div>
             </div>
-          </div>
+          </aside>
 
           {/* Mobile fullscreen preview overlay */}
           {activeTab === 'preview' && (
