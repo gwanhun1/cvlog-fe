@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IntroduceData } from './introduce';
 
@@ -80,20 +80,20 @@ const FeaturesSection = ({ data }: Props) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const startTimer = () => {
+  const startTimer = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     timerRef.current = setInterval(() => {
       setActive(prev => (prev + 1) % data.length);
       setProgressKey(k => k + 1);
     }, INTERVAL);
-  };
+  }, [data.length]);
 
   useEffect(() => {
     startTimer();
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [data.length]);
+  }, [startTimer]);
 
   const handleTabClick = (i: number) => {
     setActive(i);
@@ -114,13 +114,13 @@ const FeaturesSection = ({ data }: Props) => {
       {/* 섹션 헤더 */}
       <div className="mb-8 text-center">
         <span className="inline-block rounded-full bg-ftBlue/8 px-3 py-1 text-xs font-semibold text-ftBlue">
-          주요 기능
+          실제 화면 데모
         </span>
         <h2 className="mt-2 text-2xl font-extrabold text-ftBlack tablet:text-3xl">
-          개발 블로깅의 모든 것
+          직접 보고 바로 시작하세요
         </h2>
         <p className="mt-1.5 text-sm text-ftGray">
-          LOGME가 지원하는 핵심 기능들을 확인해보세요.
+          탭을 선택하면 실제 기능이 동작하는 모습을 볼 수 있습니다.
         </p>
       </div>
 
