@@ -4,7 +4,7 @@ import type { AuthProvider } from 'service/api/login/type';
  * 소셜 로그인/연동 진입 URL 생성.
  *
  * 로그인은 /join으로 돌아와 새 세션을 만들고,
- * 연동(link)은 /github/callback으로 돌아와 "기존 세션에 identity만 추가"한다.
+ * GitHub 연동도 등록된 /join으로 돌아오되 link state로 구분해 기존 세션에 identity만 추가한다.
  * 이 둘을 섞으면 구글로 가입한 유저가 GitHub 연동을 누르는 순간 다른 계정으로 갈아탄다.
  */
 
@@ -30,9 +30,9 @@ export const PROVIDERS: Record<AuthProvider, ProviderConfig> = {
     clientId: () =>
       process.env.NEXT_PUBLIC_GITHUB_ID ||
       process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID,
-    // 로그인 단계에서는 저장소 권한을 요구하지 않는다.
-    // repo/delete_repo는 마이페이지에서 동기화를 켤 때 증분 인증으로 받는다.
-    loginScope: 'read:user',
+    // scope를 생략해야 기존에 승인한 저장소 권한이 재로그인 때 유지된다.
+    // 신규 계정의 공개 프로필은 scope 없이 조회하고, 쓰기 권한은 연동 시 받는다.
+    loginScope: '',
   },
   google: {
     name: 'google',
@@ -114,6 +114,9 @@ export const getLoginRedirectUri = () => `${window.location.origin}/join`;
 export const getLinkRedirectUri = () =>
   `${window.location.origin}/github/callback`;
 
+export const isGithubLinkState = (state: unknown): state is string =>
+  typeof state === 'string' && /^github\.link\.[a-zA-Z0-9-]+$/.test(state);
+
 /** 로그인 시작 — 성공하면 /join에서 새 세션이 만들어진다 */
 export const buildLoginUrl = (provider: AuthProvider): string | null => {
   const config = PROVIDERS[provider];
@@ -146,17 +149,19 @@ export const buildLinkUrl = (
 
   if (!clientId) return null;
 
-  const state = buildState(provider);
+  const state = provider === 'github'
+    ? `github.link.${window.crypto.randomUUID()}`
+    : buildState(provider);
   sessionStorage.setItem(LINK_STATE_KEY, state);
 
   return buildUrl(
     config,
     clientId,
-    getLinkRedirectUri(),
+    provider === 'github' ? getLoginRedirectUri() : getLinkRedirectUri(),
     state,
     scope ?? config.loginScope
   );
 };
 
 /** GitHub 동기화에 필요한 권한 */
-export const GITHUB_SYNC_SCOPE = 'repo delete_repo';
+export const GITHUB_SYNC_SCOPE = 'read:user public_repo';

@@ -4,13 +4,21 @@ import { fetchCreateNewPost } from 'service/api/detail';
 import { CreateNewPostReq } from 'service/api/detail/type';
 import { trackEvent } from 'utils/analytics';
 import { clearDraftStorage } from 'utils/draftStorage';
+import { useToast } from 'components/Shared';
 
 export const useCreatePost = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   return useMutation({
     mutationFn: (params: CreateNewPostReq) => fetchCreateNewPost(params),
     onSuccess: async (_data, variables) => {
+      if (_data.data.githubSync?.status === 'failed') {
+        showToast(
+          `글은 저장되었습니다. ${_data.data.githubSync.message ?? 'GitHub 업로드에 실패했습니다.'}`,
+          'error',
+        );
+      }
       // mutate 호출부의 콜백은 라우팅으로 컴포넌트가 먼저 언마운트되면
       // 실행되지 않을 수 있으므로 성공 처리 자체에서 임시글을 제거한다.
       clearDraftStorage('logme_draft_new', 'logme_draft_new_updated_at');
@@ -22,6 +30,7 @@ export const useCreatePost = () => {
         tag_count: variables?.tags?.length ?? 0,
       });
       await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['githubSyncSettings'] }),
         queryClient.invalidateQueries({ queryKey: ['list'] }),
         queryClient.invalidateQueries({ queryKey: ['publicList'] }),
         queryClient.invalidateQueries({ queryKey: ['tagsFolder'] }),

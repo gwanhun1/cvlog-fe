@@ -7,7 +7,8 @@ import { useStore } from 'service/store/useStore';
 import { useRouter } from 'next/router';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 import { trackEvent, isNewSignup } from 'utils/analytics';
-import { LOGIN_STATE_KEY, parseProviderFromState } from 'utils/oauth';
+import { LOGIN_STATE_KEY, parseProviderFromState, isGithubLinkState } from 'utils/oauth';
+import OAuthLinkCallbackPage from 'pages/github/callback';
 import { getApiBaseUrl, getServerApiBaseUrl } from 'utils/apiUrl';
 import type { AuthProvider } from 'service/api/login/type';
 
@@ -104,12 +105,20 @@ const Join: NextPage<JoinProps> = ({ info, cookie, provider }) => {
 
   return <LoaderAnimation />;
 };
-export default Join;
+const JoinCallback: NextPage<JoinProps | { githubLink: true }> = (props) =>
+  'githubLink' in props ? <OAuthLinkCallbackPage /> : <Join {...props} />;
+export default JoinCallback;
 //ssr 소셜 로그인 처리
 export const getServerSideProps: GetServerSideProps = async context => {
   try {
     const { query } = context;
     const { code, state } = query;
+
+    // 연동 코드를 로그인 API에서 소비하거나 기존 사용자 세션을 교체하지 않는다.
+    // 클라이언트 연동 처리에서 sessionStorage state를 검증한 뒤 JWT로 요청한다.
+    if (isGithubLinkState(state)) {
+      return { props: { githubLink: true } };
+    }
 
     if (!code) {
       return {

@@ -9,6 +9,7 @@ import {
 } from 'service/api/detail';
 import { CreateNewPostReq } from 'service/api/detail/type';
 import { trackEvent } from 'utils/analytics';
+import { useToast } from 'components/Shared';
 
 // Always pass parseInt(pid) — never a string. queryKey uses ['detail', number].
 export const useGetDetail = (params: number, initialData?: any) => {
@@ -52,6 +53,7 @@ export const useDeleteDetail = (params: number) => {
 
 export const usePatchDetail = () => {
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   return useMutation({
     mutationFn: ({
       id,
@@ -62,6 +64,12 @@ export const usePatchDetail = () => {
     }) => patchDetail(id, public_status),
     retry: 0,
     onSuccess: (_data, variables) => {
+      if (_data.data.githubSync?.status === 'failed')
+        showToast(
+          `공개 설정은 저장되었습니다. ${_data.data.githubSync.message}`,
+          'error',
+        );
+      queryClient.invalidateQueries({ queryKey: ['githubSyncSettings'] });
       // GA4 이벤트: 공개/비공개 토글. to_public=true가 실질적인 "발행" 순간.
       trackEvent('post_visibility_change', {
         post_id: variables.id,
@@ -78,10 +86,16 @@ export const usePatchDetail = () => {
 export const useModifyPost = (pid: number) => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
   return useMutation({
     mutationFn: (params: CreateNewPostReq) =>
       fetchCreateModifyPost(params, pid),
     onSuccess: async (_data, variables) => {
+      if (_data.data.githubSync?.status === 'failed')
+        showToast(
+          `글은 저장되었습니다. ${_data.data.githubSync.message}`,
+          'error',
+        );
       localStorage.removeItem(`logme_draft_edit_${pid}`);
       // GA4 이벤트: 글 수정 완료
       trackEvent('post_update', {
@@ -89,6 +103,7 @@ export const useModifyPost = (pid: number) => {
         public_status: variables?.public_status ?? false,
       });
       await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['githubSyncSettings'] }),
         queryClient.invalidateQueries({ queryKey: ['list'] }),
         queryClient.invalidateQueries({ queryKey: ['publicList'] }),
         queryClient.invalidateQueries({ queryKey: ['detail', pid] }),

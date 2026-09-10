@@ -4,6 +4,7 @@ import {
   createGithubRepo,
   checkGithubRepoStatus,
   disconnectGithubSync,
+  retryGithubSync,
 } from 'service/api/github-sync';
 
 // 동기화 설정 조회
@@ -11,8 +12,17 @@ export const useGithubSyncSettings = () => {
   return useQuery({
     queryKey: ['githubSyncSettings'],
     queryFn: getGithubSyncSettings,
-    staleTime: 1000 * 60 * 5, // 5분
+    staleTime: 0,
     retry: 1,
+  });
+};
+
+export const useRetryGithubSync = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: retryGithubSync,
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ['githubSyncSettings'] }),
   });
 };
 

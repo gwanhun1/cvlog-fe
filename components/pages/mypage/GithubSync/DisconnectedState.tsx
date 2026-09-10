@@ -20,7 +20,8 @@ const DisconnectedState = ({
   return (
     <>
       <p className="mb-4 text-sm text-gray-600">
-        게시글을 GitHub 저장소에 마크다운 파일로 자동 백업합니다.
+        공개 게시글을 GitHub 저장소에 자동 백업합니다. 기존 저장소를 연결하거나
+        새로 만들 수 있습니다.
       </p>
 
       <div className="space-y-3">
@@ -62,18 +63,19 @@ const DisconnectedState = ({
           {isCreating ? (
             <>
               <span className="w-4 h-4 rounded-full border-2 border-white animate-spin border-t-transparent" />
-              저장소 생성 중...
+              저장소 연결 중...
             </>
           ) : (
             <>
               <FiGithub className="w-4 h-4" />
-              저장소 생성 및 연결
+              저장소 연결 / 새로 만들기
             </>
           )}
         </button>
 
         <p className="text-xs leading-relaxed text-gray-500">
-          ⚠️ 저장소 생성을 위해 GitHub 추가 권한이 필요할 수 있습니다.
+          본인 계정에 같은 이름의 공개 저장소가 있으면 연결하고, 없으면 새로
+          만듭니다.
         </p>
       </div>
     </>

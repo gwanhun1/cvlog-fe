@@ -1,46 +1,75 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { parseContributions } from 'utils/githubContributions';
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/;
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const username = Array.isArray(req.query.username)
-    ? req.query.username[0]
-    : req.query.username;
-
-  if (!username || !USERNAME_PATTERN.test(username)) {
-    return res.status(400).json({ message: 'Invalid GitHub username' });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET');
+    return res.status(405).end();
   }
-
+  const { username, year = 'last' } = req.query;
+  const currentYear = new Date().getUTCFullYear();
+  if (typeof username !== 'string' || !USERNAME_PATTERN.test(username))
+    return res.status(400).json({ message: 'Invalid GitHub username' });
+  if (
+    typeof year !== 'string' ||
+    (year !== 'last' &&
+      (!/^\d{4}$/.test(year) ||
+        Number(year) < 2008 ||
+        Number(year) > currentYear))
+  )
+    return res.status(400).json({ message: 'Invalid year' });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 12000);
   try {
-    const response = await fetch(
+    const url = new URL(
       `https://github.com/users/${encodeURIComponent(username)}/contributions`,
-      { headers: { Accept: 'text/html', 'User-Agent': 'LOGME-GitHub-Studio' } },
     );
-
-    if (!response.ok) return res.status(response.status).json({ message: 'GitHub request failed' });
-
-    const html = await response.text();
-    const days: { date: string; count: number; level: number }[] = [];
-    const dayPattern = /data-date="([0-9-]+)"[^>]*data-level="([0-4])"[^>]*><\/td>\s*<tool-tip[^>]*>(?:([0-9,]+)|No) contributions?/g;
-    let match: RegExpExecArray | null;
-
-    while ((match = dayPattern.exec(html)) !== null) {
-      days.push({
-        date: match[1],
-        level: Number(match[2]),
-        count: match[3] ? Number(match[3].replace(/,/g, '')) : 0,
-      });
+    if (year !== 'last') {
+      url.searchParams.set('from', `${year}-01-01`);
+      url.searchParams.set('to', `${year}-12-31`);
     }
-
-    if (!days.length) return res.status(502).json({ message: 'Contribution graph unavailable' });
-
-    const totalMatch = html.match(/<h2[^>]*>[\s\n]*([0-9,]+)[\s\n]*contributions/);
-    res.setHeader('Cache-Control', 'public, s-maxage=1800, stale-while-revalidate=3600');
-    return res.status(200).json({
-      total: totalMatch ? Number(totalMatch[1].replace(/,/g, '')) : days.reduce((sum, day) => sum + day.count, 0),
-      days: days.sort((a, b) => a.date.localeCompare(b.date)),
+    const response = await fetch(url, {
+      headers: {
+        Accept: 'text/html',
+        'Accept-Language': 'en-US',
+        'User-Agent': 'LOGME-GitHub-Studio',
+      },
+      signal: controller.signal,
     });
+    if (!response.ok)
+      return res
+        .status(response.status === 404 ? 404 : 502)
+        .json({ message: 'GitHub request failed' });
+    const today = new Date().toISOString().slice(0, 10);
+    const days = parseContributions(await response.text()).filter(
+      day =>
+        day.date <= today && (year === 'last' || day.date.startsWith(year)),
+    );
+    if (!days.length)
+      return res
+        .status(502)
+        .json({ message: 'Contribution graph unavailable' });
+    res.setHeader(
+      'Cache-Control',
+      req.query.fresh === '1'
+        ? 'no-store'
+        : 'public, s-maxage=300, stale-while-revalidate=300',
+    );
+    return res
+      .status(200)
+      .json({
+        total: days.reduce((sum, day) => sum + day.count, 0),
+        days,
+        fetchedAt: new Date().toISOString(),
+      });
   } catch {
     return res.status(502).json({ message: 'Contribution graph unavailable' });
+  } finally {
+    clearTimeout(timeout);
   }
 }

@@ -2,7 +2,18 @@ export interface GithubSyncSettings {
   enabled: boolean;
   repoId: number | null;
   repoName: string | null;
-  syncedPostCount: number;
+  syncedPostCount: number | null;
+  pendingPostCount: number | null;
+  repoUrl: string | null;
+  status:
+    | 'disabled'
+    | 'ready'
+    | 'pending'
+    | 'reauth_required'
+    | 'permission_required'
+    | 'repository_unavailable'
+    | 'error';
+  message: string;
 }
 
 export interface GithubRepoResponse {

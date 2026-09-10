@@ -5,7 +5,6 @@ import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 import { useToast } from 'components/Shared';
 import { linkProvider } from 'service/api/link';
 import {
-  getLinkRedirectUri,
   LINK_STATE_KEY,
   parseProviderFromState,
 } from 'utils/oauth';
@@ -55,12 +54,15 @@ const OAuthLinkCallbackPage = () => {
     linkProvider({
       provider,
       code,
-      redirectUri: getLinkRedirectUri(),
+      redirectUri: `${window.location.origin}${window.location.pathname}`,
       state: typeof state === 'string' ? state : undefined,
     })
       .then(async () => {
         // capabilities가 바뀌므로 유저 정보를 다시 받아온다
-        await queryClient.invalidateQueries({ queryKey: ['userInfo'] });
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['userInfo'] }),
+          queryClient.invalidateQueries({ queryKey: ['githubSyncSettings'] }),
+        ]);
         finish('계정이 연동되었습니다.', 'success');
       })
       .catch((err: any) => {

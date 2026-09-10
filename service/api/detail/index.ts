@@ -5,6 +5,7 @@ import {
   DeleteDetail,
   PatchDetailType,
   RelatedPost,
+  SavePostResponse,
 } from './type';
 
 export const getDetail = async (params: number) => {
@@ -31,24 +32,35 @@ export const patchDetail = async (params: number, public_status: boolean) => {
 
 export const fetchCreateModifyPost = async (
   params: CreateNewPostReq,
-  pid: number
+  pid: number,
 ) => {
-  const { data } = await axios.put<CreateNewPostReq>(`/posts/${pid}`, params);
+  const { data } = await axios.put<SavePostResponse>(`/posts/${pid}`, params, {
+    timeout: 60000,
+  });
   return data;
 };
 
 export const fetchCreateNewPost = async (params: CreateNewPostReq) => {
-  const { data } = await axios.post<CreateNewPostReq>('/posts', params);
+  const { data } = await axios.post<SavePostResponse>('/posts', params, {
+    timeout: 60000,
+  });
 
   return data;
 };
 
-export const incrementViewCount = async (id: number): Promise<{ view_count: number }> => {
-  const { data } = await axios.post<{ success: boolean; data: { view_count: number } }>(`/posts/${id}/view`);
+export const incrementViewCount = async (
+  id: number,
+): Promise<{ view_count: number }> => {
+  const { data } = await axios.post<{
+    success: boolean;
+    data: { view_count: number };
+  }>(`/posts/${id}/view`);
   return data.data;
 };
 
 export const getRelatedPosts = async (id: number): Promise<RelatedPost[]> => {
-  const { data } = await axios.get<{ success: boolean; data: RelatedPost[] }>(`/posts/${id}/related`);
+  const { data } = await axios.get<{ success: boolean; data: RelatedPost[] }>(
+    `/posts/${id}/related`,
+  );
   return data.data;
 };

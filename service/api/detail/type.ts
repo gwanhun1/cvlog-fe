@@ -10,10 +10,21 @@ export interface DeleteDetail {
 export interface PatchDetailType {
   success: boolean;
   data: {
+    githubSync?: GithubSyncResult;
     generatedMaps: [];
     raw: [];
     affected: number;
   };
+}
+
+export interface GithubSyncResult {
+  status: 'synced' | 'skipped' | 'failed';
+  message?: string;
+}
+
+export interface SavePostResponse {
+  success: boolean;
+  data: { id: number; githubSync?: GithubSyncResult };
 }
 
 export interface Content {
