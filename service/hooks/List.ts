@@ -38,10 +38,11 @@ export const useGetPublicList = (
   enabled = true,
   initialData?: any,
   keyword?: string,
+  sort = 'latest',
 ) => {
   return useQuery({
-    queryKey: ['publicList', page, keyword],
-    queryFn: () => getPublicList(page, keyword),
+    queryKey: ['publicList', page, keyword, sort],
+    queryFn: () => getPublicList(page, keyword, sort),
     retry: 0,
     enabled,
     initialData,

@@ -1,3 +1,5 @@
+import DiscoveryFilters from 'components/pages/article/DiscoveryFilters';
+import { trackEvent } from 'utils/analytics';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -35,13 +37,19 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
   const closeTagDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const setKeyword = (value: React.SetStateAction<string>) => {
-    setTagAtom(typeof value === 'function' ? value(keyword) : value);
+    const next = (typeof value === 'function' ? value(keyword) : value).trim().slice(0, 100);
+    setTagAtom(next);
+    if (next !== (router.query.q || '')) {
+      const { tagKeyword: _, ...query } = router.query;
+      router.push({ pathname: router.pathname, query: { ...query, q: next } }, undefined, { shallow: true });
+      trackEvent('search_submit', { query_length: next.length });
+    }
   };
 
   const setMenu = (value: React.SetStateAction<'list' | 'all'>) => {
     const nextMenu = typeof value === 'function' ? value(menu) : value;
-    const { tagKeyword: _tagKeyword, ...remainingQuery } = router.query;
-    setKeyword('');
+    const { tagKeyword: _tagKeyword, q: _q, ...remainingQuery } = router.query;
+    setTagAtom('');
     setDrawerOpen(false);
     router.push(
       {
@@ -60,25 +68,18 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
     if (!router.isReady || hasInitialized.current) return;
     hasInitialized.current = true;
 
-    setTagAtom('');
+    setTagAtom(typeof router.query.q === 'string' ? router.query.q : '');
     setIsClient(true);
     const token = LocalStorage.getItem('LogmeToken');
     setAccessToken(token);
 
-    if (token && !router.query.view) {
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: { ...router.query, view: 'my' },
-        },
-        undefined,
-        { shallow: true },
-      );
-    }
+
   }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => { if (router.isReady) setTagAtom(typeof router.query.q === 'string' ? router.query.q : typeof router.query.tagKeyword === 'string' ? router.query.tagKeyword : ''); }, [router.isReady, router.query.q, router.query.tagKeyword, setTagAtom]);
+
   const featuredPost =
-    menu === 'all' && !keyword ? initialList?.posts[0] : undefined;
+    menu === 'all' && !keyword && router.query.sort !== 'popular' ? initialList?.posts[0] : undefined;
   const showMyWorkspace = isClient && Boolean(accessToken) && menu === 'list';
 
   return (
@@ -160,6 +161,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
           </section>
         )}
 
+        {menu === 'all' && <DiscoveryFilters onSearch={setKeyword} />}
         <section
           aria-label="글 탐색"
           className="grid grid-cols-1 gap-4 border-b border-slate-300 pb-5 tablet:grid-cols-[minmax(0,1fr)_auto] tablet:items-center tablet:gap-7"
@@ -198,7 +200,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
                 id="article-list-title"
                 className="m-0 text-[24px] font-bold tracking-[-0.035em] text-slate-950"
               >
-                {keyword ? '검색 결과' : menu === 'all' ? '최신 글' : '내 기록'}
+                {keyword ? '검색 결과' : menu === 'all' ? router.query.sort === 'popular' ? '많이 읽은 글' : '최신 글' : '내 기록'}
               </h2>
               {keyword && (
                 <p className="mb-0 mt-1 text-xs text-slate-500">
@@ -243,6 +245,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
             {menu === 'list' ? (
               showMyWorkspace ? (
                 <PostListView
+                  key={`${menu}-${keyword}-${router.query.sort || 'latest'}`}
                   key="my-posts"
                   inputRef={inputRef}
                   setKeyword={setKeyword}
@@ -251,6 +254,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
               ) : null
             ) : (
               <PostListView
+                  key={`${menu}-${keyword}-${router.query.sort || 'latest'}`}
                 key="public-posts"
                 inputRef={inputRef}
                 setKeyword={setKeyword}

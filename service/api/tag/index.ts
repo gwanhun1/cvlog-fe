@@ -26,11 +26,11 @@ export const getList = async (
   return data.data;
 };
 
-export const getPublicList = async (page: number, keyword?: string) => {
+export const getPublicList = async (page: number, keyword?: string, sort = 'latest') => {
   const { data } = await axiosInstance.get<GetListType>(
     `/posts/public/page/${page}`,
     {
-      params: keyword ? { keyword } : undefined,
+      params: { keyword: keyword || undefined, sort },
     },
   );
   return data.data;

@@ -61,7 +61,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
               value={localKeyword}
               onChange={event => setLocalKeyword(event.target.value)}
               className="h-12 w-full bg-transparent pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus-visible:outline-none"
-              placeholder="제목 또는 태그 검색"
+              placeholder="제목·태그·시리즈 검색"
               autoComplete="off"
             />
           </div>

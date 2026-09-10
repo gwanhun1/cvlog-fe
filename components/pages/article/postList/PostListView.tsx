@@ -1,3 +1,4 @@
+import { trackEvent } from 'utils/analytics';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -5,7 +6,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useGetList, useGetPublicList } from 'service/hooks/List';
 import { BlogType, ListDataType } from 'service/api/tag/type';
 import { useStore } from 'service/store/useStore';
-import { useResponsiveColumnCount } from 'hooks/useResponsiveColumnCount';
 import ListEmpty from '../../../Shared/common/ListEmpty';
 import EditorialPostCard from './EditorialPostCard';
 import CardSkeleton from './Skeleton';
@@ -31,7 +31,8 @@ const PostListView = ({
   initialList,
   featuredPostId,
 }: PostListViewProps) => {
-  const hasPublicSeed = mode === 'public' && initialList !== undefined;
+  const sort = useRouter().query.sort === 'popular' ? 'popular' : 'latest';
+  const hasPublicSeed = mode === 'public' && initialList !== undefined && sort === 'latest';
   const [page, setPage] = useState(1);
   const [posts, setPosts] = useState<BlogType[]>(
     hasPublicSeed ? initialList.posts : [],
@@ -47,12 +48,13 @@ const PostListView = ({
   const keyword = useStore(state => state.tagAtom);
 
   const usePublicSeed =
-    mode === 'public' && page === 1 && !keyword && initialList !== undefined;
+    mode === 'public' && page === 1 && !keyword && initialList !== undefined && sort === 'latest';
   const publicList = useGetPublicList(
     page,
     mode === 'public',
     usePublicSeed ? initialList : undefined,
     keyword,
+    sort,
   );
   const myList = useGetList(page, undefined, mode === 'my', undefined, keyword);
   const listQuery = mode === 'public' ? publicList : myList;
@@ -61,14 +63,14 @@ const PostListView = ({
 
   useEffect(() => {
     const canUseSeed =
-      mode === 'public' && !keyword && initialList !== undefined;
+      mode === 'public' && !keyword && initialList !== undefined && sort === 'latest';
     setPage(1);
     setPosts(canUseSeed ? initialList.posts : []);
     setHasMore(canUseSeed ? initialList.maxPage > 1 : true);
     setIsInitialLoading(!canUseSeed);
     setIsLoadingMore(false);
     loadingLockRef.current = false;
-  }, [initialList, keyword, mode]);
+  }, [initialList, keyword, mode, sort]);
 
   useEffect(() => {
     if (!tagKeyword) return;
@@ -200,51 +202,16 @@ const PostListView = ({
       node: <CardSkeleton />,
     }));
 
-  const renderCssColumns = (items: MasonryItem[]) => (
-    <div className="w-full gap-4 columns-1 tablet:columns-2 desktop:columns-3">
-      {items.map(item => (
-        <div
-          key={item.key}
-          className={`mb-4 break-inside-avoid ${item.className ?? ''}`}
-        >
-          {item.node}
-        </div>
-      ))}
+  const renderLayout = (items: MasonryItem[]) => (
+    <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
+      {items.map(item => <div key={item.key} className={item.className}>{item.node}</div>)}
     </div>
   );
-
-  const renderFixedColumns = (items: MasonryItem[], count: number) => {
-    const columns: MasonryItem[][] = Array.from({ length: count }, () => []);
-    items.forEach((item, index) => columns[index % count].push(item));
-
-    return (
-      <div className="flex w-full items-start gap-4">
-        {columns.map((column, columnIndex) => (
-          <div
-            key={`column-${columnIndex}`}
-            className="flex min-w-0 flex-1 flex-col"
-          >
-            {column.map(item => (
-              <div key={item.key} className={`mb-4 ${item.className ?? ''}`}>
-                {item.node}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const columnCount = useResponsiveColumnCount();
-  const renderLayout = (items: MasonryItem[]) =>
-    columnCount === null
-      ? renderCssColumns(items)
-      : renderFixedColumns(items, columnCount);
 
   const emptyMessage = keyword
     ? {
         message: '검색 결과가 없습니다',
-        subMessage: '다른 제목이나 태그로 다시 검색해보세요.',
+        subMessage: '다른 제목·태그·시리즈로 다시 검색해보세요.',
       }
     : mode === 'my'
       ? {
