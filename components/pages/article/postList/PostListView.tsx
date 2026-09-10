@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useGetList, useGetPublicList } from 'service/hooks/List';
 import { BlogType, ListDataType } from 'service/api/tag/type';
 import { useStore } from 'service/store/useStore';
+import { useResponsiveColumnCount } from 'hooks/useResponsiveColumnCount';
 import ListEmpty from '../../../Shared/common/ListEmpty';
 import EditorialPostCard from './EditorialPostCard';
 import CardSkeleton from './Skeleton';
@@ -202,11 +203,48 @@ const PostListView = ({
       node: <CardSkeleton />,
     }));
 
-  const renderLayout = (items: MasonryItem[]) => (
-    <div className="grid grid-cols-1 gap-4 tablet:grid-cols-2 desktop:grid-cols-3">
-      {items.map(item => <div key={item.key} className={item.className}>{item.node}</div>)}
+  const renderCssColumns = (items: MasonryItem[]) => (
+    <div className="w-full gap-4 columns-1 tablet:columns-2 desktop:columns-3">
+      {items.map(item => (
+        <div
+          key={item.key}
+          className={`mb-4 break-inside-avoid ${item.className ?? ''}`}
+        >
+          {item.node}
+        </div>
+      ))}
     </div>
   );
+
+  // Hydration 전에는 CSS columns를 사용하고, 화면 폭을 안 뒤에는 각 열에
+  // 순서대로 배치해 세로 Masonry 흐름과 안정적인 React 키를 함께 유지한다.
+  const renderFixedColumns = (items: MasonryItem[], count: number) => {
+    const columns: MasonryItem[][] = Array.from({ length: count }, () => []);
+    items.forEach((item, index) => columns[index % count].push(item));
+
+    return (
+      <div className="flex w-full items-start gap-4">
+        {columns.map((column, columnIndex) => (
+          <div
+            key={`column-${columnIndex}`}
+            className="flex min-w-0 flex-1 flex-col"
+          >
+            {column.map(item => (
+              <div key={item.key} className={`mb-4 ${item.className ?? ''}`}>
+                {item.node}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const columnCount = useResponsiveColumnCount();
+  const renderLayout = (items: MasonryItem[]) =>
+    columnCount === null
+      ? renderCssColumns(items)
+      : renderFixedColumns(items, columnCount);
 
   const emptyMessage = keyword
     ? {
