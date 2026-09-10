@@ -1,3 +1,4 @@
+import ResumeShare from 'components/pages/resume/ResumeShare';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
@@ -1433,6 +1434,8 @@ const ResumeBuilder = () => {
           <div className="flex-1 min-w-0 flex flex-col gap-3">
             {/* Top bar */}
             <div className="flex flex-col gap-2">
+              <ResumeShare key={currentId ?? 'new'} id={currentId} />
+              <p className="my-3 text-xs leading-5 text-slate-600">자동 저장은 이 브라우저에 보관됩니다. 다른 기기에서 이어 쓰려면 계정에 저장해주세요.</p>
               {/* Row 1: 내 이력서 + 제목 + 상태 (tablet: + 저장/PDF) */}
               <div className="flex items-center gap-2">
                 {/* 내 이력서 버튼 */}

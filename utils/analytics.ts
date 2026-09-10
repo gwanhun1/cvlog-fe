@@ -21,6 +21,7 @@ export type GAEventName =
   | 'login'
   | 'login_start'
   | 'login_failed'
+  | 'resume_share'
   | 'post_create'
   | 'post_update'
   | 'post_visibility_change';

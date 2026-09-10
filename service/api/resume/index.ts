@@ -34,3 +34,8 @@ export const updateResume = async (id: number, title: string, data: string): Pro
 export const deleteResume = async (id: number): Promise<void> => {
   await axiosInstance.delete(`/resumes/${id}`);
 };
+
+export interface ShareOptions { email: boolean; phone: boolean; location: boolean; photo: boolean; onProfile: boolean }
+export const publishResume = async (id: number, options: ShareOptions): Promise<{ token: string }> => (await axiosInstance.post(`/resumes/${id}/share`, options)).data.data;
+export const revokeResume = async (id: number): Promise<void> => { await axiosInstance.delete(`/resumes/${id}/share`); };
+export const getSharedResume = async (token: string): Promise<{ title: string; data: import('components/pages/resume/types').ResumeData }> => (await axiosInstance.get(`/public/resumes/${encodeURIComponent(token)}`)).data.data;
