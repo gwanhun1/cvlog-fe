@@ -1,3 +1,4 @@
+import { trackEvent } from 'utils/analytics';
 import ResumeShare from 'components/pages/resume/ResumeShare';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { NextPage } from 'next';
@@ -583,9 +584,11 @@ const ResumeBuilder = () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
       clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY, META_KEY);
       setSaveMsg('계정에 저장됨');
+      trackEvent('resume_save');
       setTimeout(() => setSaveMsg(''), 2500);
     } catch (err: any) {
       const status = err?.response?.status;
+      trackEvent('resume_save_failed', { status: status || 0 });
       if (status === 401) setSaveMsg('로그인 필요');
       else if (!navigator.onLine) setSaveMsg('네트워크 오류');
       else if (status === 404) setSaveMsg('저장 대상을 찾지 못했습니다. 다시 불러와주세요.');
@@ -1514,7 +1517,7 @@ const ResumeBuilder = () => {
 
                 {/* PDF 버튼 — tablet+ only */}
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => { trackEvent('resume_pdf'); window.print(); }}
                   className="hidden tablet:flex items-center gap-1.5 px-3.5 py-2 text-sm font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 active:scale-95 transition-all flex-shrink-0"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1554,7 +1557,7 @@ const ResumeBuilder = () => {
                   저장
                 </button>
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => { trackEvent('resume_pdf'); window.print(); }}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-ftBlue bg-ftBlue/8 rounded-xl hover:bg-ftBlue/15 active:scale-95 transition-all"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1737,6 +1740,7 @@ const ResumeBuilder = () => {
                 </span>
               </div>
               <div className="rounded-2xl border border-slate-200 shadow-lg overflow-auto max-h-[calc(100vh-116px)] bg-white">
+                {!hasResumeDraftContent(data, Boolean(photo)) && <div className="m-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-slate-600 print:hidden"><p className="font-semibold text-slate-900">작성한 내용이 여기에 표시됩니다</p><p className="mt-2 text-sm leading-6">이름과 직함부터 입력해보세요. 프로젝트에는 문제·담당 역할·결과를 중심으로 적으면 좋습니다.</p></div>}
                 <ResumePreview data={{ ...data, photo }} />
               </div>
             </div>
@@ -1759,7 +1763,7 @@ const ResumeBuilder = () => {
                   편집으로
                 </button>
                 <button
-                  onClick={() => window.print()}
+                  onClick={() => { trackEvent('resume_pdf'); window.print(); }}
                   className="pointer-events-auto flex items-center gap-1.5 pl-3 pr-3.5 py-2 text-xs font-bold text-white bg-ftBlue/90 backdrop-blur-md rounded-full shadow-lg hover:bg-ftBlue transition-all active:scale-95"
                 >
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

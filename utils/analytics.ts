@@ -22,6 +22,11 @@ export type GAEventName =
   | 'login_start'
   | 'login_failed'
   | 'resume_share'
+  | 'search_submit'
+  | 'search_result_open'
+  | 'resume_save'
+  | 'resume_pdf'
+  | 'resume_save_failed'
   | 'post_create'
   | 'post_update'
   | 'post_visibility_change';
