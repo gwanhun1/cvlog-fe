@@ -83,6 +83,18 @@ const nextConfig = {
         ],
       },
       {
+        source: '/r/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+          { key: 'Referrer-Policy', value: 'no-referrer' },
+          { key: 'Cache-Control', value: 'no-store' },
+        ],
+      },
+      {
+        source: '/workspace',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+      {
         // 수정/작성 페이지 색인 차단
         source: '/article/modify/:path*',
         headers: [

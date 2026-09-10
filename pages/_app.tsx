@@ -57,13 +57,14 @@ export default function App({ Component, pageProps }: AppProps) {
       <ToastProvider>
         <SafeHydrate>
           <Head>
+            {router.pathname.startsWith('/r/') && <meta name="robots" content="noindex,nofollow" />}
             <meta
               name="viewport"
               content="width=device-width, initial-scale=1.0"
             />
           </Head>
           {GA_ENABLED && gaId && !router.pathname.startsWith('/r/') && <GoogleAnalytics gaId={gaId} />}
-          {router.pathname === '/login' ||
+          {router.pathname.startsWith('/r/') || router.pathname === '/login' ||
           router.pathname === '/article/new' ||
           router.pathname.startsWith('/article/modify/') ? null : (
             <ClientNav />
