@@ -8,7 +8,7 @@ import {
   DocType,
 } from '../../../components/pages/article/editor';
 import { EDITOR_CONSTANTS } from 'lib/constants';
-import { clearDraftStorage, isDraftFresh, markDraftUpdated } from 'utils/draftStorage';
+import { clearDraftStorage, isDraftFresh, saveLocalDraft } from 'utils/draftStorage';
 
 const DRAFT_KEY = 'logme_draft_new';
 const DRAFT_UPDATED_AT_KEY = 'logme_draft_new_updated_at';
@@ -20,6 +20,7 @@ const INIT_USER_INPUT: DocType = {
 };
 
 const NewPost: NextPage = () => {
+  const [saveStatus, setSaveStatus] = useState('작성 내용은 이 브라우저에 임시 저장됩니다.');
   const [doc, setDoc] = useState<DocType>(INIT_USER_INPUT);
   const [isVisiblePreview, setIsVisiblePreview] = useState(true);
   const [imageArr, setImageArr] = useState<string[]>([]);
@@ -70,8 +71,7 @@ const NewPost: NextPage = () => {
         setPendingDraft(null);
       }
       if (hasContent) {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(doc));
-        markDraftUpdated(DRAFT_UPDATED_AT_KEY);
+        setSaveStatus(saveLocalDraft(DRAFT_KEY, doc) ? '이 기기에 임시 저장됨 · 계정 저장은 발행 시 완료됩니다.' : '임시 저장 실패 · 저장 공간을 확인하고 내용을 복사해 보관해주세요.');
       } else {
         clearDraftStorage(DRAFT_KEY, DRAFT_UPDATED_AT_KEY);
       }
@@ -130,6 +130,7 @@ const NewPost: NextPage = () => {
       <main className="min-h-screen min-h-[100dvh] tablet:h-screen tablet:overflow-hidden px-2 tablet:px-10">
         <div className="flex flex-col tablet:h-full tablet:min-h-0">
           <header className="flex-none">
+            <p role="status" className="px-3 pt-3 text-xs text-slate-600">{saveStatus}</p>
             <EditorHeader
               doc={doc}
               setDoc={setDoc}
@@ -138,7 +139,7 @@ const NewPost: NextPage = () => {
               isVisiblePreview={isVisiblePreview}
               onTogglePreview={() => setIsVisiblePreview(v => !v)}
               onSaveSuccess={discardDraft}
-              onCancel={discardDraft}
+              onCancel={() => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); canAutoSaveRef.current = false; if (doc.title || doc.content !== '# Hello world') saveLocalDraft(DRAFT_KEY, doc); }}
               draftTitle={
                 pendingDraft ? pendingDraft.title.trim() || '제목 없음' : undefined
               }

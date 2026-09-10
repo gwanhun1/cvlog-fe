@@ -272,7 +272,7 @@ const EditorHeader = ({
               }}
               className="px-3 py-1.5 text-xs font-semibold text-gray-600 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
             >
-              취소
+              나가기
             </button>
 
             <button

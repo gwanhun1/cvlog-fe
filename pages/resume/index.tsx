@@ -37,6 +37,7 @@ import { DEFAULT_RESUME, SECTION_LABELS } from 'components/pages/resume/types';
 import { clearDraftStorage, isDraftFresh, markDraftUpdated } from 'utils/draftStorage';
 
 const STORAGE_KEY = 'logme_resume_v2';
+const META_KEY = 'logme_resume_meta';
 const PHOTO_KEY = 'logme_resume_photo';
 const UPDATED_AT_KEY = 'logme_resume_v2_updated_at';
 const genId = () => Math.random().toString(36).slice(2, 9);
@@ -474,7 +475,7 @@ const ResumeBuilder = () => {
     const savedPhoto = localStorage.getItem(PHOTO_KEY);
     const raw = localStorage.getItem(STORAGE_KEY);
     if ((raw || savedPhoto) && !isDraftFresh(UPDATED_AT_KEY)) {
-      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
+      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY, META_KEY);
       return;
     }
     if (savedPhoto) setPhoto(savedPhoto);
@@ -488,7 +489,7 @@ const ResumeBuilder = () => {
           setShowDraftModal(true);
         }
       } catch {
-        clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
+        clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY, META_KEY);
       }
     }
   }, []);
@@ -501,20 +502,22 @@ const ResumeBuilder = () => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       if (draftPendingRef.current) return; // don't overwrite while draft modal is pending
+      try {
       const snapshot = serializeResumeDraft(data);
       if (snapshot === savedSnapshotRef.current && !localStorage.getItem(PHOTO_KEY)) {
         clearDraftStorage(STORAGE_KEY, UPDATED_AT_KEY);
       } else {
         localStorage.setItem(STORAGE_KEY, snapshot);
         markDraftUpdated(UPDATED_AT_KEY);
+        localStorage.setItem(META_KEY, JSON.stringify({ title, currentId }));
       }
       setAutoSaved(true);
-      setTimeout(() => setAutoSaved(false), 2000);
+      } catch { setSaveMsg('이 기기 저장 실패 · 내용을 백업해주세요.'); }
     }, 600);
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [data]);
+  }, [data, title, currentId]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -577,14 +580,14 @@ const ResumeBuilder = () => {
       }
       savedSnapshotRef.current = serializeResumeDraft(data);
       if (saveTimer.current) clearTimeout(saveTimer.current);
-      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
-      setSaveMsg('저장됨');
+      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY, META_KEY);
+      setSaveMsg('계정에 저장됨');
       setTimeout(() => setSaveMsg(''), 2500);
     } catch (err: any) {
       const status = err?.response?.status;
       if (status === 401) setSaveMsg('로그인 필요');
       else if (!navigator.onLine) setSaveMsg('네트워크 오류');
-      else if (status === 404) setSaveMsg('API 없음 — BE 실행 필요');
+      else if (status === 404) setSaveMsg('저장 대상을 찾지 못했습니다. 다시 불러와주세요.');
       else if (status >= 500) setSaveMsg('서버 오류');
       else setSaveMsg('저장 실패');
       setTimeout(() => setSaveMsg(''), 4000);
@@ -602,7 +605,7 @@ const ResumeBuilder = () => {
       setData({ ...rest, photo: '' });
       setTitle(resume.title);
       setCurrentId(resume.id);
-      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
+      clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY, META_KEY);
     } catch {
       setSaveMsg('불러오기 실패');
       setTimeout(() => setSaveMsg(''), 3000);
@@ -615,7 +618,7 @@ const ResumeBuilder = () => {
     setPhoto('');
     setTitle('');
     setCurrentId(null);
-    clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
+    clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY, META_KEY);
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -628,6 +631,7 @@ const ResumeBuilder = () => {
       try {
         localStorage.setItem(PHOTO_KEY, result);
         markDraftUpdated(UPDATED_AT_KEY);
+        localStorage.setItem(META_KEY, JSON.stringify({ title, currentId }));
       } catch {}
     };
     reader.readAsDataURL(file);
@@ -785,23 +789,25 @@ const ResumeBuilder = () => {
     if (raw) {
       try {
         setData(JSON.parse(raw));
+        const metadata = JSON.parse(localStorage.getItem(META_KEY) || 'null');
+        if (metadata?.title) setTitle(metadata.title);
+        if (Number.isInteger(metadata?.currentId)) setCurrentId(metadata.currentId);
       } catch {}
     }
     draftPendingRef.current = false;
     setShowDraftModal(false);
   };
   const handleFreshStart = () => {
-    clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY);
+    clearDraftStorage(STORAGE_KEY, PHOTO_KEY, UPDATED_AT_KEY, META_KEY);
     setData(DEFAULT_RESUME);
+    setCurrentId(null);
+    setTitle('제목 없는 이력서');
     savedSnapshotRef.current = serializeResumeDraft(DEFAULT_RESUME);
     setPhoto('');
     draftPendingRef.current = false;
     setShowDraftModal(false);
   };
-  const handleDraftClose = () => {
-    draftPendingRef.current = false;
-    setShowDraftModal(false);
-  };
+  const handleDraftClose = handleResumeDraft;
 
   const renderSectionForm = useCallback(
     (
@@ -1467,7 +1473,7 @@ const ResumeBuilder = () => {
                 {/* 상태 메시지 */}
                 <div className="flex-shrink-0 text-right">
                   {saveMsg ? (
-                    <span className={`text-xs font-semibold ${saveMsg === '저장됨' ? 'text-emerald-500' : 'text-red-400'}`}>
+                    <span className={`text-xs font-semibold ${saveMsg === '계정에 저장됨' ? 'text-emerald-500' : 'text-red-400'}`}>
                       {saveMsg}
                     </span>
                   ) : autoSaved ? (
@@ -1475,7 +1481,7 @@ const ResumeBuilder = () => {
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
-                      자동저장됨
+                      이 기기에 임시 저장됨
                     </span>
                   ) : null}
                 </div>
