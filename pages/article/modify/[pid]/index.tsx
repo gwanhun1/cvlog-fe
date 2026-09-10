@@ -52,7 +52,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
       } catch { /* malformed local draft */ }
       setIsInitialized(true);
     }
-  }, [isDetailSuccess, detailData]);
+  }, [isDetailSuccess, detailData, draftKey]);
 
   // 초기 로드 이후만 자동저장 (서버 데이터로 덮어쓰기 방지)
   useEffect(() => {

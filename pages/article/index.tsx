@@ -246,7 +246,6 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
               showMyWorkspace ? (
                 <PostListView
                   key={`${menu}-${keyword}-${router.query.sort || 'latest'}`}
-                  key="my-posts"
                   inputRef={inputRef}
                   setKeyword={setKeyword}
                   mode="my"
@@ -255,7 +254,6 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
             ) : (
               <PostListView
                   key={`${menu}-${keyword}-${router.query.sort || 'latest'}`}
-                key="public-posts"
                 inputRef={inputRef}
                 setKeyword={setKeyword}
                 mode="public"

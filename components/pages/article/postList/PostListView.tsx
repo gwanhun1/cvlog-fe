@@ -162,7 +162,7 @@ const PostListView = ({
   const renderCard = (post: BlogType, index: number) => (
     <Link
       href={`/article/content/${post.id}`}
-      onClick={() => setListIndex(index)}
+      onClick={() => { setListIndex(index); if (keyword) trackEvent('search_result_open'); }}
       onMouseEnter={() => handlePrefetch(post.id)}
       onFocus={() => handlePrefetch(post.id)}
       className="group/card block rounded-[14px] focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"

@@ -37,7 +37,7 @@ export type GAEventParams = Record<
 >;
 
 export function trackEvent(name: GAEventName, params: GAEventParams = {}): void {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || window.location.pathname.startsWith('/r/')) return;
   if (!GA_ENABLED) return;
 
   // gtag.js 로드 전 호출돼도 유실되지 않도록 큐를 먼저 만든다.
