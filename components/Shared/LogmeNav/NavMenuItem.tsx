@@ -35,7 +35,7 @@ const NavMenuItem = ({
     return null;
 
   const isActive =
-    path === '/' ? router.pathname === '/' : router.pathname.includes(path);
+    path === '/' ? router.pathname === '/' : router.pathname.includes(path.split('?')[0]);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (requiresAuth && !isAuthenticated) {

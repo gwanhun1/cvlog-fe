@@ -96,7 +96,7 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
             <DropdownItem
               className={
                 pathname === item.path ||
-                (item.path !== '/' && pathname.startsWith(item.path))
+                (item.path !== '/' && pathname.startsWith(item.path.split('?')[0]))
                   ? 'text-ftBlue font-bold'
                   : ''
               }

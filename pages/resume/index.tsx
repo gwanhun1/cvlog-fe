@@ -65,9 +65,9 @@ const hasResumeDraftContent = (resume: ResumeData, hasPhoto: boolean) => {
 };
 
 const inputCls =
-  'w-full px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue transition-all placeholder:text-gray-300';
+  'w-full px-3 py-2 text-sm rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-ftBlue/20 focus:border-ftBlue transition-all placeholder:text-slate-500';
 const labelCls =
-  'block text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5';
+  'block text-xs font-semibold text-slate-700 mb-1.5';
 
 // ── Drag handle icon ───────────────────────────────────────────
 const GripIcon = () => (
@@ -1434,6 +1434,10 @@ const ResumeBuilder = () => {
           <div className="flex-1 min-w-0 flex flex-col gap-3">
             {/* Top bar */}
             <div className="flex flex-col gap-2">
+              <section className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
+                <h1 className="text-lg font-bold text-slate-900">내 경험을 이력서로</h1>
+                <p className="mt-2 leading-6">이름과 직함 → 핵심 요약 → 프로젝트 순서로 채워보세요. 사용하지 않는 섹션은 비워두어도 됩니다.</p>
+              </section>
               <ResumeShare key={currentId ?? 'new'} id={currentId} />
               <p className="my-3 text-xs leading-5 text-slate-600">자동 저장은 이 브라우저에 보관됩니다. 다른 기기에서 이어 쓰려면 계정에 저장해주세요.</p>
               {/* Row 1: 내 이력서 + 제목 + 상태 (tablet: + 저장/PDF) */}
@@ -1462,7 +1466,7 @@ const ResumeBuilder = () => {
                       setTitle(e.target.value);
                       if (e.target.value.trim()) setTitleError('');
                     }}
-                    className={`w-full px-3 py-2 text-sm font-bold text-gray-800 bg-white border rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-gray-300
+                    className={`w-full px-3 py-2 text-sm font-bold text-gray-800 bg-white border rounded-xl focus:outline-none focus:ring-2 transition-all placeholder:text-slate-500
                       ${titleError ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-slate-200 focus:ring-ftBlue/20 focus:border-ftBlue'}`}
                     placeholder="이력서 제목 (필수)"
                   />
@@ -1658,7 +1662,7 @@ const ResumeBuilder = () => {
                     <Field label="웹사이트">
                       <input
                         className={inputCls}
-                        placeholder="https://logme.shop"
+                        placeholder="https://logme.cloud"
                         value={data.basicInfo.website}
                         onChange={e => setBasic('website', e.target.value)}
                       />
