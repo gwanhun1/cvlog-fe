@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 import { getDisplayName } from 'utils/user';
 
@@ -49,7 +50,7 @@ const Profile = ({ getDetailData }: ProfileProps) => {
 
       <div className="flex flex-col min-w-0 flex-1">
         <div className="text-sm font-semibold text-slate-900">
-          {displayName}
+          {!isDeletedUser && getDetailData?.username ? <Link href={`/u/${encodeURIComponent(getDetailData.username)}`} className="hover:text-blue-700 underline-offset-4 hover:underline">{displayName}</Link> : displayName}
         </div>
       </div>
     </article>
