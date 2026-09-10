@@ -44,16 +44,16 @@ const AuthGuard = ({ children }: { children: ReactNode }) => {
           } else {
             Cookie.removeItem('refreshToken');
             LocalStorage.removeItem('LogmeToken');
-            router.push(`/login?redirect=${router.asPath}`);
+            router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
           }
         } catch (error) {
           console.error('인증 갱신 실패:', error);
-          router.push(`/login?redirect=${router.asPath}`);
+          router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
         } finally {
           setIsLoading(false);
         }
       } else {
-        router.push(`/login?redirect=${router.asPath}`);
+        router.push(`/login?redirect=${encodeURIComponent(router.asPath)}`);
       }
     } else {
       setIsAuthenticated(true);

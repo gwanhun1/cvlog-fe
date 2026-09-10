@@ -10,6 +10,16 @@ import type { AuthProvider } from 'service/api/login/type';
 
 export const LOGIN_STATE_KEY = 'oauth_login_state';
 export const LINK_STATE_KEY = 'oauth_link_state';
+export const LOGIN_RETURN_KEY = 'oauth_login_return';
+
+export const safeReturnPath = (value: unknown): string => {
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//') || /[\\\x00-\x20]/.test(value)) return '/workspace';
+  try {
+    const url = new URL(value, 'https://logme.cloud');
+    if (url.origin !== 'https://logme.cloud' || /^\/(login|join|github\/callback)(\/|$)/.test(url.pathname)) return '/workspace';
+    return url.pathname + url.search + url.hash;
+  } catch { return '/workspace'; }
+};
 
 interface ProviderConfig {
   name: AuthProvider;
@@ -126,6 +136,7 @@ export const buildLoginUrl = (provider: AuthProvider): string | null => {
 
   const state = buildState(provider);
   sessionStorage.setItem(LOGIN_STATE_KEY, state);
+  sessionStorage.setItem(LOGIN_RETURN_KEY, JSON.stringify({ state, path: safeReturnPath(new URLSearchParams(window.location.search).get('redirect')) }));
 
   return buildUrl(
     config,

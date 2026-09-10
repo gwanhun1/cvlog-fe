@@ -9,7 +9,7 @@ const mod = { exports: {} };
 vm.runInNewContext(ts.transpileModule(fs.readFileSync('utils/oauth.ts', 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
 }).outputText, {
-  exports: mod.exports, URLSearchParams,
+  exports: mod.exports, URLSearchParams, URL,
   process: { env: { NEXT_PUBLIC_GITHUB_ID: 'test-client', NEXT_PUBLIC_GOOGLE_CLIENT_ID: 'google-client' } },
   window: { location: { origin: 'https://logme.cloud' }, crypto: { randomUUID } },
   sessionStorage: { setItem: (key, value) => storage.set(key, value) },
@@ -35,4 +35,9 @@ test('other providers retain their callback and malformed link states are reject
   for (const state of [undefined, ['github.link.abc'], 'google.link.abc', 'github.link.', 'github.link.abc/def']) {
     assert.equal(oauth.isGithubLinkState(state), false);
   }
+});
+
+test('return destination rejects external, callback and malformed paths', () => {
+  for (const path of ['https://evil.test', '//evil.test', '/\\evil.test', '/login', '/join?code=x', '/github/callback']) assert.equal(oauth.safeReturnPath(path), '/workspace');
+  assert.equal(oauth.safeReturnPath('/resume?draft=1'), '/resume?draft=1');
 });

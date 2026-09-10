@@ -7,7 +7,7 @@ import { useStore } from 'service/store/useStore';
 import { useRouter } from 'next/router';
 import LoaderAnimation from 'components/Shared/common/LoaderAnimation';
 import { trackEvent, isNewSignup } from 'utils/analytics';
-import { LOGIN_STATE_KEY, parseProviderFromState, isGithubLinkState } from 'utils/oauth';
+import { LOGIN_STATE_KEY, LOGIN_RETURN_KEY, safeReturnPath, parseProviderFromState, isGithubLinkState } from 'utils/oauth';
 import OAuthLinkCallbackPage from 'pages/github/callback';
 import { getApiBaseUrl, getServerApiBaseUrl } from 'utils/apiUrl';
 import type { AuthProvider } from 'service/api/login/type';
@@ -44,6 +44,12 @@ const Join: NextPage<JoinProps> = ({ info, cookie, provider }) => {
   );
 
   useEffect(() => {
+    let returnPath = '/workspace';
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(LOGIN_RETURN_KEY) || 'null');
+      if (saved?.state === router.query.state) returnPath = safeReturnPath(saved.path);
+    } catch { /* default destination */ }
+    sessionStorage.removeItem(LOGIN_RETURN_KEY);
     const initializeAuth = async () => {
       try {
         LocalStorage.setItem('LogmeToken', info.data.accessToken);
@@ -78,7 +84,7 @@ const Join: NextPage<JoinProps> = ({ info, cookie, provider }) => {
 
         window.dispatchEvent(new Event('storage'));
 
-        await router.push('/');
+        await router.replace(returnPath);
       } catch (error) {
         console.error('Error fetching user info:', error);
         LocalStorage.removeItem('LogmeToken');
