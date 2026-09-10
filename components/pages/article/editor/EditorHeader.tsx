@@ -39,6 +39,8 @@ const EditorHeader = ({
   onRestoreDraft,
   onDiscardDraft,
 }: EditorHeaderProps) => {
+  const [showPublish, setShowPublish] = useState(false);
+  const [visibility, setVisibility] = useState<'public' | 'private'>('public');
   const [tag, setTag] = useState('');
   const [isTagInputOpen, setIsTagInputOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -128,7 +130,7 @@ const EditorHeader = ({
       title: doc.title.trim(),
       content: doc.content.trim(),
       user_id: userId,
-      public_status: true,
+      public_status: visibility === 'public',
       tags: doc.tags,
       files: imageArr,
       series,
@@ -145,6 +147,7 @@ const EditorHeader = ({
     });
   }, [
     doc,
+    visibility,
     imageArr,
     userInfo?.id,
     accessToken,
@@ -157,6 +160,26 @@ const EditorHeader = ({
 
   return (
     <>
+      {showPublish && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/50 p-4" onKeyDown={e => { if (e.key === 'Escape' && !isLoading) setShowPublish(false); }}>
+          <section role="dialog" aria-modal="true" aria-labelledby="publish-title" className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <h2 id="publish-title" className="text-xl font-bold text-slate-900">게시하기 전에 확인하세요</h2>
+            <h3 className="mt-4 font-semibold text-slate-900 break-words">{doc.title || '제목을 입력해주세요'}</h3>
+            <p className="mt-2 max-h-24 overflow-hidden text-sm leading-6 text-slate-600">{doc.content.replace(/[#*`>]/g, '').slice(0, 220)}</p>
+            <p className="mt-3 text-xs text-slate-600">{doc.tags.length ? doc.tags.map(t => `#${t}`).join(' ') : '태그 없음'}{doc.series ? ` · 시리즈: ${doc.series}` : ''}</p>
+            <label className="mt-5 block text-sm font-semibold text-slate-800" htmlFor="publish-visibility">공개 범위</label>
+            <select autoFocus id="publish-visibility" value={visibility} onChange={e => setVisibility(e.target.value as 'public' | 'private')} className="mt-2 w-full rounded-lg border border-slate-300 p-3">
+              <option value="public">공개 · 누구나 읽을 수 있습니다</option>
+              <option value="private">비공개 · 나만 볼 수 있습니다</option>
+            </select>
+            <p className="mt-3 text-sm leading-6 text-slate-600">{visibility === 'public' ? 'GitHub 동기화가 연결돼 있으면 공개 글을 함께 백업합니다. 백업 상태는 작업실에서 확인할 수 있습니다.' : '계정에 비공개로 저장합니다. GitHub에는 업로드하지 않습니다.'}</p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button type="button" disabled={isLoading} onClick={() => setShowPublish(false)} className="rounded-lg border border-slate-300 px-4 py-2">계속 작성</button>
+              <button type="button" disabled={isLoading} onClick={handleSavePost} className="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white disabled:opacity-50">{isLoading ? '저장 중…' : visibility === 'public' ? '공개 발행' : '비공개 저장'}</button>
+            </div>
+          </section>
+        </div>
+      )}
       {isLoading && <LoaderAnimation />}
       <div className="w-full">
         {/* ① 제목 행 = 제목(flex-1) + 버튼들 */}
@@ -279,7 +302,7 @@ const EditorHeader = ({
               type="button"
               onClick={() =>
                 accessToken
-                  ? handleSavePost()
+                  ? mode === 'create' ? setShowPublish(true) : handleSavePost()
                   : showToast(ERROR_MESSAGES.LOGIN_REQUIRED, 'warning')
               }
               disabled={isLoading}
