@@ -10,11 +10,11 @@ import { cn } from 'styles/utils';
 import { usePushNotification } from 'hooks/usePushNotification';
 
 const MENU_ITEMS = [
-  { name: 'HOME', path: '/', requiresAuth: false, hideWhenGuest: false },
-  { name: 'ARTICLE', path: '/article', requiresAuth: false, hideWhenGuest: false },
-  { name: 'RESUME', path: '/resume', requiresAuth: false, hideWhenGuest: false },
+  { name: '작업실', path: '/workspace', requiresAuth: true, hideWhenGuest: true },
+  { name: '글 탐색', path: '/article?view=all', requiresAuth: false, hideWhenGuest: false },
+  { name: '이력서', path: '/resume', requiresAuth: false, hideWhenGuest: false },
   {
-    name: 'GITHUB',
+    name: 'GitHub',
     path: '/github',
     requiresAuth: false,
     hideWhenGuest: false,

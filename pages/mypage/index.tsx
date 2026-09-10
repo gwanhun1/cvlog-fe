@@ -67,6 +67,7 @@ const Mypage: NextPage = () => {
     <AuthGuard>
       <section className="w-full min-h-screen min-h-[100dvh]">
         <div className="mx-auto w-full max-w-[1248px] space-y-4">
+          <Link href="/workspace" className="inline-block py-3 font-semibold text-blue-700">← 내 작업실</Link>
           {/* 프로필 헤더 */}
           <section className={cardBase}>
             <div className="p-5">
