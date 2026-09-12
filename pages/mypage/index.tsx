@@ -33,7 +33,7 @@ function AccountSettings() {
       ? joined.toLocaleDateString('ko-KR')
       : null;
   return (
-    <main className="mx-auto w-full max-w-6xl py-6">
+    <main className="mx-auto w-full max-w-6xl px-3 py-6 tablet:px-0">
       <Head>
         <title>계정 설정 · LOGME</title>
         <meta name="robots" content="noindex" />
@@ -54,7 +54,7 @@ function AccountSettings() {
         <p role="status" className="py-6 text-slate-600">
           계정 정보를 불러오는 중…
         </p>
-      ) : isError ? (
+      ) : isError || !userInfo?.id ? (
         <button
           type="button"
           onClick={() => refetch()}

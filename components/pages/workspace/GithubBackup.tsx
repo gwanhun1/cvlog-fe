@@ -9,7 +9,7 @@ import { hasCapability } from 'utils/user';
 export default function GithubBackup() {
   const { data: user, isPending, isError, refetch } = useGetUserInfo();
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-6 py-6">
+    <main className="mx-auto w-full max-w-6xl space-y-6 px-3 py-6 tablet:px-0">
       <Head>
         <title>GitHub 백업 · LOGME</title>
         <meta name="robots" content="noindex" />
@@ -25,7 +25,7 @@ export default function GithubBackup() {
         <p role="status" className="py-6 text-slate-600">
           계정 확인 중…
         </p>
-      ) : isError ? (
+      ) : isError || !user?.id ? (
         <button
           type="button"
           onClick={() => refetch()}

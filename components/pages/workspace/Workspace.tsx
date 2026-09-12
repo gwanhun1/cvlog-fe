@@ -16,9 +16,11 @@ const actionClass =
 export default function Workspace() {
   const {
     data: user,
-    isError: userError,
+    isError: userQueryError,
+    isPending: userPending,
     refetch: refetchUser,
   } = useGetUserInfo();
+  const userError = userQueryError || (!userPending && !user?.id);
   const { drafts, error } = useLocalDrafts();
   const resumes = useQuery({
     queryKey: ['workspaceResumes'],
@@ -29,7 +31,7 @@ export default function Workspace() {
   const recentPosts: BlogType[] = posts.data?.posts.slice(0, 5) ?? [];
 
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-7 py-6">
+    <main className="mx-auto w-full max-w-6xl space-y-7 px-3 py-6 tablet:px-0">
       <Head>
         <title>내 작업실 · LOGME</title>
         <meta name="robots" content="noindex" />
@@ -129,7 +131,11 @@ export default function Workspace() {
               내 글 전체 →
             </Link>
           </div>
-          {posts.isError ? (
+          {userError ? (
+            <p className="py-5 text-sm text-slate-600">
+              계정 정보를 확인한 뒤 글을 불러올 수 있습니다.
+            </p>
+          ) : posts.isError ? (
             <button
               type="button"
               onClick={() => posts.refetch()}
@@ -184,7 +190,11 @@ export default function Workspace() {
             >
               저장한 이력서
             </h2>
-            {resumes.isError ? (
+            {userError ? (
+              <p className="py-5 text-sm text-slate-600">
+                계정 정보를 확인한 뒤 이력서를 불러올 수 있습니다.
+              </p>
+            ) : resumes.isError ? (
               <button
                 type="button"
                 className="min-h-[44px] py-4 text-sm text-ftBlue underline"

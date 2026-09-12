@@ -575,7 +575,7 @@ export default function GithubStudio({
                     쌓이는지 확인하세요.
                   </p>
                   <Link
-                    href={isAuthenticated ? '/mypage' : '/login'}
+                    href={isAuthenticated ? '/workspace/github' : '/login?redirect=/workspace/github'}
                     className="mt-4 inline-flex text-sm font-semibold text-blue-700 underline"
                   >
                     {isAuthenticated ? '내 연동 관리' : '로그인하고 연결하기'}

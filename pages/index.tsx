@@ -40,7 +40,7 @@ const actionClass =
 export default function Home() {
   const { isAuthenticated } = useIsLogin();
   return (
-    <main className="mx-auto w-full max-w-6xl py-6 tablet:py-10">
+    <main className="mx-auto w-full max-w-6xl px-3 py-6 tablet:px-0 tablet:py-10">
       <Head>
         <title>LOGME · 개발 기록을 포트폴리오로</title>
         <meta
