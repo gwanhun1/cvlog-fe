@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { KeyboardEvent as ReactKeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useToast } from 'components/Shared';
 import { EDITOR_CONSTANTS, ERROR_MESSAGES, KeyMap } from 'lib/constants';
 import LocalStorage from 'public/utils/Localstorage';
@@ -47,6 +47,8 @@ const EditorHeader = ({
   const [isTagInputOpen, setIsTagInputOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDraftMenuOpen, setIsDraftMenuOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const settingsRef = useRef<HTMLDivElement>(null);
   const publishRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (!showPublish) return;
@@ -59,6 +61,24 @@ const EditorHeader = ({
   useEffect(() => {
     if (isTagInputOpen) tagInputRef.current?.focus();
   }, [isTagInputOpen]);
+
+  useEffect(() => {
+    if (!isSettingsOpen) return;
+    const closeOnOutsideClick = (event: MouseEvent) => {
+      if (!settingsRef.current?.contains(event.target as Node)) {
+        setIsSettingsOpen(false);
+      }
+    };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsSettingsOpen(false);
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [isSettingsOpen]);
   const router = useRouter();
   const userInfo = useStore(state => state.userIdAtom);
   const { showToast } = useToast();
@@ -81,13 +101,13 @@ const EditorHeader = ({
     [setDoc],
   );
 
-  const changeFocusContent = (e: KeyboardEvent<HTMLInputElement>) => {
+  const changeFocusContent = (e: ReactKeyboardEvent<HTMLInputElement>) => {
     if (e.key !== KeyMap.ENTER) return;
     e.preventDefault();
   };
 
   const createTags = useCallback(
-    (e: KeyboardEvent<HTMLInputElement>) => {
+    (e: ReactKeyboardEvent<HTMLInputElement>) => {
       if (!tag || e.key !== KeyMap.ENTER || e.nativeEvent.isComposing) return;
       if (tag.length > EDITOR_CONSTANTS.TAG_MAX_LENGTH) {
         showToast(ERROR_MESSAGES.TAG_TOO_LONG, 'warning');
@@ -439,47 +459,77 @@ const EditorHeader = ({
           )}
           </div>
           {saveStatus && (
-            <details className="relative shrink-0 text-xs text-slate-500">
-              <summary className="cursor-pointer rounded px-1 py-1 focus-visible:outline-blue-600">
-                <span role="status">{saveStatus.includes('실패') ? '저장 실패' : saveStatus.includes('저장됨') ? '임시 저장됨' : '자동 저장'}</span>
-              </summary>
-              <p className="absolute right-0 top-full z-30 mt-2 w-56 rounded-lg border border-slate-200 bg-white p-3 leading-5 shadow-lg">{saveStatus}</p>
-            </details>
+            <span
+              role="status"
+              className={`hidden shrink-0 items-center gap-1.5 text-xs tablet:inline-flex ${
+                saveStatus.includes('실패') ? 'text-red-600' : 'text-slate-500'
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className={`h-1.5 w-1.5 rounded-full ${
+                  saveStatus.includes('실패') ? 'bg-red-500' : 'bg-emerald-500'
+                }`}
+              />
+              {saveStatus.includes('실패') ? '자동 저장 오류' : '자동 저장 켜짐'}
+            </span>
           )}
-          <details className="relative shrink-0 text-xs text-slate-600">
-            <summary className="cursor-pointer rounded px-1 py-1 focus-visible:outline-blue-600">추가 설정{doc.series?.trim() ? ' · 시리즈' : ''}</summary>
-            <div className="absolute right-0 top-full z-30 mt-2 flex w-64 max-w-[calc(100vw-2rem)] flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white p-3 shadow-lg">
-          <label htmlFor="editor-series" className="w-full text-xs font-medium text-slate-600">시리즈 (선택)</label>
-          <input
-            id="editor-series"
-            className="flex-1 min-w-0 text-sm text-ftBlack placeholder:text-gray-300 focus:outline-none bg-transparent"
-            name="series"
-            value={doc.series || ''}
-            placeholder="연재 시리즈 이름 (선택)"
-            onChange={e =>
-              setDoc(prev => ({ ...prev, series: e.target.value }))
-            }
-          />
-          {doc.series?.trim() && (
-            <input
-              type="number"
-              min={1}
-              className="w-16 text-sm text-center text-ftBlack placeholder:text-gray-300 focus:outline-none bg-transparent border-b border-ftBlue/30"
-              name="series_order"
-              aria-label="시리즈 순번"
-              value={doc.series_order ?? ''}
-              placeholder="순번"
-              onChange={e =>
-                setDoc(prev => ({
-                  ...prev,
-                  series_order:
-                    e.target.value === '' ? null : Number(e.target.value),
-                }))
-              }
-            />
-          )}
-            </div>
-          </details>
+          <div ref={settingsRef} className="relative shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(open => !open)}
+              aria-expanded={isSettingsOpen}
+              aria-controls="editor-extra-settings"
+              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors ${
+                isSettingsOpen || doc.series?.trim()
+                  ? 'bg-ftBlue/10 text-ftBlue'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <svg aria-hidden="true" className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.75a5.25 5.25 0 100 10.5 5.25 5.25 0 000-10.5zM12 3v1.5m0 15V21m9-9h-1.5M4.5 12H3m15.364-6.364l-1.06 1.06M6.696 17.304l-1.06 1.06m12.728 0l-1.06-1.06M6.696 6.696l-1.06-1.06" />
+              </svg>
+              추가 설정
+              {doc.series?.trim() && <span className="h-1.5 w-1.5 rounded-full bg-ftBlue" aria-label="설정됨" />}
+            </button>
+            {isSettingsOpen && (
+              <div
+                id="editor-extra-settings"
+                role="group"
+                aria-label="추가 설정"
+                className="absolute right-0 top-full z-30 mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-xl border border-slate-200 bg-white p-4 shadow-xl"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-bold text-slate-900">시리즈 설정</p>
+                  <button type="button" onClick={() => setIsSettingsOpen(false)} aria-label="추가 설정 닫기" className="rounded-md px-2 py-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700">×</button>
+                </div>
+                <label htmlFor="editor-series" className="mt-3 block text-xs font-medium text-slate-600">시리즈 이름</label>
+                <input
+                  id="editor-series"
+                  className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-ftBlack outline-none placeholder:text-slate-400 focus:border-ftBlue focus:ring-2 focus:ring-ftBlue/15"
+                  name="series"
+                  value={doc.series || ''}
+                  placeholder="예: React 시작하기"
+                  onChange={e => setDoc(prev => ({ ...prev, series: e.target.value }))}
+                />
+                {doc.series?.trim() && (
+                  <>
+                    <label htmlFor="editor-series-order" className="mt-3 block text-xs font-medium text-slate-600">글 순서</label>
+                    <input
+                      id="editor-series-order"
+                      type="number"
+                      min={1}
+                      className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-ftBlack outline-none focus:border-ftBlue focus:ring-2 focus:ring-ftBlue/15"
+                      name="series_order"
+                      value={doc.series_order ?? ''}
+                      placeholder="1"
+                      onChange={e => setDoc(prev => ({ ...prev, series_order: e.target.value === '' ? null : Number(e.target.value) }))}
+                    />
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
