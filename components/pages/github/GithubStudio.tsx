@@ -11,7 +11,6 @@ import {
   FiStar,
 } from 'react-icons/fi';
 import ContributionCalendar from './ContributionCalendar';
-import GithubSyncPanel from './GithubSyncPanel';
 import RepositoryExplorer from './RepositoryExplorer';
 import RelatedPostsCard from './RelatedPostsCard';
 import GithubConnectPrompt from 'components/Shared/GithubConnectPrompt';
@@ -523,7 +522,11 @@ export default function GithubStudio({
               ))}
             </div>
           </section>
-          {ownProfile ? <GithubSyncPanel /> : null}
+          {ownProfile ? (
+            <Link href="/workspace/github" className="inline-flex min-h-[44px] items-center gap-2 font-semibold text-ftBlue hover:underline">
+              GitHub 백업 관리 →
+            </Link>
+          ) : null}
           <ContributionCalendar
             key={username}
             username={username}

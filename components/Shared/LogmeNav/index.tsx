@@ -10,12 +10,21 @@ import { cn } from 'styles/utils';
 import { usePushNotification } from 'hooks/usePushNotification';
 
 const MENU_ITEMS = [
-  { name: '작업실', path: '/workspace', requiresAuth: true, hideWhenGuest: true },
-  { name: '글 탐색', path: '/article?view=all', requiresAuth: false, hideWhenGuest: false },
-  { name: '이력서', path: '/resume', requiresAuth: false, hideWhenGuest: false },
   {
-    name: 'GitHub',
-    path: '/github',
+    name: '작업실',
+    path: '/workspace',
+    requiresAuth: true,
+    hideWhenGuest: true,
+  },
+  {
+    name: '글 탐색',
+    path: '/article?view=all',
+    requiresAuth: false,
+    hideWhenGuest: false,
+  },
+  {
+    name: '이력서',
+    path: '/resume',
     requiresAuth: false,
     hideWhenGuest: false,
   },
@@ -32,7 +41,10 @@ const Nav = () => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 50;
       setIsScrolled(scrolled);
-      document.documentElement.style.setProperty('--header-height', scrolled ? '40px' : '64px');
+      document.documentElement.style.setProperty(
+        '--header-height',
+        scrolled ? '40px' : '64px',
+      );
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -62,7 +74,7 @@ const Nav = () => {
     <header
       className={cn(
         'fixed top-0 right-0 left-0 z-50 w-full transition-all duration-300 border-b shadow-sm backdrop-blur-lg border-slate-200/60 bg-white/70',
-        isScrolled ? 'h-10' : 'h-16'
+        isScrolled ? 'h-10' : 'h-16',
       )}
     >
       <div className="grid grid-cols-12 gap-4 px-4 mx-auto max-w-7xl h-full">

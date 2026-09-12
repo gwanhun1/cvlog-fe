@@ -33,7 +33,7 @@ const NavProfile = ({ setAuthority, shrink = false }: Props) => {
       <LogmeDropdown
         trigger={
           <img
-            src={userInfo.profile_image || '/images/github.png'}
+            src={userInfo.profile_image || '/assets/default-profile.svg'}
             alt="User"
             className={cn(
               'rounded-full object-cover cursor-pointer ring-2 ring-slate-200 hover:ring-ftBlue/40 transition-all duration-300',
@@ -52,10 +52,15 @@ const NavProfile = ({ setAuthority, shrink = false }: Props) => {
           </div>
         </DropdownHeader>
         <div className="py-1">
+          {userInfo?.username && (
+            <Link href={`/u/${userInfo.username}`}>
+              <DropdownItem>내 공개 프로필</DropdownItem>
+            </Link>
+          )}
           <Link href="/mypage">
             <DropdownItem>
               <HiOutlineCog6Tooth className="w-4 h-4 flex-shrink-0" />
-              마이페이지/설정
+              계정 설정
             </DropdownItem>
           </Link>
           <DropdownItem onClick={onClickLogout} danger>

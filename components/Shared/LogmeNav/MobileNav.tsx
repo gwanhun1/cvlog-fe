@@ -18,7 +18,6 @@ const MENU_ITEMS = [
   { label: '내 작업실', path: '/workspace', authRequired: true },
   { label: '글 탐색', path: '/article?view=all', authRequired: false },
   { label: '이력서', path: '/resume', authRequired: false },
-  { label: 'GitHub', path: '/github', authRequired: false },
 ];
 
 interface MobileNavProps {
@@ -65,7 +64,7 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
           <DropdownHeader>
             <div className="flex flex-col items-center space-y-2">
               <img
-                src={userInfo?.profile_image || '/images/github.png'}
+                src={userInfo?.profile_image || '/assets/default-profile.svg'}
                 alt="User"
                 className="object-cover w-10 h-10 rounded-full"
               />
@@ -84,7 +83,7 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
         {isAuth && (
           <div
             className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <span className="text-sm text-gray-500">알림</span>
             <LogmeNotification />
@@ -96,7 +95,8 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
             <DropdownItem
               className={
                 pathname === item.path ||
-                (item.path !== '/' && pathname.startsWith(item.path.split('?')[0]))
+                (item.path !== '/' &&
+                  pathname.startsWith(item.path.split('?')[0]))
                   ? 'text-ftBlue font-bold'
                   : ''
               }
@@ -108,13 +108,18 @@ const MobileNav = ({ isLoading, isAuth }: MobileNavProps) => {
 
         {token ? (
           <>
+            {userInfo?.username && (
+              <Link href={`/u/${userInfo.username}`}>
+                <DropdownItem>내 공개 프로필</DropdownItem>
+              </Link>
+            )}
             <Link href="/mypage">
               <DropdownItem
                 className={
                   pathname === '/mypage' ? 'text-ftBlue font-bold' : ''
                 }
               >
-                마이페이지/설정
+                계정 설정
               </DropdownItem>
             </Link>
             <DropdownItem onClick={onClickLogout} danger>
