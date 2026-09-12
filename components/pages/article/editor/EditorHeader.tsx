@@ -23,6 +23,7 @@ interface EditorHeaderProps {
   draftTitle?: string;
   onRestoreDraft?: () => void;
   onDiscardDraft?: () => void;
+  saveStatus?: string;
 }
 
 const EditorHeader = ({
@@ -38,6 +39,7 @@ const EditorHeader = ({
   draftTitle,
   onRestoreDraft,
   onDiscardDraft,
+  saveStatus,
 }: EditorHeaderProps) => {
   const [showPublish, setShowPublish] = useState(false);
   const [visibility, setVisibility] = useState<'public' | 'private'>('public');
@@ -199,6 +201,7 @@ const EditorHeader = ({
         <div className="flex items-center gap-2 px-3 py-2.5 border-b border-slate-100">
           {/* 제목 입력 */}
           <input
+            aria-label="글 제목"
             className="flex-1 min-w-0 font-bold text-ftBlack placeholder:text-gray-300 text-lg tablet:text-2xl focus:outline-none bg-transparent"
             name="title"
             value={doc.title}
@@ -327,7 +330,8 @@ const EditorHeader = ({
         </div>
 
         {/* ② 태그 영역 — pills + 아이콘 버튼 (클릭 시 인풋 열림) */}
-        <div className="flex flex-wrap items-center gap-1.5 px-3 py-2 ">
+        <div className="flex items-center gap-3 px-3 py-2">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
           {doc.tags.map(t => (
             <span
               key={t}
@@ -346,7 +350,7 @@ const EditorHeader = ({
           ))}
 
           {doc.tags.length === 0 && !isTagInputOpen && (
-            <span className="text-xs text-gray-300 select-none">태그를 추가해보세요</span>
+            <span className="text-xs text-slate-500 select-none">태그</span>
           )}
 
           {isTagInputOpen ? (
@@ -423,12 +427,21 @@ const EditorHeader = ({
               </svg>
             </button>
           )}
-        </div>
-
-        {/* ③ 시리즈(연재) — 선택 입력 */}
-        <div className="flex items-center gap-2 px-3 py-2 border-t border-slate-50">
-          <span className="flex-shrink-0 text-xs text-gray-400">시리즈</span>
+          </div>
+          {saveStatus && (
+            <details className="relative shrink-0 text-xs text-slate-500">
+              <summary className="cursor-pointer rounded px-1 py-1 focus-visible:outline-blue-600">
+                <span role="status">{saveStatus.includes('실패') ? '저장 실패' : saveStatus.includes('저장됨') ? '임시 저장됨' : '자동 저장'}</span>
+              </summary>
+              <p className="absolute right-0 top-full z-30 mt-2 w-56 rounded-lg border border-slate-200 bg-white p-3 leading-5 shadow-lg">{saveStatus}</p>
+            </details>
+          )}
+          <details className="relative shrink-0 text-xs text-slate-600">
+            <summary className="cursor-pointer rounded px-1 py-1 focus-visible:outline-blue-600">추가 설정{doc.series?.trim() ? ' · 시리즈' : ''}</summary>
+            <div className="absolute right-0 top-full z-30 mt-2 flex w-64 max-w-[calc(100vw-2rem)] flex-wrap items-center gap-2 rounded-lg border border-slate-200 bg-white p-3 shadow-lg">
+          <label htmlFor="editor-series" className="w-full text-xs font-medium text-slate-600">시리즈 (선택)</label>
           <input
+            id="editor-series"
             className="flex-1 min-w-0 text-sm text-ftBlack placeholder:text-gray-300 focus:outline-none bg-transparent"
             name="series"
             value={doc.series || ''}
@@ -443,6 +456,7 @@ const EditorHeader = ({
               min={1}
               className="w-16 text-sm text-center text-ftBlack placeholder:text-gray-300 focus:outline-none bg-transparent border-b border-ftBlue/30"
               name="series_order"
+              aria-label="시리즈 순번"
               value={doc.series_order ?? ''}
               placeholder="순번"
               onChange={e =>
@@ -454,6 +468,8 @@ const EditorHeader = ({
               }
             />
           )}
+            </div>
+          </details>
         </div>
       </div>
     </>

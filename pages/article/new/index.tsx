@@ -130,8 +130,8 @@ const NewPost: NextPage = () => {
       <main className="min-h-screen min-h-[100dvh] tablet:h-screen tablet:overflow-hidden px-2 tablet:px-10">
         <div className="flex flex-col tablet:h-full tablet:min-h-0">
           <header className="flex-none">
-            <p role="status" className="px-3 pt-3 text-xs text-slate-600">{saveStatus}</p>
             <EditorHeader
+              saveStatus={saveStatus}
               doc={doc}
               setDoc={setDoc}
               imageArr={imageArr}
