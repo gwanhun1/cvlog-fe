@@ -111,15 +111,8 @@ const EditorialPostCard = ({ post, keyword, mode }: EditorialPostCardProps) => {
       )}
 
       <div className="p-5">
-        <div className="mb-3 flex min-h-[22px] items-center justify-between gap-3 text-[11px] font-medium text-slate-400">
-          <div className="min-w-0">
-            {post.tags[0] && (
-              <span className="truncate font-semibold text-ftBlue">
-                <HighlightText text={post.tags[0].name} keyword={keyword} />
-              </span>
-            )}
-          </div>
-          <div className="flex shrink-0 items-center gap-2.5">
+        <div className="mb-3 flex min-h-[22px] items-center justify-end text-[11px] font-medium text-slate-400">
+          <div className="flex items-center gap-2.5">
             {mode === 'my' && (
               <span
                 className={`flex items-center gap-1 font-semibold ${
@@ -168,9 +161,9 @@ const EditorialPostCard = ({ post, keyword, mode }: EditorialPostCardProps) => {
           </p>
         )}
 
-        {post.tags.length > 1 && (
+        {post.tags.length > 0 && (
           <div className="mt-5 flex flex-wrap gap-1.5 border-t border-slate-100 pt-4">
-            {post.tags.slice(1, 4).map(tag => (
+            {post.tags.slice(0, 4).map(tag => (
               <span
                 key={tag.id}
                 className="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-500"
