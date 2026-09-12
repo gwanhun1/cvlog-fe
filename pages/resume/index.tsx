@@ -1369,7 +1369,10 @@ const ResumeBuilder = () => {
         <ResumePreview data={{ ...data, photo }} />
       </div>
 
-      <div id="resume-editor-wrap" className="w-full max-w-7xl mx-auto">
+      <div
+        id="resume-editor-wrap"
+        className="mx-auto w-full max-w-7xl tablet:h-[calc(100dvh-7rem)] tablet:overflow-hidden"
+      >
         <DraftResumeModal
           isOpen={showDraftModal}
           draftTitle={draftName}
@@ -1440,9 +1443,9 @@ const ResumeBuilder = () => {
             </div>
           </div>
         )}
-        <div className="flex gap-6">
+        <div className="flex gap-6 tablet:h-full tablet:items-stretch">
           {/* Left: Form */}
-          <div className="flex-1 min-w-0 flex flex-col gap-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-3 tablet:h-full tablet:overflow-y-auto tablet:pr-2">
             {/* Top bar */}
             <div className="flex flex-col gap-2">
               <section className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
@@ -1739,7 +1742,7 @@ const ResumeBuilder = () => {
           </div>
 
           {/* Right: Preview */}
-          <aside className="hidden w-[50%] flex-shrink-0 self-start tablet:sticky tablet:top-[68px] tablet:block tablet:h-[calc(100vh-84px)]">
+          <aside className="hidden w-[50%] flex-shrink-0 tablet:block tablet:h-full">
             <div className="flex h-full flex-col">
               {/* 미리보기 라벨 (저장/PDF는 좌측 상단바에 이미 있어 중복 제거) */}
               <div className="flex items-center mb-2 px-1">
