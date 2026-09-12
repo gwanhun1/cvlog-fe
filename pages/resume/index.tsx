@@ -1445,7 +1445,7 @@ const ResumeBuilder = () => {
         )}
         <div className="flex gap-6 tablet:h-full tablet:items-stretch">
           {/* Left: Form */}
-          <div className="flex min-w-0 flex-1 flex-col gap-3 tablet:h-full tablet:overflow-y-auto tablet:pr-2">
+          <div className="scrollbar-hide flex min-w-0 flex-1 flex-col gap-3 tablet:h-full tablet:overflow-y-auto tablet:pr-2">
             {/* Top bar */}
             <div className="flex flex-col gap-2">
               <section className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
@@ -1750,7 +1750,7 @@ const ResumeBuilder = () => {
                   미리보기
                 </span>
               </div>
-              <div className="min-h-0 flex-1 overflow-auto rounded-2xl border border-slate-200 bg-white shadow-lg">
+              <div className="min-h-0 flex-1 overflow-y-scroll rounded-2xl border border-slate-200 bg-white shadow-lg [scrollbar-gutter:stable]">
                 {!hasResumeDraftContent(data, Boolean(photo)) && <div className="m-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-slate-600 print:hidden"><p className="font-semibold text-slate-900">작성한 내용이 여기에 표시됩니다</p><p className="mt-2 text-sm leading-6">이름과 직함부터 입력해보세요. 프로젝트에는 문제·담당 역할·결과를 중심으로 적으면 좋습니다.</p></div>}
                 <ResumePreview data={{ ...data, photo }} />
               </div>
