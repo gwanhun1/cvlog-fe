@@ -8,6 +8,7 @@ export default function DiscoveryFilters({
 }) {
   const router = useRouter();
   const selected = typeof router.query.q === 'string' ? router.query.q : '';
+  const normalizeTag = (value: string) => value.trim().toLocaleLowerCase();
   const filters = useQuery({
     queryKey: ['discoveryFilters'],
     queryFn: getDiscoveryFilters,
@@ -50,9 +51,15 @@ export default function DiscoveryFilters({
             <button
               type="button"
               key={tag.name}
-              aria-pressed={selected === tag.name}
-              onClick={() => onSearch(selected === tag.name ? '' : tag.name)}
-              className={`rounded-full border px-3 py-2 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-ftBlue ${selected === tag.name ? 'border-ftBlue bg-ftBlue text-white' : 'border-blue-100 bg-blue-50 text-ftBlue hover:border-ftBlue/40'}`}
+              aria-pressed={normalizeTag(selected) === normalizeTag(tag.name)}
+              onClick={() =>
+                onSearch(
+                  normalizeTag(selected) === normalizeTag(tag.name)
+                    ? ''
+                    : tag.name,
+                )
+              }
+              className={`rounded-full border-2 px-3 py-2 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-ftBlue ${normalizeTag(selected) === normalizeTag(tag.name) ? 'border-ftBlue bg-ftBlue text-white' : 'border-blue-200 bg-blue-50 text-ftBlue hover:border-ftBlue/60'}`}
             >
               #{tag.name} · {tag.count}
             </button>

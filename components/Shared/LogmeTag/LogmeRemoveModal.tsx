@@ -3,19 +3,24 @@ import { Folder } from 'service/api/tag/type';
 import { useGetFolders, useRemoveFolders } from 'service/hooks/List';
 import { useQueryClient } from '@tanstack/react-query';
 import BaseModal from 'components/Shared/common/BaseModal';
+import { useToast } from 'components/Shared';
 
 interface TagRemoveModalProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal }) => {
+const TagRemoveModal: React.FC<TagRemoveModalProps> = ({
+  showModal,
+  setShowModal,
+}) => {
   const [selectFolder, setSelectFolder] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: folders } = useGetFolders();
   const queryClient = useQueryClient();
   const removeTagsFolders = useRemoveFolders();
+  const { showToast } = useToast();
 
   const handleClose = () => !isLoading && setShowModal(false);
 
@@ -31,6 +36,11 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
           setShowModal(false);
         },
       });
+    } catch {
+      showToast(
+        '폴더를 삭제하지 못했습니다. 폴더가 비어 있는지 확인하고 다시 시도해 주세요.',
+        'error',
+      );
     } finally {
       setIsLoading(false);
       document.body.style.cursor = 'default';
@@ -40,7 +50,10 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
   const emptyFolders =
     folders?.filter(
       (folder): folder is Folder =>
-        folder && Array.isArray(folder.tags) && folder.tags.length === 0 && folder.id !== 999,
+        folder &&
+        Array.isArray(folder.tags) &&
+        folder.tags.length === 0 &&
+        folder.id !== 999,
     ) || [];
 
   return (
@@ -49,7 +62,9 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
         <div className="text-center space-y-2">
           <h3 className="text-xl font-bold text-gray-900">폴더 삭제</h3>
           {emptyFolders.length > 0 && (
-            <p className="text-sm text-gray-500">삭제할 폴더를 선택하세요.</p>
+            <p className="text-sm text-gray-500">
+              삭제할 빈 폴더를 선택하세요.
+            </p>
           )}
         </div>
 
@@ -62,6 +77,7 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
                   type="button"
                   onClick={() => !isLoading && setSelectFolder(folderId)}
                   disabled={isLoading}
+                  aria-pressed={folderId === selectFolder}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                     folderId === selectFolder
                       ? 'bg-ftBlue text-white'
@@ -74,7 +90,12 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                    />
                   </svg>
                   {name}
                 </button>
@@ -98,9 +119,24 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <svg
+                      className="w-4 h-4 animate-spin"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
                     </svg>
                     삭제 중...
                   </span>
@@ -112,7 +148,10 @@ const TagRemoveModal: React.FC<TagRemoveModalProps> = ({ showModal, setShowModal
           </>
         ) : (
           <div className="flex items-center justify-center h-24 rounded-xl bg-gray-50 border border-gray-200">
-            <p className="text-sm text-gray-500">삭제할 폴더가 없습니다.</p>
+            <p className="px-4 text-sm text-gray-500">
+              빈 폴더가 없습니다. 태그를 다른 폴더나 미분류로 옮긴 후 삭제해
+              주세요.
+            </p>
           </div>
         )}
       </div>

@@ -1,17 +1,15 @@
 import DiscoveryFilters from 'components/pages/article/DiscoveryFilters';
 import dynamic from 'next/dynamic';
 import { trackEvent } from 'utils/analytics';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { IoPricetagsOutline } from 'react-icons/io5';
 import FilterBox from 'components/Shared/LogmeFilterBox/FilterBox';
 import PopularPosts from 'components/Shared/PopularPosts';
 import { PostListView } from 'components/pages/article/postList';
 import FeaturedPost from 'components/pages/article/postList/FeaturedPost';
 import MenuTab from 'components/pages/article/sideView/MenuTab';
-import TagDrawer from 'components/pages/article/sideView/TagDrawer';
 import LocalStorage from 'public/utils/Localstorage';
 import { BlogType, ListDataType } from 'service/api/tag/type';
 import { useStore } from 'service/store/useStore';
@@ -31,14 +29,11 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
   const { view } = router.query;
   const [isClient, setIsClient] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const keyword = useStore(state => state.tagAtom);
   const setTagAtom = useStore(state => state.setTagAtom);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
   const menu = view === 'my' ? 'list' : 'all';
-  const openTagDrawer = useCallback(() => setDrawerOpen(true), []);
-  const closeTagDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const setKeyword = (value: React.SetStateAction<string>) => {
     const next = (typeof value === 'function' ? value(keyword) : value)
@@ -60,7 +55,6 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
     const nextMenu = typeof value === 'function' ? value(menu) : value;
     const { tagKeyword: _tagKeyword, q: _q, ...remainingQuery } = router.query;
     setTagAtom('');
-    setDrawerOpen(false);
     router.push(
       {
         pathname: router.pathname,
@@ -163,10 +157,6 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
 
       <h1 className="sr-only">LOGME 게시글</h1>
 
-      {showMyWorkspace && (
-        <TagDrawer open={drawerOpen} onClose={closeTagDrawer} />
-      )}
-
       <main className="w-full">
         {featuredPost && (
           <section
@@ -199,19 +189,6 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
 
           <div className="flex items-center justify-between gap-4 tablet:justify-end">
             <MenuTab setMenu={setMenu} activeMenu={menu} />
-            {showMyWorkspace && (
-              <button
-                type="button"
-                onClick={openTagDrawer}
-                className="flex min-h-[44px] items-center gap-2 rounded-[10px] border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 transition-colors hover:border-ftBlue hover:text-ftBlue focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"
-                aria-label="태그 폴더 관리 열기"
-                aria-controls="article-tag-drawer"
-                aria-expanded={drawerOpen}
-              >
-                <IoPricetagsOutline aria-hidden className="h-4 w-4" />
-                폴더 관리
-              </button>
-            )}
           </div>
         </section>
 

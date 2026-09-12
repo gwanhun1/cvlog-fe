@@ -150,7 +150,7 @@ const FolderItem = ({
 
   return (
     <div
-      className="relative z-30 flex w-full cursor-pointer select-none items-center justify-between px-2 py-3 transition-colors duration-200 hover:bg-slate-100/70"
+      className="relative z-30 flex w-full cursor-pointer select-none items-center justify-between rounded-lg border-2 border-blue-200 bg-blue-50 px-3 py-3 transition-colors duration-200 hover:border-blue-300 hover:bg-blue-100"
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       onMouseDown={e => e.stopPropagation()}

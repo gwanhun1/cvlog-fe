@@ -16,22 +16,53 @@ import { useGetFolders } from 'service/hooks/List';
 import { useTagDragState } from 'hooks/useTagDragState';
 import type { Folder, Tag } from 'service/api/tag/type';
 import LogmeAddModal from 'components/Shared/LogmeTag/LogmeAddModal';
+import LogmeRemoveModal from 'components/Shared/LogmeTag/LogmeRemoveModal';
 import { folderCoordinates } from 'utils/tagFolderKeyboard';
+
+const folderColors = [
+  'border-blue-300 bg-blue-100 text-blue-900',
+  'border-sky-300 bg-sky-100 text-sky-900',
+  'border-indigo-300 bg-indigo-100 text-indigo-900',
+  'border-cyan-300 bg-white text-cyan-800',
+];
+const folderInlineColors = [
+  { borderColor: '#93c5fd', backgroundColor: '#dbeafe', color: '#1e3a8a' },
+  { borderColor: '#7dd3fc', backgroundColor: '#e0f2fe', color: '#0c4a6e' },
+  { borderColor: '#a5b4fc', backgroundColor: '#e0e7ff', color: '#312e81' },
+  { borderColor: '#67e8f9', backgroundColor: '#ffffff', color: '#155e75' },
+];
+
+function folderColor(id: number) {
+  const numericId = Number(id);
+  if (numericId === 999) {
+    return 'border-slate-300 bg-slate-100 text-slate-700';
+  }
+  if (!Number.isFinite(numericId)) {
+    return folderColors[0];
+  }
+  return folderColors[Math.abs(numericId) % folderColors.length];
+}
+
+function folderInlineColor(id: number) {
+  const numericId = Number(id);
+  return folderInlineColors[
+    Number.isFinite(numericId)
+      ? Math.abs(numericId) % folderInlineColors.length
+      : 0
+  ];
+}
 
 function FolderChip({
   folder,
   selected,
-  editing,
   onSelect,
 }: {
   folder: Folder;
   selected: boolean;
-  editing: boolean;
   onSelect: () => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id: folder.id,
-    disabled: !editing,
   });
   return (
     <button
@@ -39,7 +70,12 @@ function FolderChip({
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
-      className={`rounded-lg border px-3 py-2 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-ftBlue ${isOver ? 'border-ftBlue bg-blue-100 ring-2 ring-ftBlue/30' : selected ? 'border-ftBlue/30 bg-ftBlue/10 text-ftBlue' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+      style={
+        !selected && !isOver
+          ? { borderWidth: 2, ...folderInlineColor(folder.id) }
+          : undefined
+      }
+      className={`rounded-lg border-2 px-3 py-2 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-ftBlue ${isOver ? 'border-ftBlue bg-blue-100 text-ftBlue ring-2 ring-ftBlue/40' : selected ? 'border-ftBlue bg-ftBlue text-white' : `${folderColor(folder.id)} hover:border-ftBlue`}`}
     >
       {folder.id === 999 ? '미분류' : folder.name}{' '}
       <span className="opacity-60">{folder.tags.length}</span>
@@ -50,14 +86,12 @@ function FolderChip({
 function TagChip({
   tag,
   folderId,
-  editing,
   pending,
   selected,
   onSelect,
 }: {
   tag: Tag;
   folderId: number;
-  editing: boolean;
   pending: boolean;
   selected: boolean;
   onSelect: () => void;
@@ -65,31 +99,29 @@ function TagChip({
   const { setNodeRef, setActivatorNodeRef, listeners, attributes, isDragging } =
     useDraggable({
       id: `${folderId}-${tag.id}`,
-      disabled: !editing || pending,
+      disabled: pending,
     });
   return (
     <div
       ref={setNodeRef}
-      className={`inline-flex max-w-full items-center rounded-full border text-xs font-semibold ${selected ? 'border-ftBlue bg-ftBlue text-white' : 'border-blue-100 bg-blue-50 text-ftBlue'} ${isDragging || pending ? 'opacity-40' : ''}`}
+      className={`inline-flex max-w-full items-center rounded-full border text-xs font-semibold ${selected ? 'border-ftBlue bg-ftBlue text-white' : folderColor(folderId)} ${isDragging || pending ? 'opacity-40' : ''}`}
     >
-      {editing && (
-        <button
-          ref={setActivatorNodeRef}
-          type="button"
-          {...listeners}
-          {...attributes}
-          disabled={pending}
-          aria-label={`${tag.name} 이동. Space로 잡고 방향키로 폴더 선택, Space로 놓기, Esc로 취소`}
-          className="touch-none cursor-grab rounded-l-full px-2 py-2 active:cursor-grabbing focus-visible:ring-2 focus-visible:ring-ftBlue"
-        >
-          ⠿
-        </button>
-      )}
+      <button
+        ref={setActivatorNodeRef}
+        type="button"
+        {...listeners}
+        {...attributes}
+        disabled={pending}
+        aria-label={`${tag.name} 이동. Space로 잡고 방향키로 폴더 선택, Space로 놓기, Esc로 취소`}
+        className="touch-none cursor-grab rounded-l-full px-2 py-2 active:cursor-grabbing focus-visible:ring-2 focus-visible:ring-ftBlue"
+      >
+        ⠿
+      </button>
       <button
         type="button"
         onClick={onSelect}
         aria-pressed={selected}
-        className={`min-w-0 truncate rounded-full py-2 pr-3 focus-visible:ring-2 focus-visible:ring-ftBlue ${editing ? 'pl-0' : 'pl-3'}`}
+        className="min-w-0 truncate rounded-full py-2 pl-0 pr-3 focus-visible:ring-2 focus-visible:ring-ftBlue"
       >
         #{tag.name}
         {Number.isFinite(tag.postsCount) ? ` · ${tag.postsCount}` : ''}
@@ -106,9 +138,9 @@ export default function InlineTagOrganizer({
   onSearch: (value: string) => void;
 }) {
   const query = useGetFolders();
-  const [editing, setEditing] = useState(false);
   const [folderId, setFolderId] = useState<number | null>(null);
   const [showAdd, setShowAdd] = useState(false);
+  const [showRemove, setShowRemove] = useState(false);
   const drag = useTagDragState(query.data);
   const folders = drag.optimisticFoldersData ?? [];
   const selectedFolder = folders.some(folder => folder.id === folderId)
@@ -126,7 +158,7 @@ export default function InlineTagOrganizer({
       aria-label="내 태그 탐색과 정리"
       className="my-5 space-y-3 rounded-xl border border-slate-200 bg-white p-4"
     >
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-sm font-semibold text-slate-800">
           내 태그로 기록 찾기
         </h2>
@@ -140,35 +172,43 @@ export default function InlineTagOrganizer({
               필터 해제
             </button>
           )}
-          {editing && (
-            <button
-              type="button"
-              onClick={() => setShowAdd(true)}
-              className="rounded-lg px-2 py-2 text-xs font-semibold text-ftBlue"
-            >
-              + 폴더
-            </button>
-          )}
           <button
             type="button"
+            onClick={() => setShowAdd(true)}
+            disabled={query.isLoading || query.isError}
+            className="rounded-lg px-2 py-2 text-xs font-semibold text-ftBlue"
+          >
+            + 폴더 추가
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowRemove(true)}
             disabled={
               query.isLoading ||
               query.isError ||
               drag.hasPendingOperations ||
               !!drag.activeTag
             }
-            onClick={() => setEditing(value => !value)}
-            aria-pressed={editing}
-            className="rounded-lg bg-ftBlue/10 px-3 py-2 text-xs font-semibold text-ftBlue disabled:opacity-40"
+            className="rounded-lg px-2 py-2 text-xs font-semibold text-slate-500 hover:bg-blue-50 hover:text-ftBlue disabled:opacity-40"
           >
-            {editing ? '정리 완료' : '태그 정리'}
+            폴더 삭제
           </button>
         </div>
       </div>
       {query.isLoading ? (
-        <p role="status" className="text-xs text-slate-500">
-          태그를 불러오는 중…
-        </p>
+        <div
+          role="status"
+          aria-label="태그 불러오는 중"
+          className="flex flex-wrap gap-2 pt-1"
+        >
+          {[78, 112, 66, 92, 84, 126, 72, 104].map((width, index) => (
+            <span
+              key={`${width}-${index}`}
+              style={{ width }}
+              className="h-9 animate-pulse rounded-full border-2 border-blue-100 bg-blue-50"
+            />
+          ))}
+        </div>
       ) : query.isError ? (
         <button
           type="button"
@@ -210,7 +250,6 @@ export default function InlineTagOrganizer({
                 key={folder.id}
                 folder={folder}
                 selected={selectedFolder === folder.id}
-                editing={editing}
                 onSelect={() => setFolderId(folder.id)}
               />
             ))}
@@ -227,13 +266,20 @@ export default function InlineTagOrganizer({
                     key={tag.id}
                     tag={tag}
                     folderId={folder.id}
-                    editing={editing}
                     pending={drag.movingTags.some(
                       moving => moving.tagId === tag.id,
                     )}
-                    selected={keyword === tag.name}
+                    selected={
+                      keyword.trim().toLocaleLowerCase() ===
+                      tag.name.trim().toLocaleLowerCase()
+                    }
                     onSelect={() =>
-                      onSearch(keyword === tag.name ? '' : tag.name)
+                      onSearch(
+                        keyword.trim().toLocaleLowerCase() ===
+                          tag.name.trim().toLocaleLowerCase()
+                          ? ''
+                          : tag.name,
+                      )
                     }
                   />
                 )),
@@ -246,10 +292,10 @@ export default function InlineTagOrganizer({
           ) && (
             <p className="py-2 text-xs text-slate-500">
               아직 태그가 없습니다.
-              {editing ? ' 전체에서 태그를 끌어 이 폴더에 넣어보세요.' : ''}
+              {' 전체에서 태그를 끌어 이 폴더에 넣어보세요.'}
             </p>
           )}
-          {editing && (
+          {(drag.hasPendingOperations || drag.activeTag) && (
             <p role="status" className="pt-2 text-xs text-slate-500">
               {drag.hasPendingOperations
                 ? '이동 저장 중…'
@@ -267,6 +313,9 @@ export default function InlineTagOrganizer({
       )}
       {showAdd && (
         <LogmeAddModal showModal={showAdd} setShowModal={setShowAdd} />
+      )}
+      {showRemove && (
+        <LogmeRemoveModal showModal={showRemove} setShowModal={setShowRemove} />
       )}
     </section>
   );
