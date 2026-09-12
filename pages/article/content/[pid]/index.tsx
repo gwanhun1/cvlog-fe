@@ -95,6 +95,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const [isToggling, setIsToggling] = useState(false);
   const [viewCount, setViewCount] = useState<number | null>(initialData?.post?.view_count ?? null);
   const viewCountFired = useRef(false);
+  const initializedTagsForPost = useRef<number | null>(null);
   // 본문+댓글 영역을 브라우저 내장 번역으로 바꿔주는 훅 (미지원 환경에서는 버튼이 안 뜬다)
   const translatableRef = useRef<HTMLDivElement>(null);
   const translation = useArticleTranslation(translatableRef);
@@ -105,11 +106,15 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
     if (detailData?.post) {
       setPatchMessage(detailData.post.public_status);
       setTagList(detailData.post.tags);
+      if (initializedTagsForPost.current !== detailData.post.id) {
+        setSelectTagList(detailData.post.tags);
+        initializedTagsForPost.current = detailData.post.id;
+      }
       if (viewCount === null) {
         setViewCount(detailData.post.view_count ?? 0);
       }
     }
-  }, [detailData, setTagList]);
+  }, [detailData, setSelectTagList, setTagList]);
 
   useEffect(() => {
     if (!pid || viewCountFired.current) return;
@@ -191,6 +196,13 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const resolvedData = detailData || initialData;
   const shouldShowSkeleton = isLoading && !initialData;
   const postData = resolvedData?.post;
+  const postTags = useMemo<TagType[]>(() => postData?.tags ?? [], [postData?.tags]);
+  const areAllTagsSelected =
+    postTags.length > 0 &&
+    postTags.every(tag => selectTagList.some(selected => selected.id === tag.id));
+  const handleToggleAllTags = useCallback(() => {
+    setSelectTagList(areAllTagsSelected ? [] : postTags);
+  }, [areAllTagsSelected, postTags, setSelectTagList]);
   // 소유권은 id로만 판정한다.
   // 예전에 있던 github_id 비교는 소셜 유저끼리 서로 소유자로 잡힐 수 있어 제거했다.
   const isOwner = hasToken && !!postData && isSameUser(userInfo, postData.user);
@@ -404,7 +416,8 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
       </Head>
 
       <header className="mx-auto w-full max-w-[820px] pb-4 pt-3 tablet:pb-5 tablet:pt-4">
-        <div className="mb-2 flex flex-wrap gap-x-3 gap-y-2">
+        <div className="mb-3 flex items-start justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap gap-1.5">
           {shouldShowSkeleton ? (
             <>
               <div className="h-5 w-16 animate-pulse bg-slate-100" />
@@ -417,15 +430,26 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
                 key={tag.id}
                 onClick={() => handleTagSelect(tag)}
                 title={`${tag.name} 키워드를 본문에서 강조`}
-                className={`text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-4 ${
+                aria-pressed={selectTagList.some(item => item.id === tag.id)}
+                className={`rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2 ${
                   selectTagList.some(item => item.id === tag.id)
-                    ? 'text-ftBlue underline decoration-ftBlue/40 underline-offset-4'
-                    : 'text-ftBlue/75 hover:text-ftBlue'
+                    ? 'border-ftBlue/25 bg-ftBlue/10 text-ftBlue'
+                    : 'border-slate-200 bg-white text-slate-400 hover:border-ftBlue/30 hover:text-ftBlue'
                 }`}
               >
                 #{tag.name}
               </button>
             ))
+          )}
+          </div>
+          {!shouldShowSkeleton && postTags.length > 0 && (
+            <button
+              type="button"
+              onClick={handleToggleAllTags}
+              className="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-500 transition-colors hover:bg-slate-100 hover:text-ftBlue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"
+            >
+              {areAllTagsSelected ? '모두 끄기' : '모두 켜기'}
+            </button>
           )}
         </div>
 
