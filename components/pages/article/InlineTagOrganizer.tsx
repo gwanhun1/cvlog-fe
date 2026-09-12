@@ -91,7 +91,7 @@ function TagChip({
         aria-pressed={selected}
         className={`min-w-0 truncate rounded-full py-2 pr-3 focus-visible:ring-2 focus-visible:ring-ftBlue ${editing ? 'pl-0' : 'pl-3'}`}
       >
-        {selected ? '✓ ' : ''}#{tag.name}
+        #{tag.name}
         {Number.isFinite(tag.postsCount) ? ` · ${tag.postsCount}` : ''}
       </button>
     </div>

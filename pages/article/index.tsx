@@ -21,7 +21,10 @@ type ArticleProps = {
   initialList?: ListDataType;
 };
 
-const InlineTagOrganizer = dynamic(() => import('components/pages/article/InlineTagOrganizer'), { ssr: false });
+const InlineTagOrganizer = dynamic(
+  () => import('components/pages/article/InlineTagOrganizer'),
+  { ssr: false },
+);
 
 const Article: NextPage<ArticleProps> = ({ initialList }) => {
   const router = useRouter();
@@ -38,11 +41,17 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
   const closeTagDrawer = useCallback(() => setDrawerOpen(false), []);
 
   const setKeyword = (value: React.SetStateAction<string>) => {
-    const next = (typeof value === 'function' ? value(keyword) : value).trim().slice(0, 100);
+    const next = (typeof value === 'function' ? value(keyword) : value)
+      .trim()
+      .slice(0, 100);
     setTagAtom(next);
     if (next !== (router.query.q || '')) {
       const { tagKeyword: _, ...query } = router.query;
-      router.push({ pathname: router.pathname, query: { ...query, q: next } }, undefined, { shallow: true });
+      router.push(
+        { pathname: router.pathname, query: { ...query, q: next } },
+        undefined,
+        { shallow: true, scroll: false },
+      );
       trackEvent('search_submit', { query_length: next.length });
     }
   };
@@ -73,14 +82,23 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
     setIsClient(true);
     const token = LocalStorage.getItem('LogmeToken');
     setAccessToken(token);
-
-
   }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { if (router.isReady) setTagAtom(typeof router.query.q === 'string' ? router.query.q : typeof router.query.tagKeyword === 'string' ? router.query.tagKeyword : ''); }, [router.isReady, router.query.q, router.query.tagKeyword, setTagAtom]);
+  useEffect(() => {
+    if (router.isReady)
+      setTagAtom(
+        typeof router.query.q === 'string'
+          ? router.query.q
+          : typeof router.query.tagKeyword === 'string'
+            ? router.query.tagKeyword
+            : '',
+      );
+  }, [router.isReady, router.query.q, router.query.tagKeyword, setTagAtom]);
 
   const featuredPost =
-    menu === 'all' && !keyword && router.query.sort !== 'popular' ? initialList?.posts[0] : undefined;
+    menu === 'all' && !keyword && router.query.sort !== 'popular'
+      ? initialList?.posts[0]
+      : undefined;
   const showMyWorkspace = isClient && Boolean(accessToken) && menu === 'list';
 
   return (
@@ -163,7 +181,12 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
         )}
 
         {menu === 'all' && <DiscoveryFilters onSearch={setKeyword} />}
-        {showMyWorkspace && <InlineTagOrganizer keyword={keyword} onSearch={value => setKeyword(value)} />}
+        {showMyWorkspace && (
+          <InlineTagOrganizer
+            keyword={keyword}
+            onSearch={value => setKeyword(value)}
+          />
+        )}
         <section
           aria-label="글 탐색"
           className="grid grid-cols-1 gap-4 border-b border-slate-300 pb-5 tablet:grid-cols-[minmax(0,1fr)_auto] tablet:items-center tablet:gap-7"
@@ -202,7 +225,13 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
                 id="article-list-title"
                 className="m-0 text-[24px] font-bold tracking-[-0.035em] text-slate-950"
               >
-                {keyword ? '검색 결과' : menu === 'all' ? router.query.sort === 'popular' ? '많이 읽은 글' : '최신 글' : '내 기록'}
+                {keyword
+                  ? '검색 결과'
+                  : menu === 'all'
+                    ? router.query.sort === 'popular'
+                      ? '많이 읽은 글'
+                      : '최신 글'
+                    : '내 기록'}
               </h2>
               {keyword && (
                 <p className="mb-0 mt-1 text-xs text-slate-500">
@@ -234,7 +263,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
               ) : null
             ) : (
               <PostListView
-                  key={`${menu}-${keyword}-${router.query.sort || 'latest'}`}
+                key={`${menu}-${keyword}-${router.query.sort || 'latest'}`}
                 inputRef={inputRef}
                 setKeyword={setKeyword}
                 mode="public"

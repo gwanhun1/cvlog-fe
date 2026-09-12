@@ -54,7 +54,7 @@ export default function DiscoveryFilters({
               onClick={() => onSearch(selected === tag.name ? '' : tag.name)}
               className={`rounded-full border px-3 py-2 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-ftBlue ${selected === tag.name ? 'border-ftBlue bg-ftBlue text-white' : 'border-blue-100 bg-blue-50 text-ftBlue hover:border-ftBlue/40'}`}
             >
-              {selected === tag.name ? '✓ ' : ''}#{tag.name} · {tag.count}
+              #{tag.name} · {tag.count}
             </button>
           ))}
           {selected && (
