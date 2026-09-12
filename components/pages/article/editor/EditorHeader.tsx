@@ -51,7 +51,7 @@ const EditorHeader = ({
   useEffect(() => {
     if (!showPublish) return;
     const previous = document.activeElement as HTMLElement | null;
-    publishRef.current?.querySelector<HTMLSelectElement>('select')?.focus();
+    publishRef.current?.querySelector<HTMLInputElement>('input:checked')?.focus();
     return () => previous?.focus();
   }, [showPublish]);
   const tagInputRef = useRef<HTMLInputElement>(null);
@@ -173,21 +173,31 @@ const EditorHeader = ({
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/50 p-4" onKeyDown={e => { if (e.key === 'Escape' && !isLoading) setShowPublish(false); }}>
           <section ref={publishRef} onKeyDown={event => {
             if (event.key !== 'Tab') return;
-            const elements = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), select:not(:disabled)'));
+            const elements = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:checked, summary'));
             const first = elements[0], last = elements[elements.length - 1];
             if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
             else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-          }} role="dialog" aria-modal="true" aria-labelledby="publish-title" className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
-            <h2 id="publish-title" className="text-xl font-bold text-slate-900">게시하기 전에 확인하세요</h2>
-            <h3 className="mt-4 font-semibold text-slate-900 break-words">{doc.title || '제목을 입력해주세요'}</h3>
-            <p className="mt-2 max-h-24 overflow-hidden text-sm leading-6 text-slate-600">{doc.content.replace(/[#*`>]/g, '').slice(0, 220)}</p>
-            <p className="mt-3 text-xs text-slate-600">{doc.tags.length ? doc.tags.map(t => `#${t}`).join(' ') : '태그 없음'}{doc.series ? ` · 시리즈: ${doc.series}` : ''}</p>
-            <label className="mt-5 block text-sm font-semibold text-slate-800" htmlFor="publish-visibility">공개 범위</label>
-            <select id="publish-visibility" value={visibility} onChange={e => setVisibility(e.target.value as 'public' | 'private')} className="mt-2 w-full rounded-lg border border-slate-300 p-3">
-              <option value="public">공개 · 누구나 읽을 수 있습니다</option>
-              <option value="private">비공개 · 나만 볼 수 있습니다</option>
-            </select>
-            <p className="mt-3 text-sm leading-6 text-slate-600">{visibility === 'public' ? 'GitHub 동기화가 연결돼 있으면 공개 글을 함께 백업합니다. 백업 상태는 작업실에서 확인할 수 있습니다.' : '계정에 비공개로 저장합니다. GitHub에는 업로드하지 않습니다.'}</p>
+          }} role="dialog" aria-modal="true" aria-labelledby="publish-title" className="max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto rounded-2xl bg-white p-5 shadow-xl">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="publish-title" className="text-lg font-bold text-slate-900">글 발행</h2>
+              <button type="button" aria-label="발행 창 닫기" disabled={isLoading} onClick={() => setShowPublish(false)} className="rounded-lg px-2 py-1 text-slate-500 hover:bg-slate-100">×</button>
+            </div>
+            <p className="mt-3 break-words text-sm leading-6 text-slate-600">{doc.title || '제목을 입력해주세요'}</p>
+            <fieldset className="mt-5">
+              <legend className="mb-2 text-xs font-semibold text-slate-600">공개 범위</legend>
+              <div className="grid grid-cols-2 gap-2">
+                {(['public', 'private'] as const).map(option => (
+                  <label key={option} className={`flex cursor-pointer items-start gap-2 rounded-xl border p-3 ${visibility === option ? 'border-blue-600 bg-blue-50' : 'border-slate-200 hover:bg-slate-50'}`}>
+                    <input type="radio" name="publish-visibility" value={option} checked={visibility === option} disabled={isLoading} onChange={() => setVisibility(option)} className="mt-1 accent-blue-700" />
+                    <span><span className="block text-sm font-semibold text-slate-900">{option === 'public' ? '공개' : '비공개'}</span><span className="mt-1 block text-xs text-slate-500">{option === 'public' ? '누구나 읽기' : '나만 읽기'}</span></span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            <details className="mt-3 text-xs text-slate-500">
+              <summary className="cursor-pointer py-1">GitHub 백업 안내</summary>
+              <p className="mt-1 leading-5">{visibility === 'public' ? '동기화가 연결돼 있으면 공개 글을 백업합니다. 결과는 작업실에서 확인할 수 있습니다.' : '비공개 글은 GitHub에 업로드하지 않습니다.'}</p>
+            </details>
             <div className="mt-6 flex justify-end gap-3">
               <button type="button" disabled={isLoading} onClick={() => setShowPublish(false)} className="rounded-lg border border-slate-300 px-4 py-2">계속 작성</button>
               <button type="button" disabled={isLoading} onClick={handleSavePost} className="rounded-lg bg-blue-700 px-4 py-2 font-semibold text-white disabled:opacity-50">{isLoading ? '저장 중…' : visibility === 'public' ? '공개 발행' : '비공개 저장'}</button>
@@ -324,7 +334,7 @@ const EditorHeader = ({
               disabled={isLoading}
               className="px-4 py-1.5 text-xs font-semibold text-white bg-ftBlue rounded-lg hover:bg-[#1f4a8c] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {mode === 'create' ? '출간' : '저장'}
+              {mode === 'create' ? '발행' : '저장'}
             </button>
           </div>
         </div>
