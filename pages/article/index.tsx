@@ -1,17 +1,16 @@
 import DiscoveryFilters from 'components/pages/article/DiscoveryFilters';
+import dynamic from 'next/dynamic';
 import { trackEvent } from 'utils/analytics';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { AnimatePresence, motion } from 'framer-motion';
 import { IoPricetagsOutline } from 'react-icons/io5';
 import FilterBox from 'components/Shared/LogmeFilterBox/FilterBox';
 import PopularPosts from 'components/Shared/PopularPosts';
 import { PostListView } from 'components/pages/article/postList';
 import FeaturedPost from 'components/pages/article/postList/FeaturedPost';
 import MenuTab from 'components/pages/article/sideView/MenuTab';
-import SideView from 'components/pages/article/sideView/SideView';
 import TagDrawer from 'components/pages/article/sideView/TagDrawer';
 import LocalStorage from 'public/utils/Localstorage';
 import { BlogType, ListDataType } from 'service/api/tag/type';
@@ -21,6 +20,8 @@ import { getServerApiBaseUrl } from 'utils/apiUrl';
 type ArticleProps = {
   initialList?: ListDataType;
 };
+
+const InlineTagOrganizer = dynamic(() => import('components/pages/article/InlineTagOrganizer'), { ssr: false });
 
 const Article: NextPage<ArticleProps> = ({ initialList }) => {
   const router = useRouter();
@@ -162,6 +163,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
         )}
 
         {menu === 'all' && <DiscoveryFilters onSearch={setKeyword} />}
+        {showMyWorkspace && <InlineTagOrganizer keyword={keyword} onSearch={value => setKeyword(value)} />}
         <section
           aria-label="글 탐색"
           className="grid grid-cols-1 gap-4 border-b border-slate-300 pb-5 tablet:grid-cols-[minmax(0,1fr)_auto] tablet:items-center tablet:gap-7"
@@ -178,13 +180,13 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
               <button
                 type="button"
                 onClick={openTagDrawer}
-                className="flex min-h-[44px] items-center gap-2 rounded-[10px] border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 transition-colors hover:border-ftBlue hover:text-ftBlue focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2 desktop:hidden"
-                aria-label="내 태그 정리 열기"
+                className="flex min-h-[44px] items-center gap-2 rounded-[10px] border border-slate-300 bg-white px-3 text-xs font-bold text-slate-700 transition-colors hover:border-ftBlue hover:text-ftBlue focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"
+                aria-label="태그 폴더 관리 열기"
                 aria-controls="article-tag-drawer"
                 aria-expanded={drawerOpen}
               >
                 <IoPricetagsOutline aria-hidden className="h-4 w-4" />
-                태그 정리
+                폴더 관리
               </button>
             )}
           </div>
@@ -220,28 +222,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
             )}
           </div>
 
-          <div
-            className={
-              showMyWorkspace
-                ? 'desktop:grid desktop:grid-cols-[208px_minmax(0,1fr)] desktop:items-start desktop:gap-6'
-                : ''
-            }
-          >
-            <AnimatePresence initial={false}>
-              {showMyWorkspace && (
-                <motion.aside
-                  key="tag-sidebar"
-                  className="hidden desktop:block"
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -12 }}
-                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                >
-                  <SideView className="sticky top-[calc(var(--header-height,64px)+16px)] flex max-h-[calc(100vh-var(--header-height,64px)-32px)] w-full flex-col overflow-hidden border-t-2 border-slate-900 bg-transparent" />
-                </motion.aside>
-              )}
-            </AnimatePresence>
-
+          <div>
             {menu === 'list' ? (
               showMyWorkspace ? (
                 <PostListView
