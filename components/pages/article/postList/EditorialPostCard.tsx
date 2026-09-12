@@ -111,40 +111,6 @@ const EditorialPostCard = ({ post, keyword, mode }: EditorialPostCardProps) => {
       )}
 
       <div className="p-5">
-        <div className="mb-3 flex min-h-[22px] items-center justify-end text-[11px] font-medium text-slate-400">
-          <div className="flex items-center gap-2.5">
-            {mode === 'my' && (
-              <span
-                className={`flex items-center gap-1 font-semibold ${
-                  post.public_status ? 'text-emerald-700' : 'text-slate-500'
-                }`}
-                aria-label={
-                  post.public_status
-                    ? '이 게시물은 공개되어 있습니다'
-                    : '이 게시물은 나만 볼 수 있습니다'
-                }
-              >
-                {post.public_status ? (
-                  <IoGlobeOutline aria-hidden className="h-3.5 w-3.5" />
-                ) : (
-                  <IoLockClosedOutline aria-hidden className="h-3.5 w-3.5" />
-                )}
-                {post.public_status ? '공개됨' : '나만 보기'}
-              </span>
-            )}
-            {publishedAt && (
-              <time
-                suppressHydrationWarning
-                dateTime={publishedAt}
-                itemProp="datePublished"
-                className="shrink-0"
-              >
-                {formatTimeAgo(publishedAt)}
-              </time>
-            )}
-          </div>
-        </div>
-
         <h3
           className="m-0 text-[19px] font-bold leading-[1.35] tracking-[-0.025em] text-slate-900 transition-colors duration-200 group-hover:text-ftBlue"
           itemProp="headline"
@@ -161,21 +127,53 @@ const EditorialPostCard = ({ post, keyword, mode }: EditorialPostCardProps) => {
           </p>
         )}
 
-        {post.tags.length > 0 && (
-          <div className="mt-5 flex flex-wrap gap-1.5 border-t border-slate-100 pt-4">
-            {post.tags.slice(0, 4).map(tag => (
-              <span
-                key={tag.id}
-                className="rounded-md bg-slate-100 px-2 py-1 text-[10px] font-medium text-slate-500"
-              >
-                <HighlightText text={tag.name} keyword={keyword} />
-              </span>
-            ))}
-            {post.tags.length > 4 && (
-              <span className="px-1 py-1 text-[10px] text-slate-400">
-                +{post.tags.length - 4}
-              </span>
-            )}
+        {(post.tags.length > 0 || mode === 'my' || publishedAt) && (
+          <div className="mt-5 flex items-center justify-between gap-3 border-t border-slate-100 pt-4 text-[10px] font-medium text-slate-400">
+            <div className="flex min-w-0 flex-wrap gap-1.5">
+              {post.tags.slice(0, 4).map(tag => (
+                <span
+                  key={tag.id}
+                  className="rounded-md bg-slate-100 px-2 py-1 font-medium text-slate-500"
+                >
+                  <HighlightText text={tag.name} keyword={keyword} />
+                </span>
+              ))}
+              {post.tags.length > 4 && (
+                <span className="px-1 py-1 text-slate-400">
+                  +{post.tags.length - 4}
+                </span>
+              )}
+            </div>
+            <div className="flex shrink-0 items-center gap-2.5">
+              {mode === 'my' && (
+                <span
+                  className={`flex items-center gap-1 font-semibold ${
+                    post.public_status ? 'text-emerald-700' : 'text-slate-500'
+                  }`}
+                  aria-label={
+                    post.public_status
+                      ? '이 게시물은 공개되어 있습니다'
+                      : '이 게시물은 나만 볼 수 있습니다'
+                  }
+                >
+                  {post.public_status ? (
+                    <IoGlobeOutline aria-hidden className="h-3.5 w-3.5" />
+                  ) : (
+                    <IoLockClosedOutline aria-hidden className="h-3.5 w-3.5" />
+                  )}
+                  {post.public_status ? '공개됨' : '나만 보기'}
+                </span>
+              )}
+              {publishedAt && (
+                <time
+                  suppressHydrationWarning
+                  dateTime={publishedAt}
+                  itemProp="datePublished"
+                >
+                  {formatTimeAgo(publishedAt)}
+                </time>
+              )}
+            </div>
           </div>
         )}
       </div>
