@@ -17,7 +17,7 @@ const MENU_ITEMS = [
     hideWhenGuest: true,
   },
   {
-    name: '글 탐색',
+    name: '블로그',
     path: '/article?view=all',
     requiresAuth: false,
     hideWhenGuest: false,

@@ -33,7 +33,7 @@ function AccountSettings() {
       ? joined.toLocaleDateString('ko-KR')
       : null;
   return (
-    <main className="mx-auto w-full max-w-6xl px-3 py-6 tablet:px-0">
+    <main className="mx-auto w-full max-w-6xl py-0 tablet:py-6">
       <Head>
         <title>계정 설정 · LOGME</title>
         <meta name="robots" content="noindex" />

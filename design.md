@@ -16,7 +16,7 @@ Existing Korean-compatible system stack is deliberately preserved to avoid new r
 `tokens.css` is the source of truth, compiled into `styles/logmeDesign.module.scss` with Sass `@use`. The `.root` selector is local to that CSS module. Named ink, muted, surface, rule, accent, focus, danger, loading and spacing tokens. No global CSS changes. Focus is immediate; links/buttons have 44px touch targets. No page reveal animation; existing video behavior is preserved. Skeleton uses restrained opacity animation and stops with reduced-motion.
 
 ## Layout
-Desktop home intro uses an asymmetric split. Desktop workspace rail is 152px and main content grows; secondary utility column is 240px when space allows. At 768px utilities become a compact row; at phone widths they stack. Page padding is 12–16px on phone. Sections use 16–24px gaps; rows 12px internal padding. No forced full-viewport height.
+Desktop home intro uses an asymmetric split. Desktop workspace rail is 152px and main content grows; secondary utility column is 240px when space allows. At 768px utilities become a compact row; at phone widths they stack. Mobile page gutters are 20px, owned by the shared Layout and matched to article detail; page roots do not add horizontal padding. Sections use 16–24px gaps; rows 12px internal padding. No forced full-viewport height.
 
 ## States
 Initial identity, draft, recent-post, resume, and backup loading each have shape-matched skeletons. Data errors are distinct from empty data. Existing account API can return null; keep the retry state. Background refresh retains readable data. No invented counts or sample user content.
@@ -240,3 +240,7 @@ Font references and CSS values should be adapted to the target token pipeline.
 ## Verification — 2026-09-13
 
 Home and workspace visually inspected at 320, 375, 414, 768 and 1280px. Scoped text contrast exceeds 4.5:1; control border is 3.27:1. Loading, ready, empty and error layouts inspected with synthetic preview data; the live workspace currently shows account lookup failure, so populated API integration remains unverified. Live GitHub navigation reaches contribution and repository data. Isolated `next build` passed type checking, lint, compilation and page generation with existing warnings. Protected article/resume internals, APIs/hooks, video source/data/files and global layout/styles have no diff.
+
+## Mobile spacing follow-up
+
+Use a single 20px mobile gutter in Layout below the existing 1024px tablet breakpoint. Home/workspace, public profile, account and backup roots remove duplicate horizontal padding and extra mobile top spacing. Article detail and standalone editors keep their existing layout branches. Public-profile loading shares the introduction and post-row shapes; animation respects reduced-motion. Primary navigation labels use 블로그.

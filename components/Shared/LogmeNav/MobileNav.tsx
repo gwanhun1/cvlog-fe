@@ -16,7 +16,7 @@ import { getDisplayName } from 'utils/user';
 
 const MENU_ITEMS = [
   { label: '내 작업실', path: '/workspace', authRequired: true },
-  { label: '글 탐색', path: '/article?view=all', authRequired: false },
+  { label: '블로그', path: '/article?view=all', authRequired: false },
   { label: '이력서', path: '/resume', authRequired: false },
   { label: 'GitHub', path: '/github', authRequired: false },
 ];

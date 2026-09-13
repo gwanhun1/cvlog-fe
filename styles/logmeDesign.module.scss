@@ -9,7 +9,7 @@
   max-width: 1200px;
   min-width: 0;
   margin-inline: auto;
-  padding: var(--space-md) var(--space-md) var(--space-xl);
+  padding: 0 0 var(--space-xl);
   color: var(--color-ink);
   font-family: var(--font-body);
   font-size: 14px;
@@ -127,7 +127,7 @@
 .homeIntro {
   display: grid;
   gap: var(--space-lg);
-  padding-block: var(--space-lg) var(--space-xl);
+  padding-block: 0 var(--space-xl);
 }
 .homeTitle {
   font-size: clamp(30px, 3.5vw, 44px) !important;
@@ -703,6 +703,7 @@
 }
 @media (min-width: 64rem) {
   .root {
+    padding-top: var(--space-md);
     padding-inline: 0;
   }
   .demoSkeleton {

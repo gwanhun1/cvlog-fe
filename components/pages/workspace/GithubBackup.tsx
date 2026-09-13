@@ -9,7 +9,7 @@ import { hasCapability } from 'utils/user';
 export default function GithubBackup() {
   const { data: user, isPending, isError, refetch } = useGetUserInfo();
   return (
-    <main className="mx-auto w-full max-w-6xl space-y-6 px-3 py-6 tablet:px-0">
+    <main className="mx-auto w-full max-w-6xl space-y-6 py-0 tablet:py-6">
       <Head>
         <title>GitHub 백업 · LOGME</title>
         <meta name="robots" content="noindex" />
