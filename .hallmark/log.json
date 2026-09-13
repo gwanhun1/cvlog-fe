@@ -1,0 +1,49 @@
+[
+  {
+    "date": "2026-09-13",
+    "scope": "app",
+    "macrostructure": "Split Studio (home), working index (workspace)",
+    "theme": "custom",
+    "theme_axes": "near-white / Korean system sans / LOGME blue 260",
+    "genre": "modern-minimal",
+    "enrichment": "existing functional video demo",
+    "brief": "Compact blog-first career workspace with visible Resume and GitHub pillars",
+    "navigation": "existing primary navigation plus GitHub; N3 workspace rail",
+    "footer": "compact inline",
+    "selfCritique": {
+      "philosophy": 4,
+      "hierarchy": 4,
+      "execution": 4,
+      "specificity": 4,
+      "restraint": 5,
+      "variety": 4
+    },
+    "verification": {
+      "responsiveWidths": [
+        320,
+        375,
+        414,
+        768,
+        1280
+      ],
+      "workspaceStates": "synthetic loading, ready, empty, error; live account-error state",
+      "home": "live feature video and desktop/mobile GitHub navigation",
+      "github": "primary link reaches live contribution and repository page",
+      "build": "isolated next build passed (typecheck, lint, compilation, page generation); existing warnings remain",
+      "contrast": {
+        "inkOnPaper": 16.41,
+        "mutedOnSurface": 6.22,
+        "accentOnPaper": 7.05,
+        "accentOnSelected": 6.09,
+        "controlBorderOnPaper": 3.27
+      },
+      "protectedPaths": "no changes to article/resume internals, APIs/hooks, video source/data/files, or global layout/styles"
+    },
+    "exceptions": [
+      "Existing feature video component retains its fonts, motion, colors and tab wrapping by user instruction.",
+      "Existing Korean system fonts retained; tokens and overflow clipping scoped to the two pages instead of html/body.",
+      "Authenticated populated workspace cannot be verified against current local account API; synthetic preview is not an API test."
+    ],
+    "slopReview": "Scoped review completed; no claim of all universal gates passing across preserved components."
+  }
+]

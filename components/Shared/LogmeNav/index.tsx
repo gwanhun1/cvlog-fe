@@ -28,6 +28,12 @@ const MENU_ITEMS = [
     requiresAuth: false,
     hideWhenGuest: false,
   },
+  {
+    name: 'GitHub',
+    path: '/github',
+    requiresAuth: false,
+    hideWhenGuest: false,
+  },
 ];
 
 const Nav = () => {

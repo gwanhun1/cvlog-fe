@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { RecordSkeleton } from 'components/pages/design/LoadingShapes';
+import s from 'styles/logmeDesign.module.scss';
 import { useGithubSyncSettings } from 'service/hooks/useGithubSync';
 import type { GithubSyncSettings } from 'service/api/github-sync/type';
 
@@ -15,40 +17,36 @@ const statusLabels: Record<GithubSyncSettings['status'], string> = {
 export default function GithubBackupSummary() {
   const { data, isPending, isError, refetch, isFetching } =
     useGithubSyncSettings();
+  if (isPending) return <RecordSkeleton kind="utility" />;
   return (
-    <div className="space-y-3">
-      <p role="status" className="text-sm text-slate-600">
-        {isPending
-          ? '백업 상태 확인 중…'
-          : isError
-            ? '백업 상태를 불러오지 못했습니다.'
-            : data
-              ? statusLabels[data.status]
-              : '백업 상태를 확인해주세요'}
+    <div>
+      <p role="status">
+        {isError
+          ? '백업 상태를 불러오지 못했습니다.'
+          : data
+            ? statusLabels[data.status]
+            : '백업 상태를 확인해주세요.'}
       </p>
-      {data && !isError && (
-        <p className="break-words text-sm text-slate-600">
+      {data && !isError && data.repoName && (
+        <p>
           {data.repoName}
           {data.pendingPostCount != null && data.pendingPostCount > 0
             ? ` · 미반영 ${data.pendingPostCount}개`
             : ''}
         </p>
       )}
-      <div className="flex flex-wrap gap-4">
-        <Link
-          href="/workspace/github"
-          className="inline-flex min-h-[44px] items-center text-sm font-semibold text-ftBlue hover:underline"
-        >
-          백업 관리 →
+      <div className={s.actions}>
+        <Link href="/workspace/github" className={s.textLink}>
+          백업 설정 →
         </Link>
         {isError && (
           <button
             type="button"
             disabled={isFetching}
             onClick={() => refetch()}
-            className="min-h-[44px] text-sm text-slate-600 underline disabled:opacity-50"
+            className={s.textLink}
           >
-            다시 확인
+            {isFetching ? '확인 중…' : '다시 확인'}
           </button>
         )}
       </div>

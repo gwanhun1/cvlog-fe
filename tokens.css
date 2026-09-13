@@ -1,0 +1,29 @@
+/* LOGME tokens: compiled into the page CSS module, never imported globally. */
+.root {
+  --color-paper: oklch(99% 0.003 260);
+  --color-surface: oklch(96.8% 0.005 260);
+  --color-ink: oklch(23% 0.014 260);
+  --color-muted: oklch(47% 0.016 260);
+  --color-rule: oklch(88% 0.01 260);
+  --color-control-rule: oklch(64% 0.015 260);
+  --color-accent: oklch(46% 0.14 260);
+  --color-accent-ink: oklch(99% 0.003 260);
+  --color-selected: oklch(94% 0.022 260);
+  --color-focus: oklch(46% 0.14 260);
+  --color-danger: oklch(43% 0.15 25);
+  --color-loading: oklch(89.5% 0.008 260);
+  --font-body:
+    -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic',
+    sans-serif;
+  --font-display: var(--font-body);
+  --font-mono: ui-monospace, 'SFMono-Regular', monospace;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-micro: 120ms;
+}
