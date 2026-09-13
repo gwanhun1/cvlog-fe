@@ -1,0 +1,17 @@
+{
+  "framework": "Next.js 13 Pages Router",
+  "styles": "Tailwind 3 + SCSS modules",
+  "brandAccent": "#2657A6",
+  "font": "existing Korean-compatible system stack",
+  "motion": "Framer Motion; existing video preserved",
+  "scope": [
+    "pages/index.tsx",
+    "components/pages/workspace/Workspace.tsx"
+  ],
+  "protected": [
+    "article",
+    "resume",
+    "global layout",
+    "home feature videos"
+  ]
+}
