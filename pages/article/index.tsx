@@ -170,7 +170,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
           </section>
         )}
 
-        {menu === 'all' && <DiscoveryFilters onSearch={setKeyword} />}
+        {menu === 'all' && <DiscoveryFilters />}
         {showMyWorkspace && (
           <InlineTagOrganizer
             keyword={keyword}
