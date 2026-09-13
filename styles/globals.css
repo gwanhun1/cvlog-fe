@@ -228,6 +228,16 @@ table {
 }
 
 @layer utilities {
+  .min-h-viewport {
+    min-height: 100vh;
+  }
+
+  @supports (height: 100dvh) {
+    .min-h-viewport {
+      min-height: 100dvh;
+    }
+  }
+
   .text-balance {
     text-wrap: balance;
   }

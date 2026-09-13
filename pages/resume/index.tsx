@@ -1447,7 +1447,7 @@ const ResumeBuilder = () => {
           {/* Left: Form */}
           <div className="scrollbar-hide flex min-w-0 flex-1 flex-col gap-3 tablet:h-full tablet:overflow-y-auto tablet:pr-2">
             {/* Top bar */}
-            <div className="flex flex-col gap-2">
+            <div className="flex shrink-0 flex-col gap-2">
               <section className="mb-4 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-slate-700">
                 <h1 className="text-lg font-bold text-slate-900">내 경험을 이력서로</h1>
                 <p className="mt-2 leading-6">이름과 직함 → 핵심 요약 → 프로젝트 순서로 채워보세요. 사용하지 않는 섹션은 비워두어도 됩니다.</p>
@@ -1581,7 +1581,7 @@ const ResumeBuilder = () => {
 
             {/* Basic Info */}
             <div
-              className={`rounded-2xl border bg-white overflow-hidden transition-all ${collapsed.has('basicInfo') ? 'border-slate-200 shadow-sm' : 'border-ftBlue/20 shadow-md shadow-ftBlue/5'}`}
+              className={`shrink-0 rounded-2xl border bg-white overflow-hidden transition-all ${collapsed.has('basicInfo') ? 'border-slate-200 shadow-sm' : 'border-ftBlue/20 shadow-md shadow-ftBlue/5'}`}
             >
               <div
                 className="flex items-center gap-3 px-5 py-3.5 cursor-pointer select-none"
@@ -1723,7 +1723,7 @@ const ResumeBuilder = () => {
                 items={data.sectionOrder}
                 strategy={verticalListSortingStrategy}
               >
-                <div className="flex flex-col gap-3">
+                <div className="flex shrink-0 flex-col gap-3">
                   {data.sectionOrder.map((key, idx) => (
                     <SortableSection key={key} id={key}>
                       {({ dragProps }) =>
