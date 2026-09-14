@@ -6,7 +6,6 @@
 
 .root {
   width: 100%;
-  max-width: 1200px;
   min-width: 0;
   margin-inline: auto;
   padding: 0 0 var(--space-xl);
@@ -703,7 +702,6 @@
 }
 @media (min-width: 64rem) {
   .root {
-    padding-top: var(--space-md);
     padding-inline: 0;
   }
   .demoSkeleton {

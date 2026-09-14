@@ -83,7 +83,7 @@ const Nav = () => {
         isScrolled ? 'h-10' : 'h-16',
       )}
     >
-      <div className="grid grid-cols-12 gap-4 px-4 mx-auto max-w-7xl h-full">
+      <div className="mx-auto grid h-full w-full grid-cols-12 gap-4 px-5 tablet:container tablet:px-20">
         <div className="flex col-span-4 items-center tablet:col-span-3">
           <Link href="/" className="flex items-center group">
             <div className="transition-all duration-300 transform group-hover:scale-105">

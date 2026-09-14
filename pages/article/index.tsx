@@ -96,7 +96,7 @@ const Article: NextPage<ArticleProps> = ({ initialList }) => {
   const showMyWorkspace = isClient && Boolean(accessToken) && menu === 'list';
 
   return (
-    <div className="mx-auto min-h-screen min-h-[100dvh] w-full max-w-[1248px] text-slate-950">
+    <div className="min-h-viewport mx-auto w-full text-slate-950">
       <Head>
         <title>LOGME - 게시물 목록</title>
         <meta
