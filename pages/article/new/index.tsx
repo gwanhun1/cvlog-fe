@@ -8,7 +8,7 @@ import {
   DocType,
 } from '../../../components/pages/article/editor';
 import { EDITOR_CONSTANTS } from 'lib/constants';
-import { clearDraftStorage, isDraftFresh, saveLocalDraft } from 'utils/draftStorage';
+import { clearDraftStorage, hasArticleDraftContent, isDraftFresh, saveLocalDraft } from 'utils/draftStorage';
 
 const DRAFT_KEY = 'logme_draft_new';
 const DRAFT_UPDATED_AT_KEY = 'logme_draft_new_updated_at';
@@ -45,7 +45,7 @@ const NewPost: NextPage = () => {
         typeof draft.title === 'string' &&
         typeof draft.content === 'string' &&
         Array.isArray(draft.tags) &&
-        (draft.title || draft.content !== INIT_USER_INPUT.content || draft.tags.length > 0)
+        hasArticleDraftContent(draft, DRAFT_KEY)
       ) {
         draftPendingRef.current = true;
         setPendingDraft(draft);
@@ -57,10 +57,7 @@ const NewPost: NextPage = () => {
 
   // 1초 디바운스 자동저장
   useEffect(() => {
-    const hasContent =
-      doc.title.trim() !== '' ||
-      (doc.content.trim() !== '' && doc.content.trim() !== '# Hello world') ||
-      doc.tags.length > 0;
+    const hasContent = hasArticleDraftContent(doc, DRAFT_KEY);
 
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     autoSaveTimerRef.current = setTimeout(() => {
@@ -70,11 +67,8 @@ const NewPost: NextPage = () => {
         draftPendingRef.current = false;
         setPendingDraft(null);
       }
-      if (hasContent) {
-        setSaveStatus(saveLocalDraft(DRAFT_KEY, doc) ? '이 기기에 임시 저장됨 · 계정 저장은 발행 시 완료됩니다.' : '임시 저장 실패 · 저장 공간을 확인하고 내용을 복사해 보관해주세요.');
-      } else {
-        clearDraftStorage(DRAFT_KEY, DRAFT_UPDATED_AT_KEY);
-      }
+      const saved = saveLocalDraft(DRAFT_KEY, doc);
+      setSaveStatus(!saved ? '임시 저장 실패 · 저장 공간을 확인하고 내용을 복사해 보관해주세요.' : hasContent ? '이 기기에 임시 저장됨 · 계정 저장은 발행 시 완료됩니다.' : '작성 내용은 이 브라우저에 임시 저장됩니다.');
     }, 1000);
 
     return () => {
@@ -110,9 +104,7 @@ const NewPost: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    const hasUnsavedChanges =
-      doc.title.trim() !== '' ||
-      (doc.content.trim() !== '' && doc.content.trim() !== '# Hello world');
+    const hasUnsavedChanges = hasArticleDraftContent(doc, DRAFT_KEY);
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
@@ -123,7 +115,7 @@ const NewPost: NextPage = () => {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [doc.title, doc.content]);
+  }, [doc]);
 
   return (
     <AuthGuard>
@@ -139,7 +131,7 @@ const NewPost: NextPage = () => {
               isVisiblePreview={isVisiblePreview}
               onTogglePreview={() => setIsVisiblePreview(v => !v)}
               onSaveSuccess={discardDraft}
-              onCancel={() => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); canAutoSaveRef.current = false; if (doc.title || doc.content !== '# Hello world') saveLocalDraft(DRAFT_KEY, doc); }}
+              onCancel={() => { if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); canAutoSaveRef.current = false; if (!draftPendingRef.current || hasArticleDraftContent(doc, DRAFT_KEY)) saveLocalDraft(DRAFT_KEY, doc); }}
               draftTitle={
                 pendingDraft ? pendingDraft.title.trim() || '제목 없음' : undefined
               }

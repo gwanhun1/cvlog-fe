@@ -1,4 +1,4 @@
-import { saveLocalDraft } from 'utils/draftStorage';
+import { clearDraftStorage, hasArticleDraftContent, saveLocalDraft } from 'utils/draftStorage';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import AuthGuard from 'components/Shared/common/AuthGuard';
@@ -48,7 +48,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
       });
       try {
         const saved = JSON.parse(localStorage.getItem(draftKey) || 'null');
-        if (saved && typeof saved.title === 'string' && typeof saved.content === 'string' && Array.isArray(saved.tags) && (saved.content !== content || saved.title !== title || JSON.stringify(saved.tags) !== JSON.stringify(tags?.map(t => t.name) || []))) setPendingDraft(saved);
+        if (hasArticleDraftContent(saved, draftKey) && saved && typeof saved.title === 'string' && typeof saved.content === 'string' && Array.isArray(saved.tags) && (saved.content !== content || saved.title !== title || JSON.stringify(saved.tags) !== JSON.stringify(tags?.map(t => t.name) || []))) setPendingDraft(saved);
       } catch { /* malformed local draft */ }
       setIsInitialized(true);
     }
@@ -61,7 +61,8 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
     autoSaveTimerRef.current = setTimeout(() => {
       if (!canAutoSaveRef.current) return;
-      setSaveStatus(saveLocalDraft(draftKey, doc) ? '이 기기에 임시 저장됨 · 게시글 반영은 저장 버튼을 눌러주세요.' : '임시 저장 실패 · 내용을 복사해 보관해주세요.');
+      const saved = saveLocalDraft(draftKey, doc);
+      setSaveStatus(!saved ? '임시 저장 실패 · 내용을 복사해 보관해주세요.' : hasArticleDraftContent(doc, draftKey) ? '이 기기에 임시 저장됨 · 게시글 반영은 저장 버튼을 눌러주세요.' : '수정 내용은 이 기기에 임시 저장됩니다.');
     }, 1000);
 
     return () => {
@@ -72,7 +73,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   const discardDraft = useCallback(() => {
     canAutoSaveRef.current = false;
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
-    localStorage.removeItem(draftKey);
+    clearDraftStorage(draftKey, `${draftKey}_updated_at`);
   }, [draftKey]);
 
   useEffect(() => {
@@ -85,7 +86,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
   }, []);
 
   useEffect(() => {
-    const hasUnsavedChanges = doc.title.trim() !== '' || doc.content.trim() !== '';
+    const hasUnsavedChanges = hasArticleDraftContent(doc, draftKey);
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (hasUnsavedChanges) {
@@ -96,7 +97,7 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [doc.title, doc.content]);
+  }, [doc, draftKey]);
 
   return (
     <AuthGuard>
@@ -114,10 +115,10 @@ const ModifyPost: NextPage<ModifyPostProps> = ({ pid }) => {
               isVisiblePreview={isVisiblePreview}
               onTogglePreview={() => setIsVisiblePreview(v => !v)}
               onSaveSuccess={discardDraft}
-              onCancel={() => { canAutoSaveRef.current = false; if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); if (!pendingDraft) saveLocalDraft(draftKey, doc); }}
+              onCancel={() => { canAutoSaveRef.current = false; if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current); if (isInitialized && !pendingDraft) saveLocalDraft(draftKey, doc); }}
               draftTitle={pendingDraft ? pendingDraft.title || '수정 중인 글' : undefined}
               onRestoreDraft={() => { if (pendingDraft) setDoc(pendingDraft); setPendingDraft(null); }}
-              onDiscardDraft={() => { localStorage.removeItem(draftKey); setPendingDraft(null); }}
+              onDiscardDraft={() => { clearDraftStorage(draftKey, `${draftKey}_updated_at`); setPendingDraft(null); }}
             />
           </header>
           <div className="flex flex-col flex-1 w-full tablet:flex-row tablet:min-h-0">
