@@ -8,6 +8,7 @@ import { useRef, useMemo, memo } from 'react';
 import { cn } from 'styles/utils';
 import { useStore } from 'service/store/useStore';
 import { isSameUser } from 'utils/user';
+import { highlightTagWords } from 'utils/highlightTagWords';
 import styles from '../../../styles/markdown.module.scss';
 import TocItemsContainer from './TocItemsContainer';
 
@@ -41,39 +42,10 @@ const MarkdownContentComponent = ({
     [selectedTags]
   );
 
-  // 텍스트에서 선택된 태그 단어들을 강조 처리.
-  // dangerouslySetInnerHTML로 주입되므로 원본 텍스트는 먼저 HTML 이스케이프해
-  // 사용자 콘텐츠가 마크업으로 해석되는 것을 막는다.
-  const highlightWords = useMemo(() => {
-    const escapeHtml = (value: string) =>
-      value
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-
-    return (text: string) => {
-      const escaped = escapeHtml(text);
-      if (!selectedWords.length) return escaped;
-
-      let result = escaped;
-      selectedWords.forEach((word, index) => {
-        if (!word) return;
-        const escapedWord = escapeHtml(word).replace(
-          /[.*+?^${}()|[\]\\]/g,
-          '\\$&'
-        );
-        const regex = new RegExp(`(${escapedWord})`, 'gi');
-        const color = blueColors[index % blueColors.length];
-        result = result.replace(
-          regex,
-          `<span style="background-color: ${color}">$1</span>`
-        );
-      });
-      return result;
-    };
-  }, [selectedWords]);
+  const highlightWords = useMemo(
+    () => (text: string) => highlightTagWords(text, selectedWords, blueColors),
+    [selectedWords]
+  );
 
   // 마크다운 컴포넌트에 전달할 커스텀 컴포넌트
   const components = useMemo(() => {
