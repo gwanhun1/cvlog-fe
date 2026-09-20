@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/router';
-import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
+import { GetStaticPaths, NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import removeMarkdown from 'markdown-to-text';
@@ -26,7 +26,7 @@ import type { ContentData, TagType } from 'service/api/detail/type';
 import { isSameUser } from 'utils/user';
 import { useArticleTranslation } from 'hooks/useArticleTranslation';
 import TranslateButton from 'components/pages/article/content/TranslateButton';
-import { getServerApiBaseUrl } from 'utils/apiUrl';
+import { getArticleStaticProps } from 'server/articleDetail';
 
 interface DetailProps {
   pid: string;
@@ -44,40 +44,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps = async context => {
-  const pidParam = context.params?.pid;
-  const pid = Array.isArray(pidParam) ? pidParam[0] : pidParam;
-
-  if (!pid) return { notFound: true };
-
-  // 서버사이드(ISR)에서는 BE 직통 주소를 우선 사용 (자기 자신 프록시(/api) 호출 방지)
-  const API_URL = getServerApiBaseUrl();
-
-  try {
-    const response = await fetch(`${API_URL}/posts/${pid}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-
-    // 비공개 글(403)이면 initialData null로 내려보내 클라이언트가 인증 토큰으로 재시도
-    if (!response.ok) {
-      return { props: { pid, initialData: null }, revalidate: 60 };
-    }
-
-    const responseData = await response.json();
-
-    if (!responseData?.data?.post) {
-      return { props: { pid, initialData: null }, revalidate: 60 };
-    }
-
-    return {
-      props: { pid, initialData: responseData.data },
-      revalidate: 60,
-    };
-  } catch {
-    return { props: { pid, initialData: null }, revalidate: 60 };
-  }
-};
+export const getStaticProps = getArticleStaticProps;
 
 const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   const router = useRouter();
@@ -233,6 +200,7 @@ const Detail: NextPage<DetailProps> = ({ pid: propsPid, initialData }) => {
   if (!shouldShowSkeleton && !resolvedData?.post) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Head><meta name="robots" content="noindex, nofollow" /></Head>
         <div className="mb-4 text-2xl font-bold text-gray-700">게시물을 찾을 수 없습니다.</div>
         <div className="mb-8 text-gray-500">삭제되었거나 비공개된 게시물일 수 있습니다.</div>
         <Link href="/article" className="px-6 py-2 text-white bg-ftBlue rounded-lg transition-colors hover:bg-[#1f4a8c]">

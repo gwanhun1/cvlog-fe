@@ -10,6 +10,7 @@ import { useResponsiveColumnCount } from 'hooks/useResponsiveColumnCount';
 import ListEmpty from '../../../Shared/common/ListEmpty';
 import EditorialPostCard from './EditorialPostCard';
 import CardSkeleton from './Skeleton';
+import ArticlePagination from '../ArticlePagination';
 
 interface PostListViewProps {
   inputRef: React.RefObject<HTMLInputElement>;
@@ -17,6 +18,7 @@ interface PostListViewProps {
   mode: 'public' | 'my';
   initialList?: ListDataType;
   featuredPostId?: number;
+  initialPage?: number;
 }
 
 interface MasonryItem {
@@ -31,25 +33,28 @@ const PostListView = ({
   mode,
   initialList,
   featuredPostId,
+  initialPage = 1,
 }: PostListViewProps) => {
-  const sort = useRouter().query.sort === 'popular' ? 'popular' : 'latest';
-  const hasPublicSeed = mode === 'public' && initialList !== undefined && sort === 'latest';
-  const [page, setPage] = useState(1);
+  const router = useRouter();
+  const sort = router.query.sort === 'popular' ? 'popular' : 'latest';
+  const keyword = useStore(state => state.tagAtom);
+  const isPaginated = mode === 'public' && !keyword && sort === 'latest';
+  const firstPage = isPaginated ? initialPage : 1;
+  const hasPublicSeed = isPaginated && initialList !== undefined;
+  const [page, setPage] = useState(firstPage);
   const [posts, setPosts] = useState<BlogType[]>(
     hasPublicSeed ? initialList.posts : [],
   );
   const [hasMore, setHasMore] = useState(
-    hasPublicSeed ? initialList.maxPage > 1 : true,
+    hasPublicSeed ? initialList.maxPage > firstPage : true,
   );
   const [isInitialLoading, setIsInitialLoading] = useState(!hasPublicSeed);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const loadingLockRef = useRef(false);
   const loadingRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const keyword = useStore(state => state.tagAtom);
 
   const usePublicSeed =
-    mode === 'public' && page === 1 && !keyword && initialList !== undefined && sort === 'latest';
+    hasPublicSeed && page === firstPage;
   const publicList = useGetPublicList(
     page,
     mode === 'public',
@@ -64,14 +69,14 @@ const PostListView = ({
 
   useEffect(() => {
     const canUseSeed =
-      mode === 'public' && !keyword && initialList !== undefined && sort === 'latest';
-    setPage(1);
+      isPaginated && initialList !== undefined;
+    setPage(firstPage);
     setPosts(canUseSeed ? initialList.posts : []);
-    setHasMore(canUseSeed ? initialList.maxPage > 1 : true);
+    setHasMore(canUseSeed ? initialList.maxPage > firstPage : true);
     setIsInitialLoading(!canUseSeed);
     setIsLoadingMore(false);
     loadingLockRef.current = false;
-  }, [initialList, keyword, mode, sort]);
+  }, [initialList, keyword, mode, sort, firstPage, isPaginated]);
 
   useEffect(() => {
     if (!tagKeyword) return;
@@ -84,7 +89,7 @@ const PostListView = ({
   useEffect(() => {
     if (!list) return;
 
-    if (page === 1) {
+    if (page === firstPage) {
       setPosts(list.posts);
       setIsInitialLoading(false);
     } else {
@@ -100,7 +105,7 @@ const PostListView = ({
 
     setHasMore(page < list.maxPage);
     loadingLockRef.current = false;
-  }, [list, page]);
+  }, [list, page, firstPage]);
 
   useEffect(() => {
     if (!listQuery.isError) return;
@@ -134,7 +139,7 @@ const PostListView = ({
 
   useEffect(() => {
     const target = loadingRef.current;
-    if (!target || typeof IntersectionObserver === 'undefined') return;
+    if (isPaginated || !target || typeof IntersectionObserver === 'undefined') return;
 
     const observer = new IntersectionObserver(
       entries => {
@@ -145,7 +150,7 @@ const PostListView = ({
 
     observer.observe(target);
     return () => observer.disconnect();
-  }, [loadMorePosts]);
+  }, [loadMorePosts, isPaginated]);
 
   const setListIndex = useStore(state => state.setListIndexAtom);
   const queryClient = useQueryClient();
@@ -312,12 +317,15 @@ const PostListView = ({
             이어서 불러오기
           </button>
         )}
-        {!hasMore && !isInitialLoading && posts.length > 0 && (
+        {!isPaginated && !hasMore && !isInitialLoading && posts.length > 0 && (
           <p className="m-0 py-4 text-xs text-slate-400">
             모든 게시물을 불러왔습니다
           </p>
         )}
       </div>
+      {isPaginated && (
+        <ArticlePagination page={firstPage} maxPage={list?.maxPage ?? initialList?.maxPage ?? 1} />
+      )}
     </div>
   );
 };

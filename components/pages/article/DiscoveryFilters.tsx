@@ -8,16 +8,17 @@ export default function DiscoveryFilters() {
       정렬
       <select
         value={router.query.sort === 'popular' ? 'popular' : 'latest'}
-        onChange={e =>
+        onChange={e => {
+          const { page: _page, ...query } = router.query;
           router.push(
             {
               pathname: '/article',
-              query: { ...router.query, view: 'all', sort: e.target.value },
+              query: { ...query, view: 'all', sort: e.target.value },
             },
             undefined,
             { shallow: true },
-          )
-        }
+          );
+        }}
         className="min-h-[40px] rounded-lg border border-slate-300 bg-white px-3 text-sm"
       >
         <option value="latest">최신순</option>
