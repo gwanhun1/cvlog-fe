@@ -57,12 +57,12 @@ const PopularPosts = ({ limit = 3 }: PopularPostsProps) => {
                 {String(index + 1).padStart(2, '0')}
               </span>
               <span className="min-w-0">
-                <span className="flex min-w-0 items-baseline gap-2">
-                  <strong className="min-w-0 flex-1 truncate text-[14px] leading-[1.45] text-slate-800 transition-colors group-hover:text-ftBlue">
+                <span className="flex min-w-0 items-start gap-2">
+                  <strong className="min-w-0 min-h-[2.9rem] flex-1 line-clamp-2 text-[14px] leading-[1.45] text-slate-800 transition-colors group-hover:text-ftBlue">
                     {post.title}
                   </strong>
                   {post.tags?.length > 0 && (
-                    <span className="max-w-[42%] shrink-0 truncate text-[10px] font-medium text-ftBlue/65" title={post.tags.map(tag => `#${tag.name}`).join(' ')}>
+                    <span className="max-w-[42%] shrink-0 truncate text-[10px] font-medium text-[#8aa5d0]" title={post.tags.map(tag => `#${tag.name}`).join(' ')}>
                       {post.tags.map(tag => `#${tag.name}`).join(' ')}
                     </span>
                   )}

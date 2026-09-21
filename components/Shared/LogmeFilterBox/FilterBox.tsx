@@ -58,6 +58,14 @@ const FilterBox = ({ keyword, setKeyword, inputRef, suggestedTags = [] }: Filter
     const nextKeyword = localKeyword.trim();
     saveSearch(nextKeyword);
     setKeyword(nextKeyword);
+    inputRef.current?.blur();
+  };
+
+  const selectSearchTerm = (value: string) => {
+    setLocalKeyword(value);
+    saveSearch(value);
+    setKeyword(value);
+    inputRef.current?.blur();
   };
 
   const handleWrite = () => {
@@ -130,10 +138,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef, suggestedTags = [] }: Filter
                           type="button"
                           className="max-w-[180px] truncate py-1.5 hover:text-ftBlue"
                           onMouseDown={event => event.preventDefault()}
-                          onClick={() => {
-                            setLocalKeyword(item);
-                            setKeyword(item);
-                          }}
+                          onClick={() => selectSearchTerm(item)}
                         >
                           {item}
                         </button>
@@ -164,11 +169,7 @@ const FilterBox = ({ keyword, setKeyword, inputRef, suggestedTags = [] }: Filter
                         type="button"
                         className="shrink-0 text-ftBlue/70 transition-colors hover:text-ftBlue focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue/30"
                         onMouseDown={event => event.preventDefault()}
-                        onClick={() => {
-                          setLocalKeyword(tag);
-                          saveSearch(tag);
-                          setKeyword(tag);
-                        }}
+                        onClick={() => selectSearchTerm(tag)}
                       >
                         #{tag}
                       </button>
