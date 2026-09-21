@@ -14,12 +14,9 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
   const [imageFailed, setImageFailed] = useState(false);
   const excerpt = getPostExcerpt(post.content, 190);
   const publishedAt = post.created_at ?? post.updated_at;
-  const isTextOnly = !imageUrl || imageFailed;
 
   return (
-    <article
-      className={`min-w-0 desktop:only:col-span-2 ${isTextOnly ? 'desktop:self-start' : ''}`}
-    >
+    <article className="min-w-0 desktop:only:col-span-2">
       {imageUrl && !imageFailed ? (
         <Link
           href={`/article/content/${post.id}`}
@@ -50,7 +47,10 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
             <div className="transition-opacity duration-300 ease-out desktop:opacity-40 desktop:group-hover/media:opacity-100 desktop:group-focus-visible/media:opacity-100">
               <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-white/70">
                 {post.tags.map(tag => (
-                  <span key={tag.id} className="whitespace-nowrap font-semibold text-white">
+                  <span
+                    key={tag.id}
+                    className="whitespace-nowrap font-semibold text-white"
+                  >
                     #{tag.name}
                   </span>
                 ))}
@@ -79,11 +79,14 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
           </div>
         </Link>
       ) : (
-        <div className="border-t-2 border-slate-900 pt-7">
+        <div className="flex h-full flex-col border-t-2 border-slate-900 pt-7">
           <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-medium text-slate-400">
-                {post.tags.map(tag => (
-                  <span key={tag.id} className="whitespace-nowrap font-semibold text-ftBlue">
-                    #{tag.name}
+            {post.tags.map(tag => (
+              <span
+                key={tag.id}
+                className="whitespace-nowrap font-semibold text-ftBlue"
+              >
+                #{tag.name}
               </span>
             ))}
             {publishedAt && (
@@ -108,12 +111,12 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
           </h2>
 
           {excerpt && (
-                <p className="mb-0 mt-3 line-clamp-3 max-w-[720px] text-[14px] leading-[1.7] text-slate-500">
+            <p className="mb-0 mt-3 max-w-[720px] text-[14px] leading-[1.7] text-slate-500">
               {excerpt}
             </p>
           )}
 
-          <div className="mt-4 flex items-center justify-end border-t border-slate-200 pt-3">
+          <div className="mt-auto flex items-center justify-end border-t border-slate-200 pt-3">
             <Link
               href={`/article/content/${post.id}`}
               className="text-xs font-bold text-ftBlue transition-transform duration-200 hover:translate-x-0.5 focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"
