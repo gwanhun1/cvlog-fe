@@ -28,6 +28,9 @@ import { useArticleTranslation } from 'hooks/useArticleTranslation';
 import TranslateButton from 'components/pages/article/content/TranslateButton';
 import { getArticleStaticProps } from 'server/articleDetail';
 
+// Includes cold start and HTML rendering; the upstream request remains capped at 8s.
+export const config = { maxDuration: 30 };
+
 interface DetailProps {
   pid: string;
   initialData?: {

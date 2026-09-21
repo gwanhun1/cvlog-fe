@@ -118,6 +118,16 @@ test('invalid article IDs return 404 before making upstream requests', async () 
   }
 });
 
+test('detail aborts a stalled connection and rejects regeneration without retrying', async () => {
+  let calls = 0;
+  const load = setup((_url, { signal }) => {
+    calls++;
+    return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('deadline')), { once: true }));
+  }, { deadline: true });
+  await assert.rejects(load('server/articleDetail.ts').getArticleStaticProps(context()), /deadline/);
+  assert.equal(calls, 1);
+});
+
 test('public list rejects outages and strips author fields that must not enter static props', async () => {
   const load = setup(async () => listResponse([post(71, { user: { id: 1, name: 'Author', refresh_token: 'must-not-leak' } })]));
   const list = await load('server/publicArticles.ts').getPublicArticlePage(1);

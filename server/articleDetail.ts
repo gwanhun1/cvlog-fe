@@ -11,10 +11,28 @@ export const getArticleStaticProps: GetStaticProps = async context => {
   ) {
     return { notFound: true };
   }
-  const response = await axios.get(`${getServerApiBaseUrl()}/posts/${pid}`, {
-    timeout: 8000,
-    validateStatus: () => true,
-  });
+  const controller = new AbortController();
+  const startedAt = Date.now();
+  const timer = setTimeout(() => controller.abort(), 8000);
+  // Bound connection/DNS waits as well as the socket timeout. Keep errors
+  // rejected so ISR retains the last successful HTML.
+  const response = await (async () => {
+    try {
+      const result = await axios.get(`${getServerApiBaseUrl()}/posts/${pid}`, {
+        signal: controller.signal,
+        timeout: 8000,
+        validateStatus: () => true,
+      });
+      console.info('article-api', { pid, status: result.status, durationMs: Date.now() - startedAt });
+      return result;
+    } catch (error) {
+      console.error('article-api-failed', { pid, durationMs: Date.now() - startedAt, aborted: controller.signal.aborted });
+      throw error;
+    } finally {
+      clearTimeout(timer);
+      controller.abort();
+    }
+  })();
   if (response.status === 404) return { notFound: true, revalidate: 60 };
   // Private posts still let the owner retry in the browser with their token.
   if (response.status === 403)
