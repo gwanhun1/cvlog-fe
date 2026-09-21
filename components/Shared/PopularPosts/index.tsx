@@ -57,9 +57,16 @@ const PopularPosts = ({ limit = 3 }: PopularPostsProps) => {
                 {String(index + 1).padStart(2, '0')}
               </span>
               <span className="min-w-0">
-                <strong className="line-clamp-1 block text-[14px] leading-[1.45] text-slate-800 transition-colors group-hover:text-ftBlue">
-                  {post.title}
-                </strong>
+                <span className="flex min-w-0 items-baseline gap-2">
+                  <strong className="min-w-0 flex-1 truncate text-[14px] leading-[1.45] text-slate-800 transition-colors group-hover:text-ftBlue">
+                    {post.title}
+                  </strong>
+                  {post.tags?.length > 0 && (
+                    <span className="max-w-[42%] shrink-0 truncate text-[10px] font-medium text-ftBlue/65" title={post.tags.map(tag => `#${tag.name}`).join(' ')}>
+                      {post.tags.map(tag => `#${tag.name}`).join(' ')}
+                    </span>
+                  )}
+                </span>
                 <time
                   dateTime={post.created_at}
                   className="mt-1 block text-[11px] text-slate-400"

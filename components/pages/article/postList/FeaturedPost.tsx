@@ -48,7 +48,7 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
               <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-white/70">
                 {post.tags.map(tag => (
                   <span key={tag.id} className="whitespace-nowrap font-semibold text-white">
-                    {tag.name}
+                    #{tag.name}
                   </span>
                 ))}
                 {publishedAt && (
@@ -78,9 +78,9 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
       ) : (
         <div className="border-t-2 border-slate-900 pt-7">
           <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-medium text-slate-400">
-            {post.tags.map(tag => (
-              <span key={tag.id} className="whitespace-nowrap font-semibold text-ftBlue">
-                {tag.name}
+                {post.tags.map(tag => (
+                  <span key={tag.id} className="whitespace-nowrap font-semibold text-ftBlue">
+                    #{tag.name}
               </span>
             ))}
             {publishedAt && (
