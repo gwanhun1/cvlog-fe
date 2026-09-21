@@ -216,42 +216,26 @@ const Article: NextPage<ArticleProps> = ({ initialList, initialPage = 1 }) => {
         </section>
 
         <section
-          aria-labelledby="article-list-title"
+          aria-labelledby={keyword ? undefined : 'article-list-title'}
+          aria-label={keyword ? '검색 결과 목록' : undefined}
           className="pb-14 pt-9 tablet:pb-16 tablet:pt-11"
         >
-          <div className="mb-5 flex items-end justify-between gap-4">
-            <div>
+          {!keyword && (
+            <div className="mb-5 flex items-end justify-between gap-4">
               <h2
                 id="article-list-title"
                 className="m-0 text-[24px] font-bold tracking-[-0.035em] text-slate-950"
               >
-                {keyword
-                  ? '검색 결과'
-                  : menu === 'all'
-                    ? router.query.sort === 'popular'
-                      ? '많이 읽은 글'
-                      : initialPage === 1
-                        ? '최신 글'
-                        : `이전 글 · ${initialPage}페이지`
-                    : '내 기록'}
+                {menu === 'all'
+                  ? router.query.sort === 'popular'
+                    ? '많이 읽은 글'
+                    : initialPage === 1
+                      ? '최신 글'
+                      : `이전 글 · ${initialPage}페이지`
+                  : '내 기록'}
               </h2>
-              {keyword && (
-                <p className="mb-0 mt-1 text-xs text-slate-500">
-                  <strong className="font-bold text-ftBlue">{keyword}</strong>{' '}
-                  검색 결과입니다.
-                </p>
-              )}
             </div>
-            {keyword && (
-              <button
-                type="button"
-                onClick={() => setKeyword('')}
-                className="min-h-[44px] px-1 text-xs font-bold text-slate-500 hover:text-ftBlue focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-ftBlue focus-visible:ring-offset-2"
-              >
-                검색 지우기
-              </button>
-            )}
-          </div>
+          )}
 
           <div>
             {menu === 'list' ? (
