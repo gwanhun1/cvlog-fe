@@ -46,11 +46,11 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
           <div className="absolute inset-0 flex flex-col justify-end bg-slate-950/80 p-5 text-white transition-[background-color] duration-300 ease-out desktop:bg-slate-950/20 desktop:group-hover/media:bg-slate-950/80 desktop:group-focus-visible/media:bg-slate-950/80">
             <div className="transition-opacity duration-300 ease-out desktop:opacity-40 desktop:group-hover/media:opacity-100 desktop:group-focus-visible/media:opacity-100">
               <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium text-white/70">
-                {post.tags[0] && (
-                  <span className="font-semibold text-white">
-                    {post.tags[0].name}
+                {post.tags.map(tag => (
+                  <span key={tag.id} className="whitespace-nowrap font-semibold text-white">
+                    {tag.name}
                   </span>
-                )}
+                ))}
                 {publishedAt && (
                   <>
                     <span aria-hidden className="text-white/40">
@@ -78,11 +78,11 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
       ) : (
         <div className="border-t-2 border-slate-900 pt-7">
           <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] font-medium text-slate-400">
-            {post.tags[0] && (
-              <span className="font-semibold text-ftBlue">
-                {post.tags[0].name}
+            {post.tags.map(tag => (
+              <span key={tag.id} className="whitespace-nowrap font-semibold text-ftBlue">
+                {tag.name}
               </span>
-            )}
+            ))}
             {publishedAt && (
               <>
                 <span aria-hidden className="text-slate-300">

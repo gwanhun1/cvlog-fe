@@ -9,9 +9,10 @@ interface FilterBoxProps {
   keyword: string;
   setKeyword: (keyword: string) => void;
   inputRef: React.RefObject<HTMLInputElement>;
+  suggestedTags?: string[];
 }
 
-const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
+const FilterBox = ({ keyword, setKeyword, inputRef, suggestedTags = [] }: FilterBoxProps) => {
   const [localKeyword, setLocalKeyword] = useState(keyword);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
@@ -48,11 +49,11 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
         onSubmit={handleSearch}
         className="flex w-full items-center gap-2.5"
       >
-        <div className="flex min-w-0 flex-1 items-stretch overflow-hidden rounded-[12px] border border-slate-300 bg-white transition-[border-color,box-shadow] focus-within:border-ftBlue focus-within:ring-2 focus-within:ring-ftBlue/10">
+        <div className="flex min-w-0 flex-1 items-stretch overflow-visible rounded-[12px] border border-slate-300 bg-white transition-[border-color,box-shadow] focus-within:border-ftBlue focus-within:ring-2 focus-within:ring-ftBlue/10">
           <label htmlFor="article-search" className="sr-only">
             게시물 검색
           </label>
-          <div className="relative min-w-0 flex-1">
+          <div className="group relative min-w-0 flex-1">
             <IoMdSearch className="pointer-events-none absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400" />
             <input
               id="article-search"
@@ -64,6 +65,26 @@ const FilterBox = ({ keyword, setKeyword, inputRef }: FilterBoxProps) => {
               placeholder="제목·태그·시리즈 검색"
               autoComplete="off"
             />
+            {suggestedTags.length > 0 && (
+              <div className="pointer-events-none invisible absolute left-0 right-0 top-[calc(100%+9px)] z-20 rounded-[10px] border border-ftBlue/10 bg-white/95 px-3 py-2.5 opacity-0 shadow-[0_8px_24px_rgba(38,87,166,0.10)] transition-[opacity,visibility] duration-150 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:opacity-100">
+                <div className="flex items-center gap-3 overflow-x-auto whitespace-nowrap text-xs [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {suggestedTags.map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      className="shrink-0 text-ftBlue/70 transition-colors hover:text-ftBlue focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ftBlue/30"
+                      onMouseDown={event => event.preventDefault()}
+                      onClick={() => {
+                        setLocalKeyword(tag);
+                        setKeyword(tag);
+                      }}
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           <button
             type="submit"

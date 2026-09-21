@@ -103,6 +103,13 @@ const Article: NextPage<ArticleProps> = ({ initialList, initialPage = 1 }) => {
       ? initialList?.posts[0]
       : undefined;
   const showMyWorkspace = isClient && Boolean(accessToken) && menu === 'list';
+  const suggestedTags = Array.from(
+    new Map(
+      (initialList?.posts ?? [])
+        .flatMap(post => post.tags ?? [])
+        .map(tag => [tag.name, tag.name]),
+    ).values(),
+  );
 
   const canonicalUrl = `https://logme.cloud${publicArticlePagePath(initialPage)}`;
   const pageTitle =
@@ -200,6 +207,7 @@ const Article: NextPage<ArticleProps> = ({ initialList, initialPage = 1 }) => {
             keyword={keyword}
             setKeyword={setKeyword}
             inputRef={inputRef}
+            suggestedTags={suggestedTags}
           />
 
           <div className="flex items-center justify-between gap-4 tablet:justify-end">
