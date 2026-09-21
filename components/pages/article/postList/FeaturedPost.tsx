@@ -14,9 +14,12 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
   const [imageFailed, setImageFailed] = useState(false);
   const excerpt = getPostExcerpt(post.content, 190);
   const publishedAt = post.created_at ?? post.updated_at;
+  const isTextOnly = !imageUrl || imageFailed;
 
   return (
-    <article className="min-w-0 desktop:only:col-span-2">
+    <article
+      className={`min-w-0 desktop:only:col-span-2 ${isTextOnly ? 'desktop:self-start' : ''}`}
+    >
       {imageUrl && !imageFailed ? (
         <Link
           href={`/article/content/${post.id}`}
@@ -105,7 +108,7 @@ const FeaturedPost = ({ post }: FeaturedPostProps) => {
           </h2>
 
           {excerpt && (
-            <p className="mb-0 mt-3 line-clamp-2 max-w-[720px] text-[14px] leading-[1.7] text-slate-500">
+                <p className="mb-0 mt-3 line-clamp-3 max-w-[720px] text-[14px] leading-[1.7] text-slate-500">
               {excerpt}
             </p>
           )}
