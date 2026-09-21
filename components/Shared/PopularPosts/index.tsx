@@ -71,7 +71,8 @@ const PopularPosts = ({ limit = 3 }: PopularPostsProps) => {
                       className="ml-2 text-[11px] font-medium text-[#8aa5d0]"
                       title={post.tags.map(tag => `#${tag.name}`).join(' ')}
                     >
-                      {post.tags.map(tag => `#${tag.name}`).join(' ')}
+                      #{post.tags[0].name}
+                      {post.tags.length > 1 ? ' ...' : ''}
                     </span>
                   )}
                 </strong>
