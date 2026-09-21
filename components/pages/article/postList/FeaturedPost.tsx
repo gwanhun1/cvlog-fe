@@ -12,11 +12,14 @@ interface FeaturedPostProps {
 const FeaturedPost = ({ post }: FeaturedPostProps) => {
   const imageUrl = extractPostImage(post.content);
   const [imageFailed, setImageFailed] = useState(false);
-  const excerpt = getPostExcerpt(post.content, 190);
+  const isTextOnly = !imageUrl || imageFailed;
+  const excerpt = getPostExcerpt(post.content, isTextOnly ? 320 : 190);
   const publishedAt = post.created_at ?? post.updated_at;
 
   return (
-    <article className="min-w-0 desktop:only:col-span-2">
+    <article
+      className={`min-w-0 desktop:only:col-span-2 ${isTextOnly ? 'h-full' : ''}`}
+    >
       {imageUrl && !imageFailed ? (
         <Link
           href={`/article/content/${post.id}`}
