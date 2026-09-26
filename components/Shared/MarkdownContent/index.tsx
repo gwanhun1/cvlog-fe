@@ -4,7 +4,7 @@ import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
-import { useRef, useMemo, memo } from 'react';
+import { Children, useRef, useMemo, memo } from 'react';
 import { cn } from 'styles/utils';
 import { useStore } from 'service/store/useStore';
 import { isSameUser } from 'utils/user';
@@ -50,7 +50,7 @@ const MarkdownContentComponent = ({
   // 마크다운 컴포넌트에 전달할 커스텀 컴포넌트
   const components = useMemo(() => {
     const createHighlightComponent = (Tag: keyof JSX.IntrinsicElements) => {
-      const HighlightComponent = ({ children, ...props }: any) => {
+      const HighlightComponent = ({ children, node: _node, ...props }: any) => {
         if (typeof children === 'string') {
           return (
             <Tag
@@ -59,7 +59,15 @@ const MarkdownContentComponent = ({
             />
           );
         }
-        return <Tag {...props}>{children}</Tag>;
+        return (
+          <Tag {...props}>
+            {Children.map(children, child =>
+              typeof child === 'string' && selectedWords.length > 0 ? (
+                <span dangerouslySetInnerHTML={{ __html: highlightWords(child) }} />
+              ) : child
+            )}
+          </Tag>
+        );
       };
       HighlightComponent.displayName = `Highlight${
         Tag.charAt(0).toUpperCase() + Tag.slice(1)
@@ -78,6 +86,11 @@ const MarkdownContentComponent = ({
       li: createHighlightComponent('li'),
       em: createHighlightComponent('em'),
       strong: createHighlightComponent('strong'),
+      a: createHighlightComponent('a'),
+      del: createHighlightComponent('del'),
+      td: createHighlightComponent('td'),
+      th: createHighlightComponent('th'),
+      span: createHighlightComponent('span'),
       table: ({ ...props }: any) => (
         <div className={styles.tableWrapper}>
           <table {...props} />
@@ -105,7 +118,7 @@ const MarkdownContentComponent = ({
         );
       },
     };
-  }, [highlightWords]);
+  }, [highlightWords, selectedWords]);
 
   return (
     <div

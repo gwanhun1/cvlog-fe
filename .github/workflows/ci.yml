@@ -28,6 +28,9 @@ jobs:
       - name: Type check
         run: yarn tsc --noEmit
 
+      - name: Tag highlighting regression tests
+        run: node --test scripts/test-highlight-tag-words.cjs scripts/test-markdown-tag-highlighting.cjs
+
       - name: Build
         run: yarn build
         env:
